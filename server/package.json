@@ -1,0 +1,31 @@
+{
+  "name": "ft_transcendence",
+  "version": "1.0.0",
+  "description": "Transcendence server",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "build:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css",
+    "watch:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css --watch",
+    "dev": "npm run watch:tailwind & npm run start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MisterBanBan/ft_transcendence.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MisterBanBan/ft_transcendence/issues"
+  },
+  "homepage": "https://github.com/MisterBanBan/ft_transcendence#readme",
+  "dependencies": {
+    "fastify": "^5.2.1",
+    "node": "^23.9.0",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.3.0",
+    "tailwindcss": "^2.1.2"
+  }
+}
