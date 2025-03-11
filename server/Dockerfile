@@ -2,10 +2,10 @@ FROM node:18-alpine AS base
 
 WORKDIR /node
 
-# Copier les fichiers de configuration
+# copy conf files
 COPY package.json package-lock.json* ./
 
-# Installer les dépendances
+# Install dep
 RUN npm install
 
 # Install TypeScript globally
@@ -18,15 +18,16 @@ COPY tsconfig.json ./
 # Copy all source files
 COPY . .
 
-# Installer Tailwind CSS
+# Install Tailwind CSS
 RUN npm install -D tailwindcss
 RUN npx tailwindcss-cli@latest init -p
 
-# Copier le reste du code source
+
+RUN npm install fastify @fastify/static
+
 COPY . .
 
-# Exposer le port
 EXPOSE 3000
 
-# Démarrer le serveur
+# Start server
 CMD ["npm", "start"]
