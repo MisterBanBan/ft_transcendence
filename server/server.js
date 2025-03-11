@@ -19,7 +19,7 @@ fastify.register(fastifyStatic, {
 
 // Serve HTML directly from a route
 fastify.get('/html', async function (request, reply) {
-  return reply.sendFile('index.html');
+  return reply.sendFile('html/index.html');
 });
 
 // Original route

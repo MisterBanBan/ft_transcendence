@@ -16,7 +16,7 @@ COPY package*.json ./
 COPY tsconfig.json ./
 
 # Copy all source files
-COPY . .
+#COPY . .
 
 # Install Tailwind CSS
 RUN npm install -D tailwindcss
