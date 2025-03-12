@@ -21,12 +21,9 @@ RUN npm install -g typescript
 RUN npm install -D tailwindcss
 RUN npx tailwindcss-cli@latest init -p
 
-# Doesn't run for some reason ???
-RUN tsc
-
 RUN npm install fastify @fastify/static
 
 EXPOSE 3000
 
 # Start server
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev"]
