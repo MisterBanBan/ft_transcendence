@@ -27,3 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
         bouton.textContent = `Clics : ${compteur}`;
     });
 });
+
+function qsdsq()
+{}

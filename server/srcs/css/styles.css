@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    background-color: #000;
+    /*background-color: #000;*/
 }
 
 .fond-sombre {
@@ -9,7 +9,7 @@ body {
     left: 0;
     width: 100%;
     height: 100vh;
-    background-image: linear-gradient(to bottom, #333, #000);
+    /*background-image: linear-gradient(to bottom, #333, #000);*/
     filter: blur(5px);
 }
 
