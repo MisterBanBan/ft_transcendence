@@ -23,7 +23,7 @@ RUN npm install -D nodemon
 RUN npm install -D tailwindcss
 RUN npx tailwindcss-cli@latest init -p
 
-RUN npm install fastify @fastify/static
+RUN npm install fastify @fastify/static @fastify/formbody
 
 EXPOSE 3000
 
