@@ -17,6 +17,8 @@ COPY srcs/ ./srcs/
 # Install TypeScript globally
 RUN npm install -g typescript
 
+RUN npm install -D nodemon
+
 # Install Tailwind CSS
 RUN npm install -D tailwindcss
 RUN npx tailwindcss-cli@latest init -p

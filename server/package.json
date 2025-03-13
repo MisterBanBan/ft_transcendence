@@ -8,7 +8,7 @@
     "start": "node server.js",
     "build:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css",
     "watch:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css --watch",
-    "dev": "npm run watch:tailwind & node --watch server.js & tsc --watch"
+    "dev": "npm run watch:tailwind & tsc --watch & npx nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "node": "^23.9.0"
   },
   "devDependencies": {
-    "tailwindcss": "^2.1.2"
+    "tailwindcss": "^2.1.2",
+    "nodemon": "^3.1.9"
   }
 }
