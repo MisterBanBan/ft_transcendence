@@ -15,7 +15,7 @@ fastify.post('/signup', async function (request, reply) {
     const errEmail = validateEmail(email);
     if (errEmail)
     {
-        console.log("Invalid email");
+		error("Invalid email");
         return reply.redirect('signup');
     }
 
@@ -23,7 +23,7 @@ fastify.post('/signup', async function (request, reply) {
     if (errPassword)
     {
         errPassword.forEach(element => {
-            console.log(element);
+            error(element);
         });
         return reply.redirect('signup');
     }
@@ -37,7 +37,7 @@ fastify.post('/signup', async function (request, reply) {
         }
 
         if (users.some(user => user.email === email)) {
-            console.log("Email already in use");
+            error("Email already in use");
             return reply.redirect('signup');
         }
 
@@ -45,9 +45,9 @@ fastify.post('/signup', async function (request, reply) {
 
         fs.writeFile("users.json", JSON.stringify(users, null, 2), (err) => {
             if (err)
-                console.log("An error occurred while registering an user: ", err);
+                error("An error occurred while registering an user: ", err);
             else
-                console.log("Correctly registered: ", email);
+                error("Correctly registered: ", email);
         });
     });
 
@@ -78,4 +78,9 @@ function validatePassword(password, cpassword) {
     if (!hasSpecialChar) errors.push("The password needs at least 1 special character.");
 
     return errors;
+}
+
+function error(message)
+{
+    console.log(`\x1b[31m${message}\x1b[0m`);
 }
