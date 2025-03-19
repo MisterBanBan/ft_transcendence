@@ -3,8 +3,8 @@ var PlayerStats = /** @class */ (function () {
     function PlayerStats() {
         this.velocity = { x: 0, y: 0 };
         this.isJumping = false;
-        this.lastKeyLeft = false;
-        this.lastKeyRight = false;
+        this.leftKey = false;
+        this.rightKey = false;
     }
     return PlayerStats;
 }());
@@ -56,44 +56,35 @@ function handleKeyPressPlayer(stats, speed, jump, e) {
             break;
         case 'arrowleft':
         case 'q':
-            stats.lastKeyLeft = true;
-            stats.lastKeyRight = false;
-            stats.velocity.x = -speed;
+            if (stats.leftKey === false) {
+                stats.leftKey = true;
+                stats.velocity.x += -speed;
+            }
             break;
         case 'arrowright':
         case 'd':
-            stats.lastKeyRight = true;
-            stats.lastKeyLeft = false;
-            stats.velocity.x = speed;
+            if (stats.rightKey === false) {
+                stats.rightKey = true;
+                stats.velocity.x += speed;
+            }
             break;
     }
-}
-function moveLeft(velocity, speed) {
-    velocity.x = -speed;
-}
-function moveRight(velocity, speed) {
-    velocity.x = speed;
-}
-function stopJumpMovement(velocity) {
-    velocity.x = 0;
 }
 function handleKeyReleasePlayer(stats, speed, e) {
     switch (e.key.toLowerCase()) {
         case 'arrowleft':
         case 'q':
-            stats.lastKeyLeft = false;
-            if (stats.lastKeyRight)
-                moveRight(stats.velocity, speed);
-            else
-                stopJumpMovement(stats.velocity);
+            if (stats.leftKey) {
+                stats.velocity.x -= -speed;
+                stats.leftKey = false;
+            }
             break;
         case 'arrowright':
         case 'd':
-            stats.lastKeyRight = false;
-            if (stats.lastKeyLeft)
-                moveLeft(stats.velocity, speed);
-            else
-                stopJumpMovement(stats.velocity);
+            if (stats.rightKey) {
+                stats.velocity.x -= speed;
+                stats.rightKey = false;
+            }
             break;
     }
 }
@@ -101,6 +92,7 @@ var PlayerController = /** @class */ (function () {
     function PlayerController(playerId) {
         var _this = this;
         this.pos = { x: 0, y: 0 };
+        this.velo = { x: 0, y: 0 };
         this.stats = new PlayerStats();
         this.speed = 400;
         this.jump = -700;
@@ -133,6 +125,7 @@ var PlayerController = /** @class */ (function () {
             this.stats.isJumping = false;
         }
         console.log("Velocity Y: ".concat(this.stats.velocity.y, ", Position Y: ").concat(this.pos.y));
+        console.log("Velocity X: ".concat(this.stats.velocity.x));
         this.updatePosition();
         requestAnimationFrame(this.gameLoop.bind(this));
     };
