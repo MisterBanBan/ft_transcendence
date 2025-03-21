@@ -1,12 +1,12 @@
 {
-    "compilerOptions": {
-      "outDir": "./srcs/scripts/",
-      "rootDir": "./scripts",
-      "target": "es5",
-      "module": "commonjs",
-      "strict": true,
-      "esModuleInterop": true
-    },
+  "compilerOptions": {
+    "outDir": "./srcs/scripts/",
+    "rootDir": "./scripts",
+    "target": "es5",
+    "module": "es2015", // Changed from commonjs
+    "strict": true,
+    "esModuleInterop": true
+  },
     "include": ["scripts/**/*"],
     "exclude": ["node_modules"]
 }

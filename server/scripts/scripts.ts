@@ -1,3 +1,5 @@
+import { PlayerAnimation } from "./player_animation.js";
+
 interface Position {
     x: number;
     y: number;
@@ -49,7 +51,7 @@ function handleKeyRelease(velocity: {x: number, y: number}, e: KeyboardEvent) {
     }
 }*/
 
-function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, e: KeyboardEvent) {
+function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, player: PlayerAnimation,  e: KeyboardEvent) {
 
     switch(e.key.toLowerCase()) {
         case ' ':
@@ -64,6 +66,7 @@ function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, e
             {
                 stats.leftKey = true;
                 stats.velocity.x += -speed;
+                player.startAnimation();
             }
             break;
         case 'arrowright':
@@ -72,12 +75,13 @@ function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, e
                 {
                     stats.rightKey = true;
                     stats.velocity.x += speed;
+                    player.startAnimation();
                 }
             break;
     }
 }
 
-function handleKeyReleasePlayer(stats: PlayerStats, speed: number, e: KeyboardEvent) {
+function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: PlayerAnimation, e: KeyboardEvent) {
     switch (e.key.toLowerCase()) {
         case 'arrowleft':
         case 'q':
@@ -85,6 +89,7 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, e: KeyboardEv
             {
                 stats.velocity.x -= -speed;
                 stats.leftKey = false;
+                player.stopAnimation();
             }
             break;
         case 'arrowright':
@@ -93,6 +98,7 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, e: KeyboardEv
             {
                 stats.velocity.x -= speed;
                 stats.rightKey = false;
+                player.stopAnimation();
             }
             break;
     }
@@ -100,7 +106,7 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, e: KeyboardEv
 
 
 class PlayerController {
-    private player: HTMLElement;
+    private player: PlayerAnimation;
     private pos: Position = { x: 0, y: 0};
     private velo: Position = { x: 0, y: 0};
     private stats: PlayerStats = new PlayerStats();
@@ -114,14 +120,14 @@ class PlayerController {
     constructor(playerId: string) {
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
-        this.player = playerElement;
+        this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
 
         this.updatePosition();
-        window.addEventListener('keydown', (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, e));
-        window.addEventListener('keyup', (e) => handleKeyReleasePlayer(this.stats, this.speed, e));
+        window.addEventListener('keydown', (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, this.player, e));
+        window.addEventListener('keyup', (e) => handleKeyReleasePlayer(this.stats, this.speed, this.player, e));
 
         requestAnimationFrame(this.gameLoop.bind(this));
     }
@@ -146,15 +152,14 @@ class PlayerController {
         }
         console.log(`Velocity Y: ${this.stats.velocity.y}, Position Y: ${this.pos.y}`);
         console.log(`Velocity X: ${this.stats.velocity.x}`);
-
         this.updatePosition();
         requestAnimationFrame(this.gameLoop.bind(this));
     }
-
     private updatePosition() {
-        this.player.style.top = `${this.pos.y}px`;
-        this.player.style.left = `${this.pos.x}px`;
+        this.player.updatePosition(this.pos.x, this.pos.y);
     }
+
+
     
 }
 

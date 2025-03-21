@@ -20,6 +20,9 @@ RUN npm install -g typescript
 # Install Tailwind CSS
 RUN npm install -D tailwindcss
 RUN npx tailwindcss-cli@latest init -p
+#RUN npm install -g tailwindcss
+#ENV PATH=./node_modules/.bin:$PATH
+
 
 RUN npm install fastify @fastify/static
 

@@ -1,4 +1,4 @@
-"use strict";
+import { PlayerAnimation } from "./player_animation.js";
 var PlayerStats = /** @class */ (function () {
     function PlayerStats() {
         this.velocity = { x: 0, y: 0 };
@@ -46,7 +46,7 @@ function handleKeyRelease(velocity: {x: number, y: number}, e: KeyboardEvent) {
             break;
     }
 }*/
-function handleKeyPressPlayer(stats, speed, jump, e) {
+function handleKeyPressPlayer(stats, speed, jump, player, e) {
     switch (e.key.toLowerCase()) {
         case ' ':
             if (!stats.isJumping) {
@@ -59,6 +59,7 @@ function handleKeyPressPlayer(stats, speed, jump, e) {
             if (stats.leftKey === false) {
                 stats.leftKey = true;
                 stats.velocity.x += -speed;
+                player.startAnimation();
             }
             break;
         case 'arrowright':
@@ -66,17 +67,19 @@ function handleKeyPressPlayer(stats, speed, jump, e) {
             if (stats.rightKey === false) {
                 stats.rightKey = true;
                 stats.velocity.x += speed;
+                player.startAnimation();
             }
             break;
     }
 }
-function handleKeyReleasePlayer(stats, speed, e) {
+function handleKeyReleasePlayer(stats, speed, player, e) {
     switch (e.key.toLowerCase()) {
         case 'arrowleft':
         case 'q':
             if (stats.leftKey) {
                 stats.velocity.x -= -speed;
                 stats.leftKey = false;
+                player.stopAnimation();
             }
             break;
         case 'arrowright':
@@ -84,6 +87,7 @@ function handleKeyReleasePlayer(stats, speed, e) {
             if (stats.rightKey) {
                 stats.velocity.x -= speed;
                 stats.rightKey = false;
+                player.stopAnimation();
             }
             break;
     }
@@ -101,13 +105,13 @@ var PlayerController = /** @class */ (function () {
         var playerElement = document.getElementById(playerId);
         if (!playerElement)
             throw new Error('Player element not found');
-        this.player = playerElement;
+        this.player = new PlayerAnimation(playerId);
         var sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
         this.updatePosition();
-        window.addEventListener('keydown', function (e) { return handleKeyPressPlayer(_this.stats, _this.speed, _this.jump, e); });
-        window.addEventListener('keyup', function (e) { return handleKeyReleasePlayer(_this.stats, _this.speed, e); });
+        window.addEventListener('keydown', function (e) { return handleKeyPressPlayer(_this.stats, _this.speed, _this.jump, _this.player, e); });
+        window.addEventListener('keyup', function (e) { return handleKeyReleasePlayer(_this.stats, _this.speed, _this.player, e); });
         requestAnimationFrame(this.gameLoop.bind(this));
     }
     PlayerController.prototype.gameLoop = function (timestamp) {
@@ -130,8 +134,7 @@ var PlayerController = /** @class */ (function () {
         requestAnimationFrame(this.gameLoop.bind(this));
     };
     PlayerController.prototype.updatePosition = function () {
-        this.player.style.top = "".concat(this.pos.y, "px");
-        this.player.style.left = "".concat(this.pos.x, "px");
+        this.player.updatePosition(this.pos.x, this.pos.y);
     };
     return PlayerController;
 }());
