@@ -1,8 +1,9 @@
-import { fastify } from '../server.js';
+import { fastify } from '../../server.js';
 import fastifyFormbody from '@fastify/formbody';
 import fs from 'fs'
+import argon2 from 'argon2'
 
-fastify.register(fastifyFormbody)
+fastify.register(fastifyFormbody);
 
 fastify.get('/signup', async function (request, reply) {  
     return reply.sendFile('signup.html');
@@ -27,8 +28,15 @@ fastify.post('/signup', async function (request, reply) {
         });
         return reply.redirect('signup');
     }
-        
-    const userData = { email, password }
+
+	let hash;
+	try {
+		hash = await argon2.hash(password);
+	} catch (err) {
+		error(`An error occured while registering a password: ${err}`);
+	}
+
+	const userData = { email, hash };
 
     fs.readFile("users.json", "utf-8", (err, data) => {
         let users = [];
@@ -45,9 +53,9 @@ fastify.post('/signup', async function (request, reply) {
 
         fs.writeFile("users.json", JSON.stringify(users, null, 2), (err) => {
             if (err)
-                error("An error occurred while registering an user: ", err);
+                error(`An error occurred while registering an user: ${err}`);
             else
-                error("Correctly registered: ", email);
+                console.log("Correctly registered: ", email);
         });
     });
 

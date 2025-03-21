@@ -19,6 +19,9 @@ RUN npm install -g typescript
 
 RUN npm install -D nodemon
 
+RUN npm install -g node-gyp
+RUN CXX=g++-12 npm install argon2
+
 # Install Tailwind CSS
 RUN npm install -D tailwindcss
 RUN npx tailwindcss-cli@latest init -p
