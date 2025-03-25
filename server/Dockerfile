@@ -22,11 +22,13 @@ RUN npm install -D nodemon
 RUN npm install -g node-gyp
 RUN CXX=g++-12 npm install argon2
 
+RUN npm install dotenv
+
 # Install Tailwind CSS
 RUN npm install -D tailwindcss
 RUN npx tailwindcss-cli@latest init -p
 
-RUN npm install fastify @fastify/static @fastify/formbody
+RUN npm install fastify @fastify/static @fastify/formbody @fastify/jwt
 
 EXPOSE 3000
 

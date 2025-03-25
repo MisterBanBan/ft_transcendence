@@ -10,5 +10,9 @@
   {
     "email": "asd@asd.com",
     "hash": "$argon2id$v=19$m=65536,t=3,p=4$Y8/Im6SIvh5sZJ3RQ/FjEg$TS1bnVtwQOuti3wZB5aOfsdaLg5vo6IpbMCInh7yzMw"
+  },
+  {
+    "email": "asdad@gmail.com",
+    "hash": "$argon2id$v=19$m=65536,t=3,p=4$l9C8LS8pjF3ZTjguSqBrJA$0e8S2urRv3mEwTKCny4wMO9IYlk5h/fz2W8Qxb9w9Eo"
   }
 ]

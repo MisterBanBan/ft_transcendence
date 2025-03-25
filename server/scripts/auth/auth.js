@@ -1,16 +1,30 @@
 import { fastify } from '../../server.js';
+import { fileURLToPath } from 'url';
 import fastifyFormbody from '@fastify/formbody';
-import fs from 'fs'
-import argon2 from 'argon2'
+import jwt from '@fastify/jwt';
+import fs from 'fs';
+import argon2 from 'argon2';
+import dotenv from 'dotenv';
+import path from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+dotenv.config({ path: path.join(__dirname, '../../.env') });
+
+dotenv.config({ path: __dirname+ './../../.env'});
+
+console.log(process.env.JWT_SECRET)
 
 fastify.register(fastifyFormbody);
+
+fastify.register(jwt, { secret: process.env.JWT_SECRET });
 
 fastify.get('/signup', async function (request, reply) {  
     return reply.sendFile('signup.html');
 });
 
 fastify.post('/signup', async function (request, reply) {
-
     const { email, password, cpassword } = request.body;
 
     const errEmail = validateEmail(email);
@@ -40,9 +54,8 @@ fastify.post('/signup', async function (request, reply) {
 
     fs.readFile("users.json", "utf-8", (err, data) => {
         let users = [];
-        if (!err && data) {
+        if (!err && data)
             users = JSON.parse(data);
-        }
 
         if (users.some(user => user.email === email)) {
             error("Email already in use");
@@ -58,6 +71,8 @@ fastify.post('/signup', async function (request, reply) {
                 console.log("Correctly registered: ", email);
         });
     });
+
+    jwt.sign();
 
     return reply.redirect('signup');
 });
@@ -91,4 +106,9 @@ function validatePassword(password, cpassword) {
 function error(message)
 {
     console.log(`\x1b[31m${message}\x1b[0m`);
+}
+
+function generateToken(name)
+{
+
 }
