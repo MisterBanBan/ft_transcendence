@@ -28,7 +28,7 @@ RUN npm install dotenv
 RUN npm install -D tailwindcss
 RUN npx tailwindcss-cli@latest init -p
 
-RUN npm install fastify @fastify/static @fastify/formbody @fastify/jwt
+RUN npm install fastify @fastify/static @fastify/formbody @fastify/jwt @fastify/cookie
 
 EXPOSE 3000
 

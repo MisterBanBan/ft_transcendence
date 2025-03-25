@@ -2,5 +2,9 @@ import { fastify } from '../server.js';
 
 // Serve HTML directly from a route
 fastify.get('/html', async function (request, reply) {
-    return reply.sendFile('index.html');
+    const token = request.cookies.token;
+	if (!token)
+		return reply.redirect('signup');
+	else
+        return reply.sendFile('index.html');
 });
