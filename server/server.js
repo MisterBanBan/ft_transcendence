@@ -24,7 +24,7 @@ async function loadScripts(directory) {
 	try {
 		const dirFiles = await fs.readdir(directory);
 		const filteredFiles = dirFiles.filter(file => file.endsWith('.js') || path.extname(file) === '');
-
+    
 		for (const file of filteredFiles) {
 			const filePath = path.join(directory, file);
 

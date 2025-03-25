@@ -8,7 +8,7 @@
     "start": "node server.js",
     "build:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css",
     "watch:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css --watch",
-    "dev": "npm run watch:tailwind & tsc --watch & npx nodemon server.js"
+    "dev": "npm run watch:tailwind & tsc --watch & npx nodemon server.js --ignore users.json"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,8 @@
   "homepage": "https://github.com/MisterBanBan/ft_transcendence#readme",
   "dependencies": {
     "fastify": "^5.2.1",
-    "node": "^23.9.0"
+    "node": "^23.9.0",
+    "argon2": "^0.41.1"
   },
   "devDependencies": {
     "tailwindcss": "^2.1.2",
