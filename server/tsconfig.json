@@ -1,0 +1,12 @@
+{
+    "compilerOptions": {
+      "outDir": "./srcs/scripts/",
+      "rootDir": "./scripts",
+      "target": "es5",
+      "module": "commonjs",
+      "strict": true,
+      "esModuleInterop": true
+    },
+    "include": ["scripts/**/*"],
+    "exclude": ["node_modules"]
+}

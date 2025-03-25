@@ -1,0 +1,17 @@
+services:
+  server:
+    container_name: server
+    build: ./server
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./server:/node
+      - /node/node_modules
+    restart: unless-stopped
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /node/src
+        - action: rebuild
+          path: package.json
