@@ -4,7 +4,7 @@ import { fastify } from '../server.js';
 fastify.get('/html', async function (request, reply) {
     const token = request.cookies.token;
 	if (!token)
-		return reply.redirect('signup');
+		return reply.redirect('sign-up');
 	else
         return reply.sendFile('index.html');
 });

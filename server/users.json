@@ -1,46 +1,22 @@
 [
   {
-    "email": "Yo@gmail.com",
-    "password": "Salut"
-  },
-  {
-    "email": "salut@gmail",
-    "password": "coucou"
-  },
-  {
-    "email": "asd@asd.com",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$Y8/Im6SIvh5sZJ3RQ/FjEg$TS1bnVtwQOuti3wZB5aOfsdaLg5vo6IpbMCInh7yzMw"
-  },
-  {
-    "email": "asdad@gmail.com",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$l9C8LS8pjF3ZTjguSqBrJA$0e8S2urRv3mEwTKCny4wMO9IYlk5h/fz2W8Qxb9w9Eo"
-  },
-  {
     "email": "c",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$CBCksxKC22OsPzCa65Ftxw$W+DEnIiZmyc7a3pBO508Ykknq9X1IlHe2svSIOm1TjI"
-  },
-  {
-    "email": "a",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$1294QiQcSbQTQurj/OGbmw$TGancSfE/EfXJHmyweQoqKNQL+fEsY7oBA3ZJggHQYo"
-  },
-  {
-    "email": "g",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$szjBIGs2zjb/zgb5FO7uXw$p2TkQdGLG+DFKOrmoa0skGkOV4XhavRR9frh4z8vm6o"
-  },
-  {
-    "email": "f",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$SV7bFsKWCE/a+PwzU2qzEQ$XhtPiBwIJvQXFr0uSAOVv8qj5+IFxEOKq3QdqmQhOHE"
+    "hash": "$argon2id$v=19$m=65536,t=3,p=4$Lvu15NfJaiK4szftsWKl3Q$Dy12fVaKjQh+bED+Geb7Kkt2xREAJh+q21VD52YXTDk",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImMiLCJpYXQiOjE3NDI5NDUyNzF9.ZSOPktmOx5iAQ2qVeYz04cfMqwEyVK6pMvCmdwIqGFQ"
   },
   {
     "email": "d",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$7ggMnHkrSLGaV9cW+HvYAg$5L7beNOUJfugNi5rEB5La/06D0W6sivAH1HA/y8wiiY"
+    "hash": "$argon2id$v=19$m=65536,t=3,p=4$j7dClyhlyP8hCWrWEKfL/A$4YunK9M7VOHXhOXjA90HRYrApz1mLZVsSOwKkXBDdio",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImQiLCJpYXQiOjE3NDI5NDY2OTV9.h8of8NfhjWDroTcVwYemcxviANMz6-wE5vRv6xv1aKE"
   },
   {
-    "email": "e",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$5bUorFEu8qTu2FsuQLCdzw$psYlNfmgVCnmZ7PhzcwqP37ZwawA4J5DhImFYwUDSIQ"
+    "email": "asdasdasdasdasd",
+    "hash": "$argon2id$v=19$m=65536,t=3,p=4$1BN7caTH6gW68n9O9It6bw$fXut2LViTPHgOQe0Pdq0sLVzK9+SpUGyHhoARxp/XAI",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFzZGFzZGFzZGFzZGFzZCIsImlhdCI6MTc0Mjk0NjczMX0.zTI8NI7x0pLUgHEkb8sqkKInuARj3RuEG7lIyPEV_k0"
   },
   {
-    "email": "t",
-    "hash": "$argon2id$v=19$m=65536,t=3,p=4$FN6cWBSi3pmdx++bzt8w5Q$Qw0+M6llwoT2orvfl1QXl/timsPZPrCzIBEwT+9vAU0"
+    "email": "q",
+    "hash": "$argon2id$v=19$m=65536,t=3,p=4$mJbwa4rxYLTE7MbxahZ1yQ$tiAwy2G48XE+DuWqyIeHNrxec8mqBTkChcAvZqj2+7A",
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InEiLCJpYXQiOjE3NDI5NDY4ODd9.O6CCkBC-UMy31om_X7WJecZMvBS1ZKTlI72EexgNHWQ"
   }
 ]
