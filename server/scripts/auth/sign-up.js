@@ -19,16 +19,16 @@ fastify.post('/sign-up', async function (request, reply) {
 	const errEmail = validateEmail(email);
 	if (errEmail) {
 		error("Invalid email");
-		return reply.redirect('signup');
+		return reply.redirect('sign-up');
 	}
 
-	const errPassword = validatePassword(password, cpassword)
-	if (errPassword) {
-		errPassword.forEach(element => {
-			error(element);
-		});
-		return reply.redirect('signup');
-	}
+	// const errPassword = validatePassword(password, cpassword)
+	// if (errPassword) {
+	// 	errPassword.forEach(element => {
+	// 		error(element);
+	// 	});
+	// 	return reply.redirect('sign-up');
+	// }
 
 	let hash;
 
