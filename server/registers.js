@@ -6,6 +6,7 @@ import fstatic from '@fastify/static';
 import cookie from '@fastify/cookie';
 import formbody from '@fastify/formbody'
 import jwt from '@fastify/jwt';
+import cors from '@fastify/cors';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -28,4 +29,11 @@ fastify.register(formbody);
 
 fastify.register(jwt, {
     secret: process.env.JWT_SECRET
+});
+
+fastify.register(cors, {
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
 });

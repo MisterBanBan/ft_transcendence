@@ -1,12 +1,12 @@
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="auth/error.js"></script>
 	<title>Sign-up</title>
 	<style>
-				body {
+		body {
 			background-color: rgb(70, 70, 70);
 		}
 
@@ -36,7 +36,7 @@
             border-radius: 4px;
         }
 
-        input[type="submit"] {
+        input[type="button"] {
             background-color: #007BFF;
             color: white;
             border: none;
@@ -50,27 +50,32 @@
         }
 
 		.error-message {
-            color: red;
-            font-size: 14px;
-            display: none;
-        }
+			color: red;
+			font-size: 15px;
+			padding-bottom: 5px;
+		}
 	</style>
 </head>
 
 <body>
 	<form id="signup-form" action="" method="post">
+		<div class="error-message" id="error-global"></div>
+
 		<label for="email">Email:</label>
+		<div class="error-message" id="error-email"></div>
 		<input type="text" name="email" id="email">
-		<span class="error-message" id="email-error">Email invalide</span>
 
 		<label for="password">Password:</label>
+		<div class="error-message" id="error-password"></div>
 		<input type="password" name="password" id="password">
 
 		<label for="cpassword">Confirm password:</label>
 		<input type="password" name="cpassword" id="cpassword">
 
-		<input type="submit" value="Sign up">
+		<input type="button" id="submit" value="Sign up">
 	</form>
+
+	<script src="/public/scripts/test.js"></script>
 </body>
 
 </html>

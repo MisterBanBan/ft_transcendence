@@ -16,26 +16,24 @@ fastify.post('/sign-up', async function (request, reply) {
 
 	const { email, password, cpassword } = request.body;
 
-	const errEmail = validateEmail(email);
-	if (errEmail) {
-		error("Invalid email");
-		return reply.redirect('sign-up');
+	if (!email || !password || !cpassword) {
+		return reply.status(400).send({ error: ['Tous les champs sont requis.'], type: 'global' });
 	}
 
-	// const errPassword = validatePassword(password, cpassword)
-	// if (errPassword) {
-	// 	errPassword.forEach(element => {
-	// 		error(element);
-	// 	});
-	// 	return reply.redirect('sign-up');
-	// }
+	const errEmail = validateEmail(email);
+	if (errEmail)
+		return reply.status(400).send({ error: ['Invalid email.'], type: "email" });
+
+	const errPassword = validatePassword(password, cpassword)
+	if (errPassword)
+		return reply.status(400).send({ error: errPassword, type: "password" });
 
 	let hash;
 
 	try {
 		hash = await argon2.hash(password);
 	} catch (err) {
-		error(`An error occured while registering a password: ${err}`);
+		return reply.status(400).send({ error: [`An error occurred while registering a password: ${err}.`], type: "password" });
 	}
 
 	try {
@@ -46,8 +44,7 @@ fastify.post('/sign-up', async function (request, reply) {
 		}
 
 		if (users.some(user => user.email === email)) {
-			error("Email already in use");
-			return reply.redirect('sign-up');
+			return reply.status(400).send({ error: ["Email already in use."], type: "email" });
 		}
 
 		console.log("\x1b[32mCreating token\x1b[0m");
@@ -63,11 +60,10 @@ fastify.post('/sign-up', async function (request, reply) {
 			httpOnly: true,
 			secure: false,
 			maxAge: 3600
-		}).redirect('html');
+		}).status(200).send({ error: [`Successfully registered`], type: "global" });
 
 	} catch (err) {
-		error(`An error occurred: ${err}`);
-		return reply.redirect('sign-up');
+		return reply.status(400).send({ error: [`An error occurred: ${err}.`], type: "global" });
 	}
 });
 
@@ -93,6 +89,7 @@ function validatePassword(password, cpassword) {
 	if (!hasUpperCase) errors.push("The password needs at least 1 upper case.");
 	if (!hasNumber) errors.push("The password needs at least 1 number.");
 	if (!hasSpecialChar) errors.push("The password needs at least 1 special character.");
+	if (!samePassword) errors.push("Passwords don't match.");
 
 	return errors;
 }
