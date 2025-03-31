@@ -4,13 +4,12 @@
   "description": "Transcendence server",
   "main": "server.js",
   "type": "module",
-  "scripts": {
-    "start": "node server.js",
-    "build:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css",
-    "watch:tailwind": "tailwindcss build src/tailwind.css -o src/tailwind.output.css --watch",
+"scripts": {
+  "build": "tsc && npx tailwindcss -i ./server/srcs/css/main.css -o ./server/srcs/css/tailwind.css",
+  "dev": "npm run build && node server.js",
+  "start": "node server.js"
+},
 
-    "dev": "npm run watch:tailwind & node --watch server.js & tsc --watch"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/MisterBanBan/ft_transcendence.git"

@@ -1,10 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PlayerAnimation = void 0;
 var PlayerAnimation = /** @class */ (function () {
     function PlayerAnimation(elementId) {
         this.images = [
-            '/public/img/kodama_stop.png',
-            '/public/img/kodama_walk.png',
-            '/public/img/kodama_walk2.png',
-            '/public/img/kodama_walk3.png',
+            '../srcs/img/kodama_stop.png',
+            '../srcs/img/kodama_walk.png',
+            '../srcs/img/kodama_walk2.png',
+            '../srcs/img/kodama_walk3.png',
         ];
         this.currentFrame = 0;
         this.animationInterval = null;
@@ -37,4 +40,4 @@ var PlayerAnimation = /** @class */ (function () {
     };
     return PlayerAnimation;
 }());
-export { PlayerAnimation };
+exports.PlayerAnimation = PlayerAnimation;

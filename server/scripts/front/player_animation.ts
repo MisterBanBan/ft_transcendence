@@ -1,10 +1,10 @@
 export class PlayerAnimation{
     private element: HTMLElement;
     private images: string[] = [
-        '/public/img/kodama_stop.png',
-        '/public/img/kodama_walk.png',
-        '/public/img/kodama_walk2.png',
-        '/public/img/kodama_walk3.png',
+        '../srcs/img/kodama_stop.png',
+        '../srcs/img/kodama_walk.png',
+        '../srcs/img/kodama_walk2.png',
+        '../srcs/img/kodama_walk3.png',
     ];
     private currentFrame: number = 0;
     private animationInterval: number | null = null;

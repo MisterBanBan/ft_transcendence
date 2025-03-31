@@ -1,4 +1,6 @@
-import { PlayerAnimation } from "./player_animation.js";
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var player_animation_js_1 = require("./player_animation.js");
 var PlayerStats = /** @class */ (function () {
     function PlayerStats() {
         this.velocity = { x: 0, y: 0 };
@@ -105,7 +107,7 @@ var PlayerController = /** @class */ (function () {
         var playerElement = document.getElementById(playerId);
         if (!playerElement)
             throw new Error('Player element not found');
-        this.player = new PlayerAnimation(playerId);
+        this.player = new player_animation_js_1.PlayerAnimation(playerId);
         var sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;

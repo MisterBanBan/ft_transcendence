@@ -13,12 +13,17 @@ export const fastify = Fastify({
 
 fastify.register(fastifyStatic, {
   root: path.join(__dirname, 'srcs'),
-  prefix: '/public/',
+  prefix: '/srcs/',
 });
 
-fastify.get('/', async function handler (request, reply) {
-  return { hello: 'world' };
+fastify.get('/', async function handler(request, reply) {
+    return reply.sendFile('index.html', { root: path.join(__dirname, 'srcs') });
 });
+
+
+fastify.setNotFoundHandler((request, reply) => {
+	reply.sendFile('index.html');
+  });
 
 async function loadScripts(directory) {
 	try {

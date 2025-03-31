@@ -3,10 +3,11 @@
     "outDir": "./srcs/scripts/",
     "rootDir": "./scripts",
     "target": "es5",
-    "module": "es2015", // Changed from commonjs
+    "module": "commonjs",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": ["ES2015", "DOM"]  // Ajoutez cette ligne
   },
-    "include": ["scripts/**/*"],
-    "exclude": ["node_modules"]
+  "include": ["scripts/**/*"],
+  "exclude": ["node_modules"]
 }
