@@ -7,6 +7,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 fastify.register(fstatic, {
-    root: path.join(__dirname, 'srcs'),
+    root: path.join(__dirname, 'app'),
     prefix: '/public/',
 });
