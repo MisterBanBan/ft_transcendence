@@ -1,74 +1,74 @@
 services:
   Users:
-    image: Users
+    image: users
     container_name: Users
     build:
-      context: Users
-    env_file:
-      - ".env"
+      context: services/Users
+#    env_file:
+#      - ".env"
     networks:
       - ft_transcendence
     restart: on-failure
 
-  Tournament:
-    image: Tournament
-    container_name: Tournament
-    build:
-      context: Tournament
-    env_file:
-      - ".env"
-    networks:
-      - ft_transcendence
-    restart: on-failure
+#  Tournament:
+#    image: tournament
+#    container_name: Tournament
+#    build:
+#      context: services/Tournament
+#    env_file:
+#      - ".env"
+#    networks:
+#      - ft_transcendence
+#    restart: on-failure
 
-  Game:
-    image: Game
-    container_name: Game
-    build:
-      context: Game
-    env_file:
-      - ".env"
-    networks:
-      - ft_transcendence
-    restart: on-failure
+#  Game:
+#    image: game
+#    container_name: Game
+#    build:
+#      context: services/Game
+#    env_file:
+#      - ".env"
+#    networks:
+#      - ft_transcendence
+#    restart: on-failure
 
-  Matchmaking:
-    image: Matchmaking
-    container_name: Matchmaking
-    build:
-      context: Matchmaking
-    env_file:
-      - ".env"
-    networks:
-      - ft_transcendence
-    restart: on-failure
+#  Matchmaking:
+#    image: matchmaking
+#    container_name: Matchmaking
+#    build:
+#      context: services/Matchmaking
+#    env_file:
+#      - ".env"
+#    networks:
+#      - ft_transcendence
+#    restart: on-failure
 
-  Authentification:
-    image: Authentification
-    container_name: Authentification
-    build:
-      context: Authentification
-    env_file:
-      - ".env"
-    networks:
-      - ft_transcendence
-    restart: on-failure
+#  Authentification:
+#    image: authentification
+#    container_name: Authentification
+#    build:
+#      context: services/Authentification
+#    env_file:
+#      - ".env"
+#    networks:
+#      - ft_transcendence
+#    restart: on-failure
 
   Nginx:
-    image: Nginx
+    image: nginx
     container_name: Nginx
     build:
-      context: Nginx
-    env_file:
-      - ".env"
+      context: services/Nginx
+#    env_file:
+#      - ".env"
     ports:
-      - "8080:8080"
+      - "3000:3000"
     depends_on:
       - Users
-      - Matchmaking
-      - Authentification
-      - Game
-      - Tournament
+#      - Matchmaking
+#      - Authentification
+#      - Game
+#      - Tournament
     networks:
       - ft_transcendence
     restart: on-failure
@@ -77,17 +77,17 @@ networks:
   ft_transcendence:
       driver: bridge
 
-volumes:
-  Nginx-data:
-    driver: local
-  Authentification-data:
-    driver: local
-  Matchmaking-data:
-    driver: local
-  Game-data:
-    driver: local
-  Tournament-data:
-    driver: local
-  Users-data:
-    driver: local
+#volumes:
+#  Nginx-data:
+#    driver: local
+##  Authentification-data:
+##    driver: local
+##  Matchmaking-data:
+##    driver: local
+##  Game-data:
+##    driver: local
+##  Tournament-data:
+##    driver: local
+#  Users-data:
+#    driver: local
 
