@@ -11,10 +11,7 @@ export const fastify = Fastify({
   logger: true
 });
 
-fastify.register(fastifyStatic, {
-  root: path.join(__dirname, 'srcs'),
-  prefix: '/srcs/',
-});
+import("./registers.js");
 
 fastify.get('/', async function handler(request, reply) {
     return reply.sendFile('index.html', { root: path.join(__dirname, 'srcs') });

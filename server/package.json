@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
 "scripts": {
-  "build": "tsc && npx tailwindcss -i ./server/srcs/css/main.css -o ./server/srcs/css/tailwind.css",
+  "build": "tsc && npx tailwindcss -i ./srcs/css/main.css -o ./srcs/css/tailwind.css",
   "dev": "npm run build && node server.js",
   "start": "node server.js"
 },

@@ -56,11 +56,10 @@ class Router {
                 }
             }
             this.appDiv.innerHTML = content;
-    
             // Charger dynamiquement le module si on est sur la page d'accueil
             if (window.location.pathname === "/" && !(window as any).hasLoadedScripts) {
                 (window as any).hasLoadedScripts = true;
-                import("../srcs/scripts/front/scripts.js")
+                import("./scripts.js")
                   .then(module => {
                     console.log("Module scripts.js chargé :", module);
                   })
@@ -80,12 +79,12 @@ class Router {
 const routes: Route[] = [
     {
         path: "/",
-        title: "Acceuil",
+        title: "Accueil",
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
-            return `<div class="fixed inset-0 w-full h-screen bg-[url('../srcs/img/fond_outside.jpg')] bg-cover bg-no-repeat bg-center -z-10"></div>
-    <div id="player" class="absolute w-64 h-64 bg-[url('../srcs/img/kodama_stop.png')] bg-contain bg-no-repeat"></div>
-    <script type="module" src="../srcs/scripts/front/scripts.js"></script>
+            return `<div class="fixed inset-0 w-full h-screen bg-[url('/public/img/fond_outside.jpg')] bg-cover bg-no-repeat bg-center -z-10"></div>
+    <div id="player" class="absolute w-64 h-64 bg-[url('/public/srcs/img/kodama_stop.png')] bg-contain bg-no-repeat"></div>
+    <script type="module" src="/public/scripts/front/scripts.js"></script>
             `;
         }
     },
