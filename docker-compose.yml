@@ -1,4 +1,14 @@
 services:
+  mariadb:
+    image: Users
+    container_name: Users
+    build:
+      context: Users/app
+    env_file: ".env"
+    networks:
+      - ft_transcendence
+    restart: on-failure
+
   server:
     container_name: server
     build: ./server
