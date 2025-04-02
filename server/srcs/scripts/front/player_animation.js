@@ -1,10 +1,10 @@
 export class PlayerAnimation {
     constructor(elementId) {
         this.images = [
-            '../srcs/img/kodama_stop.png',
-            '../srcs/img/kodama_walk.png',
-            '../srcs/img/kodama_walk2.png',
-            '../srcs/img/kodama_walk3.png',
+            '/public/img/kodama_stop.png',
+            '/public/img/kodama_walk.png',
+            '/public/img/kodama_walk2.png',
+            '/public/img/kodama_walk3.png',
         ];
         this.currentFrame = 0;
         this.animationInterval = null;

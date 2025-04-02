@@ -7,44 +7,6 @@ class PlayerStats {
         this.rightKey = false;
     }
 }
-/*
-function handleKeyPress(velocity: {x: number, y: number}, speed: number, e: KeyboardEvent) {
-    switch(e.key.toLowerCase()) {
-        case 'arrowup':
-        case 'z':
-            velocity.y = -speed;
-            break;
-        case 'arrowdown':
-        case 's':
-            velocity.y = speed;
-            break;
-        case 'arrowleft':
-        case 'q':
-            velocity.x = -speed;
-            break;
-        case 'arrowright':
-        case 'd':
-            velocity.x = speed;
-            break;
-    }
-}*/
-/*
-function handleKeyRelease(velocity: {x: number, y: number}, e: KeyboardEvent) {
-    switch (e.key.toLowerCase()) {
-        case 'arrowup':
-        case 'z':
-        case 'arrowdown':
-        case 's':
-            velocity.y = 0;
-            break;
-        case 'arrowleft':
-        case 'q':
-        case 'arrowright':
-        case 'd':
-            velocity.x = 0;
-            break;
-    }
-}*/
 function handleKeyPressPlayer(stats, speed, jump, player, e) {
     switch (e.key.toLowerCase()) {
         case ' ':
@@ -55,15 +17,15 @@ function handleKeyPressPlayer(stats, speed, jump, player, e) {
             break;
         case 'arrowleft':
         case 'q':
-            if (stats.leftKey === false) {
+            if (!stats.leftKey) {
                 stats.leftKey = true;
-                stats.velocity.x += -speed;
+                stats.velocity.x -= speed;
                 player.startAnimation();
             }
             break;
         case 'arrowright':
         case 'd':
-            if (stats.rightKey === false) {
+            if (!stats.rightKey) {
                 stats.rightKey = true;
                 stats.velocity.x += speed;
                 player.startAnimation();
@@ -76,7 +38,7 @@ function handleKeyReleasePlayer(stats, speed, player, e) {
         case 'arrowleft':
         case 'q':
             if (stats.leftKey) {
-                stats.velocity.x -= -speed;
+                stats.velocity.x += speed;
                 stats.leftKey = false;
                 player.stopAnimation();
             }
@@ -94,7 +56,6 @@ function handleKeyReleasePlayer(stats, speed, player, e) {
 class PlayerController {
     constructor(playerId) {
         this.pos = { x: 0, y: 0 };
-        this.velo = { x: 0, y: 0 };
         this.stats = new PlayerStats();
         this.speed = 400;
         this.jump = -700;
@@ -103,6 +64,7 @@ class PlayerController {
         const playerElement = document.getElementById(playerId);
         if (!playerElement)
             throw new Error('Player element not found');
+        console.log("PlayerController initialisé !");
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
@@ -135,7 +97,11 @@ class PlayerController {
         this.player.updatePosition(this.pos.x, this.pos.y);
     }
 }
-// Initialisation quand le DOM est prêt
+// Exporter correctement la classe PlayerController
+export default PlayerController;
 document.addEventListener('DOMContentLoaded', () => {
-    new PlayerController('player');
+    if (!document.getElementById("player")) {
+        console.warn("Le joueur n'est pas encore chargé, attente...");
+        setTimeout(() => new PlayerController('player'), 100);
+    }
 });

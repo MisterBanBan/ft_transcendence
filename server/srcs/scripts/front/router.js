@@ -53,20 +53,27 @@ class Router {
                     }
                 }
                 this.appDiv.innerHTML = content;
-                // Charger dynamiquement le module si on est sur la page d'accueil
-                if (window.location.pathname === "/" && !window.hasLoadedScripts) {
-                    window.hasLoadedScripts = true;
-                    import("./scripts.js")
-                        .then(module => {
-                        console.log("Module scripts.js chargé :", module);
-                    })
-                        .catch(error => {
-                        console.error("Erreur lors du chargement du module:", error);
-                    });
+                // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
+                if (window.location.pathname === "/") {
+                    this.loadPlayerScripts();
                 }
             }
             else {
                 this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
+            }
+        });
+    }
+    loadPlayerScripts() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const { default: PlayerController } = yield import("./scripts.js");
+                const playerElement = document.getElementById("player");
+                if (playerElement) {
+                    new PlayerController('player');
+                }
+            }
+            catch (error) {
+                console.error("Erreur lors du chargement des scripts:", error);
             }
         });
     }
@@ -78,8 +85,7 @@ const routes = [
         template: () => __awaiter(void 0, void 0, void 0, function* () {
             yield new Promise(resolve => setTimeout(resolve, 300));
             return `<div class="fixed inset-0 w-full h-screen bg-[url('/public/img/fond_outside.jpg')] bg-cover bg-no-repeat bg-center -z-10"></div>
-    <div id="player" class="absolute w-64 h-64 bg-[url('/public/srcs/img/kodama_stop.png')] bg-contain bg-no-repeat"></div>
-    <script type="module" src="/public/scripts/front/scripts.js"></script>
+            <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/public/img/kodama_stop.png')] bg-contain bg-no-repeat"></div>
             `;
         })
     },

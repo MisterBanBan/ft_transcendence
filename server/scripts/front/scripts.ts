@@ -11,48 +11,8 @@ class PlayerStats {
     leftKey: boolean = false;
     rightKey: boolean = false;
 }
-/*
-function handleKeyPress(velocity: {x: number, y: number}, speed: number, e: KeyboardEvent) {
-    switch(e.key.toLowerCase()) {
-        case 'arrowup':
-        case 'z':
-            velocity.y = -speed;
-            break;
-        case 'arrowdown':
-        case 's':
-            velocity.y = speed;
-            break;
-        case 'arrowleft':
-        case 'q':
-            velocity.x = -speed;
-            break;
-        case 'arrowright':
-        case 'd':
-            velocity.x = speed;
-            break;
-    }
-}*/
 
-/*
-function handleKeyRelease(velocity: {x: number, y: number}, e: KeyboardEvent) {
-    switch (e.key.toLowerCase()) {
-        case 'arrowup':
-        case 'z':
-        case 'arrowdown':
-        case 's':
-            velocity.y = 0;
-            break;
-        case 'arrowleft':
-        case 'q':
-        case 'arrowright':
-        case 'd':
-            velocity.x = 0;
-            break;
-    }
-}*/
-
-function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, player: PlayerAnimation,  e: KeyboardEvent) {
-
+function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, player: PlayerAnimation, e: KeyboardEvent) {
     switch(e.key.toLowerCase()) {
         case ' ':
             if (!stats.isJumping) {
@@ -62,21 +22,19 @@ function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, p
             break;
         case 'arrowleft':
         case 'q':
-            if (stats.leftKey === false)
-            {
+            if (!stats.leftKey) {
                 stats.leftKey = true;
-                stats.velocity.x += -speed;
+                stats.velocity.x -= speed;
                 player.startAnimation();
             }
             break;
         case 'arrowright':
         case 'd':
-            if (stats.rightKey === false)
-                {
-                    stats.rightKey = true;
-                    stats.velocity.x += speed;
-                    player.startAnimation();
-                }
+            if (!stats.rightKey) {
+                stats.rightKey = true;
+                stats.velocity.x += speed;
+                player.startAnimation();
+            }
             break;
     }
 }
@@ -85,17 +43,15 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: Playe
     switch (e.key.toLowerCase()) {
         case 'arrowleft':
         case 'q':
-            if (stats.leftKey)
-            {
-                stats.velocity.x -= -speed;
+            if (stats.leftKey) {
+                stats.velocity.x += speed;
                 stats.leftKey = false;
                 player.stopAnimation();
             }
             break;
         case 'arrowright':
         case 'd':
-            if (stats.rightKey)
-            {
+            if (stats.rightKey) {
                 stats.velocity.x -= speed;
                 stats.rightKey = false;
                 player.stopAnimation();
@@ -104,11 +60,9 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: Playe
     }
 }
 
-
 class PlayerController {
     private player: PlayerAnimation;
     private pos: Position = { x: 0, y: 0};
-    private velo: Position = { x: 0, y: 0};
     private stats: PlayerStats = new PlayerStats();
     private speed: number = 400;
     private jump: number = -700;
@@ -120,6 +74,8 @@ class PlayerController {
     constructor(playerId: string) {
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
+
+        console.log("PlayerController initialisé !");
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
@@ -144,26 +100,30 @@ class PlayerController {
         this.pos.y = Math.max(0, Math.min(window.innerHeight - this.playerHeight, this.pos.y));
 
         const floor = window.innerHeight - this.playerHeight;
-        if (this.pos.y >= floor)
-        {
+        if (this.pos.y >= floor) {
             this.stats.velocity.y = 0;
             this.pos.y = floor;
             this.stats.isJumping = false;
         }
+
         console.log(`Velocity Y: ${this.stats.velocity.y}, Position Y: ${this.pos.y}`);
         console.log(`Velocity X: ${this.stats.velocity.x}`);
+        
         this.updatePosition();
         requestAnimationFrame(this.gameLoop.bind(this));
     }
+
     private updatePosition() {
         this.player.updatePosition(this.pos.x, this.pos.y);
     }
-
-
-    
 }
 
-// Initialisation quand le DOM est prêt
+// Exporter correctement la classe PlayerController
+export default PlayerController;
+
 document.addEventListener('DOMContentLoaded', () => {
-    new PlayerController('player');
+    if (!document.getElementById("player")) {
+        console.warn("Le joueur n'est pas encore chargé, attente...");
+        setTimeout(() => new PlayerController('player'), 100);
+    }
 });
