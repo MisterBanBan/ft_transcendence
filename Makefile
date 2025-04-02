@@ -1,6 +1,6 @@
-make: all
+DOCKER_COMPOSE= docker-compose
 
-DOCKER_COMPOSE=docker compose
+make: all
 
 build:
 	$(DOCKER_COMPOSE) build

@@ -3,7 +3,7 @@ services:
     image: users
     container_name: Users
     build:
-      context: services/Users
+      context: api/Users
 #    env_file:
 #      - ".env"
     networks:
@@ -14,7 +14,7 @@ services:
 #    image: tournament
 #    container_name: Tournament
 #    build:
-#      context: services/Tournament
+#      context: api/Tournament
 #    env_file:
 #      - ".env"
 #    networks:
@@ -25,7 +25,7 @@ services:
 #    image: game
 #    container_name: Game
 #    build:
-#      context: services/Game
+#      context: api/Game
 #    env_file:
 #      - ".env"
 #    networks:
@@ -36,18 +36,18 @@ services:
 #    image: matchmaking
 #    container_name: Matchmaking
 #    build:
-#      context: services/Matchmaking
+#      context: api/Matchmaking
 #    env_file:
 #      - ".env"
 #    networks:
 #      - ft_transcendence
 #    restart: on-failure
 
-#  Authentification:
-#    image: authentification
-#    container_name: Authentification
+#  Authentication:
+#    image: authentication
+#    container_name: Authentication
 #    build:
-#      context: services/Authentification
+#      context: api/Authentication
 #    env_file:
 #      - ".env"
 #    networks:
@@ -58,7 +58,7 @@ services:
     image: nginx
     container_name: Nginx
     build:
-      context: services/Nginx
+      context: api/Nginx
 #    env_file:
 #      - ".env"
     ports:
@@ -66,7 +66,7 @@ services:
     depends_on:
       - Users
 #      - Matchmaking
-#      - Authentification
+#      - Authentication
 #      - Game
 #      - Tournament
     networks:
@@ -80,7 +80,7 @@ networks:
 #volumes:
 #  Nginx-data:
 #    driver: local
-##  Authentification-data:
+##  Authentication-data:
 ##    driver: local
 ##  Matchmaking-data:
 ##    driver: local
