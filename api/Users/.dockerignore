@@ -1,5 +1,0 @@
-.dockerignore
-node_modules/
-.git
-.gitignore
-.npmrc
