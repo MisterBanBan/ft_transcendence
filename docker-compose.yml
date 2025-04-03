@@ -3,9 +3,11 @@ services:
     image: users
     container_name: Users
     build:
-      context: api/Users
+      context: ./api/Users
 #    env_file:
 #      - ".env"
+    volumes:
+      - ./src:/app/src
     networks:
       - ft_transcendence
     restart: on-failure
@@ -64,11 +66,8 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - Users
-#      - Matchmaking
-#      - Authentication
-#      - Game
-#      - Tournament
+      Users:
+        condition: service_started
     networks:
       - ft_transcendence
     restart: on-failure

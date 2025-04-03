@@ -1,4 +1,4 @@
-DOCKER_COMPOSE= docker-compose
+DOCKER_COMPOSE= docker compose
 
 make: all
 
@@ -13,6 +13,9 @@ down:
 
 logs:
 	$(DOCKER_COMPOSE) logs -f
+
+ps:
+	$(DOCKER_COMPOSE) ps
 
 clean:
 	$(DOCKER_COMPOSE) down --rmi all --volumes --remove-orphans
