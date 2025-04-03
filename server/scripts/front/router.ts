@@ -68,10 +68,11 @@ class Router {
     
     private async loadPlayerScripts() {
         try {
-            const { default: PlayerController } = await import("./scripts.js");
+            
 
             const playerElement = document.getElementById("player");
             if (playerElement) {
+                const { default: PlayerController } = await import("./scripts.js");
                 new PlayerController('player');
             }
         } catch (error) {
@@ -101,6 +102,20 @@ const routes: Route[] = [
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
             return `
+            `;
+        }
+    },
+    {
+        path: "/Tv",
+        title: "Tv",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `<div class="fixed inset-0 w-full h-screen -z-10">
+            <video autoplay loop muted class="w-full h-full object-cover">
+                <source src="/public/img/Tv.mp4" type="video/mp4">
+                Votre navigateur ne supporte pas la vidéo.
+            </video>
+            </div>
             `;
         }
     },
