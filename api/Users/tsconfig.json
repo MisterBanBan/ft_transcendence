@@ -6,12 +6,8 @@
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "NodeNext",
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "moduleResolution": "NodeNext"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules"]
 }
