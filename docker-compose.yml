@@ -1,73 +1,83 @@
 services:
-  Users:
+  users:
     image: users
-    container_name: Users
+    container_name: users
     build:
-      context: ./api/Users
-#    env_file:
-#      - ".env"
-    volumes:
-      - ./src:/app/src
-    networks:
-      - ft_transcendence
-    restart: on-failure
-
-#  Tournament:
-#    image: tournament
-#    container_name: Tournament
-#    build:
-#      context: api/Tournament
-#    env_file:
-#      - ".env"
-#    networks:
-#      - ft_transcendence
-#    restart: on-failure
-
-#  Game:
-#    image: game
-#    container_name: Game
-#    build:
-#      context: api/Game
-#    env_file:
-#      - ".env"
-#    networks:
-#      - ft_transcendence
-#    restart: on-failure
-
-#  Matchmaking:
-#    image: matchmaking
-#    container_name: Matchmaking
-#    build:
-#      context: api/Matchmaking
-#    env_file:
-#      - ".env"
-#    networks:
-#      - ft_transcendence
-#    restart: on-failure
-
-#  Authentication:
-#    image: authentication
-#    container_name: Authentication
-#    build:
-#      context: api/Authentication
-#    env_file:
-#      - ".env"
-#    networks:
-#      - ft_transcendence
-#    restart: on-failure
-
-  Nginx:
-    image: nginx
-    container_name: Nginx
-    build:
-      context: api/Nginx
+      context: api/users
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 #    env_file:
 #      - ".env"
     ports:
-      - "3000:3000"
+      - "8080:8080"
+#    volumes:
+#      - ./src:/app/src
+    networks:
+      ft_transcendence:
+        aliases:
+          - users-service
+    restart: unless-stopped
+
+#  tournament:
+#    image: tournament
+#    container_name: tournament
+#    build:
+#      context: api/tournament
+#    env_file:
+#      - ".env"
+#    networks:
+#      - ft_transcendence
+#    restart: on-failure
+
+#  game:
+#    image: game
+#    container_name: game
+#    build:
+#      context: api/game
+#    env_file:
+#      - ".env"
+#    networks:
+#      - ft_transcendence
+#    restart: on-failure
+
+#  matchmaking:
+#    image: matchmaking
+#    container_name: matchmaking
+#    build:
+#      context: api/matchmaking
+#    env_file:
+#      - ".env"
+#    networks:
+#      - ft_transcendence
+#    restart: on-failure
+
+#  authentication:
+#    image: authentication
+#    container_name: authentication
+#    build:
+#      context: api/authentication
+#    env_file:
+#      - ".env"
+#    networks:
+#      - ft_transcendence
+#    restart: on-failure
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    build:
+      context: api/nginx
+#    env_file:
+#      - ".env"
+    ports:
+      - "8443:443"
     depends_on:
-      Users:
-        condition: service_started
+      users:
+        condition: service_healthy
     networks:
       - ft_transcendence
     restart: on-failure
@@ -77,16 +87,16 @@ networks:
       driver: bridge
 
 #volumes:
-#  Nginx-data:
+#  nginx-data:
 #    driver: local
-##  Authentication-data:
+##  authentication-data:
 ##    driver: local
-##  Matchmaking-data:
+##  matchmaking-data:
 ##    driver: local
-##  Game-data:
+##  game-data:
 ##    driver: local
-##  Tournament-data:
+##  tournament-data:
 ##    driver: local
-#  Users-data:
+#  users-data:
 #    driver: local
 
