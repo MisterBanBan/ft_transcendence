@@ -16,6 +16,12 @@ class Router {
     private routes: Route[];
     /*utilisation des elements html*/
     private appDiv: HTMLElement;
+    private nextPageDiv: HTMLElement;
+    private worldContainer: HTMLElement;
+    private currentPath: string = '/';
+    private worldWidth: number = 0;
+    private pageTransitioninProgress: boolean = false;
+
     private activePlayerController: IPlayerController | null = null;
 
     constructor(routes: Route[]) {

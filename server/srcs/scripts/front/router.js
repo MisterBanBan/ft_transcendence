@@ -36,8 +36,71 @@ class Router {
         });
     }
     navigateTo(url) {
-        history.pushState(null, "", url);
-        this.updatePage();
+        return __awaiter(this, void 0, void 0, function* () {
+            const currentPath = window.location.pathname;
+            const direction = this.getNavigationDirection(currentPath, url);
+            // Créer un conteneur temporaire pour la nouvelle page
+            const tempContainer = document.createElement("div");
+            tempContainer.className = "fixed inset-0 transform transition-transform duration-500 ease-in-out";
+            tempContainer.style.zIndex = "10";
+            // Positionner le conteneur hors écran selon la direction
+            if (direction === 'forward') {
+                tempContainer.classList.add("translate-x-full");
+            }
+            else {
+                tempContainer.classList.add("-translate-x-full");
+            }
+            // Animer le contenu actuel
+            this.appDiv.classList.add("transition-transform", "duration-500", "ease-in-out");
+            this.appDiv.style.transform = direction === 'forward' ? "translateX(-100vw)" : "translateX(100vw)";
+            // Charger le contenu de la nouvelle page
+            const newRoute = this.routes.find(r => r.path === url) ||
+                this.routes.find(r => r.path === "*");
+            if (newRoute) {
+                let content = newRoute.template;
+                if (typeof content === "function") {
+                    try {
+                        content = yield content();
+                    }
+                    catch (error) {
+                        content = "<p>Error failed to load this page</p>";
+                    }
+                }
+                // Insérer le contenu dans le conteneur temporaire
+                tempContainer.innerHTML = content;
+                document.body.appendChild(tempContainer);
+                // Attendre un instant pour que le DOM se mette à jour
+                yield new Promise(resolve => setTimeout(resolve, 50));
+                // Animer l'entrée du nouveau contenu
+                tempContainer.classList.remove(direction === 'forward' ? "translate-x-full" : "-translate-x-full");
+                // Attendre la fin de l'animation
+                yield new Promise(resolve => setTimeout(resolve, 500));
+                // Nettoyer les contrôleurs actifs
+                if (this.activePlayerController) {
+                    this.activePlayerController.destroy();
+                    this.activePlayerController = null;
+                }
+                // Mettre à jour l'URL et le titre
+                history.pushState(null, "", url);
+                document.title = newRoute.title;
+                // Remplacer le contenu principal
+                this.appDiv.innerHTML = content;
+                this.appDiv.style.transform = ""; // Réinitialiser la transformation
+                this.appDiv.classList.remove("transition-transform", "duration-500", "ease-in-out");
+                // Supprimer le conteneur temporaire
+                document.body.removeChild(tempContainer);
+                // Initialiser les scripts si nécessaire
+                if (url === "/") {
+                    this.checkForPlayerElement();
+                }
+            }
+        });
+    }
+    getNavigationDirection(currentPath, newPath) {
+        const paths = ['/', '/about', 'Tv', '/contact'];
+        const currentIndex = paths.indexOf(currentPath);
+        const nextIndex = paths.indexOf(newPath);
+        return nextIndex > currentIndex ? 'forward' : 'backward';
     }
     updatePage() {
         return __awaiter(this, void 0, void 0, function* () {
