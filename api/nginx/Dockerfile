@@ -11,7 +11,4 @@ RUN mkdir -p /etc/nginx/ssl && \
 COPY nginx.conf /etc/nginx/
 COPY front/ /usr/share/nginx/front
 
-COPY wait-for-it.sh /wait-for-it.sh
-RUN chmod +x /wait-for-it.sh
-
-CMD ["sh", "-c", "/wait-for-it.sh users:8080 --timeout=30 -- nginx -g 'daemon off;'"]
+CMD [ "nginx" ]
