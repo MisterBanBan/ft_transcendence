@@ -3,80 +3,94 @@ services:
     image: users
     container_name: users
     build:
-      context: api/users
+      context: api/users/
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8080/health || exit 1"]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
-#    env_file:
-#      - ".env"
-    ports:
-      - "8080:8080"
-#    volumes:
-#      - ./src:/app/src
     networks:
-      ft_transcendence:
-        aliases:
-          - users-service
+      - ft_transcendence
     restart: unless-stopped
 
-#  tournament:
-#    image: tournament
-#    container_name: tournament
-#    build:
-#      context: api/tournament
-#    env_file:
-#      - ".env"
-#    networks:
-#      - ft_transcendence
-#    restart: on-failure
+  tournament:
+    image: tournament
+    container_name: tournament
+    build:
+      context: api/tournament/
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    restart: unless-stopped
 
-#  game:
-#    image: game
-#    container_name: game
-#    build:
-#      context: api/game
-#    env_file:
-#      - ".env"
-#    networks:
-#      - ft_transcendence
-#    restart: on-failure
+  game:
+    image: game
+    container_name: game
+    build:
+      context: api/game
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8082/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    restart: on-failure
 
-#  matchmaking:
-#    image: matchmaking
-#    container_name: matchmaking
-#    build:
-#      context: api/matchmaking
-#    env_file:
-#      - ".env"
-#    networks:
-#      - ft_transcendence
-#    restart: on-failure
+  matchmaking:
+    image: matchmaking
+    container_name: matchmaking
+    build:
+      context: api/matchmaking
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8083/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    restart: on-failure
 
-#  authentication:
-#    image: authentication
-#    container_name: authentication
-#    build:
-#      context: api/authentication
-#    env_file:
-#      - ".env"
-#    networks:
-#      - ft_transcendence
-#    restart: on-failure
+  authentication:
+    image: authentication
+    container_name: authentication
+    build:
+      context: api/authentication
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    restart: on-failure
 
   nginx:
     image: nginx
     container_name: nginx
     build:
       context: api/nginx
-#    env_file:
-#      - ".env"
     ports:
       - "8443:443"
     depends_on:
       users:
+        condition: service_healthy
+      tournament:
+        condition: service_healthy
+      matchmaking:
+        condition: service_healthy
+      game:
+        condition: service_healthy
+      authentication:
         condition: service_healthy
     networks:
       - ft_transcendence
@@ -84,7 +98,7 @@ services:
 
 networks:
   ft_transcendence:
-      driver: bridge
+    driver: bridge
 
 #volumes:
 #  nginx-data:
