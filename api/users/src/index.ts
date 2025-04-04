@@ -2,7 +2,11 @@ import fastify from 'fastify';
 
 const server = fastify();
 
-server.get('/api/users', async (request, reply) => {
+server.get('/health', async (request, reply) => {
+    reply.code(200).send({ status: 'healthy' });
+});
+
+server.get('/api/users/', async (request, reply) => {
     reply.send({ users: ["User1", "User2", "User3"] });
 });
 
