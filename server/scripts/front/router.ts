@@ -1,18 +1,26 @@
 import { PlayerAnimation } from "./player_animation.js";
 
+/*Permet d'eviter que le player tourne en fond sur d'autres page*/
+interface IPlayerController {
+    destroy(): void;
+}
+
 interface Route {
     path: string;
     title: string;
-    /*par exemple, lorsqu'on doit récupérer des données depuis une API, ou simuler un délai de chargement*/
+    /*Gestion du chargement asynchrone du contenu des templates grace a Promise*/
     template: (() => Promise<string>) | string;
 }
 
 class Router {
     private routes: Route[];
+    /*utilisation des elements html*/
     private appDiv: HTMLElement;
+    private activePlayerController: IPlayerController | null = null;
 
     constructor(routes: Route[]) {
         this.routes = routes;
+        /*recupere l'element app dans index.html*/
         const app = document.getElementById("app");
         if (!app)
             throw new Error("Element not found");
@@ -24,9 +32,10 @@ class Router {
     /*Intercepte les clics*/
     private bindLinks(): void {
         document.body.addEventListener("click", (event) => {
-            /*seul les liens avec data-link <a href="/home" data-link>Accueil</a>  closest permet de remonter a lelement de datalink*/
+            /*seul les liens avec data-link <a href="/home" data-link>Accueil</a>  closest permet de remonter a l'element de datalink*/
             const target = (event.target as HTMLElement).closest("[data-link]");
             if (target) {
+                /*empeche le comportement par defaut du navigateur comme recharger la page */
                 event.preventDefault();
                 const url = target.getAttribute("href");
                 if (url) {
@@ -41,6 +50,11 @@ class Router {
     }
     
     public async updatePage(): Promise<void> {
+        if (this.activePlayerController) {
+            this.activePlayerController.destroy();
+            this.activePlayerController = null;
+        }
+
         const path = window.location.pathname;
         const route = this.routes.find(r => r.path === path) || 
                       this.routes.find(r => r.path === "*");
@@ -59,22 +73,27 @@ class Router {
     
             // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
             if (window.location.pathname === "/") {
-                this.loadPlayerScripts();
+                this.checkForPlayerElement();
             }
         } else {
             this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
         }
     }
+
+    private checkForPlayerElement() {
+        const playerElement = document.getElementById("player");
+        if (playerElement) {
+            this.loadPlayerScripts();
+        }
+        else {
+            setTimeout(() => this.checkForPlayerElement(), 50);
+        }
+    }
     
     private async loadPlayerScripts() {
         try {
-            
-
-            const playerElement = document.getElementById("player");
-            if (playerElement) {
-                const { default: PlayerController } = await import("./scripts.js");
-                new PlayerController('player');
-            }
+            const { default: PlayerController } = await import("./scripts.js");
+            this.activePlayerController = new PlayerController('player');
         } catch (error) {
             console.error("Erreur lors du chargement des scripts:", error);
         }
@@ -112,7 +131,7 @@ const routes: Route[] = [
             await new Promise(resolve => setTimeout(resolve, 300));
             return `<div class="fixed inset-0 w-full h-screen -z-10">
             <video autoplay loop muted class="w-full h-full object-cover">
-                <source src="/public/img/Tv.mp4" type="video/mp4">
+                <source src="/public/img/quit.mp4" type="video/mp4">
                 Votre navigateur ne supporte pas la vidéo.
             </video>
             </div>

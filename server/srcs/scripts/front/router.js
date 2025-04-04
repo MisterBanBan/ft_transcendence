@@ -9,7 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 class Router {
     constructor(routes) {
+        this.activePlayerController = null;
         this.routes = routes;
+        /*recupere l'element app dans index.html*/
         const app = document.getElementById("app");
         if (!app)
             throw new Error("Element not found");
@@ -21,9 +23,10 @@ class Router {
     /*Intercepte les clics*/
     bindLinks() {
         document.body.addEventListener("click", (event) => {
-            /*seul les liens avec data-link <a href="/home" data-link>Accueil</a>  closest permet de remonter a lelement de datalink*/
+            /*seul les liens avec data-link <a href="/home" data-link>Accueil</a>  closest permet de remonter a l'element de datalink*/
             const target = event.target.closest("[data-link]");
             if (target) {
+                /*empeche le comportement par defaut du navigateur comme recharger la page */
                 event.preventDefault();
                 const url = target.getAttribute("href");
                 if (url) {
@@ -38,6 +41,10 @@ class Router {
     }
     updatePage() {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.activePlayerController) {
+                this.activePlayerController.destroy();
+                this.activePlayerController = null;
+            }
             const path = window.location.pathname;
             const route = this.routes.find(r => r.path === path) ||
                 this.routes.find(r => r.path === "*");
@@ -55,7 +62,7 @@ class Router {
                 this.appDiv.innerHTML = content;
                 // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
                 if (window.location.pathname === "/") {
-                    this.loadPlayerScripts();
+                    this.checkForPlayerElement();
                 }
             }
             else {
@@ -63,14 +70,20 @@ class Router {
             }
         });
     }
+    checkForPlayerElement() {
+        const playerElement = document.getElementById("player");
+        if (playerElement) {
+            this.loadPlayerScripts();
+        }
+        else {
+            setTimeout(() => this.checkForPlayerElement(), 50);
+        }
+    }
     loadPlayerScripts() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const playerElement = document.getElementById("player");
-                if (playerElement) {
-                    const { default: PlayerController } = yield import("./scripts.js");
-                    new PlayerController('player');
-                }
+                const { default: PlayerController } = yield import("./scripts.js");
+                this.activePlayerController = new PlayerController('player');
             }
             catch (error) {
                 console.error("Erreur lors du chargement des scripts:", error);
@@ -105,7 +118,7 @@ const routes = [
             yield new Promise(resolve => setTimeout(resolve, 300));
             return `<div class="fixed inset-0 w-full h-screen -z-10">
             <video autoplay loop muted class="w-full h-full object-cover">
-                <source src="/public/img/Tv.mp4" type="video/mp4">
+                <source src="/public/img/quit.mp4" type="video/mp4">
                 Votre navigateur ne supporte pas la vidéo.
             </video>
             </div>

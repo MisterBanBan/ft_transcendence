@@ -1,5 +1,9 @@
 import { PlayerAnimation } from "./player_animation.js";
 
+interface IPlayerController {
+    destroy(): void;
+}
+
 interface Position {
     x: number;
     y: number;
@@ -60,7 +64,7 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: Playe
     }
 }
 
-class PlayerController {
+class PlayerController implements IPlayerController{
     private player: PlayerAnimation;
     private pos: Position = { x: 0, y: 0};
     private stats: PlayerStats = new PlayerStats();
@@ -70,6 +74,9 @@ class PlayerController {
     private lastTimestamp: number = 0;
     private playerWidth: number;
     private playerHeight: number;
+    private boundKeyDownHandler: (e: KeyboardEvent) => void;
+    private boundKeyUpHandler: (e: KeyboardEvent) => void;
+    private animationFrameId: number | null = null;
 
     constructor(playerId: string) {
         const playerElement = document.getElementById(playerId);
@@ -80,14 +87,31 @@ class PlayerController {
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
+        this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, this.player, e);
+        this.boundKeyUpHandler = (e) => handleKeyReleasePlayer(this.stats, this.speed, this.player, e);
+
+        window.addEventListener('keydown', this.boundKeyDownHandler);
+        window.addEventListener('keyup', this.boundKeyUpHandler);
+
 
         this.updatePosition();
-        window.addEventListener('keydown', (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, this.player, e));
-        window.addEventListener('keyup', (e) => handleKeyReleasePlayer(this.stats, this.speed, this.player, e));
+        this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
 
-        requestAnimationFrame(this.gameLoop.bind(this));
     }
-
+    public destroy(): void {
+        // Arrêter l'animation du joueur
+        this.player.stopAnimation();
+        
+        // Supprimer les écouteurs d'événements
+        window.removeEventListener('keydown', this.boundKeyDownHandler);
+        window.removeEventListener('keyup', this.boundKeyUpHandler);
+        
+        // Annuler la boucle de jeu
+        if (this.animationFrameId !== null) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+        console.log("PlayerController détruit");
+    }
     private gameLoop(timestamp: number) {
         const deltaTime = (timestamp - this.lastTimestamp) / 1000;
         this.lastTimestamp = timestamp;
@@ -110,7 +134,7 @@ class PlayerController {
         console.log(`Velocity X: ${this.stats.velocity.x}`);
         
         this.updatePosition();
-        requestAnimationFrame(this.gameLoop.bind(this));
+        this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
     }
 
     private updatePosition() {

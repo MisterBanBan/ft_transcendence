@@ -61,6 +61,7 @@ class PlayerController {
         this.jump = -700;
         this.gravity = 1500;
         this.lastTimestamp = 0;
+        this.animationFrameId = null;
         const playerElement = document.getElementById(playerId);
         if (!playerElement)
             throw new Error('Player element not found');
@@ -69,10 +70,24 @@ class PlayerController {
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
+        this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, this.player, e);
+        this.boundKeyUpHandler = (e) => handleKeyReleasePlayer(this.stats, this.speed, this.player, e);
+        window.addEventListener('keydown', this.boundKeyDownHandler);
+        window.addEventListener('keyup', this.boundKeyUpHandler);
         this.updatePosition();
-        window.addEventListener('keydown', (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, this.player, e));
-        window.addEventListener('keyup', (e) => handleKeyReleasePlayer(this.stats, this.speed, this.player, e));
-        requestAnimationFrame(this.gameLoop.bind(this));
+        this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
+    }
+    destroy() {
+        // Arrêter l'animation du joueur
+        this.player.stopAnimation();
+        // Supprimer les écouteurs d'événements
+        window.removeEventListener('keydown', this.boundKeyDownHandler);
+        window.removeEventListener('keyup', this.boundKeyUpHandler);
+        // Annuler la boucle de jeu
+        if (this.animationFrameId !== null) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+        console.log("PlayerController détruit");
     }
     gameLoop(timestamp) {
         const deltaTime = (timestamp - this.lastTimestamp) / 1000;
@@ -91,7 +106,7 @@ class PlayerController {
         console.log(`Velocity Y: ${this.stats.velocity.y}, Position Y: ${this.pos.y}`);
         console.log(`Velocity X: ${this.stats.velocity.x}`);
         this.updatePosition();
-        requestAnimationFrame(this.gameLoop.bind(this));
+        this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
     }
     updatePosition() {
         this.player.updatePosition(this.pos.x, this.pos.y);
