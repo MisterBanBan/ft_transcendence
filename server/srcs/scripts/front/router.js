@@ -7,18 +7,77 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-class Router {
+export default class Router {
     constructor(routes) {
+        this.currentPath = '/';
+        this.worldWidth = 0;
+        this.pageTransitioninProgress = false;
         this.activePlayerController = null;
         this.routes = routes;
         /*recupere l'element app dans index.html*/
         const app = document.getElementById("app");
         if (!app)
             throw new Error("Element not found");
-        this.appDiv = app;
+        app.innerHTML = `
+            <div id="world-container" class="relative overflow-hidden w-full h-screen">
+                <div id="current-page" class="absolute inset-0"></div>
+                <div id="next-page" class="absolute inset-0 translate-x-full"></div>
+            </div>
+        `;
+        /*this.appDiv = app;*/
+        this.worldContainer = document.getElementById("world-container");
+        this.currentPageDiv = document.getElementById("current-page");
+        this.nextPageDiv = document.getElementById("next-page");
+        this.worldWidth = window.innerWidth;
         this.bindLinks();
         /*Cette ligne ajoute un écouteur pour l'événement popstate sur l'objet window. L'événement popstate est déclenché lorsque l'utilisateur utilise les boutons Back ou Forward du navigateur. Lorsque cet événement se produit, la méthode updatePage() est appelée pour mettre à jour le contenu affiché en fonction de l'URL courante, assurant ainsi que l'application réagit correctement aux changements de l'historique sans recharger la page. */
         window.addEventListener("popstate", () => this.updatePage());
+        window.addEventListener("resize", () => this.handleResize());
+        this.updatePage();
+    }
+    preloadNextPage(direction) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (this.pageTransitioninProgress)
+                return;
+            const paths = ['/', '/about', '/Tv', '/contact'];
+            const currentIndex = paths.indexOf(this.currentPath);
+            let nextPath;
+            if (direction === 'right' && currentIndex < paths.length - 1) {
+                nextPath = paths[currentIndex + 1];
+            }
+            else if (direction === 'left' && currentIndex > 0) {
+                nextPath = paths[currentIndex - 1];
+            }
+            else {
+                return;
+            }
+            const nextRoute = this.routes.find(r => r.path === nextPath);
+            if (!nextRoute)
+                return;
+            let content = nextRoute.template;
+            if (typeof content === "function") {
+                try {
+                    content = yield content();
+                }
+                catch (error) {
+                    content = "<p>Error failed to up this page </p>";
+                }
+            }
+            if (direction === 'right') {
+                this.nextPageDiv.classList.remove('-translate-x-full');
+                this.nextPageDiv.classList.add('translate-x-full');
+            }
+            else {
+                this.nextPageDiv.classList.remove('translate-x-full');
+                this.nextPageDiv.classList.add('-translate-x-full');
+            }
+            this.nextPageDiv.innerHTML = content;
+            this.pageTransitioninProgress = true;
+            return nextPath;
+        });
+    }
+    handleResize() {
+        this.worldWidth = window.innerWidth;
     }
     /*Intercepte les clics*/
     bindLinks() {
@@ -36,71 +95,50 @@ class Router {
         });
     }
     navigateTo(url) {
+        history.pushState(null, "", url);
+        this.updatePage();
+    }
+    updatePageTransition(playerX, direction) {
+        if (!this.pageTransitioninProgress)
+            return;
+        if (direction === 'right') {
+            const progress = playerX / this.worldWidth;
+            this.nextPageDiv.style.transform = `translateX(${(1 - progress) * 100}%)`;
+        }
+        else {
+            const progress = (this.worldWidth - playerX) / this.worldWidth;
+            this.nextPageDiv.style.transform = `translateX(${(progress - 1) * 100}%)`;
+        }
+    }
+    completePageTransition(nextPath) {
         return __awaiter(this, void 0, void 0, function* () {
-            const currentPath = window.location.pathname;
-            const direction = this.getNavigationDirection(currentPath, url);
-            // Créer un conteneur temporaire pour la nouvelle page
-            const tempContainer = document.createElement("div");
-            tempContainer.className = "fixed inset-0 transform transition-transform duration-500 ease-in-out";
-            tempContainer.style.zIndex = "10";
-            // Positionner le conteneur hors écran selon la direction
-            if (direction === 'forward') {
-                tempContainer.classList.add("translate-x-full");
-            }
-            else {
-                tempContainer.classList.add("-translate-x-full");
-            }
-            // Animer le contenu actuel
-            this.appDiv.classList.add("transition-transform", "duration-500", "ease-in-out");
-            this.appDiv.style.transform = direction === 'forward' ? "translateX(-100vw)" : "translateX(100vw)";
-            // Charger le contenu de la nouvelle page
-            const newRoute = this.routes.find(r => r.path === url) ||
-                this.routes.find(r => r.path === "*");
-            if (newRoute) {
-                let content = newRoute.template;
-                if (typeof content === "function") {
-                    try {
-                        content = yield content();
-                    }
-                    catch (error) {
-                        content = "<p>Error failed to load this page</p>";
-                    }
-                }
-                // Insérer le contenu dans le conteneur temporaire
-                tempContainer.innerHTML = content;
-                document.body.appendChild(tempContainer);
-                // Attendre un instant pour que le DOM se mette à jour
-                yield new Promise(resolve => setTimeout(resolve, 50));
-                // Animer l'entrée du nouveau contenu
-                tempContainer.classList.remove(direction === 'forward' ? "translate-x-full" : "-translate-x-full");
-                // Attendre la fin de l'animation
-                yield new Promise(resolve => setTimeout(resolve, 500));
-                // Nettoyer les contrôleurs actifs
+            if (!this.pageTransitioninProgress)
+                return;
+            history.pushState(null, "", nextPath);
+            const nextRoute = this.routes.find(r => r.path === nextPath);
+            if (nextRoute)
+                document.title = nextRoute.title;
+            // Sauvegardez la position actuelle du joueur avant de changer de page
+            const playerElement = document.getElementById("player");
+            const playerPosition = playerElement ? playerElement.getBoundingClientRect() : null;
+            const tempContent = this.currentPageDiv.innerHTML;
+            this.currentPageDiv.innerHTML = this.nextPageDiv.innerHTML;
+            this.nextPageDiv.innerHTML = tempContent;
+            this.nextPageDiv.style.transform = '';
+            this.nextPageDiv.classList.add('translate-x-full');
+            this.currentPath = nextPath;
+            this.pageTransitioninProgress = false;
+            // Restaurez la position du joueur sur la nouvelle page
+            const newPlayerElement = document.getElementById("player");
+            if (newPlayerElement && playerPosition) {
+                // Utilisez les coordonnées sauvegardées pour positionner le joueur
                 if (this.activePlayerController) {
                     this.activePlayerController.destroy();
                     this.activePlayerController = null;
                 }
-                // Mettre à jour l'URL et le titre
-                history.pushState(null, "", url);
-                document.title = newRoute.title;
-                // Remplacer le contenu principal
-                this.appDiv.innerHTML = content;
-                this.appDiv.style.transform = ""; // Réinitialiser la transformation
-                this.appDiv.classList.remove("transition-transform", "duration-500", "ease-in-out");
-                // Supprimer le conteneur temporaire
-                document.body.removeChild(tempContainer);
-                // Initialiser les scripts si nécessaire
-                if (url === "/") {
-                    this.checkForPlayerElement();
-                }
+                this.checkForPlayerElement();
             }
         });
-    }
-    getNavigationDirection(currentPath, newPath) {
-        const paths = ['/', '/about', 'Tv', '/contact'];
-        const currentIndex = paths.indexOf(currentPath);
-        const nextIndex = paths.indexOf(newPath);
-        return nextIndex > currentIndex ? 'forward' : 'backward';
     }
     updatePage() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -122,14 +160,14 @@ class Router {
                         content = "<p>Error failed to up this page </p>";
                     }
                 }
-                this.appDiv.innerHTML = content;
+                this.currentPageDiv.innerHTML = content;
                 // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
                 if (window.location.pathname === "/") {
                     this.checkForPlayerElement();
                 }
             }
             else {
-                this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
+                this.currentPageDiv.innerHTML = "<h1>404 - Page not found</h1>";
             }
         });
     }
@@ -145,8 +183,11 @@ class Router {
     loadPlayerScripts() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { default: PlayerController } = yield import("./scripts.js");
-                this.activePlayerController = new PlayerController('player');
+                const playerElement = document.getElementById("player");
+                if (playerElement) {
+                    const { default: PlayerController } = yield import("./scripts.js");
+                    this.activePlayerController = new PlayerController('player', this);
+                }
             }
             catch (error) {
                 console.error("Erreur lors du chargement des scripts:", error);
@@ -170,7 +211,8 @@ const routes = [
         title: "About",
         template: () => __awaiter(void 0, void 0, void 0, function* () {
             yield new Promise(resolve => setTimeout(resolve, 300));
-            return `
+            return `<div class="fixed inset-0 w-full h-screen bg-[url('/public/img/about_bg.jpg')] bg-cover bg-no-repeat bg-center -z-10"></div>
+            <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/public/img/kodama_stop.png')] bg-contain bg-no-repeat"></div>
             `;
         })
     },
@@ -199,4 +241,3 @@ document.addEventListener("DOMContentLoaded", () => {
     const router = new Router(routes);
     router.updatePage();
 });
-export {};

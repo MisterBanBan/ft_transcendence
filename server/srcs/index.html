@@ -9,7 +9,13 @@
     <!--<link href="/public/css/tailwind.output.css" rel="stylesheet"> -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" type="image/x-icon" href="/public/img/favicon.ico">
-
+    <!-- Dans votre fichier HTML ou dans vos styles -->
+    <style>
+        #current-page, #next-page {
+        transition: transform 0.1s ease-out;
+        }
+    </style>
+  
 
 </head>
 <body class="bg-gray-100 text-gray-900">
@@ -21,8 +27,12 @@
     </nav>
   
     <div id="app" class="p-6">
-      <!-- Le contenu des pages sera chargé ici -->
-    </div>
+        <div id="world-container" class="relative overflow-hidden w-full h-screen">
+          <div id="current-page" class="absolute inset-0"></div>
+          <div id="next-page" class="absolute inset-0 translate-x-full"></div>
+        </div>
+      </div>
+      
   
     <!-- Inclusion du script compilé (app.js) -->
     <script type="module" src="/public/scripts/front/router.js"></script>

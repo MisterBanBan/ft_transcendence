@@ -1,4 +1,5 @@
 import { PlayerAnimation } from "./player_animation.js";
+import Router from "./router.js";
 
 interface IPlayerController {
     destroy(): void;
@@ -50,7 +51,9 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: Playe
             if (stats.leftKey) {
                 stats.velocity.x += speed;
                 stats.leftKey = false;
-                player.stopAnimation();
+                if (!stats.rightKey) {
+                    player.stopAnimation();
+                }
             }
             break;
         case 'arrowright':
@@ -58,7 +61,9 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: Playe
             if (stats.rightKey) {
                 stats.velocity.x -= speed;
                 stats.rightKey = false;
-                player.stopAnimation();
+                if (!stats.leftKey) {
+                    player.stopAnimation();
+                }
             }
             break;
     }
@@ -74,13 +79,28 @@ class PlayerController implements IPlayerController{
     private lastTimestamp: number = 0;
     private playerWidth: number;
     private playerHeight: number;
+    private router: Router;
+    private nextPagePath: string | null | undefined;
+    private transitionDirection: 'right' | 'left' | null = null;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
 
-    constructor(playerId: string) {
+    constructor(playerId: string, router: Router, initialX?: number, initialDirection?: 'right' | 'left') {
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
+
+        this.router = router;
+        if (initialX !== undefined) {
+            this.pos.x = initialX;
+        }
+
+        if (initialDirection) {
+            this.transitionDirection = initialDirection;
+            if (initialDirection === 'right') {
+
+            }
+        }
 
         console.log("PlayerController initialisé !");
         this.player = new PlayerAnimation(playerId);
@@ -93,7 +113,7 @@ class PlayerController implements IPlayerController{
         window.addEventListener('keydown', this.boundKeyDownHandler);
         window.addEventListener('keyup', this.boundKeyUpHandler);
 
-
+        this.lastTimestamp = performance.now();
         this.updatePosition();
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
 
@@ -112,15 +132,50 @@ class PlayerController implements IPlayerController{
         }
         console.log("PlayerController détruit");
     }
-    private gameLoop(timestamp: number) {
-        const deltaTime = (timestamp - this.lastTimestamp) / 1000;
-        this.lastTimestamp = timestamp;
+    private async gameLoop(timestamp: number) {
+        if (!this.lastTimestamp) this.lastTimestamp = timestamp;
+    const deltaTime = (timestamp - this.lastTimestamp) / 1000;
+    this.lastTimestamp = timestamp;
+
+        const screenWidth = window.innerWidth;
+
+        if (this.stats.velocity.x > 0 && this.pos.x > screenWidth * 0.7 && !this.nextPagePath) {
+            this.nextPagePath = await this.router.preloadNextPage('right');
+            this.transitionDirection = 'right';
+        }
+        else if (this.stats.velocity.x < 0 && this.pos.x < screenWidth * 0.3 && !this.nextPagePath) {
+            this.nextPagePath = await this.router.preloadNextPage('left');
+            this.transitionDirection = 'left';
+        }
+
+        if (this.nextPagePath && this.transitionDirection) {
+            this.router.updatePageTransition(this.pos.x, this.transitionDirection);
+
+            if ((this.transitionDirection === 'right' && this.pos.x > screenWidth) || (this.transitionDirection === 'left' && this.pos.x < -this.playerWidth)) {
+                await this.router.completePageTransition(this.nextPagePath);
+                if(this.transitionDirection === 'right') {
+                    this.pos.x = 0;
+                } else {
+                    this.pos.x = screenWidth - this.playerWidth;
+                }
+                this.nextPagePath = null;
+                this.transitionDirection = null;
+            } /*else {
+                this.pos.x = Math.max(0, Math.min(screenWidth - this.playerWidth, this.pos.x));
+            }
+            this.updatePosition();
+            this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));*/
+        }
+
+
 
         this.pos.x += this.stats.velocity.x * deltaTime;
         this.stats.velocity.y += this.gravity * deltaTime;
         this.pos.y += this.stats.velocity.y * deltaTime;
-
-        this.pos.x = Math.max(0, Math.min(window.innerWidth - this.playerWidth, this.pos.x));
+        if (!this.nextPagePath) {
+            this.pos.x = Math.max(0, Math.min(screenWidth - this.playerWidth, this.pos.x));
+        }
+        /*this.pos.x = Math.max(0, Math.min(window.innerWidth - this.playerWidth, this.pos.x));*/
         this.pos.y = Math.max(0, Math.min(window.innerHeight - this.playerHeight, this.pos.y));
 
         const floor = window.innerHeight - this.playerHeight;
@@ -144,10 +199,10 @@ class PlayerController implements IPlayerController{
 
 // Exporter correctement la classe PlayerController
 export default PlayerController;
-
+/*
 document.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById("player")) {
         console.warn("Le joueur n'est pas encore chargé, attente...");
         setTimeout(() => new PlayerController('player'), 100);
     }
-});
+});*/

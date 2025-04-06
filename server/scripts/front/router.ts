@@ -12,14 +12,15 @@ interface Route {
     template: (() => Promise<string>) | string;
 }
 
-class Router {
+export default class Router {
     private routes: Route[];
     /*utilisation des elements html*/
-    private appDiv: HTMLElement;
+    /*private appDiv: HTMLElement;*/
+    private currentPageDiv: HTMLElement;
     private nextPageDiv: HTMLElement;
     private worldContainer: HTMLElement;
     private currentPath: string = '/';
-    private worldWidth: number = 0;
+    private worldWidth: number = 0; 
     private pageTransitioninProgress: boolean = false;
 
     private activePlayerController: IPlayerController | null = null;
@@ -30,11 +31,66 @@ class Router {
         const app = document.getElementById("app");
         if (!app)
             throw new Error("Element not found");
-        this.appDiv = app;
+        app.innerHTML = `
+            <div id="world-container" class="relative overflow-hidden w-full h-screen">
+                <div id="current-page" class="absolute inset-0"></div>
+                <div id="next-page" class="absolute inset-0 translate-x-full"></div>
+            </div>
+        `;
+        /*this.appDiv = app;*/
+        this.worldContainer = document.getElementById("world-container") as HTMLElement;
+        this.currentPageDiv = document.getElementById("current-page") as HTMLElement;
+        this.nextPageDiv = document.getElementById("next-page") as HTMLElement;
+        this.worldWidth = window.innerWidth;
         this.bindLinks();
         /*Cette ligne ajoute un écouteur pour l'événement popstate sur l'objet window. L'événement popstate est déclenché lorsque l'utilisateur utilise les boutons Back ou Forward du navigateur. Lorsque cet événement se produit, la méthode updatePage() est appelée pour mettre à jour le contenu affiché en fonction de l'URL courante, assurant ainsi que l'application réagit correctement aux changements de l'historique sans recharger la page. */
         window.addEventListener("popstate", () => this.updatePage());
+        window.addEventListener("resize", () => this.handleResize());
+        this.updatePage();
     }
+
+    public async preloadNextPage(direction: 'right' | 'left') {
+
+        if (this.pageTransitioninProgress) return;
+
+        const paths = ['/', '/about', '/Tv', '/contact'];
+        const currentIndex = paths.indexOf(this.currentPath);
+        let nextPath;
+
+        if (direction === 'right' && currentIndex < paths.length - 1) {
+            nextPath = paths[currentIndex + 1];
+        } else if (direction === 'left' && currentIndex > 0) {
+            nextPath = paths[currentIndex - 1];
+        } else {
+            return;
+        }
+        const nextRoute = this.routes.find(r => r.path === nextPath);
+        if (!nextRoute) return;
+
+        let content = nextRoute.template;
+        if (typeof content === "function") {
+            try {
+                content = await content();
+            } catch (error) {
+                content = "<p>Error failed to up this page </p>";
+            }
+        }
+        if (direction === 'right') {
+            this.nextPageDiv.classList.remove('-translate-x-full');
+            this.nextPageDiv.classList.add('translate-x-full');
+        } else {
+            this.nextPageDiv.classList.remove('translate-x-full');
+            this.nextPageDiv.classList.add('-translate-x-full');
+        }
+        this.nextPageDiv.innerHTML = content;
+        this.pageTransitioninProgress = true;
+        return nextPath;
+    }
+
+    private handleResize() {
+        this.worldWidth = window.innerWidth;
+    }
+
     /*Intercepte les clics*/
     private bindLinks(): void {
         document.body.addEventListener("click", (event) => {
@@ -55,6 +111,52 @@ class Router {
         this.updatePage();
     }
     
+    public updatePageTransition(playerX: number, direction: 'right' | 'left') {
+        if(!this.pageTransitioninProgress) return;
+
+        if (direction === 'right') {
+            const progress = playerX / this.worldWidth;
+            this.nextPageDiv.style.transform = `translateX(${(1 - progress) * 100}%)`;
+        } else {
+            const progress = (this.worldWidth - playerX) / this.worldWidth;
+            this.nextPageDiv.style.transform = `translateX(${(progress - 1) * 100}%)`;
+        }
+    }
+
+    public async completePageTransition(nextPath: string) {
+        if (!this.pageTransitioninProgress) return;
+    
+        history.pushState(null, "", nextPath);
+        const nextRoute = this.routes.find(r => r.path === nextPath);
+        if (nextRoute) document.title = nextRoute.title;
+    
+        // Sauvegardez la position actuelle du joueur avant de changer de page
+        const playerElement = document.getElementById("player");
+        const playerPosition = playerElement ? playerElement.getBoundingClientRect() : null;
+    
+        const tempContent = this.currentPageDiv.innerHTML;
+        this.currentPageDiv.innerHTML = this.nextPageDiv.innerHTML;
+        this.nextPageDiv.innerHTML = tempContent;
+        
+        this.nextPageDiv.style.transform = '';
+        this.nextPageDiv.classList.add('translate-x-full');
+    
+        this.currentPath = nextPath;
+        this.pageTransitioninProgress = false;
+    
+        // Restaurez la position du joueur sur la nouvelle page
+        const newPlayerElement = document.getElementById("player");
+        if (newPlayerElement && playerPosition) {
+            // Utilisez les coordonnées sauvegardées pour positionner le joueur
+            if (this.activePlayerController) {
+                this.activePlayerController.destroy();
+                this.activePlayerController = null;
+            }
+            this.checkForPlayerElement();
+        }
+    }
+    
+
     public async updatePage(): Promise<void> {
         if (this.activePlayerController) {
             this.activePlayerController.destroy();
@@ -75,14 +177,14 @@ class Router {
                     content = "<p>Error failed to up this page </p>";
                 }
             }
-            this.appDiv.innerHTML = content;
+            this.currentPageDiv.innerHTML = content;
     
             // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
             if (window.location.pathname === "/") {
                 this.checkForPlayerElement();
             }
         } else {
-            this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
+            this.currentPageDiv.innerHTML = "<h1>404 - Page not found</h1>";
         }
     }
 
@@ -98,8 +200,11 @@ class Router {
     
     private async loadPlayerScripts() {
         try {
-            const { default: PlayerController } = await import("./scripts.js");
-            this.activePlayerController = new PlayerController('player');
+            const playerElement = document.getElementById("player");
+            if (playerElement) {
+                const { default: PlayerController } = await import("./scripts.js");
+                this.activePlayerController = new PlayerController('player', this);
+            }
         } catch (error) {
             console.error("Erreur lors du chargement des scripts:", error);
         }
@@ -126,7 +231,8 @@ const routes: Route[] = [
         title: "About",
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
-            return `
+            return `<div class="fixed inset-0 w-full h-screen bg-[url('/public/img/about_bg.jpg')] bg-cover bg-no-repeat bg-center -z-10"></div>
+            <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/public/img/kodama_stop.png')] bg-contain bg-no-repeat"></div>
             `;
         }
     },
