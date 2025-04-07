@@ -1,5 +1,4 @@
-import { fastify } from '../../server.js';
-import { error } from './error.js';
+import { fastify } from '../../../server.js';
 import fs from 'fs';
 import argon2 from 'argon2';
 
@@ -14,7 +13,6 @@ fastify.get('/sign-in', async function (request, reply) {
 
 fastify.post('/sign-in', async function (request, reply) {
 
-	console.log("Sign in request");
 	const { email, password } = request.body;
 
 	try {
@@ -26,7 +24,7 @@ fastify.post('/sign-in', async function (request, reply) {
 			if (data) users = JSON.parse(data);
 		}
 		else
-			return reply.send("No users.json file found");
+			return reply.status(400).send({ error: ["No users.json file found"], type: "global"});
 
 		let token;
 
@@ -34,8 +32,7 @@ fastify.post('/sign-in', async function (request, reply) {
 		if (user)
 			token = user.token;
 		else {
-			error("Invalid email");
-			return reply.redirect('sign-in');
+			return reply.status(400).send({ error: ["Invalid email."], type: "email" });
 		}
 
 		if (await argon2.verify(user.hash, password)) {
@@ -44,13 +41,12 @@ fastify.post('/sign-in', async function (request, reply) {
 				httpOnly: true,
 				secure: false,
 				maxAge: 3600
-			}).redirect('html');
-		} else {
-			error("Invalid password");
-			return reply.redirect('sign-in');
-		}
+			}).status(200).redirect('/html' +
+				'');
+		} else
+			return reply.status(400).send({ error: ["Invalid password."], type: "password" });
 	} catch (err) {
-		return reply.redirect('sign-in');
+		return reply.status(400).send({ error: [err], type: "global" });
 	}
 
 });

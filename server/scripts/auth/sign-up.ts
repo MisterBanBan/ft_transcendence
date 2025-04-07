@@ -1,4 +1,4 @@
-console.log("Script activated")
+import {showError} from "./show_errors";
 
 document.getElementById("submit").addEventListener("click", async (event) => {
 
@@ -7,8 +7,6 @@ document.getElementById("submit").addEventListener("click", async (event) => {
     const cpassword = document.getElementById("cpassword").value;
     let errorSpan = document.getElementById("error-global");
 
-    document.querySelectorAll(".error-message").forEach(errorSpan => errorSpan.innerHTML = "");
-
     try {
         const response = await fetch("http://localhost:3000/sign-up", {
             method: "POST",
@@ -16,22 +14,8 @@ document.getElementById("submit").addEventListener("click", async (event) => {
             body: JSON.stringify({ email, password, cpassword }),
         });
 
-        const data = await response.json();
+        await showError(response);
 
-        errorSpan = document.getElementById("error-" + data.type);
-
-        errorSpan.innerHTML = "";
-
-        console.log("Réponse du serveur:", data);
-        console.log("Type de data.error:", typeof data.error);
-        console.log("Est-ce un tableau ?", Array.isArray(data.error));
-
-        if (!response.ok) {
-            errorSpan.innerHTML = data.error.map(err => `${err}<br>`).join("");
-            return;
-        }
-
-        console.log("Erreur insérée dans errorSpan:", errorSpan.innerHTML);
     } catch (err) {
         console.error("Erreur réseau", err);
         errorSpan.style.display = "block";

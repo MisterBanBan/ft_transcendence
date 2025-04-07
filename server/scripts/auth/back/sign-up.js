@@ -1,5 +1,4 @@
-import { fastify } from '../../server.js';
-import { error } from './error.js';
+import { fastify } from '../../../server.js';
 import fs from 'fs';
 import argon2 from 'argon2';
 

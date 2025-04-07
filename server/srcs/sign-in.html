@@ -42,7 +42,7 @@
             border-radius: 4px;
         }
 
-        input[type="submit"] {
+        input[type="button"] {
             background-color: #007BFF;
             color: white;
             border: none;
@@ -60,14 +60,20 @@
 <body>
 	<form action="" method="post">
 
+		<div class="error-message" id="error-global"></div>
+
 		<label for="email">Email:</label>
+		<div class="error-message" id="error-email"></div>
 		<input type="text" name="email" id="email">
 
 		<label for="password">Password:</label>
+		<div class="error-message" id="error-password"></div>
 		<input type="password" name="password" id="password">
 
-		<input type="submit" value="Sign in">
+		<input type="button" id="submit" value="Sign in">
 	</form>
+
+	<script type="module" src="/public/scripts/auth/sign-in.js"></script>
 </body>
 
 </html>

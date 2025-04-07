@@ -1,4 +1,4 @@
-import { fastify } from '../../server.js';
+import { fastify } from '../../../server.js';
 
 fastify.addHook('onRequest', async (request, reply) => {
 	const token = request.cookies.token
