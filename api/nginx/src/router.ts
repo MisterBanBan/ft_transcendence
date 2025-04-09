@@ -109,8 +109,8 @@ const routes: Route[] = [
         title: "Accueil",
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
-            return `<div class="fixed inset-0 w-full h-screen bg-[url('./img/fond_outside.jpg')] bg-cover bg-no-repeat bg-center -z-10"></div>
-            <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('./img/kodama_stop.png')] bg-contain bg-no-repeat"></div>
+            return `<div class="fixed inset-0 w-full h-screen bg-[url('../img/fond_outside.jpg')] bg-cover bg-no-repeat bg-center -z-10"></div>
+            <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('../img/kodama_stop.png')] bg-contain bg-no-repeat"></div>
             `;
     
         }

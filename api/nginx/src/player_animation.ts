@@ -17,6 +17,7 @@ export class PlayerAnimation{
     startAnimation(frameRate: number = 100) {
         if (this.animationInterval) return;
         this.animationInterval = window.setInterval(() => {
+            console.log(this.images[this.currentFrame]);
             this.currentFrame = (this.currentFrame + 1) % this.images.length;
             this.element.style.backgroundImage = `url(${this.images[this.currentFrame]})`;
         }, frameRate); 
