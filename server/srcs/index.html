@@ -11,20 +11,32 @@
     <link rel="icon" type="image/x-icon" href="/public/img/favicon.ico">
     <!-- Dans votre fichier HTML ou dans vos styles -->
     <style>
-        #current-page, #next-page {
-        transition: transform 0.1s ease-out;
-        }
-    </style>
-  
-
+      html, body {
+          overflow-x: hidden;
+          width: 100%;
+          margin: 0;
+          padding: 0;
+      }
+      
+      #current-page, #next-page {
+          transition: transform 0.1s ease-out;
+          width: 100%;
+      }
+      
+      #world-container {
+          overflow-x: hidden;
+          width: 100vw;
+          max-width: 100%;
+      }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
-    <nav class="p-4 bg-white shadow flex gap-4">
+    <!--<nav class="p-4 bg-white shadow flex gap-4">
       <a href="/" data-link class="text-blue-500 hover:underline">Accueil</a>
       <a href="/about" data-link class="text-blue-500 hover:underline">À propos</a>
       <a href="/Tv" data-link class="text-blue-500 hover:underline">Tv</a>
       <a href="/contact" data-link class="text-blue-500 hover:underline">Contact</a>
-    </nav>
+    </nav>-->
   
     <div id="app" class="p-6">
         <div id="world-container" class="relative overflow-hidden w-full h-screen">

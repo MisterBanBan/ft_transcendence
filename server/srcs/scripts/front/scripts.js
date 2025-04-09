@@ -49,9 +49,7 @@ function handleKeyReleasePlayer(stats, speed, player, e) {
             if (stats.leftKey) {
                 stats.velocity.x += speed;
                 stats.leftKey = false;
-                if (!stats.rightKey) {
-                    player.stopAnimation();
-                }
+                player.stopAnimation();
             }
             break;
         case 'arrowright':
@@ -59,9 +57,7 @@ function handleKeyReleasePlayer(stats, speed, player, e) {
             if (stats.rightKey) {
                 stats.velocity.x -= speed;
                 stats.rightKey = false;
-                if (!stats.leftKey) {
-                    player.stopAnimation();
-                }
+                player.stopAnimation();
             }
             break;
     }
@@ -79,15 +75,20 @@ class PlayerController {
         const playerElement = document.getElementById(playerId);
         if (!playerElement)
             throw new Error('Player element not found');
+        //cela ne sert a rien les deux if
+        console.log(`init: ${initialDirection}`);
+        console.log(`init: ${initialX}`);
         this.router = router;
         if (initialX !== undefined) {
             this.pos.x = initialX;
         }
         if (initialDirection) {
             this.transitionDirection = initialDirection;
-            if (initialDirection === 'right') {
-            }
+            /*if (initialDirection === 'right') {
+
+            }*/
         }
+        console.log(`PlayerController initialisé avec position X: ${this.pos.x}`);
         console.log("PlayerController initialisé !");
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
@@ -101,18 +102,6 @@ class PlayerController {
         this.updatePosition();
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
     }
-    destroy() {
-        // Arrêter l'animation du joueur
-        this.player.stopAnimation();
-        // Supprimer les écouteurs d'événements
-        window.removeEventListener('keydown', this.boundKeyDownHandler);
-        window.removeEventListener('keyup', this.boundKeyUpHandler);
-        // Annuler la boucle de jeu
-        if (this.animationFrameId !== null) {
-            cancelAnimationFrame(this.animationFrameId);
-        }
-        console.log("PlayerController détruit");
-    }
     gameLoop(timestamp) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!this.lastTimestamp)
@@ -120,15 +109,22 @@ class PlayerController {
             const deltaTime = (timestamp - this.lastTimestamp) / 1000;
             this.lastTimestamp = timestamp;
             const screenWidth = window.innerWidth;
-            if (this.stats.velocity.x > 0 && this.pos.x > screenWidth * 0.7 && !this.nextPagePath) {
+            /*console.log(`init: ${this.pos.x}`);
+            console.log(`init: ${screenWidth * 0.5}`);
+            if (this.nextPagePath) {
+                console.log("Next page path exists:", this.nextPagePath);
+            } else {
+                console.log("Next page path is null or undefined");
+            }*/
+            if (this.stats.velocity.x > 0 && this.pos.x > screenWidth * 0.5 && !this.nextPagePath) {
                 this.nextPagePath = yield this.router.preloadNextPage('right');
                 this.transitionDirection = 'right';
             }
-            else if (this.stats.velocity.x < 0 && this.pos.x < screenWidth * 0.3 && !this.nextPagePath) {
+            else if (this.stats.velocity.x < 0 && this.pos.x < screenWidth * 0.5 && !this.nextPagePath) {
                 this.nextPagePath = yield this.router.preloadNextPage('left');
                 this.transitionDirection = 'left';
             }
-            if (this.nextPagePath && this.transitionDirection) {
+            if (this.nextPagePath && this.transitionDirection && (this.pos.x < screenWidth * 0.6 || this.pos.x > screenWidth * 0.6)) {
                 this.router.updatePageTransition(this.pos.x, this.transitionDirection);
                 if ((this.transitionDirection === 'right' && this.pos.x > screenWidth) || (this.transitionDirection === 'left' && this.pos.x < -this.playerWidth)) {
                     yield this.router.completePageTransition(this.nextPagePath);
@@ -160,14 +156,32 @@ class PlayerController {
                 this.pos.y = floor;
                 this.stats.isJumping = false;
             }
-            console.log(`Velocity Y: ${this.stats.velocity.y}, Position Y: ${this.pos.y}`);
-            console.log(`Velocity X: ${this.stats.velocity.x}`);
+            //console.log(`Velocity Y: ${this.stats.velocity.y}, Position Y: ${this.pos.y}`);
+            //console.log(`Velocity X: ${this.stats.velocity.x}`);
             this.updatePosition();
             this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
         });
     }
     updatePosition() {
         this.player.updatePosition(this.pos.x, this.pos.y);
+    }
+    destroy() {
+        // Arrêter l'animation du joueur
+        this.player.stopAnimation();
+        // Supprimer les écouteurs d'événements
+        window.removeEventListener('keydown', this.boundKeyDownHandler);
+        window.removeEventListener('keyup', this.boundKeyUpHandler);
+        // Annuler la boucle de jeu
+        if (this.animationFrameId !== null) {
+            cancelAnimationFrame(this.animationFrameId);
+        }
+        console.log("PlayerController détruit");
+    }
+    getVelocity() {
+        return Object.assign({}, this.stats.velocity);
+    }
+    getIsJumping() {
+        return this.stats.isJumping;
     }
 }
 // Exporter correctement la classe PlayerController
