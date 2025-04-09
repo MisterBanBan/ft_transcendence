@@ -64,7 +64,7 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: Playe
     }
 }
 
-class PlayerController implements IPlayerController{
+export class PlayerController implements IPlayerController{
     private player: PlayerAnimation;
     private pos: Position = { x: 0, y: 0};
     private stats: PlayerStats = new PlayerStats();

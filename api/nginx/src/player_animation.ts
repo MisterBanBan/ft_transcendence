@@ -1,26 +1,27 @@
-export class PlayerAnimation {
-    constructor(elementId) {
-        this.images = [
-            '/public/img/kodama_stop.png',
-            '/public/img/kodama_walk.png',
-            '/public/img/kodama_walk2.png',
-            '/public/img/kodama_walk3.png',
-        ];
-        this.currentFrame = 0;
-        this.animationInterval = null;
+export class PlayerAnimation{
+    private element: HTMLElement;
+    private images: string[] = [
+        '../img/kodama_stop.png',
+        '../img/kodama_walk.png',
+        '../img/kodama_walk2.png',
+        '../img/kodama_walk3.png',
+    ];
+    private currentFrame: number = 0;
+    private animationInterval: number | null = null;
+
+    constructor(elementId: string) {
         const element = document.getElementById(elementId);
-        if (!element)
-            throw new Error("element not found");
+        if (!element) throw new Error("element not found");
         this.element = element;
     }
-    startAnimation(frameRate = 100) {
-        if (this.animationInterval)
-            return;
+    startAnimation(frameRate: number = 100) {
+        if (this.animationInterval) return;
         this.animationInterval = window.setInterval(() => {
             this.currentFrame = (this.currentFrame + 1) % this.images.length;
             this.element.style.backgroundImage = `url(${this.images[this.currentFrame]})`;
-        }, frameRate);
+        }, frameRate); 
     }
+
     stopAnimation() {
         if (this.animationInterval) {
             clearInterval(this.animationInterval);
@@ -29,8 +30,9 @@ export class PlayerAnimation {
             this.element.style.backgroundImage = `url(${this.images[0]})`;
         }
     }
-    updatePosition(x, y) {
+    updatePosition(x: number, y: number) {
         this.element.style.left = `${x}px`;
         this.element.style.top = `${y}px`;
     }
+    
 }
