@@ -120,7 +120,20 @@ export class PlayerController implements IPlayerController{
         this.stats.velocity.y += this.gravity * deltaTime;
         this.pos.y += this.stats.velocity.y * deltaTime;
 
-        this.pos.x = Math.max(0, Math.min(window.innerWidth - this.playerWidth, this.pos.x));
+        const pageContainer = document.getElementById("pageContainer");
+        if (pageContainer) {
+            const containerWidth = window.innerWidth * 2; // Largeur totale du conteneur (2 pages)
+            const viewportCenter = window.innerWidth / 2;
+            if (this.pos.x > window.innerWidth / 2) {
+                const maxOffset = containerWidth - window.innerWidth; // Déplacement maximum du conteneur
+            const offset = Math.min(this.pos.x - viewportCenter, maxOffset);
+            pageContainer.style.transform = `translateX(-${offset}px)`;
+        } else {
+            pageContainer.style.transform = 'translateX(0)';
+        }
+        }
+
+        this.pos.x = Math.max(0, Math.min(window.innerWidth * 2 - this.playerWidth, this.pos.x));
         this.pos.y = Math.max(0, Math.min(window.innerHeight - this.playerHeight, this.pos.y));
 
         const floor = window.innerHeight - this.playerHeight;
@@ -130,8 +143,8 @@ export class PlayerController implements IPlayerController{
             this.stats.isJumping = false;
         }
 
-        console.log(`Velocity Y: ${this.stats.velocity.y}, Position Y: ${this.pos.y}`);
-        console.log(`Velocity X: ${this.stats.velocity.x}`);
+        //console.log(`Velocity Y: ${this.stats.velocity.y}, Position Y: ${this.pos.y}`);
+        //console.log(`Velocity X: ${this.stats.velocity.x}`);
         
         this.updatePosition();
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
