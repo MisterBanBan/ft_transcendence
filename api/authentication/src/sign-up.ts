@@ -1,6 +1,6 @@
-import { server } from '../index.js';
-import fs from 'fs';
-import argon2 from 'argon2';
+import argon2 from "argon2";
+import fs from "fs";
+import {server} from "./index.js";
 
 interface User {
 	email: string;
@@ -8,16 +8,92 @@ interface User {
 	token: string;
 }
 
-server.get('/sign-up', async function (request, reply) {
+server.get('/api/authentication/', async (request, reply) => {
 
-	const token = request.cookies.token;
-	if (!token)
-		return reply.sendFile('sign-up.html');
-	else
-		return reply.send("You are already authentificated.");
+	console.log("GET /api/authentication/");
+
+	const htmlContent = `
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Sign-up</title>
+		<style>
+			body {
+				background-color: rgb(70, 70, 70);
+			}
+			label {
+				color: white;
+			}
+			form {
+				display: flex;
+				flex-direction: column;
+				width: 300px;
+				margin: 50px auto;
+				padding: 20px;
+				border: 1px solid #303030;
+				border-radius: 8px;
+				background: #3b3b3b;
+			}
+			label, input {
+				margin-bottom: 10px;
+			}
+			input[type="text"],
+			input[type="password"] {
+				padding: 8px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+			}
+			input[type="button"] {
+				background-color: #007BFF;
+				color: white;
+				border: none;
+				padding: 10px;
+				cursor: pointer;
+				border-radius: 4px;
+			}
+			input[type="submit"]:hover {
+				background-color: #0056b3;
+			}
+			.error-message {
+				color: red;
+				font-size: 15px;
+				padding-bottom: 5px;
+			}
+		</style>
+	</head>
+	<body>
+	<form id="signup-form" action="" method="post">
+		<div class="error-message" id="error-global"></div>
+
+		<label for="email">Email:</label>
+		<div class="error-message" id="error-email"></div>
+		<input type="text" name="email" id="email">
+
+		<label for="password">Password:</label>
+		<div class="error-message" id="error-password"></div>
+		<input type="password" name="password" id="password">
+
+		<label for="cpassword">Confirm password:</label>
+		<input type="password" name="cpassword" id="cpassword">
+
+		<input type="button" id="submit" value="Sign up">
+	</form>
+
+	<script type="module" src="/public/auth/sign-up.js"></script>
+	</body>
+	</html>
+	`;
+
+	// Répondre avec le contenu HTML
+	reply.type('text/html').send(htmlContent);
 });
 
-server.post('/sign-up', async function (request, reply) {
+server.post('/api/authentication/', async (request, reply) => {
+
+	console.log("POST /api/authentication/");
+	console.log(request.body);
 
 	const { email, password, cpassword } = request.body as { email: string; password: string, cpassword: string };
 
@@ -70,7 +146,7 @@ server.post('/sign-up', async function (request, reply) {
 	} catch (err) {
 		return reply.status(400).send({ error: [`An error occurred: ${err}.`], type: "global" });
 	}
-});
+})
 
 function validateEmail(email: string) {
 	const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

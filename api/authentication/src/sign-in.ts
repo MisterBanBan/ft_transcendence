@@ -1,4 +1,4 @@
-import { server } from '../index.js';
+import { server } from './index.js';
 import fs from 'fs';
 import argon2 from 'argon2';
 

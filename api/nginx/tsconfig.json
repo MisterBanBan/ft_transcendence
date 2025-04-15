@@ -3,8 +3,11 @@
     "target": "ES2020",
     "module": "ESNext",
     "outDir": "./dist",
-    "rootDir": "./app",
+    "rootDir": "./src",
     "strict": true,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "moduleResolution": "Bundler"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist", "node_modules"]
 }
