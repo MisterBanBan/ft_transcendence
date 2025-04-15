@@ -1,6 +1,7 @@
 import {server} from './index.js';
 import fs from 'fs';
 import argon2 from 'argon2';
+import * as repl from "node:repl";
 
 interface User {
 	email: string;
@@ -16,6 +17,13 @@ interface Cookie {
 }
 
 server.get('/api/auth/sign-in', async function (request, reply) {
+
+	console.log("GET /api/auth/sign-in");
+
+	const token = request.cookies.token
+	if (token) {
+		reply.redirect("/");
+	}
 
 	const htmlContent = `<!DOCTYPE html>
 	<html lang="en">

@@ -12,6 +12,11 @@ server.get('/api/auth/sign-up', async (request, reply) => {
 
 	console.log("GET /api/auth/sign-up");
 
+	const token = request.cookies.token
+	if (token) {
+		reply.redirect("/");
+	}
+
 	const htmlContent = `
 	<!DOCTYPE html>
 	<html lang="en">
