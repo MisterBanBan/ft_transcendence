@@ -25,6 +25,6 @@ fclean: clean
 
 all: build up
 
-re: down all
+re: clean all
 
 .PHONY: build up down logs clean fclean

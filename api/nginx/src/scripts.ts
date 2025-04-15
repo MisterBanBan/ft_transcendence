@@ -68,7 +68,7 @@ export class PlayerController implements IPlayerController{
     private player: PlayerAnimation;
     private pos: Position = { x: 0, y: 0};
     private stats: PlayerStats = new PlayerStats();
-    private speed: number = 400;
+    private speed: number = 800;
     private jump: number = -700;
     private gravity: number = 1500;
     private lastTimestamp: number = 0;
@@ -77,12 +77,19 @@ export class PlayerController implements IPlayerController{
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
+    private triggerZoneStart: number;
+    private triggerZoneEnd: number;
+    private isInTriggerZone: boolean = false;
 
-    constructor(playerId: string) {
+    constructor(playerId: string, door: string) {
         const playerElement = document.getElementById(playerId);
+        const doorElement = document.getElementById(door);
+        if (!doorElement) throw new Error('door element not found');
         if (!playerElement) throw new Error('Player element not found');
 
         console.log("PlayerController initialisé !");
+        const rect = ele
+        this.triggerZoneStart = doorElement.left;
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
@@ -112,28 +119,40 @@ export class PlayerController implements IPlayerController{
         }
         console.log("PlayerController détruit");
     }
+
+    private worldPosX:number = 0;
+    private cameraX:number = 0;
+
     private gameLoop(timestamp: number) {
         const deltaTime = (timestamp - this.lastTimestamp) / 1000;
         this.lastTimestamp = timestamp;
 
-        this.pos.x += this.stats.velocity.x * deltaTime;
-        this.stats.velocity.y += this.gravity * deltaTime;
-        this.pos.y += this.stats.velocity.y * deltaTime;
+        const viewportWidth = window.innerWidth;
+        const worldWidth = viewportWidth * 3;
+        const cameraDeadZone = viewportWidth / 3;
 
+        this.worldPosX = this.worldPosX || this.pos.x;
+        this.worldPosX += this.stats.velocity.x * deltaTime;
+        //Securiter to max world 
+        this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
+        this.cameraX = this.cameraX || 0;
+
+        if (this.worldPosX < cameraDeadZone) {
+            this.cameraX = 0;
+        } else if (this.worldPosX > worldWidth - cameraDeadZone) {
+            this.cameraX = worldWidth - viewportWidth;
+        } else {
+            this.cameraX = this.worldPosX - cameraDeadZone;
+        }
+        
         const pageContainer = document.getElementById("pageContainer");
         if (pageContainer) {
-            const containerWidth = window.innerWidth * 2; // Largeur totale du conteneur (2 pages)
-            const viewportCenter = window.innerWidth / 2;
-            if (this.pos.x > window.innerWidth / 2) {
-                const maxOffset = containerWidth - window.innerWidth; // Déplacement maximum du conteneur
-            const offset = Math.min(this.pos.x - viewportCenter, maxOffset);
-            pageContainer.style.transform = `translateX(-${offset}px)`;
-        } else {
-            pageContainer.style.transform = 'translateX(0)';
-        }
+            pageContainer.style.transform = `translateX(-${this.cameraX}px)`;
         }
 
-        this.pos.x = Math.max(0, Math.min(window.innerWidth * 2 - this.playerWidth, this.pos.x));
+        this.pos.x = this.worldPosX - this.cameraX;
+        this.stats.velocity.y += this.gravity * deltaTime;
+        this.pos.y += this.stats.velocity.y * deltaTime;
         this.pos.y = Math.max(0, Math.min(window.innerHeight - this.playerHeight, this.pos.y));
 
         const floor = window.innerHeight - this.playerHeight;
@@ -161,6 +180,6 @@ export default PlayerController;
 document.addEventListener('DOMContentLoaded', () => {
     if (!document.getElementById("player")) {
         console.warn("Le joueur n'est pas encore chargé, attente...");
-        setTimeout(() => new PlayerController('player'), 100);
+        setTimeout(() => new PlayerController('player', 'pressE'), 100);
     }
 });

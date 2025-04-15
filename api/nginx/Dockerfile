@@ -6,9 +6,19 @@ WORKDIR /app
 
 COPY package.json .
 COPY tsconfig.json .
+COPY tailwind.config.js .
+COPY postcss.config.js .
 COPY src/ ./src
 
+# Installer les dépendances, y compris Tailwind CSS
+RUN npm uninstall tailwindcss --if-present
+RUN npm install tailwindcss@3.3.3 postcss autoprefixer --save-dev
 RUN npm install
+
+# Créer le fichier CSS Tailwind avant la construction principale
+RUN npx tailwindcss -i ./src/css/input.css -o ./src/css/output.css
+
+# Construire l'application
 RUN npm run build
 
 FROM node:20-alpine
@@ -35,6 +45,7 @@ COPY src/img/ /usr/share/nginx/front/img/
 COPY src/error_page /usr/share/nginx/front/error_page/
 COPY src/index.html /usr/share/nginx/front/
 
+COPY --from=builder /app/src/css/ /usr/share/nginx/front/css/
 COPY --from=builder /app/dist /usr/share/nginx/front/public/
 COPY package.json .
 
