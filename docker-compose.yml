@@ -59,11 +59,11 @@ services:
       - ft_transcendence
     restart: on-failure
 
-  authentication:
-    image: authentication
-    container_name: authentication
+  auth:
+    image: auth
+    container_name: auth
     build:
-      context: api/authentication
+      context: api/auth
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
       interval: 10s
@@ -90,7 +90,7 @@ services:
         condition: service_healthy
       game:
         condition: service_healthy
-      authentication:
+      auth:
         condition: service_healthy
     networks:
       - ft_transcendence
@@ -103,7 +103,7 @@ networks:
 #volumes:
 #  nginx-data:
 #    driver: local
-##  authentication-data:
+##  auth-data:
 ##    driver: local
 ##  matchmaking-data:
 ##    driver: local

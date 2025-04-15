@@ -29,7 +29,7 @@ async function submitForm() {
 	const auth = { email, password, cpassword } as Auth;
 
     try {
-        const response = await fetch("https://localhost:8443/authentication/", {
+        const response = await fetch("https://localhost:8443/auth/", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(auth)
