@@ -1,6 +1,6 @@
 import {showError} from "./show_errors.js";
 
-interface payload {
+interface Payload {
     email: string;
     password: string;
 }
@@ -24,17 +24,16 @@ async function submitForm() {
 
     const email: string = emailInput.value;
     const password: string = passwordInput.value;
-    const body: payload = {email, password};
+    const body: Payload = {email, password};
 
     try {
-        const response = await fetch("http://localhost:3000/sign-in", {
+        const response = await fetch("https://localhost:8443/auth/sign-in", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify(body),
         });
 
-        const jsonResponse: payload = await response.json();
-        await showError(jsonResponse);
+        await showError(response);
 
     } catch (err) {
         console.error("Erreur réseau", err);

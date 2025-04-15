@@ -8,9 +8,9 @@ interface User {
 	token: string;
 }
 
-server.get('/api/auth/', async (request, reply) => {
+server.get('/api/auth/sign-up', async (request, reply) => {
 
-	console.log("GET /api/auth/");
+	console.log("GET /api/auth/sign-up");
 
 	const htmlContent = `
 	<!DOCTYPE html>
@@ -86,13 +86,12 @@ server.get('/api/auth/', async (request, reply) => {
 	</html>
 	`;
 
-	// Répondre avec le contenu HTML
 	reply.type('text/html').send(htmlContent);
 });
 
-server.post('/api/auth/', async (request, reply) => {
+server.post('/api/auth/sign-up', async (request, reply) => {
 
-	console.log("POST /api/auth/");
+	console.log("POST /api/auth/sign-up");
 	console.log(request.body);
 
 	const { email, password, cpassword } = request.body as { email: string; password: string, cpassword: string };

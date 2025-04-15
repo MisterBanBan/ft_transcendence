@@ -11,7 +11,7 @@ if (submitButton) {
     console.error("Submit button not found!");
 }
 
-interface Auth {
+interface Payload {
 	email: string;
 	password: string;
 	cpassword: string;
@@ -26,10 +26,10 @@ async function submitForm() {
 	const email = emailInput.value;
 	const password = passwordInput.value;
 	const cpassword = cpasswordInput.value;
-	const auth = { email, password, cpassword } as Auth;
+	const auth = { email, password, cpassword } as Payload;
 
     try {
-        const response = await fetch("https://localhost:8443/auth/", {
+        const response = await fetch("https://localhost:8443/auth/sign-up", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(auth)

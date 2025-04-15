@@ -1,4 +1,4 @@
-import { server } from './index.js';
+import {server} from './index.js';
 import fs from 'fs';
 import argon2 from 'argon2';
 
@@ -8,18 +8,98 @@ interface User {
 	token: string;
 }
 
-server.get('/sign-in', async function (request, reply) {
+server.get('/api/auth/sign-in', async function (request, reply) {
 
-	const token = request.cookies.token;
-	if (!token)
-		return reply.sendFile('sign-in.html');
-	else
-		return reply.send("You are already authentificated.");
+	console.log("GET /api/auth/sign-in");
+
+	const htmlContent = `<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Sign-up</title>
+		<style>
+
+			body {
+				background-color: rgb(70, 70, 70);
+				font-family: Arial, Helvetica, sans-serif;
+			}
+			
+			label {
+				color: white;
+			}
+	
+			form {
+				display: flex;
+				flex-direction: column;
+				width: 300px;
+				margin: 50px auto;
+				padding: 20px;
+				border: 1px solid #303030;
+				border-radius: 8px;
+				background: #3b3b3b;
+			}
+	
+			label, input {
+				margin-bottom: 10px;
+			}
+	
+			.error-message {
+				color: red;
+				font-size: 15px;
+				padding-bottom: 5px;
+			}
+	
+			input[type="text"],
+			input[type="password"] {
+				padding: 8px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+			}
+	
+			input[type="button"] {
+				background-color: #007BFF;
+				color: white;
+				border: none;
+				padding: 10px;
+				cursor: pointer;
+				border-radius: 4px;
+			}
+	
+			input[type="submit"]:hover {
+				background-color: #0056b3;
+			}
+		</style>
+	</head>
+
+	<body>
+		<form action="" method="post">
+		
+		<div class="error-message" id="error-global"></div>
+		
+		<label for="email">Email:</label>
+		<div class="error-message" id="error-email"></div>
+		<input type="text" name="email" id="email">
+		
+		<label for="password">Password:</label>
+		<div class="error-message" id="error-password"></div>
+		<input type="password" name="password" id="password">
+		
+		<input type="button" id="submit" value="Sign in">
+		</form>
+		
+		<script type="module" src="/public/auth/sign-in.js"></script>
+	</body>
+
+	</html>`
+
+	reply.type('text/html').send(htmlContent);
 });
 
-server.post('/sign-in', async function (request, reply) {
+server.post('/api/auth/sign-in', async function (request, reply) {
 
-	const { email, password } = request.body as { email: string; password: string };
+	console.log("POST /api/auth/sign-in");
+	const {email, password} = request.body as { email: string; password: string };
 
 	try {
 
@@ -28,9 +108,8 @@ server.post('/sign-in', async function (request, reply) {
 			console.log("Read file");
 			const data = fs.readFileSync("users.json", "utf-8");
 			if (data) users = JSON.parse(data);
-		}
-		else
-			return reply.status(400).send({ error: ["No users.json file found"], type: "global"});
+		} else
+			return reply.status(400).send({error: ["No users.json file found"], type: "global"});
 
 		let token;
 
@@ -38,7 +117,7 @@ server.post('/sign-in', async function (request, reply) {
 		if (user)
 			token = user.token;
 		else {
-			return reply.status(400).send({ error: ["Invalid email."], type: "email" });
+			return reply.status(400).send({error: ["Invalid email."], type: "email"});
 		}
 
 		if (await argon2.verify(user.hash, password)) {
@@ -50,9 +129,9 @@ server.post('/sign-in', async function (request, reply) {
 			}).status(200).redirect('/html' +
 				'');
 		} else
-			return reply.status(400).send({ error: ["Invalid password."], type: "password" });
+			return reply.status(400).send({error: ["Invalid password."], type: "password"});
 	} catch (err) {
-		return reply.status(400).send({ error: [err], type: "global" });
+		return reply.status(400).send({error: [err], type: "global"});
 	}
 
 });
