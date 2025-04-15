@@ -8,16 +8,21 @@ interface User {
 	token: string;
 }
 
-server.get('/api/auth/sign-in', async function (request, reply) {
+interface Cookie {
+	path: string,
+	httpOnly: boolean,
+	secure: boolean,
+	maxAge: number
+}
 
-	console.log("GET /api/auth/sign-in");
+server.get('/api/auth/sign-in', async function (request, reply) {
 
 	const htmlContent = `<!DOCTYPE html>
 	<html lang="en">
 	<head>
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Sign-up</title>
+		<title>Sign-in</title>
 		<style>
 
 			body {
@@ -105,7 +110,6 @@ server.post('/api/auth/sign-in', async function (request, reply) {
 
 		let users: User[] = [];
 		if (fs.existsSync("users.json")) {
-			console.log("Read file");
 			const data = fs.readFileSync("users.json", "utf-8");
 			if (data) users = JSON.parse(data);
 		} else
@@ -120,18 +124,18 @@ server.post('/api/auth/sign-in', async function (request, reply) {
 			return reply.status(400).send({error: ["Invalid email."], type: "email"});
 		}
 
+		console.log("Find user:", user);
+
+		const cookie = { path: '/',
+			httpOnly: true,
+			secure: false,
+			maxAge: 3600 } as Cookie;
+
 		if (await argon2.verify(user.hash, password)) {
-			return reply.setCookie('token', token, {
-				path: '/',
-				httpOnly: true,
-				secure: false,
-				maxAge: 3600
-			}).status(200).redirect('/html' +
-				'');
+			return reply.setCookie('token', token, cookie).status(200).send({ error: [`Successfully registered`], type: "global" });
 		} else
 			return reply.status(400).send({error: ["Invalid password."], type: "password"});
 	} catch (err) {
 		return reply.status(400).send({error: [err], type: "global"});
 	}
-
 });

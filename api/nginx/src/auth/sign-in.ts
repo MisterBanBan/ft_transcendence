@@ -1,10 +1,5 @@
 import {showError} from "./show_errors.js";
 
-interface Payload {
-    email: string;
-    password: string;
-}
-
 const submitButton = document.getElementById("submit");
 
 if (submitButton) {
@@ -16,6 +11,11 @@ if (submitButton) {
     console.error("Submit button not found!");
 }
 
+interface Payload {
+    email: string;
+    password: string;
+}
+
 async function submitForm() {
 
     const emailInput = document.getElementById("email") as HTMLInputElement;
@@ -24,7 +24,7 @@ async function submitForm() {
 
     const email: string = emailInput.value;
     const password: string = passwordInput.value;
-    const body: Payload = {email, password};
+    const body = {email, password} as Payload;
 
     try {
         const response = await fetch("https://localhost:8443/auth/sign-in", {
