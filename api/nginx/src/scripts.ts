@@ -77,19 +77,26 @@ export class PlayerController implements IPlayerController{
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
-    private triggerZoneStart: number;
-    private triggerZoneEnd: number;
+    private doorWorldPage: number = 2.5 * window.innerWidth;
+    private doorWidth = 200;
+    private doorElement: HTMLElement;
+    //private triggerZoneStart: number;
+    //private triggerZoneEnd: number;
     private isInTriggerZone: boolean = false;
+    private animationPlaying = false;
 
     constructor(playerId: string, door: string) {
         const playerElement = document.getElementById(playerId);
         const doorElement = document.getElementById(door);
-        if (!doorElement) throw new Error('door element not found');
+        
         if (!playerElement) throw new Error('Player element not found');
+        if (!doorElement) throw new Error('door element not found');
+        this.doorElement = doorElement;
 
         console.log("PlayerController initialisé !");
-        const rect = ele
-        this.triggerZoneStart = doorElement.left;
+        //const rect = doorElement.getBoundingClientRect();
+        //this.triggerZoneStart = rect.left;
+        //this.triggerZoneEnd = rect.right;
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
@@ -99,6 +106,10 @@ export class PlayerController implements IPlayerController{
 
         window.addEventListener('keydown', this.boundKeyDownHandler);
         window.addEventListener('keyup', this.boundKeyUpHandler);
+        window.addEventListener('keydown', (e) => {
+            if(e.key.toLowerCase() === 'e' && this.isInTriggerZone && !this.)
+        })
+
 
 
         this.updatePosition();
@@ -177,9 +188,3 @@ export class PlayerController implements IPlayerController{
 // Exporter correctement la classe PlayerController
 export default PlayerController;
 
-document.addEventListener('DOMContentLoaded', () => {
-    if (!document.getElementById("player")) {
-        console.warn("Le joueur n'est pas encore chargé, attente...");
-        setTimeout(() => new PlayerController('player', 'pressE'), 100);
-    }
-});

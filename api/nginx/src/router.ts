@@ -74,20 +74,21 @@ class Router {
     
             // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
             if (window.location.pathname === "/") {
-                this.checkForPlayerElement();
+                this.checkForElements();
             }
         } else {
             this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
         }
     }
 
-    private checkForPlayerElement() {
+    private checkForElements() {
         const playerElement = document.getElementById("player");
-        if (playerElement) {
+        const pressEElement = document.getElementById("pressE");
+        if (playerElement && pressEElement) {
             this.loadPlayerScripts();
         }
         else {
-            setTimeout(() => this.checkForPlayerElement(), 50);
+            setTimeout(() => this.checkForElements(), 50);
         }
     }
     
