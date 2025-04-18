@@ -1,6 +1,5 @@
 import fastify from 'fastify';
 import {loadModules} from "./registers.js";
-import {text} from "node:stream/consumers";
 
 export const server = fastify();
 
