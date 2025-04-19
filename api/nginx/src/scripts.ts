@@ -77,26 +77,23 @@ export class PlayerController implements IPlayerController{
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
-    private doorWorldPage: number = 2.5 * window.innerWidth;
-    private doorWidth = 200;
-    private doorElement: HTMLElement;
-    //private triggerZoneStart: number;
-    //private triggerZoneEnd: number;
+    
+    private doorWorldPage: number = 2 * window.innerWidth + 400;
+    private doorWidth = 256;
     private isInTriggerZone: boolean = false;
     private animationPlaying = false;
+    private isDoorOpen: boolean = false;
 
     constructor(playerId: string, door: string) {
         const playerElement = document.getElementById(playerId);
-        const doorElement = document.getElementById(door);
+        
         
         if (!playerElement) throw new Error('Player element not found');
-        if (!doorElement) throw new Error('door element not found');
-        this.doorElement = doorElement;
+        //this.doorElement = doorElement;
+
 
         console.log("PlayerController initialisé !");
-        //const rect = doorElement.getBoundingClientRect();
-        //this.triggerZoneStart = rect.left;
-        //this.triggerZoneEnd = rect.right;
+        
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
@@ -107,15 +104,19 @@ export class PlayerController implements IPlayerController{
         window.addEventListener('keydown', this.boundKeyDownHandler);
         window.addEventListener('keyup', this.boundKeyUpHandler);
         window.addEventListener('keydown', (e) => {
-            if(e.key.toLowerCase() === 'e' && this.isInTriggerZone && !this.)
+            //if(e.key.toLowerCase() === 'e' && this.isInTriggerZone && !this.animationPlaying) {
+              //  this.startDoorAnimation();
+            //}
         })
-
-
 
         this.updatePosition();
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
 
     }
+    /*private satrtDoorAnimation() {
+        this.animationPlaying = true;
+        this. 
+    }*/
     public destroy(): void {
         // Arrêter l'animation du joueur
         this.player.stopAnimation();
@@ -139,15 +140,46 @@ export class PlayerController implements IPlayerController{
         this.lastTimestamp = timestamp;
 
         const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
         const worldWidth = viewportWidth * 3;
         const cameraDeadZone = viewportWidth / 3;
+        this.doorWorldPage = 2 * viewportWidth + 400;
 
         this.worldPosX = this.worldPosX || this.pos.x;
         this.worldPosX += this.stats.velocity.x * deltaTime;
         //Securiter to max world 
         this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
         this.cameraX = this.cameraX || 0;
-
+        const playerCenter = this.worldPosX + this.playerWidth/2;
+        const inZone = (playerCenter >= this.doorWorldPage && playerCenter <= this.doorWorldPage + this.doorWidth);
+        //console.log('player %d triggerzone %d', this.worldPosX, this.triggerZoneStart);
+        const doorHidden = document.getElementById("pressE");
+        if (doorHidden){
+            if (inZone && !this.isInTriggerZone) {
+                this.isInTriggerZone = true;
+                doorHidden.classList.remove('hidden');
+            } else if (!inZone && this.isInTriggerZone) {
+                this.isInTriggerZone = false;
+                doorHidden.classList.add('hidden');
+            }
+        }
+        if (this.isInTriggerZone && !this.isDoorOpen) {
+            this.isDoorOpen = true;
+            const doorContainer = document.getElementById("videoDoor");
+            if (doorContainer) {
+                doorContainer.innerHTML = `<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+                <source src="/img/doorOpen.mp4" type="video/mp4">
+              </video>`;
+            }
+        } else if (!this.isInTriggerZone && this.isDoorOpen) {
+            this.isDoorOpen = false;
+            const doorContainer = document.getElementById("videoDoor");
+            if (doorContainer) {
+                doorContainer.innerHTML = `<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+                <source src="/img/door.mp4" type="video/mp4">
+              </video>`;
+            }
+        }
         if (this.worldPosX < cameraDeadZone) {
             this.cameraX = 0;
         } else if (this.worldPosX > worldWidth - cameraDeadZone) {
@@ -158,15 +190,18 @@ export class PlayerController implements IPlayerController{
         
         const pageContainer = document.getElementById("pageContainer");
         if (pageContainer) {
-            pageContainer.style.transform = `translateX(-${this.cameraX}px)`;
+            const maxCameraX = worldWidth - viewportWidth;
+            this.cameraX = Math.max(0, Math.min(this.cameraX, maxCameraX));
+            const clampedCameraX = Math.max(0, Math.min(this.cameraX, maxCameraX));
+            pageContainer.style.transform = `translateX(-${clampedCameraX}px)`;
         }
 
         this.pos.x = this.worldPosX - this.cameraX;
         this.stats.velocity.y += this.gravity * deltaTime;
         this.pos.y += this.stats.velocity.y * deltaTime;
-        this.pos.y = Math.max(0, Math.min(window.innerHeight - this.playerHeight, this.pos.y));
+        this.pos.y = Math.max(0, Math.min(viewportHeight - this.playerHeight, this.pos.y));
 
-        const floor = window.innerHeight - this.playerHeight;
+        const floor = viewportHeight - this.playerHeight;
         if (this.pos.y >= floor) {
             this.stats.velocity.y = 0;
             this.pos.y = floor;

@@ -111,25 +111,35 @@ const routes: Route[] = [
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
             return `
-            <div class="absolute inset-0 overflow-hidden">
-                <div id="pageContainer" class="flex w-[300vw] h-full">
-                    <div class="flex w-screen h-full bg-[url('/img/fond_outside.jpg')] bg-cover bg-no-repeat bg-center"></div>
-                    <div class="flex w-screen h-full">
-                        <video autoplay loop muted class="w-full h-full object-cover">
-                            <source src="/img/quit.mp4" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="flex w-screen h-full">
-                        <video autoplay loop muted class="absolute w-64 h-64 bottom-0 left-400 object-cover">
-                            <source src="/img/door.mp4" type="video/mp4">
-                        </video>
-                    </div>
+            <div class="fixed inset-0 overflow-hidden">
+              <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
+                <div class="w-screen h-screen relative">
+                  <div class="absolute inset-0 w-full h-full bg-[url('/img/fond_outside.jpg')] bg-cover bg-center bg-no-repeat"></div>
                 </div>
-                <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10"></div>
-                <div id="pressE" class="hidden" ><video autoplay loop muted class="absolute w-64 h-64 bottom-0 left-400 object-cover">
-                            <source src="/img/pressE.mp4" type="video/mp4">
-                        </video></div>
+                <div class="w-screen h-screen relative">
+                  <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black">
+                    <source src="/img/quit.mp4" type="video/mp4">
+                    .
+                  </video>
+                </div>
+                <div id="videoDoor" class="w-screen h-screen relative">
+                  <video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+                    <source src="/img/door.mp4" type="video/mp4">
+                  </video>
+                </div>
+              </div>
+              <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10"></div>
+                <div id="pressE" class="hidden absolute inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+                <video autoplay loop muted class="w-12 h-12">
+                    <source src="/img/pressE.mp4" type="video/mp4">
+                </video>
+                </div>
+                
+
             </div>`;
+            
+
+            
         }        
         
     },
@@ -147,12 +157,13 @@ const routes: Route[] = [
         title: "Tv",
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
-            return `<div class="fixed inset-0 w-full h-screen -z-10">
-            <video autoplay loop muted class="w-full h-full object-cover">
-                <source src="./img/quit.mp4" type="video/mp4">
-                Votre navigateur ne supporte pas la vidéo.
-            </video>
-            </div>
+            return `<div class="w-screen h-screen relative">
+                  <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black">
+                    <source src="/img/quit.mp4" type="video/mp4">
+                  </video>
+                </div>
+
+
             `;
         }
     },
