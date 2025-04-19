@@ -16,7 +16,7 @@ class PlayerStats {
     rightKey: boolean = false;
 }
 
-function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, player: PlayerAnimation, e: KeyboardEvent) {
+function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, player: PlayerAnimation, isInTriggerZone: boolean, isDoorOpen: boolean, e: KeyboardEvent) {
     switch(e.key.toLowerCase()) {
         case ' ':
             if (!stats.isJumping) {
@@ -64,6 +64,10 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: Playe
     }
 }
 
+function KeyEPress() {
+    
+}
+
 export class PlayerController implements IPlayerController{
     private player: PlayerAnimation;
     private pos: Position = { x: 0, y: 0};
@@ -76,6 +80,7 @@ export class PlayerController implements IPlayerController{
     private playerHeight: number;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
+    //private boundKeyEHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
     
     private doorWorldPage: number = 2 * window.innerWidth + 400;
@@ -89,7 +94,6 @@ export class PlayerController implements IPlayerController{
         
         
         if (!playerElement) throw new Error('Player element not found');
-        //this.doorElement = doorElement;
 
 
         console.log("PlayerController initialisé !");
@@ -98,16 +102,26 @@ export class PlayerController implements IPlayerController{
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
-        this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, this.player, e);
-        this.boundKeyUpHandler = (e) => handleKeyReleasePlayer(this.stats, this.speed, this.player, e);
+        this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, this.player, this.isDoorOpen, this.isInTriggerZone, e);
+        this.boundKeyUpHandler = (e) => {
+            handleKeyReleasePlayer(this.stats, this.speed, this.player, e);
+            if (e.key.toLowerCase() === 'e') {
+                if (this.isInTriggerZone && !this.isDoorOpen) {
+                    this.isDoorOpen = true;
+                    const doorContainer = document.getElementById("videoDoor");
+                    if (doorContainer) {
+                        doorContainer.innerHTML = `<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+                        <source src="/img/doorOpen.mp4" type="video/mp4">
+                      </video>`;
+                        window.history.pushState(null, "", "/Tv");
+                        window.dispatchEvent(new PopStateEvent("popstate"));
+                    }
+                }
+            }
+        };
 
         window.addEventListener('keydown', this.boundKeyDownHandler);
         window.addEventListener('keyup', this.boundKeyUpHandler);
-        window.addEventListener('keydown', (e) => {
-            //if(e.key.toLowerCase() === 'e' && this.isInTriggerZone && !this.animationPlaying) {
-              //  this.startDoorAnimation();
-            //}
-        })
 
         this.updatePosition();
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
@@ -163,23 +177,7 @@ export class PlayerController implements IPlayerController{
                 doorHidden.classList.add('hidden');
             }
         }
-        if (this.isInTriggerZone && !this.isDoorOpen) {
-            this.isDoorOpen = true;
-            const doorContainer = document.getElementById("videoDoor");
-            if (doorContainer) {
-                doorContainer.innerHTML = `<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-                <source src="/img/doorOpen.mp4" type="video/mp4">
-              </video>`;
-            }
-        } else if (!this.isInTriggerZone && this.isDoorOpen) {
-            this.isDoorOpen = false;
-            const doorContainer = document.getElementById("videoDoor");
-            if (doorContainer) {
-                doorContainer.innerHTML = `<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-                <source src="/img/door.mp4" type="video/mp4">
-              </video>`;
-            }
-        }
+        
         if (this.worldPosX < cameraDeadZone) {
             this.cameraX = 0;
         } else if (this.worldPosX > worldWidth - cameraDeadZone) {
