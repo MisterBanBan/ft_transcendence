@@ -7,6 +7,11 @@ module.exports = {
     ],
     theme: {
       extend: {
+        scale: {
+          200: '2',
+          300: '3',
+          400: '4',
+        },
         animation: {
           'spin-slow': 'spin 3s linear infinite',
           'wiggle': 'wiggle 1s ease-in-out infinite',

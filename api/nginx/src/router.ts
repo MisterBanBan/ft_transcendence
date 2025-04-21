@@ -1,5 +1,25 @@
 import { PlayerAnimation } from "./player_animation.js";
 import PlayerController from "./scripts.js";
+import { Zoom } from './zoom.js'
+
+function initZoom() {
+    if (window.location.pathname === "/Tv") {
+        const zoomElement = document.getElementById("zoom");
+        if (zoomElement) {
+            new Zoom('zoom');
+        }
+    }
+}
+
+function startGame() {
+    if (window.location.pathname === "/Tv") {
+        const zoomElement = document.getElementsByClassName('.scale-300');
+        if (zoomElement) {
+            window.history.pushState(null, "", "/Game");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+    }
+}
 
 /*Permet d'eviter que le player tourne en fond sur d'autres page*/
 interface IPlayerController {
@@ -71,7 +91,8 @@ class Router {
                 }
             }
             this.appDiv.innerHTML = content;
-    
+            initZoom();
+            startGame();
             // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
             if (window.location.pathname === "/") {
                 this.checkForElements();
@@ -144,11 +165,15 @@ const routes: Route[] = [
         
     },
     {
-        path: "/about",
-        title: "About",
+        path: "/game",
+        title: "Game",
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
-            return `
+            return `<div class="w-screen h-screen relative">
+                        <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
+            <source src="/img/new_game.mp4" type="video/mp4">
+                </video>
+                </div>
             `;
         }
     },
@@ -157,13 +182,11 @@ const routes: Route[] = [
         title: "Tv",
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
-            return `<div class="w-screen h-screen relative">
-                  <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black">
-                    <source src="/img/quit.mp4" type="video/mp4">
-                  </video>
+            return `<div id="zoom" class="w-screen h-screen relative">
+                        <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
+            <source src="/img/Tv.mp4" type="video/mp4">
+                </video>
                 </div>
-
-
             `;
         }
     },
@@ -174,6 +197,9 @@ const routes: Route[] = [
             `
     }
 ];
+
+window.addEventListener('popstate', initZoom);
+document.addEventListener('DOMContentLoaded', initZoom);
 
 document.addEventListener("DOMContentLoaded", () => {
     const router = new Router(routes);
