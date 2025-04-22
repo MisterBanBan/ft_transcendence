@@ -1,22 +1,13 @@
 import { PlayerAnimation } from "./player_animation.js";
 import PlayerController from "./scripts.js";
 import { Zoom } from './zoom.js'
+import { menu } from './menu'
 
 function initZoom() {
     if (window.location.pathname === "/Tv") {
         const zoomElement = document.getElementById("zoom");
         if (zoomElement) {
             new Zoom('zoom');
-        }
-    }
-}
-
-function startGame() {
-    if (window.location.pathname === "/Tv") {
-        const zoomElement = document.getElementsByClassName('.scale-300');
-        if (zoomElement) {
-            window.history.pushState(null, "", "/Game");
-            window.dispatchEvent(new PopStateEvent("popstate"));
         }
     }
 }
@@ -92,10 +83,12 @@ class Router {
             }
             this.appDiv.innerHTML = content;
             initZoom();
-            startGame();
             // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
             if (window.location.pathname === "/") {
                 this.checkForElements();
+            }
+            if (window.location.pathname === "/game") {
+                new menu("menu");
             }
         } else {
             this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
@@ -171,7 +164,7 @@ const routes: Route[] = [
             await new Promise(resolve => setTimeout(resolve, 300));
             return `<div class="w-screen h-screen relative">
                         <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-            <source src="/img/new_game.mp4" type="video/mp4">
+            <source id="menu" src="/img/new_game.mp4" type="video/mp4">
                 </video>
                 </div>
             `;

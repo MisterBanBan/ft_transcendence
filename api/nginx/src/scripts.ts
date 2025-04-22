@@ -25,7 +25,7 @@ function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, p
             }
             break;
         case 'arrowleft':
-        case 'q':
+        case 'a':
             if (!stats.leftKey) {
                 stats.leftKey = true;
                 stats.velocity.x -= speed;
@@ -46,7 +46,7 @@ function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, p
 function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: PlayerAnimation, e: KeyboardEvent) {
     switch (e.key.toLowerCase()) {
         case 'arrowleft':
-        case 'q':
+        case 'a':
             if (stats.leftKey) {
                 stats.velocity.x += speed;
                 stats.leftKey = false;
