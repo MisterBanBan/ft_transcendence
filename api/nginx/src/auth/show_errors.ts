@@ -1,10 +1,10 @@
-export async function showError(response: any) {
+export async function showError(response: any, extension: string) {
     document.querySelectorAll(".error-message").forEach(errorSpan => errorSpan.innerHTML = "");
 
     console.log(response);
     const data = await response.json();
 
-    const errorSpan: HTMLElement | null = document.getElementById("error-" + data.type);
+    const errorSpan: HTMLElement | null = document.getElementById(`error-${data.type}-sign${extension}`);
 
     if (errorSpan == null) {
         // TODO error

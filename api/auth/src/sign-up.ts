@@ -70,20 +70,20 @@ server.get('/api/auth/sign-up', async (request, reply) => {
 	</head>
 	<body>
 	<form id="signup-form" action="" method="post">
-		<div class="error-message" id="error-global"></div>
+		<div class="error-message" id="error-global-signup"></div>
 
 		<label for="email">Email:</label>
-		<div class="error-message" id="error-email"></div>
-		<input type="text" name="email" id="email">
+		<div class="error-message" id="error-email-signup"></div>
+		<input type="text" name="email" id="email-signup">
 
 		<label for="password">Password:</label>
-		<div class="error-message" id="error-password"></div>
-		<input type="password" name="password" id="password">
+		<div class="error-message" id="error-password-signup"></div>
+		<input type="password" name="password" id="password-signup">
 
 		<label for="cpassword">Confirm password:</label>
 		<input type="password" name="cpassword" id="cpassword">
 
-		<input type="button" id="submit" value="Sign up">
+		<input type="button" id="submit-signup" value="Sign up">
 	</form>
 
 	<script type="module" src="/public/auth/sign-up.js"></script>

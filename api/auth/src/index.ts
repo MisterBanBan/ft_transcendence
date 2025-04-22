@@ -81,40 +81,40 @@ server.get('/api/auth/', async (request, reply) => {
 
 	<body>
 		<div class="container">
-		<!-- Sign-in Form -->
-		<div class="form-container">
-		<h2 style="color:white;">Sign In</h2>
-		<div class="error-message" id="error-global-signin"></div>
-
-		<label for="email">Email:</label>
-		<div class="error-message" id="error-email-signin"></div>
-		<input type="text" name="email" id="email-signin">
-
-		<label for="password">Password:</label>
-		<div class="error-message" id="error-password-signin"></div>
-		<input type="password" name="password" id="password-signin">
-
-		<input type="button" id="submit-signin" value="Sign In">
-		</div>
-
-		<!-- Sign-up Form -->
-		<div class="form-container">
-		<h2 style="color:white;">Sign Up</h2>
-		<div class="error-message" id="error-global-signup"></div>
-
-		<label for="email">Email:</label>
-		<div class="error-message" id="error-email-signup"></div>
-		<input type="text" name="email" id="email-signup">
-
-		<label for="password">Password:</label>
-		<div class="error-message" id="error-password-signup"></div>
-		<input type="password" name="password" id="password-signup">
-
-		<label for="cpassword">Confirm Password:</label>
-		<input type="password" name="cpassword" id="cpassword">
-
-		<input type="button" id="submit-signup" value="Sign Up">
-		</div>
+			<!-- Sign-in Form -->
+			<div class="form-container">
+				<h2 style="color:white;">Sign In</h2>
+				<div class="error-message" id="error-global-signin"></div>
+		
+				<label for="email">Email:</label>
+				<div class="error-message" id="error-email-signin"></div>
+				<input type="text" name="email" id="email-signin">
+		
+				<label for="password">Password:</label>
+				<div class="error-message" id="error-password-signin"></div>
+				<input type="password" name="password" id="password-signin">
+		
+				<input type="button" id="submit-signin" value="Sign In">
+			</div>
+	
+			<!-- Sign-up Form -->
+			<div class="form-container">
+				<h2 style="color:white;">Sign Up</h2>
+				<div class="error-message" id="error-global-signup"></div>
+		
+				<label for="email">Email:</label>
+				<div class="error-message" id="error-email-signup"></div>
+				<input type="text" name="email" id="email-signup">
+		
+				<label for="password">Password:</label>
+				<div class="error-message" id="error-password-signup"></div>
+				<input type="password" name="password" id="password-signup">
+		
+				<label for="cpassword">Confirm Password:</label>
+				<input type="password" name="cpassword" id="cpassword">
+		
+				<input type="button" id="submit-signup" value="Sign Up">
+			</div>
 		</div>
 
 		<script type="module" src="/public/auth/sign-in.js"></script>

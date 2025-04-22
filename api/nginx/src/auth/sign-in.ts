@@ -1,6 +1,6 @@
 import {showError} from "./show_errors.js";
 
-const submitButton = document.getElementById("submit");
+const submitButton = document.getElementById("submit-signin");
 
 if (submitButton) {
     submitButton.addEventListener("click", async (event) => {
@@ -18,9 +18,9 @@ interface Payload {
 
 async function submitForm() {
 
-    const emailInput = document.getElementById("email") as HTMLInputElement;
-    const passwordInput = document.getElementById("password") as HTMLInputElement;
-    let errorSpan = document.getElementById("error-global") as HTMLTextAreaElement;
+    const emailInput = document.getElementById("email-signin") as HTMLInputElement;
+    const passwordInput = document.getElementById("password-signin") as HTMLInputElement;
+    let errorSpan = document.getElementById("error-global-signin") as HTMLTextAreaElement;
 
     const email: string = emailInput.value;
     const password: string = passwordInput.value;
@@ -33,7 +33,7 @@ async function submitForm() {
             body: JSON.stringify(body),
         });
 
-        await showError(response);
+        await showError(response, "in");
 
     } catch (err) {
         console.error("Erreur réseau", err);
