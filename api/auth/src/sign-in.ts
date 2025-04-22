@@ -1,7 +1,6 @@
 import {server} from './index.js';
 import fs from 'fs';
 import argon2 from 'argon2';
-import * as repl from "node:repl";
 
 interface User {
 	email: string;
