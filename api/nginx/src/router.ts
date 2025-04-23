@@ -1,21 +1,4 @@
-import { PlayerAnimation } from "./player_animation.js";
-import PlayerController from "./scripts.js";
-import { Zoom } from './zoom.js'
-import { menu } from './menu.js'
-
-function initZoom() {
-    if (window.location.pathname === "/Tv") {
-        const zoomElement = document.getElementById("zoom");
-        if (zoomElement) {
-            new Zoom('zoom');
-        }
-    }
-}
-
-/*Permet d'eviter que le player tourne en fond sur d'autres page*/
-interface IPlayerController {
-    destroy(): void;
-}
+import { introduction } from './intro.js'
 
 interface Route {
     path: string;
@@ -28,11 +11,11 @@ class Router {
     private routes: Route[];
     /*utilisation des elements html*/
     private appDiv: HTMLElement;
-    private activePlayerController: IPlayerController | null = null;
-
+    
     constructor(routes: Route[]) {
         this.routes = routes;
         /*recupere l'element app dans index.html*/
+        console.log('dsadas');
         const app = document.getElementById("app");
         if (!app)
             throw new Error("Element not found");
@@ -41,7 +24,7 @@ class Router {
         /*Cette ligne ajoute un écouteur pour l'événement popstate sur l'objet window. L'événement popstate est déclenché lorsque l'utilisateur utilise les boutons Back ou Forward du navigateur. Lorsque cet événement se produit, la méthode updatePage() est appelée pour mettre à jour le contenu affiché en fonction de l'URL courante, assurant ainsi que l'application réagit correctement aux changements de l'historique sans recharger la page. */
         window.addEventListener("popstate", () => this.updatePage());
     }
-    /*Intercepte les clics*/
+        /*Intercepte les clics*/
     private bindLinks(): void {
         document.body.addEventListener("click", (event) => {
             /*seul les liens avec data-link <a href="/home" data-link>Accueil</a>  closest permet de remonter a l'element de datalink*/
@@ -60,12 +43,7 @@ class Router {
         history.pushState(null, "",url);
         this.updatePage();
     }
-    
     public async updatePage(): Promise<void> {
-        if (this.activePlayerController) {
-            this.activePlayerController.destroy();
-            this.activePlayerController = null;
-        }
 
         const path = window.location.pathname;
         const route = this.routes.find(r => r.path === path) || 
@@ -82,42 +60,13 @@ class Router {
                 }
             }
             this.appDiv.innerHTML = content;
-            initZoom();
-            // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
-            if (window.location.pathname === "/") {
-                this.checkForElements();
-            }
-            if (window.location.pathname === "/game") {
-                new menu("menu");
-            }
         } else {
             this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
         }
     }
-
-    private checkForElements() {
-        const playerElement = document.getElementById("player");
-        const pressEElement = document.getElementById("pressE");
-        if (playerElement && pressEElement) {
-            this.loadPlayerScripts();
-        }
-        else {
-            setTimeout(() => this.checkForElements(), 50);
-        }
-    }
-    
-    private async loadPlayerScripts() {
-        try {
-            this.activePlayerController = new PlayerController('player', 'pressE');
-        } catch (error) {
-            console.error("Erreur lors du chargement des scripts:", error);
-        }
-    }
-
-    
-    
-
 }
+
+
 const routes: Route[] = [
     {
         path: "/",
@@ -148,6 +97,7 @@ const routes: Route[] = [
                     <source src="/img/pressE.mp4" type="video/mp4">
                 </video>
                 </div>
+                <script type="module" src="/public/intro.js"></script>
                 
 
             </div>`;
@@ -191,10 +141,15 @@ const routes: Route[] = [
     }
 ];
 
-window.addEventListener('popstate', initZoom);
-document.addEventListener('DOMContentLoaded', initZoom);
 
 document.addEventListener("DOMContentLoaded", () => {
-    const router = new Router(routes);
-    router.updatePage();
+    try {
+        const router = new Router(routes);
+        router.updatePage();
+    } catch (error) {
+        console.error(error);
+    }
+
+
+
 })
