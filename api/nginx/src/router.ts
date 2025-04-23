@@ -1,7 +1,7 @@
 import { PlayerAnimation } from "./player_animation.js";
 import PlayerController from "./scripts.js";
 import { Zoom } from './zoom.js'
-import { menu } from './menu'
+import { menu } from './menu.js'
 
 function initZoom() {
     if (window.location.pathname === "/Tv") {
