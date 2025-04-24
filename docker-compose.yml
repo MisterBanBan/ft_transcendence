@@ -100,15 +100,15 @@ networks:
   ft_transcendence:
     driver: bridge
 
-#volumes:
+# volumes:
 #  nginx-data:
 #    driver: local
-##  authentication-data:
-##    driver: local
-##  matchmaking-data:
-##    driver: local
-##  game-data:
-##    driver: local
+# ##  authentication-data:
+# ##    driver: local
+# ##  matchmaking-data:
+# ##    driver: local
+#  game-data:
+#    driver: local
 ##  tournament-data:
 ##    driver: local
 #  users-data:

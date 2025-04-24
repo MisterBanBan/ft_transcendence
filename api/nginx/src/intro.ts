@@ -24,13 +24,15 @@ export class introduction {
     //private appDiv: HTMLElement;
 
     constructor(playerId: string){
-        const player = document.getElementById(playerId);
+        /*const player = document.getElementById(playerId);
+        if (!player) throw new Error('Player element not found');*/
+
         if (window.location.pathname === "/") {
             this.checkForElements();
         }
-        if (window.location.pathname === "/game") {
+        /*if (window.location.pathname === "/game") {
             new menu("menu");
-        }
+        }*/
     }
     //this.appDiv.innerHTML = content;
 
@@ -60,12 +62,6 @@ export class introduction {
         this.activePlayerController = null;
     }*/
 }
-
-    
-    
-
-    
-    
 
 
 window.addEventListener('popstate', initZoom);
