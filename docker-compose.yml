@@ -29,20 +29,20 @@ services:
   #     - ft_transcendence
   #   restart: unless-stopped
 
-  # game:
-  #   image: game
-  #   container_name: game
-  #   build:
-  #     context: api/game
-  #   healthcheck:
-  #     test: [ "CMD-SHELL", "curl -f http://localhost:8082/health || exit 1" ]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #     start_period: 10s
-  #   networks:
-  #     - ft_transcendence
-  #   restart: on-failure
+  game:
+    image: game
+    container_name: game
+    build:
+      context: api/game
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8082/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    restart: on-failure
 
   # matchmaking:
   #   image: matchmaking
@@ -81,15 +81,15 @@ services:
       context: api/nginx
     ports:
       - "8443:443"
-    # depends_on:
+    depends_on:
     #   users:
     #     condition: service_healthy
       # tournament:
       #   condition: service_healthy
       # matchmaking:
       #   condition: service_healthy
-      # game:
-      #   condition: service_healthy
+        game:
+          condition: service_healthy
       # authentication:
       #   condition: service_healthy
     networks:
@@ -100,15 +100,15 @@ networks:
   ft_transcendence:
     driver: bridge
 
-# volumes:
-#  nginx-data:
-#    driver: local
+volumes:
+  nginx-data:
+    driver: local
 # ##  authentication-data:
 # ##    driver: local
 # ##  matchmaking-data:
 # ##    driver: local
-#  game-data:
-#    driver: local
+  game-data:
+    driver: local
 ##  tournament-data:
 ##    driver: local
 #  users-data:
