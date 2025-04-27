@@ -9,11 +9,6 @@ export class menu {
         '/img/setting.mp4',
         '/img/quit.mp4'
       ];
-/*    private paths = [
-        '/img/new_game.mp4',
-        '/img/continue.mp4',
-        '/img/setting.mp4',
-        '/img/quit.mp4'];*/
     
     constructor(menuId: string) {
         const menuElement = document.getElementById(menuId) as HTMLSourceElement;

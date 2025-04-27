@@ -14,13 +14,15 @@ class PlayerStats {
     isJumping: boolean = false;
     leftKey: boolean = false;
     rightKey: boolean = false;
+    speed: number = 800;
+    jump: number = -700;
 }
 
-function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, player: PlayerAnimation, isInTriggerZone: boolean, isDoorOpen: boolean, e: KeyboardEvent) {
+function handleKeyPressPlayer(stats: PlayerStats, player: PlayerAnimation, isInTriggerZone: boolean, isDoorOpen: boolean, e: KeyboardEvent) {
     switch(e.key.toLowerCase()) {
         case ' ':
             if (!stats.isJumping) {
-                stats.velocity.y = jump;
+                stats.velocity.y = stats.jump;
                 stats.isJumping = true;
             }
             break;
@@ -28,7 +30,7 @@ function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, p
         case 'a':
             if (!stats.leftKey) {
                 stats.leftKey = true;
-                stats.velocity.x -= speed;
+                stats.velocity.x -= stats.speed;
                 player.startAnimation();
             }
             break;
@@ -36,19 +38,19 @@ function handleKeyPressPlayer(stats: PlayerStats, speed: number, jump: number, p
         case 'd':
             if (!stats.rightKey) {
                 stats.rightKey = true;
-                stats.velocity.x += speed;
+                stats.velocity.x += stats.speed;
                 player.startAnimation();
             }
             break;
     }
 }
 
-function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: PlayerAnimation, e: KeyboardEvent) {
+function handleKeyReleasePlayer(stats: PlayerStats, player: PlayerAnimation, e: KeyboardEvent) {
     switch (e.key.toLowerCase()) {
         case 'arrowleft':
         case 'a':
             if (stats.leftKey) {
-                stats.velocity.x += speed;
+                stats.velocity.x += stats.speed;
                 stats.leftKey = false;
                 player.stopAnimation();
             }
@@ -56,7 +58,7 @@ function handleKeyReleasePlayer(stats: PlayerStats, speed: number, player: Playe
         case 'arrowright':
         case 'd':
             if (stats.rightKey) {
-                stats.velocity.x -= speed;
+                stats.velocity.x -= stats.speed;
                 stats.rightKey = false;
                 player.stopAnimation();
             }
@@ -72,9 +74,6 @@ export class PlayerController implements IPlayerController{
     private player: PlayerAnimation;
     private pos: Position = { x: 0, y: 0};
     private stats: PlayerStats = new PlayerStats();
-    private speed: number = 800;
-    private jump: number = -700;
-    private gravity: number = 1500;
     private lastTimestamp: number = 0;
     private playerWidth: number;
     private playerHeight: number;
@@ -102,9 +101,9 @@ export class PlayerController implements IPlayerController{
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
-        this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.speed, this.jump, this.player, this.isDoorOpen, this.isInTriggerZone, e);
+        this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.player, this.isDoorOpen, this.isInTriggerZone, e);
         this.boundKeyUpHandler = (e) => {
-            handleKeyReleasePlayer(this.stats, this.speed, this.player, e);
+            handleKeyReleasePlayer(this.stats, this.player, e);
             if (e.key.toLowerCase() === 'e') {
                 if (this.isInTriggerZone && !this.isDoorOpen) {
                     this.isDoorOpen = true;
@@ -127,10 +126,7 @@ export class PlayerController implements IPlayerController{
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
 
     }
-    /*private satrtDoorAnimation() {
-        this.animationPlaying = true;
-        this. 
-    }*/
+
     public destroy(): void {
         // Arrêter l'animation du joueur
         this.player.stopAnimation();
@@ -149,35 +145,41 @@ export class PlayerController implements IPlayerController{
     private worldPosX:number = 0;
     private cameraX:number = 0;
 
-    private gameLoop(timestamp: number) {
-        const deltaTime = (timestamp - this.lastTimestamp) / 1000;
-        this.lastTimestamp = timestamp;
+    private computeDeltaTime(ts: number): number {
+        const deltaTime = (ts - this.lastTimestamp) / 1000;
+        this.lastTimestamp = ts;
+        return (deltaTime);
+    }
 
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-        const worldWidth = viewportWidth * 3;
-        const cameraDeadZone = viewportWidth / 3;
-        this.doorWorldPage = 2 * viewportWidth + 400;
-
+    private updatePhysics(dt: number, worldWidth: number, viewportHeight: number) {
+        //position par rapport au monde
+        const gravity = 1500; 
         this.worldPosX = this.worldPosX || this.pos.x;
-        this.worldPosX += this.stats.velocity.x * deltaTime;
-        //Securiter to max world 
+        this.worldPosX += this.stats.velocity.x * dt;
         this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
-        this.cameraX = this.cameraX || 0;
-        const playerCenter = this.worldPosX + this.playerWidth/2;
-        const inZone = (playerCenter >= this.doorWorldPage && playerCenter <= this.doorWorldPage + this.doorWidth);
-        //console.log('player %d triggerzone %d', this.worldPosX, this.triggerZoneStart);
-        const doorHidden = document.getElementById("pressE");
-        if (doorHidden){
-            if (inZone && !this.isInTriggerZone) {
-                this.isInTriggerZone = true;
-                doorHidden.classList.remove('hidden');
-            } else if (!inZone && this.isInTriggerZone) {
-                this.isInTriggerZone = false;
-                doorHidden.classList.add('hidden');
-            }
+
+        //graviter
+        this.stats.velocity.y += gravity * dt;
+        this.pos.y += this.stats.velocity.y * dt;
+        this.pos.y = Math.max(0, Math.min(viewportHeight - this.playerHeight, this.pos.y));
+
+        //max graviter
+        const floor = viewportHeight - this.playerHeight;
+        if (this.pos.y >= floor) {
+            this.stats.velocity.y = 0;
+            this.pos.y = floor;
+            this.stats.isJumping = false;
         }
-        
+        console.log(`phy: %d, %d, %d`, this.pos.x, this.worldPosX, this.cameraX);
+        //position du player
+        this.pos.x = this.worldPosX - this.cameraX;
+    }
+
+    private updateCamera(viewportWidth: number, worldWidth: number) {
+
+        const cameraDeadZone = viewportWidth / 3;
+        const maxCameraX = worldWidth - viewportWidth;
+
         if (this.worldPosX < cameraDeadZone) {
             this.cameraX = 0;
         } else if (this.worldPosX > worldWidth - cameraDeadZone) {
@@ -185,29 +187,60 @@ export class PlayerController implements IPlayerController{
         } else {
             this.cameraX = this.worldPosX - cameraDeadZone;
         }
-        
+
         const pageContainer = document.getElementById("pageContainer");
         if (pageContainer) {
-            const maxCameraX = worldWidth - viewportWidth;
             this.cameraX = Math.max(0, Math.min(this.cameraX, maxCameraX));
-            const clampedCameraX = Math.max(0, Math.min(this.cameraX, maxCameraX));
-            pageContainer.style.transform = `translateX(-${clampedCameraX}px)`;
+            pageContainer.style.transform = `translateX(-${this.cameraX}px)`;
         }
+    }
 
-        this.pos.x = this.worldPosX - this.cameraX;
-        this.stats.velocity.y += this.gravity * deltaTime;
-        this.pos.y += this.stats.velocity.y * deltaTime;
-        this.pos.y = Math.max(0, Math.min(viewportHeight - this.playerHeight, this.pos.y));
+    private checkTriggers() {
 
-        const floor = viewportHeight - this.playerHeight;
-        if (this.pos.y >= floor) {
-            this.stats.velocity.y = 0;
-            this.pos.y = floor;
-            this.stats.isJumping = false;
+        const playerCenter = this.worldPosX + this.playerWidth/2;
+        const inZone = (playerCenter >= this.doorWorldPage &&
+            playerCenter <= this.doorWorldPage + this.doorWidth);
+        //console.log('player %d triggerzone %d', this.worldPosX, this.triggerZoneStart);
+        const doorVideo = document.querySelector<HTMLVideoElement>('#videoDoor video');
+        const pressE = document.getElementById("pressE");
+        if (!doorVideo || !pressE) return;
+
+        if (inZone && !this.isInTriggerZone) {
+            this.isInTriggerZone = true;
+
+            const rect = doorVideo.getBoundingClientRect();
+            Object.assign(pressE.style, {
+                position: 'absolute',
+                top:    `${rect.top}px`,
+                left:   `${rect.left}px`,
+                width:  `${rect.width}px`,
+                height: `${rect.height}px`
+              });
+              pressE.classList.remove('hidden');
+
+            //doorHidden.classList.remove('hidden');
+        } else if (!inZone && this.isInTriggerZone) {
+            this.isInTriggerZone = false;
+            pressE.classList.add('hidden');
         }
+        
+    }
 
-        //console.log(`Velocity Y: ${this.stats.velocity.y}, Position Y: ${this.pos.y}`);
-        //console.log(`Velocity X: ${this.stats.velocity.x}`);
+    private gameLoop(timestamp: number) {
+        
+        const deltaTime = this.computeDeltaTime(timestamp);
+
+    
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        const worldWidth = viewportWidth * 3;
+
+        this.doorWorldPage = 2 * viewportWidth + 400;
+
+        this.updatePhysics(deltaTime, worldWidth, viewportHeight);
+        this.updateCamera(viewportWidth, worldWidth);
+
+        this.checkTriggers();
         
         this.updatePosition();
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));

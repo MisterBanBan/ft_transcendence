@@ -27,14 +27,15 @@ export const routes: Route[] = [
                   <video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
                     <source src="/img/door.mp4" type="video/mp4">
                   </video>
+                  <div id="pressE" class="hidden absolute inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+                    <video autoplay loop muted class="w-12 h-12">
+                        <source src="/img/pressE.mp4" type="video/mp4">
+                    </video>
+                  </div>
                 </div>
               </div>
               <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10"></div>
-                <div id="pressE" class="hidden absolute inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-                <video autoplay loop muted class="w-12 h-12">
-                    <source src="/img/pressE.mp4" type="video/mp4">
-                </video>
-                </div>
+                
                
                 
 
