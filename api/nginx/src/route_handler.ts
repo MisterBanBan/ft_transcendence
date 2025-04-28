@@ -1,6 +1,7 @@
 import { introduction } from './intro.js';
 import { menu } from './menu.js';
 import { Zoom } from './zoom.js';
+import { proceduralBackground } from './proceduralBackground.js';
 
 type RouteComponent = {
     init: () => void;
@@ -13,7 +14,16 @@ const routeComponents: Record<string, RouteComponent> = {
     "/": {
         init: () => {
             activeComponent?.destroy?.();
-            activeComponent = { instance: new introduction('player')};
+
+            // Génère les oiseaux dans #procedural-bg
+            new proceduralBackground('procedural-bg').generateBirds(7);
+        
+            // Puis ton intro/joueur
+            const playerIntro = new introduction('player');
+            activeComponent = {
+              instance: playerIntro,
+              //destroy: () => playerIntro.destroy?.()
+            };
         },
         //pour l'instant inutile
         //destroy: () => (activeComponent?.instance as introduction)?.destroy?.()

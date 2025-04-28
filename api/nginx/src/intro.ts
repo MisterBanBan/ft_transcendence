@@ -1,3 +1,16 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   intro.ts                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/04/28 10:52:39 by afavier           #+#    #+#             */
+/*   Updated: 2025/04/28 10:53:01 by afavier          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+
 import { PlayerAnimation } from "./player_animation.js";
 import PlayerController from "./scripts.js";
 import { Zoom } from './zoom.js'

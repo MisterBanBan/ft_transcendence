@@ -170,7 +170,7 @@ export class PlayerController implements IPlayerController{
             this.pos.y = floor;
             this.stats.isJumping = false;
         }
-        console.log(`phy: %d, %d, %d`, this.pos.x, this.worldPosX, this.cameraX);
+        //console.log(`phy: %d, %d, %d`, this.pos.x, this.worldPosX, this.cameraX);
         //position du player
         this.pos.x = this.worldPosX - this.cameraX;
     }
@@ -197,32 +197,23 @@ export class PlayerController implements IPlayerController{
 
     private checkTriggers() {
 
-        const playerCenter = this.worldPosX + this.playerWidth/2;
-        const inZone = (playerCenter >= this.doorWorldPage &&
-            playerCenter <= this.doorWorldPage + this.doorWidth);
-        //console.log('player %d triggerzone %d', this.worldPosX, this.triggerZoneStart);
-        const doorVideo = document.querySelector<HTMLVideoElement>('#videoDoor video');
+        const door = document.getElementById("videoDoor");
         const pressE = document.getElementById("pressE");
-        if (!doorVideo || !pressE) return;
 
-        if (inZone && !this.isInTriggerZone) {
-            this.isInTriggerZone = true;
+        if (!door || !pressE) return;
 
-            const rect = doorVideo.getBoundingClientRect();
-            Object.assign(pressE.style, {
-                position: 'absolute',
-                top:    `${rect.top}px`,
-                left:   `${rect.left}px`,
-                width:  `${rect.width}px`,
-                height: `${rect.height}px`
-              });
-              pressE.classList.remove('hidden');
+        const rect = door.getBoundingClientRect();
+        
+        const doorLeft = this.cameraX + rect.left + this.playerWidth;
+        // faudrait mettre une box pour la door 
+        const doorRight = doorLeft + rect.width / 3;
+        console.log('door: %d, %d, %d',this.worldPosX, doorLeft, doorRight);
+        const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
 
-            //doorHidden.classList.remove('hidden');
-        } else if (!inZone && this.isInTriggerZone) {
-            this.isInTriggerZone = false;
-            pressE.classList.add('hidden');
-        }
+        if (inZone !== this.isInTriggerZone) {
+            this.isInTriggerZone = inZone;
+            pressE.classList.toggle("hidden", !inZone);
+          }
         
     }
 

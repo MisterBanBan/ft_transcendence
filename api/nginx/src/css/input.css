@@ -8,3 +8,22 @@
     @apply absolute bg-contain bg-no-repeat bg-center z-20;
   }
 }
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes cloud {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100vw); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-cloud {
+  animation: cloud 20s linear infinite;
+}
+
