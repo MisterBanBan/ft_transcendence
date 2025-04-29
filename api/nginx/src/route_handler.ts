@@ -16,7 +16,7 @@ const routeComponents: Record<string, RouteComponent> = {
             activeComponent?.destroy?.();
 
             // Génère les oiseaux dans #procedural-bg
-            new proceduralBackground('procedural-bg').generateBirds(7);
+            new proceduralBackground('procedural-bg');
         
             // Puis ton intro/joueur
             const playerIntro = new introduction('player');

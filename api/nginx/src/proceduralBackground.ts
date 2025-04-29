@@ -7,22 +7,20 @@ export class proceduralBackground {
         if (!co) throw Error('element null');
         this.container = co;
         //this.container.classList.add('relative', 'w-full', 'h-screen', 'overflow-hidden');
-        
+        this.generateBirds(7);
     }
-    // generate() {
-    //     this.generateBirds(5);
-    // }
 
-    public generateBirds(count = 5) {
+    private generateBirds(count = 5) {
         //const skyLevel = window.innerHeight * 0.2;
         for (let i = 0; i < count; i++) {
-          const bird = document.createElement('div');
-          bird.className = 'absolute text-4xl animate-float';
+          const bird = document.createElement('img');
+          bird.src = '/img/kodama_stop.png';
+          bird.className = 'absolute w-16 h-16 animate-float';
           const skyPercent = 20 + Math.random() * 20;
           bird.style.top = `${skyPercent}%`;
           bird.style.left = `${Math.random() * 100}%`;
           //bird.style.top = `${skyLevel + Math.random() * 20}%`;
-          bird.textContent = "🐦";
+          //bird.textContent = "🐦";
           this.container.appendChild(bird);
           this.birds.push(bird);
         }
