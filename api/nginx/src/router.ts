@@ -1,4 +1,4 @@
-import { introduction } from './intro.js'
+// import { introduction } from './intro.js'
 
 interface Route {
     path: string;
@@ -15,7 +15,6 @@ class Router {
     constructor(routes: Route[]) {
         this.routes = routes;
         /*recupere l'element app dans index.html*/
-        console.log('dsadas');
         const app = document.getElementById("app");
         if (!app)
             throw new Error("Element not found");
