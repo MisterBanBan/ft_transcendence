@@ -6,15 +6,13 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:52:39 by afavier           #+#    #+#             */
-/*   Updated: 2025/04/28 10:53:01 by afavier          ###   ########.fr       */
+/*   Updated: 2025/05/07 05:46:21 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-
-import { PlayerAnimation } from "./player_animation.js";
 import PlayerController from "./scripts.js";
+import { Component } from "./component.js";
 import { Zoom } from './zoom.js'
-import { menu } from './menu.js'
 
 function initZoom() {
     if (window.location.pathname === "/Tv") {
@@ -32,37 +30,28 @@ interface IPlayerController {
 
 
 
-export class introduction {
+export class introduction implements Component{
     private activePlayerController: IPlayerController | null = null;
-    //private appDiv: HTMLElement;
 
-    constructor(playerId: string){
-        /*const player = document.getElementById(playerId);
-        if (!player) throw new Error('Player element not found');*/
 
-        if (window.location.pathname === "/") {
-            this.checkForElements();
-        }
-        /*if (window.location.pathname === "/game") {
-            new menu("menu");
-        }*/
-    }
-    //this.appDiv.innerHTML = content;
+    constructor(playerId: string) {}
 
-    // Charger dynamiquement le script à chaque fois qu'on revient sur l'accueil
-
-    //this.appDiv.innerHTML = content;
-    private checkForElements() {
+    public init(): void {
         const playerElement = document.getElementById("player");
         const pressEElement = document.getElementById("pressE");
         if (playerElement && pressEElement) {
             this.loadPlayerScripts();
         }
         else {
-            setTimeout(() => this.checkForElements(), 50);
+            setTimeout(() => this.init(), 50);
         }
     }
-    //initZoom();
+
+    public destroy(): void {
+        this.activePlayerController?.destroy();
+        this.activePlayerController = null;
+    }
+    
     private async loadPlayerScripts() {
         try {
             this.activePlayerController = new PlayerController('player', 'pressE');
@@ -70,10 +59,6 @@ export class introduction {
             console.error("Erreur lors du chargement des scripts:", error);
         }
     }
-    /*if (this.activePlayerController) {
-        this.activePlayerController.destroy();
-        this.activePlayerController = null;
-    }*/
 }
 
 

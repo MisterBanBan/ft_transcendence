@@ -1,45 +1,66 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   route_handler.ts                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
+/*   Updated: 2025/05/07 05:47:35 by afavier          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+import { Component } from './component.js';
 import { introduction } from './intro.js';
 import { menu } from './menu.js';
 import { Zoom } from './zoom.js';
 import { proceduralBackground } from './proceduralBackground.js';
 
-type RouteComponent = {
-    init: () => void;
-    destroy?: () => void;
-};
 //permet de gerer la destruction des new
-let activeComponent: { instance: unknown; destroy?: () => void } | undefined;
+let activeComponent: Component | null = null;
 
-const routeComponents: Record<string, RouteComponent> = {
+const routeComponents: Record<string, Component> = {
+
+    
     "/": {
         init: () => {
             activeComponent?.destroy?.();
-
-            // Génère les oiseaux dans #procedural-bg
-            new proceduralBackground('procedural-bg');
-        
-            // Puis ton intro/joueur
+            const bg = new proceduralBackground('procedural-bg', 7);
             const playerIntro = new introduction('player');
+            
+            bg.init();
+            playerIntro.init();
             activeComponent = {
-              instance: playerIntro,
-              //destroy: () => playerIntro.destroy?.()
+                init: () => {},
+                destroy: () => { bg.destroy(); playerIntro.destroy(); }
             };
         },
-        //pour l'instant inutile
-        //destroy: () => (activeComponent?.instance as introduction)?.destroy?.()
+        destroy: () => {}
     },
+    
     "/game": {
         init: () => {
             activeComponent?.destroy?.();
-            activeComponent = {instance: new menu('menu')};
+            const me = new menu('menu');
+            me.init();
+            activeComponent = {
+                init: () => {},
+                destroy: () => { me.destroy(); }
+            };
         },
+        destroy: () => {}
     },
     "/Tv": {
-
         init: () => {
             activeComponent?.destroy?.();
-            activeComponent = {instance: new Zoom('zoom')};
-        }
+            const tv = new Zoom('zoom');
+            tv.init();
+            activeComponent = {
+                init: () => {},
+                destroy: () => { tv.destroy(); }
+            };
+        },
+        destroy: () => {}
     }
 };
 
@@ -48,8 +69,4 @@ export function handleRouteComponents(path: string) {
     if(component) {
         component.init();
     }
-}
-
-export function registerRouteComponent(path: string, component: RouteComponent) {
-    routeComponents[path] = component;
 }

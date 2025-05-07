@@ -1,5 +1,19 @@
-export class menu {
-    private boundKeyUpHandler: (e: KeyboardEvent) => void;
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   menu.ts                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
+/*   Updated: 2025/05/07 04:59:09 by afavier          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+import { Component } from "./component.js";
+
+export class menu implements Component{
+    private boundKeyDownHandler!: (e: KeyboardEvent) => void;
     private menuSource: HTMLSourceElement;
     private video: HTMLVideoElement;
     private currentPage: number = 0;
@@ -18,27 +32,36 @@ export class menu {
         const video = this.menuSource.closest('video') as HTMLVideoElement;
         if (!video) throw new Error('video element not found');
         this.video = video;
-          
-          this.videoPaths.forEach((src: string) => {
-            const link: HTMLLinkElement = document.createElement('link');
-            link.rel = 'preload';
-            link.as = 'video';
-            link.href = src;
-            link.type = 'video/mp4';
-            document.head.appendChild(link);
-          });
+    }
+    public init(): void {
+    
+        this.videoPaths.forEach((src: string) => {
+          const link: HTMLLinkElement = document.createElement('link');
+          link.rel = 'preload';
+          link.as = 'video';
+          link.href = src;
+          link.type = 'video/mp4';
+          document.head.appendChild(link);
+        });
 
-        this.boundKeyUpHandler = (e) => {
-            const key = e.key.toLocaleLowerCase();
+        this.boundKeyDownHandler = this.onKeyDown.bind(this);
+        window.addEventListener('keydown', this.boundKeyDownHandler);
+    }
+
+    private onKeyDown(e: KeyboardEvent) {
+        const key = e.key.toLocaleLowerCase();
             if (key == 'w' || key == 'arrowup') {
                 this.loadpage('up');
             } if (key == 's' || key == 'arrowdown') {
                 this.loadpage('down');
-            }  
-        };
-        window.addEventListener('keydown', this.boundKeyUpHandler);
+            }
     }
-    loadpage(direction: 'up' | 'down') {
+
+    public destroy(): void {
+        window.removeEventListener('keyup', this.boundKeyDownHandler);
+    }
+
+    private loadpage(direction: 'up' | 'down') {
         
         if (direction === "down") {
             this.currentPage = (this.currentPage + 1) % this.videoPaths.length;
@@ -50,7 +73,5 @@ export class menu {
 
     }
 
-    private destroy() {
-        window.removeEventListener('keyup', this.boundKeyUpHandler);
-    }
+
 }

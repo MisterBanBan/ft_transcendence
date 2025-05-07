@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   router.ts                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/06 11:10:24 by afavier           #+#    #+#             */
+/*   Updated: 2025/05/06 11:10:25 by afavier          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 //import { introduction } from './intro.js'
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
@@ -18,7 +30,8 @@ class Router {
         /*Cette ligne ajoute un écouteur pour l'événement popstate sur l'objet window. L'événement popstate est déclenché lorsque l'utilisateur utilise les boutons Back ou Forward du navigateur. Lorsque cet événement se produit, la méthode updatePage() est appelée pour mettre à jour le contenu affiché en fonction de l'URL courante, assurant ainsi que l'application réagit correctement aux changements de l'historique sans recharger la page. */
         window.addEventListener("popstate", () => this.updatePage());
     }
-        /*Intercepte les clics*/
+
+    /*Intercepte les clics*/
     private bindLinks(): void {
         document.body.addEventListener("click", (event) => {
             /*seul les liens avec data-link <a href="/home" data-link>Accueil</a>  closest permet de remonter a l'element de datalink*/
@@ -33,6 +46,7 @@ class Router {
             }
         });
     }
+
     public navigateTo(url: string): void {
         if(!url.startsWith("/")) {
             console.error("URL not good : ", url);
@@ -41,6 +55,7 @@ class Router {
         history.pushState(null, "",url);
         this.updatePage();
     }
+
     public async updatePage(): Promise<void> {
         try {
             const path = window.location.pathname;
@@ -80,7 +95,4 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Wrong init :", error);
         document.body.innerHTML = "<h1>Appli dumped</h1>";
     }
-
-
-
 })

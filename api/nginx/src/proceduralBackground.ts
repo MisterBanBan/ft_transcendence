@@ -1,49 +1,35 @@
-export class proceduralBackground {
-    private container: HTMLElement;
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   proceduralBackground.ts                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/06 11:10:07 by afavier           #+#    #+#             */
+/*   Updated: 2025/05/07 04:59:20 by afavier          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+import { Component } from "./component.js";
+import { animateBirds, destroyBirds, generateBirds } from "./generateBirds.js";
+
+export class proceduralBackground implements Component{
     private birds: HTMLElement[] = [];
+    private rafId!: number;
 
-    constructor(containerId: string) {
-        const co = document.getElementById(containerId);
-        if (!co) throw Error('element null');
-        this.container = co;
-        //this.container.classList.add('relative', 'w-full', 'h-screen', 'overflow-hidden');
-        this.generateBirds(7);
+    constructor(private containerId: string, private count = 5) {}
+    
+    public init(): void{
+      this.birds = generateBirds(this.containerId, this.count);
+      this.rafId = animateBirds(this.birds);
+    }
+    //ensuite les arbres et nuages
+
+
+
+    public destroy(): void {
+      destroyBirds(this.birds, this.rafId);
     }
 
-    private generateBirds(count = 5) {
-        //const skyLevel = window.innerHeight * 0.2;
-        for (let i = 0; i < count; i++) {
-          const bird = document.createElement('img');
-          bird.src = '/img/kodama_stop.png';
-          bird.className = 'absolute w-16 h-16 animate-float';
-          const skyPercent = 20 + Math.random() * 20;
-          bird.style.top = `${skyPercent}%`;
-          bird.style.left = `${Math.random() * 100}%`;
-          //bird.style.top = `${skyLevel + Math.random() * 20}%`;
-          //bird.textContent = "🐦";
-          this.container.appendChild(bird);
-          this.birds.push(bird);
-        }
-        this.animateBirds();
-    }
-    private animateBirds() {
-      const speed = 0.2;
-      const loop = () => {
-        this.birds.forEach(bird => {
-          let left = parseFloat(bird.style.left);
-          left -= speed;
-          if (left < -10) left = 110;
-          bird.style.left = `${left}%`;
-        });
-        requestAnimationFrame(loop);
-      };
-      requestAnimationFrame(loop);
-    }
 }
 
-
-
-// window.addEventListener('load', () => {
-//     const bg = new proceduralBackground('background-container');
-//     bg.generate();
-//   });

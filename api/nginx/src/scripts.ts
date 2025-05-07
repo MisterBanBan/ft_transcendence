@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   scripts.ts                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
+/*   Updated: 2025/05/06 18:58:54 by afavier          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 import { PlayerAnimation } from "./player_animation.js";
 
 interface IPlayerController {
@@ -66,9 +78,6 @@ function handleKeyReleasePlayer(stats: PlayerStats, player: PlayerAnimation, e: 
     }
 }
 
-function KeyEPress() {
-    
-}
 
 export class PlayerController implements IPlayerController{
     private player: PlayerAnimation;
@@ -79,19 +88,14 @@ export class PlayerController implements IPlayerController{
     private playerHeight: number;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
-    //private boundKeyEHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
     
-    private doorWorldPage: number = 2 * window.innerWidth + 400;
-    private doorWidth = 256;
     private isInTriggerZone: boolean = false;
-    private animationPlaying = false;
     private isDoorOpen: boolean = false;
 
     constructor(playerId: string, door: string) {
+        
         const playerElement = document.getElementById(playerId);
-        
-        
         if (!playerElement) throw new Error('Player element not found');
 
 
@@ -158,20 +162,18 @@ export class PlayerController implements IPlayerController{
         this.worldPosX += this.stats.velocity.x * dt;
         this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
 
-        //graviter
+        //gravity
         this.stats.velocity.y += gravity * dt;
         this.pos.y += this.stats.velocity.y * dt;
         this.pos.y = Math.max(0, Math.min(viewportHeight - this.playerHeight, this.pos.y));
 
-        //max graviter
+        //max gravity
         const floor = viewportHeight - this.playerHeight;
         if (this.pos.y >= floor) {
             this.stats.velocity.y = 0;
             this.pos.y = floor;
             this.stats.isJumping = false;
         }
-        //console.log(`phy: %d, %d, %d`, this.pos.x, this.worldPosX, this.cameraX);
-        //position du player
         this.pos.x = this.worldPosX - this.cameraX;
     }
 
@@ -226,7 +228,6 @@ export class PlayerController implements IPlayerController{
         const viewportHeight = window.innerHeight;
         const worldWidth = viewportWidth * 3;
 
-        this.doorWorldPage = 2 * viewportWidth + 400;
 
         this.updatePhysics(deltaTime, worldWidth, viewportHeight);
         this.updateCamera(viewportWidth, worldWidth);
