@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/07 05:47:35 by afavier          ###   ########.fr       */
+/*   Updated: 2025/05/07 06:31:05 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ const routeComponents: Record<string, Component> = {
     "/": {
         init: () => {
             activeComponent?.destroy?.();
-            const bg = new proceduralBackground('procedural-bg', 7);
+            const bg = new proceduralBackground('procedural-bg', 'cloud', 7);
             const playerIntro = new introduction('player');
             
             bg.init();

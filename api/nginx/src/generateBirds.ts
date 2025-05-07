@@ -6,14 +6,14 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 18:07:38 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/07 05:48:04 by afavier          ###   ########.fr       */
+/*   Updated: 2025/05/07 06:01:14 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-export function generateBirds(containerId: string, count = 5): HTMLElement[] {
+export function generateBirds(containerId: string, count:number = 5): HTMLElement[] {
     const container = document.getElementById(containerId);
     if (!container) {
-        throw new Error(`Container #${containerId} introuvable`);
+        throw new Error(`Container #${containerId} not found`);
     }
     
     const birds: HTMLElement[] = [];

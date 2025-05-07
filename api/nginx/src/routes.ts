@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/06 11:10:34 by afavier          ###   ########.fr       */
+/*   Updated: 2025/05/07 06:31:26 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ export const routes: Route[] = [
   <!-- 1. Calque procédural plein-écran, derrière tout (z-index -10) -->
   <div
     id="procedural-bg"
+    class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
+  ></div>
+  <div
+    id="cloud"
     class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
   ></div>
 
