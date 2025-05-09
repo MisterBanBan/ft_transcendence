@@ -1,5 +1,5 @@
 import fastify from 'fastify';
-import {loadModules} from "./registers.js";
+import {loadModules} from "./plugins.js";
 
 export const server = fastify();
 
@@ -84,41 +84,41 @@ server.get('/api/auth/', async (request, reply) => {
 			<!-- Sign-in Form -->
 			<div class="form-container">
 				<h2 style="color:white;">Sign In</h2>
-				<div class="error-message" id="error-global-signin"></div>
+				<div class="error-message" id="error-global-login"></div>
 		
 				<label for="email">Email:</label>
-				<div class="error-message" id="error-email-signin"></div>
-				<input type="text" name="email" id="email-signin">
+				<div class="error-message" id="error-email-login"></div>
+				<input type="text" name="email" id="email-login">
 		
 				<label for="password">Password:</label>
-				<div class="error-message" id="error-password-signin"></div>
-				<input type="password" name="password" id="password-signin">
+				<div class="error-message" id="error-password-login"></div>
+				<input type="password" name="password" id="password-login">
 		
-				<input type="button" id="submit-signin" value="Sign In">
+				<input type="button" id="submit-login" value="Sign In">
 			</div>
 	
 			<!-- Sign-up Form -->
 			<div class="form-container">
 				<h2 style="color:white;">Sign Up</h2>
-				<div class="error-message" id="error-global-signup"></div>
+				<div class="error-message" id="error-global-register"></div>
 		
 				<label for="email">Email:</label>
-				<div class="error-message" id="error-email-signup"></div>
-				<input type="text" name="email" id="email-signup">
+				<div class="error-message" id="error-email-register"></div>
+				<input type="text" name="email" id="email-register">
 		
 				<label for="password">Password:</label>
-				<div class="error-message" id="error-password-signup"></div>
-				<input type="password" name="password" id="password-signup">
+				<div class="error-message" id="error-password-register"></div>
+				<input type="password" name="password" id="password-register">
 		
 				<label for="cpassword">Confirm Password:</label>
 				<input type="password" name="cpassword" id="cpassword">
 		
-				<input type="button" id="submit-signup" value="Sign Up">
+				<input type="button" id="submit-register" value="Sign Up">
 			</div>
 		</div>
 
-		<script type="module" src="/public/auth/sign-in.js"></script>
-		<script type="module" src="/public/auth/sign-up.js"></script>
+		<script type="module" src="/public/auth/login.js"></script>
+		<script type="module" src="/public/auth/register.js"></script>
 	</body>
 
 	</html>`

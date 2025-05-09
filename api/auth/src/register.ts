@@ -8,9 +8,9 @@ interface User {
 	token: string;
 }
 
-server.get('/api/auth/sign-up', async (request, reply) => {
+server.get('/api/auth/register', async (request, reply) => {
 
-	console.log("GET /api/auth/sign-up");
+	console.log("GET /api/auth/register");
 
 	const token = request.cookies.token
 	if (token) {
@@ -69,24 +69,24 @@ server.get('/api/auth/sign-up', async (request, reply) => {
 		</style>
 	</head>
 	<body>
-	<form id="signup-form" action="" method="post">
-		<div class="error-message" id="error-global-signup"></div>
+	<form id="register-form" action="" method="post">
+		<div class="error-message" id="error-global-register"></div>
 
 		<label for="email">Email:</label>
-		<div class="error-message" id="error-email-signup"></div>
-		<input type="text" name="email" id="email-signup">
+		<div class="error-message" id="error-email-register"></div>
+		<input type="text" name="email" id="email-register">
 
 		<label for="password">Password:</label>
-		<div class="error-message" id="error-password-signup"></div>
-		<input type="password" name="password" id="password-signup">
+		<div class="error-message" id="error-password-register"></div>
+		<input type="password" name="password" id="password-register">
 
 		<label for="cpassword">Confirm password:</label>
 		<input type="password" name="cpassword" id="cpassword">
 
-		<input type="button" id="submit-signup" value="Sign up">
+		<input type="button" id="submit-register" value="Sign up">
 	</form>
 
-	<script type="module" src="/public/auth/sign-up.js"></script>
+	<script type="module" src="/public/auth/register.js"></script>
 	</body>
 	</html>
 	`;
@@ -94,9 +94,9 @@ server.get('/api/auth/sign-up', async (request, reply) => {
 	reply.type('text/html').send(htmlContent);
 });
 
-server.post('/api/auth/sign-up', async (request, reply) => {
+server.post('/api/auth/register', async (request, reply) => {
 
-	console.log("POST /api/auth/sign-up");
+	console.log("POST /api/auth/register");
 	console.log(request.body);
 
 	const { email, password, cpassword } = request.body as { email: string; password: string, cpassword: string };

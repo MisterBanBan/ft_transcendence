@@ -24,22 +24,22 @@ export class Login implements Component{
 
         async function submitForm() {
 
-            const emailInput = document.getElementById("email-signin") as HTMLInputElement;
-            const passwordInput = document.getElementById("password-signin") as HTMLInputElement;
-            let errorSpan = document.getElementById("error-global-signin") as HTMLTextAreaElement;
+            const emailInput = document.getElementById("email-login") as HTMLInputElement;
+            const passwordInput = document.getElementById("password-login") as HTMLInputElement;
+            let errorSpan = document.getElementById("error-global-login") as HTMLTextAreaElement;
 
             const email: string = emailInput.value;
             const password: string = passwordInput.value;
             const body = {email, password} as Payload;
 
             try {
-                const response = await fetch("https://localhost:8443/api/auth/sign-in", {
+                const response = await fetch("https://localhost:8443/api/auth/login", {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify(body),
                 });
 
-                await showError(response, "in");
+                await showError(response, "login");
 
             } catch (err) {
                 console.error("Erreur réseau", err);

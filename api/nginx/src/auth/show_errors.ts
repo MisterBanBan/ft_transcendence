@@ -4,7 +4,7 @@ export async function showError(response: any, extension: string) {
     console.log(response);
     const data = await response.json();
 
-    const errorSpan: HTMLElement | null = document.getElementById(`error-${data.type}-sign${extension}`);
+    const errorSpan: HTMLElement | null = document.getElementById(`error-${data.type}-${extension}`);
 
     if (errorSpan == null) {
         // TODO error

@@ -9,7 +9,7 @@ interface Payload {
 
 export class Register implements Component{
 
-	private submitButton = document.getElementById("submit-signup");
+	private submitButton = document.getElementById("submit-register");
 
 	constructor() {}
 
@@ -25,10 +25,10 @@ export class Register implements Component{
 
 		async function submitForm() {
 
-			const emailInput = document.getElementById("email-signup") as HTMLInputElement;
-			const passwordInput = document.getElementById("password-signup") as HTMLInputElement;
+			const emailInput = document.getElementById("email-register") as HTMLInputElement;
+			const passwordInput = document.getElementById("password-register") as HTMLInputElement;
 			const cpasswordInput = document.getElementById("cpassword") as HTMLInputElement;
-			let errorSpan = document.getElementById("error-global-signup") as HTMLTextAreaElement;
+			let errorSpan = document.getElementById("error-global-register") as HTMLTextAreaElement;
 
 			const email = emailInput.value;
 			const password = passwordInput.value;
@@ -36,13 +36,13 @@ export class Register implements Component{
 			const auth = { email, password, cpassword } as Payload;
 
 			try {
-				const response = await fetch("https://localhost:8443/api/auth/sign-up", {
+				const response = await fetch("https://localhost:8443/api/auth/register", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(auth)
 				});
 
-				await showError(response, "up");
+				await showError(response, "register");
 
 			} catch (err) {
 				console.error("Erreur réseau", err);

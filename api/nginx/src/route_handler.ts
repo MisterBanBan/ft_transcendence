@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 import { Component } from './component.js';
-import { Login } from "./auth/sign-in.js";
-import { Register } from "./auth/sign-up.js";
+import { Login } from "./auth/login.js";
+import { Register } from "./auth/register.js";
 // import { introduction } from './intro.js';
 // import { menu } from './menu.js';
 // import { Zoom } from './zoom.js';

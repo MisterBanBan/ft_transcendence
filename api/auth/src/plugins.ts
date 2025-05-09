@@ -18,8 +18,8 @@ export async function loadModules() {
 
 	const directoryPath = path.join(__dirname, '../');
 
-	await import(path.join(__dirname, "sign-up.js"));
-	await import(path.join(__dirname, "sign-in.js"));
+	await import(path.join(__dirname, "register.js"));
+	await import(path.join(__dirname, "login.js"));
 
 	if (!process.env.JWT_SECRET) {
 		console.log("Reading folder", directoryPath);

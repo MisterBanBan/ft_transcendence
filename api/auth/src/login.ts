@@ -15,9 +15,9 @@ interface Cookie {
 	maxAge: number
 }
 
-server.get('/api/auth/sign-in', async function (request, reply) {
+server.get('/api/auth/login', async function (request, reply) {
 
-	console.log("GET /api/auth/sign-in");
+	console.log("GET /api/auth/login");
 
 	const token = request.cookies.token
 	if (token) {
@@ -100,7 +100,7 @@ server.get('/api/auth/sign-in', async function (request, reply) {
 		<input type="button" id="submit-login" value="Sign in">
 		</form>
 		
-		<script type="module" src="/public/auth/sign-in.js"></script>
+		<script type="module" src="/public/auth/login.js"></script>
 	</body>
 
 	</html>`
@@ -108,9 +108,9 @@ server.get('/api/auth/sign-in', async function (request, reply) {
 	reply.type('text/html').send(htmlContent);
 });
 
-server.post('/api/auth/sign-in', async function (request, reply) {
+server.post('/api/auth/login', async function (request, reply) {
 
-	console.log("POST /api/auth/sign-in");
+	console.log("POST /api/auth/login");
 	const {email, password} = request.body as { email: string; password: string };
 
 	try {
