@@ -8,7 +8,7 @@ interface Payload {
 
 export class Login implements Component{
 
-    private submitButton = document.getElementById("submit-signin");
+    private submitButton = document.getElementById("submit-login");
 
     constructor() {}
 

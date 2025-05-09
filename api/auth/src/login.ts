@@ -87,17 +87,17 @@ server.get('/api/auth/sign-in', async function (request, reply) {
 	<body>
 		<form action="" method="post">
 		
-		<div class="error-message" id="error-global-signin"></div>
+		<div class="error-message" id="error-global-login"></div>
 		
 		<label for="email">Email:</label>
-		<div class="error-message" id="error-email-signin"></div>
-		<input type="text" name="email" id="email-signin">
+		<div class="error-message" id="error-email-login"></div>
+		<input type="text" name="email" id="email-login">
 		
 		<label for="password">Password:</label>
-		<div class="error-message" id="error-password-signin"></div>
-		<input type="password" name="password" id="password-signin">
+		<div class="error-message" id="error-password-login"></div>
+		<input type="password" name="password" id="password-login">
 		
-		<input type="button" id="submit-signin" value="Sign in">
+		<input type="button" id="submit-login" value="Sign in">
 		</form>
 		
 		<script type="module" src="/public/auth/sign-in.js"></script>
