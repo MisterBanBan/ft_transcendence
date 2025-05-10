@@ -1,5 +1,5 @@
 {
-  "name": "transcendance_users",
+  "name": "transcendance_auth",
   "version": "1.0.0",
   "description": "Authentication microservice",
   "main": "dist/server.js",
