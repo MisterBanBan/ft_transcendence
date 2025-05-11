@@ -1,7 +1,6 @@
 import {FastifyInstance} from "fastify";
 
 export default async function (server: FastifyInstance) {
-
     server.post('/api/users/', async function (request, reply) {
         try {
             await this.db.run(
