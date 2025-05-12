@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   proceduralBackground.ts                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:07 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/07 07:17:46 by afavier          ###   ########.fr       */
+/*   Updated: 2025/05/10 14:30:05 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ export class proceduralBackground implements Component{
     private clouds: HTMLElement[] = [];
     private rafId!: number;
 
-    constructor(private containerId: string, private containerCloudId: string, private count = 5) {}
+    constructor(private containerId: string, private containerCloudId: string, private count = 10) {}
     
     public init(): void{
       this.birds = generateBirds(this.containerId, this.count);

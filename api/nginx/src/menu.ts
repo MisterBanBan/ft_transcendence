@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   menu.ts                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/07 04:59:09 by afavier          ###   ########.fr       */
+/*   Updated: 2025/05/12 10:40:39 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ export class menu implements Component{
                 this.loadpage('up');
             } if (key == 's' || key == 'arrowdown') {
                 this.loadpage('down');
+            } if (key == 'enter') {
+                this.newPage();
             }
     }
 
@@ -61,6 +63,14 @@ export class menu implements Component{
         window.removeEventListener('keyup', this.boundKeyDownHandler);
     }
 
+    private newPage() {
+        if (this.currentPage === 0) {
+            window.history.pushState(null, "", "/Pong");
+            //permet de faire reagir les ecoute sur popstate depuis router pour init updatepage popstate = historique qui change sans actualiser
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+    }
+    
     private loadpage(direction: 'up' | 'down') {
         
         if (direction === "down") {

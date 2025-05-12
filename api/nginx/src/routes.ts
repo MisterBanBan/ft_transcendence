@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/07 06:31:26 by afavier          ###   ########.fr       */
+/*   Updated: 2025/05/12 21:46:18 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,17 +34,18 @@ export const routes: Route[] = [
     id="cloud"
     class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
   ></div>
+<canvas id="forest" class="absolute inset-0 -z-20"></canvas>
+<div id="procedural-bg" class="absolute inset-0 -z-10"></div>
+<!-- puis ton contenu principal en z-0 ou plus -->
+
+
 
   <!-- 2. Contenu principal -->
   <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
     <div class="w-screen h-screen relative">
       <div class="absolute inset-0 w-full h-full"></div>
     </div>
-    <div class="w-screen h-screen relative">
-      <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black">
-        <source src="/img/quit.mp4" type="video/mp4">
-      </video>
-    </div>
+
     <div id="videoDoor" class="w-screen h-screen relative">
       <video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
         <source src="/img/door.mp4" type="video/mp4">
@@ -74,7 +75,7 @@ export const routes: Route[] = [
             await new Promise(resolve => setTimeout(resolve, 300));
             return `<div class="w-screen h-screen relative">
                         <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-            <source id="menu" src="/img/new_game.mp4" type="video/mp4">
+            <source id="menu" src="/img/game.mp4" type="video/mp4">
                 </video>
                 </div>
             `;
@@ -93,6 +94,33 @@ export const routes: Route[] = [
             `;
         }
     },
+    {
+      path: "/Pong",
+      title: "Pong",
+      template: async () => {
+        await new Promise(r => setTimeout(r, 300));
+        return `
+          <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden">
+            <img
+              src="/img/pong.png"
+              alt="Pong background"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+            <img
+                id="left-bar"
+                src="/img/bar_left.png" alt="Left paddle"
+                class="absolute left-[15%] top-0 w-8 h-24"
+              />
+              <img
+                id="right-bar"
+                src="/img/bar_left.png" alt="Right paddle"
+                class="absolute right-[35%] top-0 w-8 h-24"
+              />
+          </div>
+        `;
+      }
+    },
+    
     {
         path: "*",
         title: "404 - Page not found",
