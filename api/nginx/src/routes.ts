@@ -136,10 +136,7 @@ export const routes: Route[] = [
                 <input type="button" id="submit-register" value="Sign Up"
                        class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
             </div>
-        </div>
-
-        <script type="module" src="/public/auth/login.js"></script>
-        <script type="module" src="/public/auth/register.js"></script>`;
+        </div>`;
         }
     },
     {
