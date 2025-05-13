@@ -67,11 +67,11 @@ services:
       - matchmaking-data:/app/database
     restart: on-failure
 
-  authentication:
-    image: authentication
-    container_name: authentication
+  auth:
+    image: auth
+    container_name: auth
     build:
-      context: api/authentication
+      context: api/auth
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
       interval: 10s
@@ -81,7 +81,7 @@ services:
     networks:
       - ft_transcendence
     volumes:
-      - authentication-data:/app/database
+      - auth-data:/app/database
     restart: on-failure
 
   nginx:
@@ -100,7 +100,7 @@ services:
         condition: service_healthy
       game:
         condition: service_healthy
-      authentication:
+      auth:
         condition: service_healthy
     networks:
       - ft_transcendence
@@ -113,7 +113,7 @@ networks:
 volumes:
   users-data:
     driver: local
-  authentication-data:
+  auth-data:
     driver: local
   matchmaking-data:
     driver: local

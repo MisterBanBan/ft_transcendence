@@ -8,7 +8,7 @@ export async function insertAuthentication(
     token: string
 ): Promise<number | undefined> {
     const result = await db.run(
-        `INSERT INTO authentication (username, email, password, token)
+        `INSERT INTO auth (username, email, password, token)
      VALUES (?, ?, ?, ?)`,
         [username, email, hashedPassword, token]
     );
