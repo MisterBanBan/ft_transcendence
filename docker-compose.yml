@@ -72,6 +72,8 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - auth-data:/app/database
     restart: on-failure
 
   nginx:
@@ -100,11 +102,11 @@ networks:
   ft_transcendence:
     driver: bridge
 
-#volumes:
+volumes:
 #  nginx-data:
 #    driver: local
-##  auth-data:
-##    driver: local
+  auth-data:
+    driver: local
 ##  matchmaking-data:
 ##    driver: local
 ##  game-data:

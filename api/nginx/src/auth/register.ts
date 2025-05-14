@@ -36,7 +36,7 @@ export class Register implements Component{
 			const auth = { email, password, cpassword } as Payload;
 
 			try {
-				const response = await fetch("https://localhost:8443/api/auth/register", {
+				const response = await fetch("/api/auth/register", {
 					method: "POST",
 					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(auth)
