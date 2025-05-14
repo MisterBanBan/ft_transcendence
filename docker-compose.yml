@@ -107,6 +107,10 @@ volumes:
 #    driver: local
   auth-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/auth/database
 ##  matchmaking-data:
 ##    driver: local
 ##  game-data:

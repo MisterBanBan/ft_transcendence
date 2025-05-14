@@ -5,12 +5,12 @@ export async function insertAuthentication(
     username: string,
     email: string,
     hashedPassword: string,
-    token: string
+    timestamp: number
 ): Promise<number | undefined> {
     const result = await db.run(
-        `INSERT INTO auth (username, email, password, token)
+        `INSERT INTO auth (username, email, password, timestamp)
      VALUES (?, ?, ?, ?)`,
-        [username, email, hashedPassword, token]
+        [username, email, hashedPassword, timestamp]
     );
     return result.lastID;
 }

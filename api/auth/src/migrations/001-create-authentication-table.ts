@@ -7,7 +7,7 @@ export async function up({ context }: { context: Database }) {
              username TEXT UNIQUE NOT NULL,
              email TEXT NOT NULL,
              password TEXT NOT NULL,
-             token TEXT NOT NULL
+             timestamp INTEGER NOT NULL
         )
     `);
 }

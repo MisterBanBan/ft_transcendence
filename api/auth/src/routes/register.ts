@@ -1,11 +1,13 @@
 import argon2 from "argon2";
 import fs from "fs";
 import {FastifyInstance} from "fastify";
+import {insertAuthentication} from "../db/insertAuthentication.js";
 
 interface User {
+	username: string;
 	email: string;
 	hash: string;
-	token: string;
+	timestamp: number;
 }
 
 export default async function (server: FastifyInstance) {
@@ -14,11 +16,15 @@ export default async function (server: FastifyInstance) {
 		console.log("POST /api/auth/register");
 		console.log(request.body);
 
-		const {email, password, cpassword} = request.body as { email: string; password: string, cpassword: string };
+		const {username, email, password, cpassword} = request.body as { username: string, email: string; password: string, cpassword: string };
 
-		if (!email || !password || !cpassword) {
+		if (!username || !email || !password || !cpassword) {
 			return reply.status(400).send({error: ['Tous les champs sont requis.'], type: 'global'});
 		}
+
+		const errUsername = validateUsername(username);
+		if (errUsername)
+			return reply.status(400).send({error: ['Invalid username.'], type: "username"});
 
 		const errEmail = validateEmail(email);
 		if (errEmail)
@@ -46,17 +52,23 @@ export default async function (server: FastifyInstance) {
 				if (data) users = JSON.parse(data);
 			}
 
-			if (users.some((user: User) => user.email === email)) {
+			if (users.some((user: User) => user.username === username)) {
+				return reply.status(400).send({error: ["Username already in use."], type: "username"});
+			}
+			else if (users.some((user: User) => user.email === email)) {
 				return reply.status(400).send({error: ["Email already in use."], type: "email"});
 			}
 
 			console.log("\x1b[32mCreating token\x1b[0m");
 			const token = server.jwt.sign({email});
 
-			const userData = {email, hash, token};
+			const timestamp = Date.now();
+			const userData = {username, email, hash, timestamp};
 
 			users.push(userData);
 			await fs.promises.writeFile("users.json", JSON.stringify(users, null, 2));
+
+			insertAuthentication(server.db, username, email, hash, timestamp);
 
 			return reply.setCookie('token', token, {
 				path: '/',
@@ -69,6 +81,11 @@ export default async function (server: FastifyInstance) {
 			return reply.status(400).send({error: [`An error occurred: ${err}.`], type: "global"});
 		}
 	})
+
+	function validateUsername(username: string) {
+		const regex = /^[a-zA-Z0-9]{3,16}$/;
+		return !regex.test(username);
+	}
 
 	function validateEmail(email: string) {
 		const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;

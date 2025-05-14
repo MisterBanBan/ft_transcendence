@@ -100,34 +100,38 @@ export const routes: Route[] = [
             await new Promise(resolve => setTimeout(resolve, 300));
             return `<div class="flex m-auto gap-8 w-4/5">
 
-            <!-- Sign-in Form -->
+            <!-- Login Form -->
             <div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
                 <h2 class="text-white text-2xl mb-4">Sign In</h2>
-                <div id="error-global-login" class="text-red-500 text-sm mb-2"></div>
+                <div id="error-global-login" class="error-message-login text-red-500 text-sm mb-2"></div>
 
                 <label for="email-login" class="text-white">Email:</label>
-                <div id="error-email-login" class="text-red-500 text-sm mb-1"></div>
+                <div id="error-email-login" class="error-message-login text-red-500 text-sm mb-1"></div>
                 <input type="text" id="email-login" class="p-2 mb-3 rounded border border-gray-300" />
 
                 <label for="password-login" class="text-white">Password:</label>
-                <div id="error-password-login" class="text-red-500 text-sm mb-1"></div>
+                <div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
                 <input type="password" id="password-login" class="p-2 mb-4 rounded border border-gray-300" />
 
                 <input type="button" id="submit-login" value="Sign In"
                        class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
             </div>
 
-            <!-- Sign-up Form -->
+            <!-- Register Form -->
             <div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
                 <h2 class="text-white text-2xl mb-4">Sign Up</h2>
-                <div id="error-global-register" class="text-red-500 text-sm mb-2"></div>
+                <div id="error-global-register" class="error-message-register text-red-500 text-sm mb-2"></div>
+
+                <label for="username-register" class="text-white">Username:</label>
+                <div id="error-username-register" class="error-message-register text-red-500 text-sm mb-1"></div>
+                <input type="text" id="username-register" class="p-2 mb-3 rounded border border-gray-300" />
 
                 <label for="email-register" class="text-white">Email:</label>
-                <div id="error-email-register" class="text-red-500 text-sm mb-1"></div>
+                <div id="error-email-register" class="error-message-register text-red-500 text-sm mb-1"></div>
                 <input type="text" id="email-register" class="p-2 mb-3 rounded border border-gray-300" />
 
                 <label for="password-register" class="text-white">Password:</label>
-                <div id="error-password-register" class="text-red-500 text-sm mb-1"></div>
+                <div id="error-password-register" class="error-message-register text-red-500 text-sm mb-1"></div>
                 <input type="password" id="password-register" class="p-2 mb-3 rounded border border-gray-300" />
 
                 <label for="cpassword" class="text-white">Confirm Password:</label>

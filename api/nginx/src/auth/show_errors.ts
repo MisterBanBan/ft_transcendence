@@ -1,5 +1,5 @@
 export async function showError(response: any, extension: string) {
-    document.querySelectorAll(".error-message").forEach(errorSpan => errorSpan.innerHTML = "");
+    document.querySelectorAll(`.error-message-${extension}`).forEach(errorSpan => errorSpan.innerHTML = "");
 
     console.log(response);
     const data = await response.json();
