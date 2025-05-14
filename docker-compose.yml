@@ -12,6 +12,8 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - users-data:/app/database
     restart: unless-stopped
 
   tournament:
@@ -27,11 +29,15 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - tournament-data:/app/database
     restart: unless-stopped
 
   game:
     image: game
     container_name: game
+    ports:
+      - "8082:8082"
     build:
       context: api/game
     healthcheck:
@@ -42,6 +48,8 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - game-data:/app/database
     restart: on-failure
 
   matchmaking:
@@ -57,13 +65,15 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - matchmaking-data:/app/database
     restart: on-failure
 
-  authentication:
-    image: authentication
-    container_name: authentication
+  auth:
+    image: auth
+    container_name: auth
     build:
-      context: api/authentication
+      context: api/auth
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
       interval: 10s
@@ -72,6 +82,8 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - auth-data:/app/database
     restart: on-failure
 
   nginx:
@@ -90,7 +102,7 @@ services:
         condition: service_healthy
       game:
         condition: service_healthy
-      authentication:
+      auth:
         condition: service_healthy
     networks:
       - ft_transcendence
@@ -100,17 +112,36 @@ networks:
   ft_transcendence:
     driver: bridge
 
-#volumes:
-#  nginx-data:
-#    driver: local
-##  authentication-data:
-##    driver: local
-##  matchmaking-data:
-##    driver: local
-##  game-data:
-##    driver: local
-##  tournament-data:
-##    driver: local
-#  users-data:
-#    driver: local
+volumes:
+  users-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/users/database
+  auth-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/auth/database
+  matchmaking-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/matchmaking/database
+  game-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/game/database
+  tournament-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/tournament/database
+
 
