@@ -1,12 +1,10 @@
 import fs from 'fs';
 import argon2 from 'argon2';
 import {FastifyInstance} from "fastify";
-
-interface User {
-	email: string;
-	hash: string;
-	token: string;
-}
+import {User} from "../types/user.js";
+import {getUserByEmail} from "../db/getUserByEmail.js";
+import {getUserByUsername} from "../db/getUserByUsername.js";
+import {TokenPayload} from "../types/tokenPayload.js";
 
 interface Cookie {
 	path: string,
@@ -19,27 +17,21 @@ export default async function (server: FastifyInstance) {
 	server.post('/api/auth/login', async function (request, reply) {
 
 		console.log("POST /api/auth/login");
-		const {email, password} = request.body as { email: string; password: string };
+		const {identifier, password} = request.body as { identifier: string; password: string };
 
 		try {
 
-			let users: User[] = [];
-			if (fs.existsSync("users.json")) {
-				const data = fs.readFileSync("users.json", "utf-8");
-				if (data) users = JSON.parse(data);
-			} else
-				return reply.status(400).send({error: ["No users.json file found"], type: "global"});
+			let user: User | undefined;
+			if (identifier.includes("@"))
+				user = await getUserByEmail(server.db, identifier);
+			else
+				user = await getUserByUsername(server.db, identifier);
 
-			let token;
+			if (user == undefined)
+				return reply.status(400).send({error: ["Invalid email or username."], type: "email"});
 
-			const user = users.find((user: User) => user.email === email);
-			if (user)
-				token = user.token;
-			else {
-				return reply.status(400).send({error: ["Invalid email."], type: "email"});
-			}
-
-			console.log("Find user:", user);
+			const tokenData: TokenPayload = { username: user.username, email: user.email, updatedAt: user.updatedAt };
+			const token = server.jwt.sign(tokenData, { noTimestamp: true });
 
 			const cookie = {
 				path: '/',
@@ -48,7 +40,7 @@ export default async function (server: FastifyInstance) {
 				maxAge: 3600
 			} as Cookie;
 
-			if (await argon2.verify(user.hash, password)) {
+			if (await argon2.verify(user.password, password)) {
 				return reply.setCookie('token', token, cookie).status(200).send({
 					error: [`Successfully registered`],
 					type: "global"

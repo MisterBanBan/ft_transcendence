@@ -2,7 +2,7 @@ import {showError} from "./show_errors.js";
 import { Component } from "../component.js";
 
 interface Payload {
-    email: string;
+    identifier: string;
     password: string;
 }
 
@@ -24,13 +24,13 @@ export class Login implements Component{
 
         async function submitForm() {
 
-            const emailInput = document.getElementById("email-login") as HTMLInputElement;
+            const identifierInput = document.getElementById("identifier-login") as HTMLInputElement;
             const passwordInput = document.getElementById("password-login") as HTMLInputElement;
             let errorSpan = document.getElementById("error-global-login") as HTMLTextAreaElement;
 
-            const email: string = emailInput.value;
+            const identifier: string = identifierInput.value;
             const password: string = passwordInput.value;
-            const body = {email, password} as Payload;
+            const body = {identifier, password} as Payload;
 
             try {
                 const response = await fetch("/api/auth/login", {

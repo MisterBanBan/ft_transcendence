@@ -1,14 +1,11 @@
 import argon2 from "argon2";
 import fs from "fs";
 import {FastifyInstance} from "fastify";
-import {insertAuthentication} from "../db/insertAuthentication.js";
-
-interface User {
-	username: string;
-	email: string;
-	hash: string;
-	timestamp: number;
-}
+import {addUser} from "../db/addUser.js";
+import {User} from "../types/user.js";
+import {getUserByUsername} from "../db/getUserByUsername.js";
+import {getUserByEmail} from "../db/getUserByEmail.js";
+import {TokenPayload} from "../types/tokenPayload.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/register', async (request, reply) => {
@@ -16,7 +13,7 @@ export default async function (server: FastifyInstance) {
 		console.log("POST /api/auth/register");
 		console.log(request.body);
 
-		const {username, email, password, cpassword} = request.body as { username: string, email: string; password: string, cpassword: string };
+		let {username, email, password, cpassword} = request.body as { username: string, email: string; password: string, cpassword: string };
 
 		if (!username || !email || !password || !cpassword) {
 			return reply.status(400).send({error: ['Tous les champs sont requis.'], type: 'global'});
@@ -34,10 +31,8 @@ export default async function (server: FastifyInstance) {
 		if (errPassword)
 			return reply.status(400).send({error: errPassword, type: "password"});
 
-		let hash;
-
 		try {
-			hash = await argon2.hash(password);
+			password = await argon2.hash(password);
 		} catch (err) {
 			return reply.status(400).send({
 				error: [`An error occurred while registering a password: ${err}.`],
@@ -46,29 +41,22 @@ export default async function (server: FastifyInstance) {
 		}
 
 		try {
-			let users: User[] = [];
-			if (fs.existsSync("users.json")) {
-				const data = fs.readFileSync("users.json", "utf-8");
-				if (data) users = JSON.parse(data);
-			}
-
-			if (users.some((user: User) => user.username === username)) {
+			let user = await getUserByUsername(server.db, username);
+			if (user)
 				return reply.status(400).send({error: ["Username already in use."], type: "username"});
-			}
-			else if (users.some((user: User) => user.email === email)) {
+
+			user = await getUserByEmail(server.db, email);
+			if (user)
 				return reply.status(400).send({error: ["Email already in use."], type: "email"});
-			}
 
 			console.log("\x1b[32mCreating token\x1b[0m");
-			const token = server.jwt.sign({email});
 
 			const timestamp = Date.now();
-			const userData = {username, email, hash, timestamp};
+			const userData: User = {username, email, password, updatedAt: timestamp };
+			const tokenData: TokenPayload = { username, email, updatedAt: timestamp };
+			const token = server.jwt.sign(tokenData, { noTimestamp: true});
 
-			users.push(userData);
-			await fs.promises.writeFile("users.json", JSON.stringify(users, null, 2));
-
-			insertAuthentication(server.db, username, email, hash, timestamp);
+			await addUser(server.db, userData);
 
 			return reply.setCookie('token', token, {
 				path: '/',

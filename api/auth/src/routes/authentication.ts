@@ -1,5 +1,5 @@
 import {FastifyInstance} from "fastify";
-import { insertAuthentication } from '../db/insertAuthentication.js';
+import { addUser } from '../db/addUser.js';
 
 export default async function (server: FastifyInstance) {
     // server.post('/api/auth/', async function (request, reply) {
