@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/13 19:33:07 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/15 13:44:54 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,20 +95,24 @@ export const routes: Route[] = [
         }
     },
     {
+    
       path: "/Pong",
       title: "Pong",
       template: async () => {
         await new Promise(r => setTimeout(r, 300));
         return `
-          <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden">
-          <img
-            src="/img/pong.png"
-            alt="Pong background"
-            class="absolute inset-0 w-full h-full object-cover"
-          />
-          <img id="left-bar"  src="/img/bar_left.png"  class="absolute w-8 h-24" />
-          <img id="right-bar" src="/img/bar_right.png" class="absolute w-8 h-24" />
-        </div>
+            <div id="pong" class="relative w-screen h-screen bg-red overflow-hidden flex items-center justify-center">
+              <img
+                id="pong-bg"
+                src="/img/pong.png"
+                alt="Pong background"
+                class="block max-w-full max-h-full object-contain"
+              />
+              <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
+              <img id="right-bar" src="/img/bar_left.png" class="absolute" />
+            </div>
+
+
         `;
       }
     },
@@ -121,3 +125,20 @@ export const routes: Route[] = [
     }
 ];
 
+/*          <div id="pong" class="relative w-screen h-screen bg-red overflow-hidden">
+            <img 
+              src="/img/pong.png"
+              alt="Pong background"
+              class="absolute inset-0 w-full h-full object-cover"
+            />
+            <img
+                id="left-bar"
+                src="/img/bar_left.png" alt="Left paddle"
+                class="absolute left-[15%] top-0 w-8 h-24"
+              />
+              <img
+                id="right-bar"
+                src="/img/bar_left.png" alt="Right paddle"
+                class="absolute right-[35%] top-0 w-8 h-24"
+              />
+          </div>*/

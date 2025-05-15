@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/12 21:09:38 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:00:44 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,8 @@ const routeComponents: Record<string, Component> = {
             const pongGame = new pong(
                 'left-bar',      // ID de la barre gauche
                 'right-bar',     // ID de la barre droite
-                'pong' // ID du conteneur de jeu
+                'pong-bg', // ID du conteneur de jeu
+                'pong'
               );
             pongGame.init();
             activeComponent = {

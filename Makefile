@@ -21,10 +21,10 @@ clean:
 	$(DOCKER_COMPOSE) down --rmi all --volumes --remove-orphans
 
 fclean: clean
-	docker system prune
+	docker system prune --all --volumes --force
 
 all: build up
 
-re: clean all
+re: down all
 
 .PHONY: build up down logs clean fclean
