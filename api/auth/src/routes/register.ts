@@ -10,10 +10,10 @@ import {TokenPayload} from "../types/tokenPayload.js";
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/register', async (request, reply) => {
 
-		console.log("POST /api/auth/register");
-		console.log(request.body);
-
 		let {username, email, password, cpassword} = request.body as { username: string, email: string; password: string, cpassword: string };
+
+		if (request.cookies && request.cookies.token)
+			return reply.status(400).send({error: ["Already logged."], type: "global"});
 
 		if (!username || !email || !password || !cpassword) {
 			return reply.status(400).send({error: ['Tous les champs sont requis.'], type: 'global'});
@@ -61,7 +61,8 @@ export default async function (server: FastifyInstance) {
 			return reply.setCookie('token', token, {
 				path: '/',
 				httpOnly: true,
-				secure: false,
+				secure: true,
+				sameSite: true,
 				maxAge: 3600
 			}).status(200).send({error: [`Successfully registered`], type: "global"});
 

@@ -13,6 +13,7 @@
 //import { introduction } from './intro.js'
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
+import {showError} from "./auth/show_errors";
 
 
 class Router {
@@ -86,11 +87,15 @@ class Router {
     }
 }
 
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     try {
+        await fetch("/api/auth/verify", {
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+        });
+
         const router = new Router(routes);
-        router.updatePage();
+        await router.updatePage();
     } catch (error) {
         console.error("Wrong init :", error);
         document.body.innerHTML = "<h1>Appli dumped</h1>";

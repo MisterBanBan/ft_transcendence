@@ -1,10 +1,10 @@
-import fs from 'fs';
 import argon2 from 'argon2';
 import {FastifyInstance} from "fastify";
 import {User} from "../types/user.js";
 import {getUserByEmail} from "../db/getUserByEmail.js";
 import {getUserByUsername} from "../db/getUserByUsername.js";
 import {TokenPayload} from "../types/tokenPayload.js";
+import {verifyToken} from "../db/verifyToken.js";
 
 interface Cookie {
 	path: string,
@@ -16,8 +16,10 @@ interface Cookie {
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/login', async function (request, reply) {
 
-		console.log("POST /api/auth/login");
 		const {identifier, password} = request.body as { identifier: string; password: string };
+
+		if (request.cookies && request.cookies.token)
+			return reply.status(400).send({error: ["Already logged."], type: "global"});
 
 		try {
 
@@ -28,7 +30,7 @@ export default async function (server: FastifyInstance) {
 				user = await getUserByUsername(server.db, identifier);
 
 			if (user == undefined)
-				return reply.status(400).send({error: ["Invalid email or username."], type: "email"});
+				return reply.status(400).send({error: ["Invalid email or username."], type: "identifier"});
 
 			const tokenData: TokenPayload = { username: user.username, email: user.email, updatedAt: user.updatedAt };
 			const token = server.jwt.sign(tokenData, { noTimestamp: true });
@@ -36,7 +38,8 @@ export default async function (server: FastifyInstance) {
 			const cookie = {
 				path: '/',
 				httpOnly: true,
-				secure: false,
+				secure: true,
+				sameSite: true,
 				maxAge: 3600
 			} as Cookie;
 
