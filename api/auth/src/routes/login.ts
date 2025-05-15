@@ -4,7 +4,6 @@ import {User} from "../types/user.js";
 import {getUserByEmail} from "../db/getUserByEmail.js";
 import {getUserByUsername} from "../db/getUserByUsername.js";
 import {TokenPayload} from "../types/tokenPayload.js";
-import {verifyToken} from "../db/verifyToken.js";
 
 interface Cookie {
 	path: string,

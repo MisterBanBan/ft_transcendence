@@ -13,7 +13,6 @@
 //import { introduction } from './intro.js'
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
-import {showError} from "./auth/show_errors";
 
 
 class Router {

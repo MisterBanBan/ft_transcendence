@@ -1,5 +1,4 @@
 import argon2 from "argon2";
-import fs from "fs";
 import {FastifyInstance} from "fastify";
 import {addUser} from "../db/addUser.js";
 import {User} from "../types/user.js";
