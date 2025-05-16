@@ -1,5 +1,5 @@
 import type {Database} from 'sqlite';
-import {User} from "../types/user.js";
+import {User} from "../interface/user.js";
 
 export async function getIdByUser(
 	db: Database,

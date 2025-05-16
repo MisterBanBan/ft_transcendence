@@ -1,8 +1,8 @@
 import argon2 from 'argon2';
 import {FastifyInstance} from "fastify";
-import {getUserByUsername} from "../db/getUserByUsername.js";
-import {TokenPayload} from "../types/tokenPayload.js";
-import {getIdByUser} from "../db/getIdByUser.js";
+import {getUserByUsername} from "../db/get-user-by-username.js";
+import {TokenPayload} from "../interface/token-payload.js";
+import {getIdByUser} from "../db/get-id-by-user.js";
 
 interface Cookie {
 	path: string,

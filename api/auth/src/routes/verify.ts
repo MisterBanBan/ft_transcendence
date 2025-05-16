@@ -1,6 +1,6 @@
 import {FastifyInstance} from "fastify";
-import {TokenPayload} from "../types/tokenPayload.js";
-import {verifyToken} from "../db/verifyToken.js";
+import {TokenPayload} from "../interface/token-payload.js";
+import {verifyToken} from "../db/verify-token.js";
 
 export default async function (server: FastifyInstance) {
     server.get('/api/auth/verify', async function (request, reply) {

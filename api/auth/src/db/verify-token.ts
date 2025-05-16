@@ -1,6 +1,6 @@
 import type {Database} from 'sqlite';
-import {User} from "../types/user.js";
-import {TokenPayload} from "../types/tokenPayload.js";
+import {User} from "../interface/user.js";
+import {TokenPayload} from "../interface/token-payload.js";
 
 export async function verifyToken(
     db: Database,

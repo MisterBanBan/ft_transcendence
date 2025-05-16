@@ -1,9 +1,9 @@
 import argon2 from "argon2";
 import {FastifyInstance} from "fastify";
-import {addUser} from "../db/addUser.js";
-import {User} from "../types/user.js";
-import {getUserByUsername} from "../db/getUserByUsername.js";
-import {TokenPayload} from "../types/tokenPayload.js";
+import {addUser} from "../db/add-user.js";
+import {User} from "../interface/user.js";
+import {getUserByUsername} from "../db/get-user-by-username.js";
+import {TokenPayload} from "../interface/token-payload.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/register', async (request, reply) => {
