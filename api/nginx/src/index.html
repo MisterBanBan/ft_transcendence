@@ -50,7 +50,7 @@
         uploadBtn.disabled = true;
 
         try {
-            const response = await fetch('http://localhost:8443/api/users/1/avatar', {
+            const response = await fetch('/api/users/1/avatar', {
                 method: 'POST',
                 body: formData
             });
