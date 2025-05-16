@@ -38,7 +38,7 @@ export default async function (server: FastifyInstance) {
 				maxAge: 3600
 			} as Cookie;
 
-			if (await argon2.verify(user.password, password)) {
+			if (await argon2.verify(user.password, password, { secret: Buffer.from(process.env.ARGON_SECRET!)})) {
 				return reply.setCookie('token', token, cookie).status(200).send({
 					error: [`Successfully registered`],
 					type: "global"
