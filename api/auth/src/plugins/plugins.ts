@@ -15,8 +15,8 @@ export default async function (server: FastifyInstance, opts: any) {
 
 	if (!process.env.JWT_SECRET)
 		throw new Error('JWT_SECRET environment variable is required');
-	else
-		console.log(process.env.JWT_SECRET);
+	if (!process.env.ARGON_SECRET)
+		throw new Error('ARGON_SECRET environment variable is required');
 
 	server.register(fastifyStatic, {
 		root: path.join(__dirname, '../dist'),

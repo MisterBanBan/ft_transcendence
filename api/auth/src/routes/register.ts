@@ -26,7 +26,7 @@ export default async function (server: FastifyInstance) {
 			return reply.status(400).send({error: errPassword, type: "password"});
 
 		try {
-			password = await argon2.hash(password);
+			password = await argon2.hash(password, {secret: Buffer.from(process.env.ARGON_SECRET!)});
 		} catch (err) {
 			return reply.status(400).send({
 				error: [`An error occurred while registering a password: ${err}.`],
@@ -43,10 +43,13 @@ export default async function (server: FastifyInstance) {
 
 			const timestamp = Date.now();
 			const userData: User = {username, password, updatedAt: timestamp };
-			const tokenData: TokenPayload = { username, updatedAt: timestamp };
-			const token = server.jwt.sign(tokenData, { noTimestamp: true});
 
-			await addUser(server.db, userData);
+			const id = await addUser(server.db, userData);
+			if (id == undefined)
+				return reply.status(400).send({error: ["An error occured while registering."], type: "global"});
+
+			const tokenData: TokenPayload = { id: id, username, updatedAt: timestamp };
+			const token = server.jwt.sign(tokenData, { noTimestamp: true});
 
 			return reply.setCookie('token', token, {
 				path: '/',

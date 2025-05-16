@@ -7,8 +7,6 @@ async function startServer() {
 
     const server = fastify();
 
-    console.log("server started");
-
     const filename = fileURLToPath(import.meta.url);
     const dir = dirname(filename);
 
@@ -17,22 +15,17 @@ async function startServer() {
             dir: join(dir, "routes/")
         });
 
-        console.log("passed first try");
-
         await server.register(autoLoad, {
             dir: join(dir, "plugins/"),
             encapsulate: false
         });
 
-        console.log("trying to listen");
         await server.listen({ port: 8084, host: '0.0.0.0' });
         console.log(`Users service is running on 0.0.0.0:8084`);
     } catch (err) {
         server.log.error(err);
         process.exit(1);
     }
-
-    console.log("passed third try");
 }
 
 startServer();

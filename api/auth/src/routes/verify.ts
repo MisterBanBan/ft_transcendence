@@ -14,17 +14,19 @@ export default async function (server: FastifyInstance) {
 			sameSite: true
 		};
 
-        if (request.cookies && request.cookies.token)
-		{
-			let token;
-			try {
-				token = server.jwt.decode(request.cookies.token) as TokenPayload;
-			} catch (e) {
+		const token = request.cookies?.token;
+
+		if (!token) return reply.send(false);
+
+		try {
+			const decodedToken = server.jwt.decode(token) as TokenPayload;
+			const isValid = await verifyToken(server.db, decodedToken);
+			if (!isValid) {
 				return reply.clearCookie('token', cookieOptions).send(false);
 			}
-
-			return reply.send(await verifyToken(server.db, token));
+			return reply.send(isValid);
+		} catch {
+			return reply.clearCookie('token', cookieOptions).send(false);
 		}
-		return reply.send(false);
-    });
+	});
 }
