@@ -14,6 +14,7 @@ interface Cookie {
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/login', async function (request, reply) {
 
+		console.log("POST /api/auth/login");
 		const {username, password} = request.body as { username: string; password: string };
 
 		if (request.cookies && request.cookies.token)
@@ -39,10 +40,7 @@ export default async function (server: FastifyInstance) {
 			} as Cookie;
 
 			if (await argon2.verify(user.password, password, { secret: Buffer.from(process.env.ARGON_SECRET!)})) {
-				return reply.setCookie('token', token, cookie).status(200).send({
-					error: [`Successfully registered`],
-					type: "global"
-				});
+				return reply.setCookie('token', token, cookie).status(200).send();
 			} else
 				return reply.status(400).send({error: ["Invalid password."], type: "password"});
 		} catch (err) {

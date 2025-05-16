@@ -42,7 +42,8 @@ export class Register implements Component{
 					body: JSON.stringify(auth)
 				});
 
-				await showError(response, "register");
+				if (!response.ok)
+					await showError(response, "register");
 
 			} catch (err) {
 				console.error("Erreur réseau", err);

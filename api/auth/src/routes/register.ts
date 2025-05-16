@@ -57,7 +57,7 @@ export default async function (server: FastifyInstance) {
 				secure: true,
 				sameSite: true,
 				maxAge: 3600
-			}).status(200).send({error: [`Successfully registered`], type: "global"});
+			}).status(200).send();
 
 		} catch (err) {
 			return reply.status(400).send({error: [`An error occurred: ${err}.`], type: "global"});
@@ -77,17 +77,16 @@ export default async function (server: FastifyInstance) {
 		const isLongEnough = password.length >= minLength;
 		const samePassword = password === cpassword
 
-		if (isLongEnough && hasUpperCase && hasNumber && hasSpecialChar && samePassword) {
-			return false;
-		}
-
-		const errors = [];
+		const errors = [] as string[];
 		if (!isLongEnough) errors.push("The password needs at least 8 characters.");
 		if (!hasUpperCase) errors.push("The password needs at least 1 upper case.");
 		if (!hasNumber) errors.push("The password needs at least 1 number.");
 		if (!hasSpecialChar) errors.push("The password needs at least 1 special character.");
 		if (!samePassword) errors.push("Passwords don't match.");
 
-		return errors;
+		if (errors.length > 0)
+			return errors;
+
+		return false;
 	}
 }

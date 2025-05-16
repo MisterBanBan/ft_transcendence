@@ -39,7 +39,8 @@ export class Login implements Component{
                     body: JSON.stringify(body),
                 });
 
-                await showError(response, "login");
+                if (!response.ok)
+                    await showError(response, "login");
 
             } catch (err) {
                 console.error("Erreur réseau", err);
