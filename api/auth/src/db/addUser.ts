@@ -6,9 +6,9 @@ export async function addUser(
     user: User
 ): Promise<number | undefined> {
     const result = await db.run(
-        `INSERT INTO auth (username, email, password, updatedAt)
-     VALUES (?, ?, ?, ?)`,
-        [user.username, user.email, user.password, user.updatedAt]
+        `INSERT INTO auth (username, password, updatedAt)
+     VALUES (?, ?, ?)`,
+        [user.username, user.password, user.updatedAt]
     );
     return result.lastID;
 }

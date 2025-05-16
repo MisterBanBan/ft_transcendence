@@ -15,6 +15,5 @@ export async function verifyToken(
      console.log("Decoded: ", decodedToken);
 
      return !!(user && user.username === decodedToken.username
-         && user.email === decodedToken.email
          && user.updatedAt === decodedToken.updatedAt);
 }

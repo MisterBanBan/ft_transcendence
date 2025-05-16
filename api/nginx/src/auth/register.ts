@@ -3,7 +3,6 @@ import { Component } from "../component.js";
 
 interface Payload {
 	username: string;
-	email: string;
 	password: string;
 	cpassword: string;
 }
@@ -27,16 +26,14 @@ export class Register implements Component{
 		async function submitForm() {
 
 			const usernameInput = document.getElementById("username-register") as HTMLInputElement;
-			const emailInput = document.getElementById("email-register") as HTMLInputElement;
 			const passwordInput = document.getElementById("password-register") as HTMLInputElement;
 			const cpasswordInput = document.getElementById("cpassword") as HTMLInputElement;
 			let errorSpan = document.getElementById("error-global-register") as HTMLTextAreaElement;
 
 			const username = usernameInput.value;
-			const email = emailInput.value;
 			const password = passwordInput.value;
 			const cpassword = cpasswordInput.value;
-			const auth = { username, email, password, cpassword } as Payload;
+			const auth = { username, password, cpassword } as Payload;
 
 			try {
 				const response = await fetch("/api/auth/register", {

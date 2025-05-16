@@ -105,9 +105,9 @@ export const routes: Route[] = [
                 <h2 class="text-white text-2xl mb-4">Sign In</h2>
                 <div id="error-global-login" class="error-message-login text-red-500 text-sm mb-2"></div>
 
-                <label for="identifier-login" class="text-white">Email or Username:</label>
-                <div id="error-identifier-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-                <input type="text" id="identifier-login" class="p-2 mb-3 rounded border border-gray-300" />
+                <label for="username-login" class="text-white">Username:</label>
+                <div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
+                <input type="text" id="username-login" class="p-2 mb-3 rounded border border-gray-300" />
 
                 <label for="password-login" class="text-white">Password:</label>
                 <div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
@@ -125,10 +125,6 @@ export const routes: Route[] = [
                 <label for="username-register" class="text-white">Username:</label>
                 <div id="error-username-register" class="error-message-register text-red-500 text-sm mb-1"></div>
                 <input type="text" id="username-register" class="p-2 mb-3 rounded border border-gray-300" />
-
-                <label for="email-register" class="text-white">Email:</label>
-                <div id="error-email-register" class="error-message-register text-red-500 text-sm mb-1"></div>
-                <input type="text" id="email-register" class="p-2 mb-3 rounded border border-gray-300" />
 
                 <label for="password-register" class="text-white">Password:</label>
                 <div id="error-password-register" class="error-message-register text-red-500 text-sm mb-1"></div>

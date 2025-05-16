@@ -1,7 +1,5 @@
 import argon2 from 'argon2';
 import {FastifyInstance} from "fastify";
-import {User} from "../types/user.js";
-import {getUserByEmail} from "../db/getUserByEmail.js";
 import {getUserByUsername} from "../db/getUserByUsername.js";
 import {TokenPayload} from "../types/tokenPayload.js";
 
@@ -15,23 +13,19 @@ interface Cookie {
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/login', async function (request, reply) {
 
-		const {identifier, password} = request.body as { identifier: string; password: string };
+		const {username, password} = request.body as { username: string; password: string };
 
 		if (request.cookies && request.cookies.token)
 			return reply.status(400).send({error: ["Already logged."], type: "global"});
 
 		try {
 
-			let user: User | undefined;
-			if (identifier.includes("@"))
-				user = await getUserByEmail(server.db, identifier);
-			else
-				user = await getUserByUsername(server.db, identifier);
+			const user = await getUserByUsername(server.db, username);
 
 			if (user == undefined)
-				return reply.status(400).send({error: ["Invalid email or username."], type: "identifier"});
+				return reply.status(400).send({error: ["Invalid username."], type: "username"});
 
-			const tokenData: TokenPayload = { username: user.username, email: user.email, updatedAt: user.updatedAt };
+			const tokenData: TokenPayload = { username: user.username, updatedAt: user.updatedAt };
 			const token = server.jwt.sign(tokenData, { noTimestamp: true });
 
 			const cookie = {

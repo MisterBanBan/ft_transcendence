@@ -5,7 +5,6 @@ export async function up({ context }: { context: Database }) {
         CREATE TABLE IF NOT EXISTS auth (
              id INTEGER PRIMARY KEY AUTOINCREMENT,
              username TEXT UNIQUE NOT NULL,
-             email TEXT UNIQUE NOT NULL,
              password TEXT NOT NULL,
              updatedAt INTEGER NOT NULL
         )
