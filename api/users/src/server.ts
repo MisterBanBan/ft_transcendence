@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import fileValidationConfig from './config/file-validation.js';
 import validationErrorHandler from './error/validation-errors.js';
-// import corsConfig from './config/cors.js';
+import corsConfig from './config/cors.js';
 // import cors from "@fastify/cors";
 // import websocket from "@fastify/websocket";
 
@@ -24,8 +24,8 @@ async function startServer() {
     // Register custom error handler for validation errors
     await server.register(validationErrorHandler);
 
-    // // Register cors config
-    // await server.register(corsConfig);
+    // Register cors config
+    await server.register(corsConfig);
 
     /*    server.register(websocket);*/
 

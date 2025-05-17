@@ -3,9 +3,10 @@ import cors from '@fastify/cors';
 
 export default async function corsConfig(server: FastifyInstance) {
     server.register(cors, {
-        origin: process.env.FRONTEND_URL || 'https://localhost',
+        origin: 'https://localhost:8443',
         methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-        allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type', 'Authorization', 'Access-Control-Allow-Origin'],
-        credentials: true
+        allowedHeaders: ['Content-Type', 'Authorization', 'Content-Disposition'],
+        credentials: true,
+        exposedHeaders: ['Content-Disposition']
     });
 }

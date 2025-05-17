@@ -13,7 +13,7 @@ services:
     networks:
       - ft_transcendence
     env_file:
-      - .env
+      - api/users/.env
     volumes:
       - users-data:/app/database
     restart: unless-stopped
