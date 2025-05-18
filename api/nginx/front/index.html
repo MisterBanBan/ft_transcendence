@@ -192,7 +192,7 @@
     uploadBtn.addEventListener('click', async () => {
         if (!selectedFile) return;
         const formData = new FormData();
-        formData.append('avatar', selectedFile);
+        formData.append('avatar', selectedFile[0]);
 
         status.textContent = 'Uploading...';
         uploadBtn.disabled = true;
