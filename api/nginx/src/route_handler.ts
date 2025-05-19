@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/14 15:00:44 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:31:14 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ const routeComponents: Record<string, Component> = {
     "/game": {
         init: () => {
             activeComponent?.destroy?.();
-            const me = new menu('menu');
+            const me = new menu('menu','special-img','auth','main-video');
             me.init();
             activeComponent = {
                 init: () => {},

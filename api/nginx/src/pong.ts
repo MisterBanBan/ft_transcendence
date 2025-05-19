@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/10 15:16:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/05/15 13:39:11 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/16 12:58:32 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,21 +90,13 @@ export class pong implements Component {
             throw new Error('Right bar not found');
         }
         
-        /*const containerElement = document.getElementById(containerId);
-        if(!containerElement) {
-            throw new Error('container not found');
-        }*/
         this.leftBEle = leftBarElement;
         this.rightBEle = rightBarElement;
         this.imgPong = document.getElementById(imgPongId) as HTMLImageElement;
-        
-        
-        
 
     }
     
     private barResize = () => {
-        // Dans barResize (ou dans le gameLoop pour le vertical)
         const imgRect = this.imgPong.getBoundingClientRect();
         
         const imgTop = imgRect.top;
@@ -115,16 +107,19 @@ export class pong implements Component {
         const barWidth = imgWidth * 0.02;
         const barHeight = imgHeight * 0.2;
         console.log(": %d : %d", barHeight, barWidth);
+        //definir la taille des barres en fonction de la taille de la fenetre
         this.leftBar.element.style.width = `${barWidth}px`;
         this.leftBar.element.style.height = `${barHeight}px`;
         this.rightBar.element.style.width = `${barWidth}px`;
         this.rightBar.element.style.height = `${barHeight}px`;
+        
         // Position horizontale (15% et 85% de la largeur de l'image)
-        this.leftBar.element.style.left  = `${imgLeft + imgWidth * 0.05}px`;
-        this.rightBar.element.style.left = `${imgLeft + imgWidth * 0.60}px`;
+        //this.leftBar.element.style.left  = `${imgLeft + imgWidth * 0.15}px`;
+        //this.rightBar.element.style.left = `${imgLeft + imgWidth * 0.85}px`;
         this.leftBar.height = barHeight;
         this.rightBar.height = barHeight;
-        // Position verticale (clampée entre 10% et 90% de la hauteur de l'image)
+        
+        // Position verticale (definie entre 10% et 90% de la hauteur de l'image)
         const margin = imgHeight * 0.1;
         const maxY = imgHeight - this.leftBar.height - margin;
         this.leftBar.position.y = Math.max(margin, Math.min(maxY, this.leftBar.position.y));
@@ -148,15 +143,16 @@ export class pong implements Component {
             const centerY = margin +(backRectHeight - margin * 2 - this.leftBar.height) / 2;
             this.leftBar.position.y = centerY;
             this.rightBar.position.y = centerY;
-            //this.leftBar.applyPosition();
-            //this.rightBar.applyPosition();
     
             window.addEventListener('resize', this.barResize);
             window.addEventListener('keydown', this.onKeyDown);
             window.addEventListener('keyup', this.onKeyUp);
             this.barResize();
+            
             this.rafId    = requestAnimationFrame(this.gameLoop);
+            
             };
+            
             if (this.imgPong.complete && this.imgPong.onload) {
                 this.imgPong.onload(new Event("load"));
             }
@@ -191,7 +187,7 @@ export class pong implements Component {
             bar.position.y += bar.velocity.y * dt;
             bar.position.y = Math.max(margin, Math.min(maxY, bar.position.y));
             // Horizontal : 15% pour gauche, 85% pour droite
-            const x = imgLeft + imgWidth * (i === 0 ? 0.15 : 0.85);
+            const x = imgLeft + imgWidth * (i === 0 ? 0.05 : 0.65);
             bar.element.style.left = `${x}px`;
             // Vertical : top = top de l'image + position.y
             bar.element.style.top = `${imgTop + bar.position.y}px`;

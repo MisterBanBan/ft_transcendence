@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/15 13:44:54 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:26:33 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,10 +73,28 @@ export const routes: Route[] = [
         title: "Game",
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
-            return `<div class="w-screen h-screen relative">
-                        <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-            <source id="menu" src="/img/game.mp4" type="video/mp4">
-                </video>
+            return `<div class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
+                        <video autoplay loop muted class="block max-w-full max-h-full object-contain" id="main-video">
+                          <source id="menu" src="/img/game.mp4" type="video/mp4">
+                        </video>
+                        <button id="auth"
+                          class="absolute rounded-full bg-red-500 hover:bg-red-700 w-16 h-16 flex items-center justify-center shadow-lg" 
+                          style="top:18%; left:68%;">
+                          <span class="text-white font-bold text-xl">GO</span>
+                        </button>
+                          <img
+                            id="special-img"
+                            src="/img/last_airbender.jpg"
+                            alt="last_airbender"
+                            class="absolute hidden object-cover"
+                            style="
+                              top: 18%;
+                              left: 4%;
+                              width: 70%;
+                              height: 70%;
+                              pointer-events: none;
+                            "
+                          />
                 </div>
             `;
         }
@@ -101,7 +119,7 @@ export const routes: Route[] = [
       template: async () => {
         await new Promise(r => setTimeout(r, 300));
         return `
-            <div id="pong" class="relative w-screen h-screen bg-red overflow-hidden flex items-center justify-center">
+            <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
               <img
                 id="pong-bg"
                 src="/img/pong.png"
