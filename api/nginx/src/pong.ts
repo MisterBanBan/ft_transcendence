@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pong.ts                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/10 15:16:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/05/16 12:58:32 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/20 11:22:27 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ export class pong implements Component {
         const imgRect = this.imgPong.getBoundingClientRect();
         
         const imgTop = imgRect.top;
-        const imgLeft = imgRect.left;
+        //const imgLeft = imgRect.left;
         const imgWidth = imgRect.width;
         const imgHeight = imgRect.height;
 

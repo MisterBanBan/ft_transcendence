@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   menu.ts                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/19 10:38:49 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:53:47 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,10 @@ import { Component } from "./component.js";
 export class menu implements Component{
     //private boundKeyDownHandler!: (e: KeyboardEvent) => void;
     //private boundClickDownHandler!: (e: KeyboardEvent) => void;
-    private menuSource: HTMLSourceElement;
+    //private menuSource: HTMLSourceElement;
     private auth: HTMLElement;
     private img: HTMLElement;
+    private user: HTMLElement;
     private videoMenu: HTMLVideoElement;
     //private video: HTMLVideoElement;
     private currentPage: number = 0;
@@ -28,10 +29,7 @@ export class menu implements Component{
         'quit'
       ];
     
-    constructor(menuId: string, imgId: string, authId: string, videoId: string) {
-        const menuElement = document.getElementById(menuId) as HTMLSourceElement;
-        if (!menuElement) throw new Error('Menu element not found');
-        this.menuSource = menuElement;
+    constructor(videoId: string, imgId: string, authId: string, userId: string) {
 
         const img = document.getElementById(imgId);
         if (!img) throw new Error('video element not found');
@@ -44,12 +42,16 @@ export class menu implements Component{
         const video = document.getElementById(videoId) as HTMLVideoElement;
         if (!video) throw new Error('video element not found');
         this.videoMenu = video;
+
+        const user = document.getElementById(userId);
+        if (!user) throw new Error('video element not found');
+        this.user = user;
     }
     public init(): void {
 
         this.auth.addEventListener('click', this.onClickDown);
         window.addEventListener('keydown', this.onKeyDown);
-        window.addEventListener('resize', this.positionImageVideo);
+        window.addEventListener('resize', this.resize);
     }
 
     private onClickDown = (e: MouseEvent) => {
@@ -76,6 +78,23 @@ export class menu implements Component{
         this.img.style.top    = rect.top  + rect.height * 0.18 + "px";
         this.img.style.width  = rect.width * 0.70 + "px";
         this.img.style.height = rect.height * 0.70 + "px";
+        
+    }
+    
+    private resize = () => {
+        const videoRect = this.videoMenu.getBoundingClientRect();
+
+        const videotop = videoRect.top;
+        const videoWidth = videoRect.width;
+        const videoHeight = videoRect.height;
+
+        const screenWidth = videoWidth * 0.9;
+        const screenHeight = videoHeight * 0.8;
+        
+        this.img.style.width = `${screenWidth}px`;
+        this.img.style.height = `${screenHeight}px`;
+
+        
         
     }
     
