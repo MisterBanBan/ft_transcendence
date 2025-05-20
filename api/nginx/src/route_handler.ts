@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   route_handler.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/18 15:31:14 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:24:09 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ const routeComponents: Record<string, Component> = {
     "/game": {
         init: () => {
             activeComponent?.destroy?.();
-            const me = new menu('menu','special-img','auth','main-video');
+            const me = new menu('main-video','special-img','auth', 'username');
             me.init();
             activeComponent = {
                 init: () => {},

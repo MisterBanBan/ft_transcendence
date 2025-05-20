@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/18 15:26:33 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:21:47 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ export const routes: Route[] = [
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
             return `<div class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
-                        <video autoplay loop muted class="block max-w-full max-h-full object-contain" id="main-video">
-                          <source id="menu" src="/img/game.mp4" type="video/mp4">
+                        <video autoplay loop muted  id="main-video" class="block max-w-full max-h-full object-contain">
+                          <source src="/img/game.mp4" type="video/mp4">
                         </video>
                         <button id="auth"
                           class="absolute rounded-full bg-red-500 hover:bg-red-700 w-16 h-16 flex items-center justify-center shadow-lg" 
@@ -94,6 +94,13 @@ export const routes: Route[] = [
                               height: 70%;
                               pointer-events: none;
                             "
+                          />
+                          <img
+                            id="username"
+                            src="/img/case.png"
+                            alt="username"
+                            class="absolute hidden object-cover"
+                            
                           />
                 </div>
             `;
