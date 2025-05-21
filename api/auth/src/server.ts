@@ -5,27 +5,27 @@ import { dirname, join } from "node:path";
 
 async function startServer() {
 
-    const server = fastify();
+	const server = fastify();
 
-    const filename = fileURLToPath(import.meta.url);
-    const dir = dirname(filename);
+	const filename = fileURLToPath(import.meta.url);
+	const dir = dirname(filename);
 
-    try {
-        await server.register(autoLoad, {
-            dir: join(dir, "routes/")
-        });
+	try {
+		await server.register(autoLoad, {
+			dir: join(dir, "routes/")
+		});
 
-        await server.register(autoLoad, {
-            dir: join(dir, "plugins/"),
-            encapsulate: false
-        });
+		await server.register(autoLoad, {
+			dir: join(dir, "plugins/"),
+			encapsulate: false
+		});
 
-        await server.listen({ port: 8084, host: '0.0.0.0' });
-        console.log(`Users service is running on 0.0.0.0:8084`);
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1);
-    }
+		await server.listen({ port: 8084, host: '0.0.0.0' });
+		console.log(`Users service is running on 0.0.0.0:8084`);
+	} catch (err) {
+		server.log.error(err);
+		process.exit(1);
+	}
 }
 
 startServer();

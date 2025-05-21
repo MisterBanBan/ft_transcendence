@@ -3,7 +3,7 @@ import {TokenPayload} from "../interface/token-payload.js";
 import {verifyToken} from "../db/verify-token.js";
 
 export default async function (server: FastifyInstance) {
-    server.get('/api/auth/verify', async function (request, reply) {
+	server.get('/api/auth/verify', async function (request, reply) {
 
 		console.log("GET /api/auth/verify");
 

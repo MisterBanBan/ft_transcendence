@@ -13,6 +13,7 @@
 import { Component } from './component.js';
 import { Login } from "./auth/login.js";
 import { Register } from "./auth/register.js";
+import {TFA} from "./auth/2fa.js";
 // import { introduction } from './intro.js';
 // import { menu } from './menu.js';
 // import { Zoom } from './zoom.js';
@@ -23,6 +24,20 @@ let activeComponent: Component | null = null;
 
 const routeComponents: Record<string, Component> = {
 
+	"/2fa": {
+		init: () => {
+			activeComponent?.destroy?.();
+
+			const tfa = new TFA();
+			tfa.init();
+
+			activeComponent = {
+				init: () => {},
+				destroy: () => { tfa.destroy(); },
+			};
+		},
+		destroy: () => {}
+	},
 	"/auth": {
 		init: () => {
 			activeComponent?.destroy?.();

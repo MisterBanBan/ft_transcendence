@@ -23,9 +23,13 @@
     "fastify-plugin": "^5.0.1",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
-    "umzug": "^3.8.2"
+    "umzug": "^3.8.2",
+    "authenticator": "^1.1.5",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
+    "@types/qrcode": "^1.5.5",
+    "@types/authenticator": "^1.1.4",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20.0.0",
     "@types/sqlite3": "^3.1.8",

@@ -3,6 +3,7 @@ import {FastifyInstance} from "fastify";
 import {getUserByUsername} from "../db/get-user-by-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
 import {getIdByUser} from "../db/get-id-by-user.js";
+import authenticator from "authenticator";
 
 interface Cookie {
 	path: string,
@@ -15,7 +16,7 @@ export default async function (server: FastifyInstance) {
 	server.post('/api/auth/login', async function (request, reply) {
 
 		console.log("POST /api/auth/login");
-		const {username, password} = request.body as { username: string; password: string };
+		const {username, password, code} = request.body as { username: string; password: string, code: string };
 
 		if (request.cookies && request.cookies.token)
 			return reply.status(400).send({error: ["Already logged."], type: "global"});
@@ -40,6 +41,17 @@ export default async function (server: FastifyInstance) {
 			} as Cookie;
 
 			if (await argon2.verify(user.password, password, { secret: Buffer.from(process.env.ARGON_SECRET!)})) {
+
+				if (user.tfa)
+				{
+					try {
+						if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(user.tfa, code))
+							return reply.status(400).send({error: ["Invalid 2FA Code"], type: "code"});
+					} catch {
+						return reply.status(400).send({error: ["Error while verifying 2FA Code"], type: "code"});
+					}
+				}
+
 				return reply.setCookie('token', token, cookie).status(200).send();
 			} else
 				return reply.status(400).send({error: ["Invalid password."], type: "password"});

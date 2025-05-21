@@ -17,7 +17,6 @@ export class Register implements Component{
 		if (this.submitButton) {
 			this.submitButton.addEventListener("click", async (event) => {
 				await submitForm();
-				console.log("Button clicked");
 			});
 		} else {
 			console.error("Submit button not found!");
@@ -43,10 +42,12 @@ export class Register implements Component{
 				});
 
 				if (!response.ok)
-					await showError(response, "register");
+					return await showError(response, "register");
+
+				document.querySelectorAll(`.error-message-register`).forEach(errorSpan => errorSpan.innerHTML = "");
 
 			} catch (err) {
-				console.error("Erreur réseau", err);
+				console.error("Error: ", err);
 				errorSpan.style.display = "block";
 				errorSpan.innerHTML = `<span>Erreur de connexion au serveur.</span>`;
 			}

@@ -42,7 +42,7 @@ export default async function (server: FastifyInstance) {
 			console.log("\x1b[32mCreating token\x1b[0m");
 
 			const timestamp = Date.now();
-			const userData: User = {username, password, updatedAt: timestamp };
+			const userData: User = {username, password, tfa: undefined ,updatedAt: timestamp };
 
 			const id = await addUser(server.db, userData);
 			if (id == undefined)

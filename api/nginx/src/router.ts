@@ -90,7 +90,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         await fetch("/api/auth/verify", {
             method: "GET",
-            headers: {"Content-Type": "application/json"},
         });
 
         const router = new Router(routes);
