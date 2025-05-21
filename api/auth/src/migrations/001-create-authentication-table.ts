@@ -5,8 +5,10 @@ export async function up({ context }: { context: Database }) {
 		CREATE TABLE IF NOT EXISTS auth (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			username TEXT UNIQUE NOT NULL,
-			password TEXT NOT NULL,
+			password TEXT,
 			tfa TEXT,
+			provider TEXT NOT NULL DEFAULT 'local',
+			provider_id TEXT,
 			updatedAt INTEGER NOT NULL
 		)
 	`);
