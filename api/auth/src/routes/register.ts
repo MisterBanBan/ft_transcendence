@@ -42,13 +42,13 @@ export default async function (server: FastifyInstance) {
 			console.log("\x1b[32mCreating token\x1b[0m");
 
 			const timestamp = Date.now();
-			const userData: User = {username, password, tfa: undefined ,updatedAt: timestamp };
+			const userData: User = {provider: "local", username, password, tfa: undefined ,updatedAt: timestamp };
 
 			const id = await addUser(server.db, userData);
 			if (id == undefined)
 				return reply.status(400).send({error: ["An error occured while registering."], type: "global"});
 
-			const tokenData: TokenPayload = { id: id, username, updatedAt: timestamp };
+			const tokenData: TokenPayload = {provider: "local", id: id, username, updatedAt: timestamp };
 			const token = server.jwt.sign(tokenData, { noTimestamp: true});
 
 			return reply.setCookie('token', token, {

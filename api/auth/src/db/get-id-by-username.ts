@@ -1,6 +1,6 @@
 import type {Database} from 'sqlite';
 
-export async function getIdByUser(
+export async function getIdByUsername(
 	db: Database,
 	username: string,
 ): Promise<number | undefined> {

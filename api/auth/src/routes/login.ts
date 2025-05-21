@@ -2,7 +2,7 @@ import argon2 from 'argon2';
 import {FastifyInstance} from "fastify";
 import {getUserByUsername} from "../db/get-user-by-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
-import {getIdByUser} from "../db/get-id-by-user.js";
+import {getIdByUsername} from "../db/get-id-by-username.js";
 import authenticator from "authenticator";
 
 interface Cookie {
@@ -24,12 +24,12 @@ export default async function (server: FastifyInstance) {
 		try {
 
 			const user = await getUserByUsername(server.db, username);
-			const id = await getIdByUser(server.db, username);
+			const id = await getIdByUsername(server.db, username);
 
 			if (user == undefined || id == undefined)
 				return reply.status(400).send({error: ["Invalid username."], type: "username"});
 
-			const tokenData: TokenPayload = { id, username: user.username, updatedAt: user.updatedAt };
+			const tokenData: TokenPayload = {provider: "local", id, username: user.username, updatedAt: user.updatedAt };
 			const token = server.jwt.sign(tokenData, { noTimestamp: true });
 
 			const cookie = {

@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import {FastifyInstance} from "fastify";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback', async (request, reply) => {
@@ -11,12 +11,14 @@ export default async function (server: FastifyInstance) {
 		try {
 			const access_token = await exchange(code);
 
-			await getUserProfile(access_token);
+			const data = await getUserProfile(access_token);
+			const login = data.login;
+
+			return reply.status(200).redirect('/');
 		} catch (error) {
 			if (error instanceof Error)
 				console.error(error.message);
 		}
-
 	});
 
 	async function exchange(code: string): Promise<string> {
@@ -26,7 +28,6 @@ export default async function (server: FastifyInstance) {
 		params.append('client_secret', process.env.CLIENT_SECRET_42!);
 		params.append('code', code);
 		params.append('redirect_uri', 'https://localhost:8443/api/auth/callback');
-		// TODO redirection
 
 		const response = await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',
@@ -45,13 +46,12 @@ export default async function (server: FastifyInstance) {
 		return data.access_token;
 	}
 
-	async function getUserProfile(access_token: string) {
+	async function getUserProfile(access_token: string): Promise<any> {
 		const response = await fetch('https://api.intra.42.fr/v2/me', {
 			method: 'GET',
 			headers: { 'Authorization': `Bearer ${access_token}` },
 		});
 
-		const data = await response.json();
-		console.log(data.login);
+		return response.json();
 	}
 }
