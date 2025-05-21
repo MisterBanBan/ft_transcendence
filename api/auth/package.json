@@ -25,7 +25,8 @@
     "sqlite3": "^5.1.7",
     "umzug": "^3.8.2",
     "authenticator": "^1.1.5",
-    "qrcode": "^1.5.4"
+    "qrcode": "^1.5.4",
+    "simple-oauth2": "^5.1.0"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.5",
