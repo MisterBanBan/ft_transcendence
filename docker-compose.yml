@@ -16,6 +16,7 @@ services:
       - api/users/.env
     volumes:
       - users-data:/app/database
+      - ./uploads:/app/uploads
     restart: unless-stopped
 
 #  tournament:

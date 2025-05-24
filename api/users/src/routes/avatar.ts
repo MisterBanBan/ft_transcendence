@@ -6,7 +6,6 @@ import path from 'path';
 
 export default async function (server: FastifyInstance) {
     server.post('/api/users/:id/avatar', {
-        // Ajout de la validation des paramètres
         schema: {
             params: {
                 type: 'object',
@@ -20,7 +19,6 @@ export default async function (server: FastifyInstance) {
             const userId = (request.params as { id: string }).id;
             console.log(`Tentative d'upload pour l'utilisateur ${userId}`);
 
-            // Vérification de l'existence du répertoire uploads
             const uploadDir = './uploads';
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir, { recursive: true });

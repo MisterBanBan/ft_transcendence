@@ -1,176 +1,192 @@
-<!--<!DOCTYPE html>
-<html>
-<head>
-    <title>Transcendance</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f5f5f5;
-        }
-        .container {
-            text-align: center;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-            color: #333;
-        }
-        .services {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .service-btn {
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        .service-btn:hover {
-            background-color: #45a049;
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <h1>Bienvenue sur Transcendance</h1>
-    <p>Votre plateforme de jeu est prete !</p>
-    <div class="services">
-        <button class="service-btn" onclick="window.location.href='../../../users/'">Service Users</button>
-        <button class="service-btn" onclick="window.location.href='../../../tournament/'">Service tournament</button>
-        <button class="service-btn" onclick="window.location.href='../../../game/'">Service game</button>
-        <button class="service-btn" onclick="window.location.href='../../../matchmaking/'">Service matchmaking</button>
-        <button class="service-btn" onclick="window.location.href='../../../authentication/'">Service authentication</button>
-    </div>
-</div>
-</body>
-</html>-->
-
-
-<!--<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Inscription utilisateur</title>
-    <style>
-        body { font-family: Arial, sans-serif; background: #f7f7f7; }
-        form { background: #fff; padding: 2em; margin: 5em auto; max-width: 350px; border-radius: 8px; box-shadow: 0 2px 8px #0002; }
-        label { display: block; margin-top: 1em; }
-        input { width: 100%; padding: 0.5em; margin-top: 0.2em; }
-        button { margin-top: 1em; width: 100%; padding: 0.7em; background: #007bff; color: #fff; border: none; border-radius: 4px; }
-        .error { color: #d00; margin-top: 0.5em; }
-        .success { color: #080; margin-top: 0.5em; }
-    </style>
-</head>
-<body>
-<form id="registerForm" autocomplete="off">
-    <h2>Créer un compte</h2>
-    <label for="username">Nom d'utilisateur</label>
-    <input type="text" id="username" name="username" required minlength="3" maxlength="32">
-
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" required maxlength="255">
-
-    <label for="password">Mot de passe</label>
-    <input type="password" id="password" name="password" required minlength="8" maxlength="128">
-
-    <button type="submit">S'inscrire</button>
-    <div id="message"></div>
-</form>
-
-<script>
-    document.getElementById('registerForm').addEventListener('submit', async function(event) {
-        event.preventDefault();
-
-        // Nettoyage des messages précédents
-        const messageDiv = document.getElementById('message');
-        messageDiv.textContent = '';
-        messageDiv.className = '';
-
-        // Récupération des valeurs
-        const username = document.getElementById('username').value.trim();
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value;
-
-        // Validation simple côté client
-        if (username.length < 3) {
-            messageDiv.textContent = "Le nom d'utilisateur doit faire au moins 3 caractères.";
-            messageDiv.className = 'error';
-            return;
-        }
-        if (!email.match(/^[^@]+@[^@]+\.[^@]+$/)) {
-            messageDiv.textContent = "Email invalide.";
-            messageDiv.className = 'error';
-            return;
-        }
-        if (password.length < 8) {
-            messageDiv.textContent = "Le mot de passe doit faire au moins 8 caractères.";
-            messageDiv.className = 'error';
-            return;
-        }
-
-        // Envoi au back-end
-        try {
-            const response = await fetch('/api/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, email, password })
-            });
-            const data = await response.json();
-            if (response.ok) {
-                messageDiv.textContent = data.message || "Inscription réussie !";
-                messageDiv.className = 'success';
-                document.getElementById('registerForm').reset();
-            } else {
-                messageDiv.textContent = data.message || "Erreur lors de l'inscription.";
-                messageDiv.className = 'error';
-            }
-        } catch (error) {
-            messageDiv.textContent = "Erreur réseau ou serveur.";
-            messageDiv.className = 'error';
-        }
-    });
-</script>
-</body>
-</html>-->
-
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Upload Profile Photo</title>
+    <title>Profile avec Avatar</title>
     <style>
-        body { background: aqua; font-family: sans-serif; margin: 2em; }
-        #preview { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 1px solid #ccc; }
-        #uploadBtn { margin-top: 1em; }
+        body {
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 2em;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        .avatar-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ddd;
+            margin-bottom: 1em;
+            background: #f9f9f9;
+        }
+
+        .avatar-placeholder {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 0 auto 1em;
+        }
+
+        .upload-section {
+            border-top: 1px solid #eee;
+            padding-top: 2em;
+        }
+
+        #preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ccc;
+            margin: 1em 0;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: #0056b3;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        .username {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5em;
+        }
+
+        .user-stats {
+            color: #666;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-<h2>Profile Photo Upload</h2>
-<input type="file" id="fileInput" accept="image/*"><br>
-<img id="preview" src="" alt="Preview" style="display:none;"><br>
-<button id="uploadBtn" disabled>Upload</button>
-<div id="status"></div>
+<div class="profile-container">
+    <div class="avatar-section">
+        <div id="currentAvatar"></div>
+        <div class="user-info">
+            <div class="username" id="username">Utilisateur</div>
+            <div class="user-stats">Membre depuis 2025</div>
+        </div>
+    </div>
+
+    <div class="upload-section">
+        <h3>Modifier l'avatar</h3>
+        <input type="file" id="fileInput" accept="image/*"><br>
+        <img id="preview" src="" alt="Preview" style="display:none;"><br>
+        <button id="uploadBtn" class="btn" disabled>Mettre à jour l'avatar</button>
+        <button id="refreshBtn" class="btn">Actualiser l'avatar</button>
+        <div id="status"></div>
+    </div>
+</div>
 
 <script>
     const fileInput = document.getElementById('fileInput');
     const preview = document.getElementById('preview');
     const uploadBtn = document.getElementById('uploadBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
     const status = document.getElementById('status');
-    let selectedFile = null;
+    const currentAvatar = document.getElementById('currentAvatar');
+    const username = document.getElementById('username');
 
+    let selectedFile = null;
+    const userId = 1; // ID de l'utilisateur actuel
+
+    // Function to load and display current user avatar
+    async function loadUserAvatar() {
+        try {
+            const response = await fetch(`/api/users/${userId}`);
+            if (response.ok) {
+                const userData = await response.json();
+                displayAvatar(userData.avatar_url, userData.username);
+            } else {
+                console.error('Erreur lors du chargement des données utilisateur');
+                displayDefaultAvatar();
+            }
+        } catch (error) {
+            console.error('Erreur réseau:', error);
+            displayDefaultAvatar();
+        }
+    }
+
+    // Function to display avatar
+    function displayAvatar(avatarUrl, userName = 'Utilisateur') {
+        currentAvatar.innerHTML = '';
+        username.textContent = userName;
+
+        if (avatarUrl && avatarUrl !== 'null') {
+            const img = document.createElement('img');
+            img.src = `/uploads/${avatarUrl}`;
+            console.log(`/uploads/${avatarUrl}`);
+            img.className = 'avatar-display';
+            img.alt = 'Avatar de ' + userName;
+
+            // Fallback si l'image ne charge pas
+            img.onerror = () => {
+                displayDefaultAvatar(userName);
+            };
+
+            currentAvatar.appendChild(img);
+        } else {
+            displayDefaultAvatar(userName);
+        }
+    }
+
+    // Function to display default avatar (initials)
+    function displayDefaultAvatar(userName = 'Utilisateur') {
+        const initials = userName.split(' ')
+            .map(name => name.charAt(0).toUpperCase())
+            .join('')
+            .substring(0, 2);
+
+        const placeholder = document.createElement('div');
+        placeholder.className = 'avatar-placeholder';
+        placeholder.textContent = initials;
+
+        currentAvatar.innerHTML = '';
+        currentAvatar.appendChild(placeholder);
+    }
+
+    // Preview selected file
     fileInput.addEventListener('change', () => {
         const file = fileInput.files[0];
         if (file) {
@@ -189,29 +205,51 @@
         }
     });
 
+    // Upload new avatar
     uploadBtn.addEventListener('click', async () => {
         if (!selectedFile) return;
-        const formData = new FormData();
-        formData.append('avatar', selectedFile[0]);
 
-        status.textContent = 'Uploading...';
+        const formData = new FormData();
+        formData.append('avatar', selectedFile);
+
+        status.textContent = 'Upload en cours...';
         uploadBtn.disabled = true;
 
         try {
-            const response = await fetch('/api/users/1/avatar', {
+            const response = await fetch(`/api/users/${userId}/avatar`, {
                 method: 'POST',
                 body: formData
             });
+
             if (response.ok) {
-                status.textContent = 'Upload successful!';
-            } else {
-                const err = await response.json();
-                status.textContent = 'Error: ' + (err.error || 'Upload failed');
+                const result = await response.json();
+                status.textContent = 'Avatar mis à jour avec succès!';
+                status.style.color = 'green';
+
+                setTimeout(() => {
+                    loadUserAvatar();
+                    preview.style.display = 'none';
+                    fileInput.value = '';
+                }, 500); // Délai de 500ms
             }
         } catch (e) {
-            status.textContent = 'Network error';
+            status.textContent = 'Erreur réseau';
+            status.style.color = 'red';
         }
+
         uploadBtn.disabled = false;
+    });
+
+    // Refresh avatar manually
+    refreshBtn.addEventListener('click', () => {
+        loadUserAvatar();
+        status.textContent = 'Avatar actualisé';
+        status.style.color = 'blue';
+    });
+
+    // Load avatar on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUserAvatar();
     });
 </script>
 </body>
