@@ -1,28 +1,62 @@
 import fastify from "fastify";
-import socketioServer from "fastify-socket.io";
+import fastifyIO from "fastify-socket.io";
 import autoLoad from "@fastify/autoload";
-import { Server } from "socket.io";
 import { join } from "path";
+import cors from "@fastify/cors";
+import { Socket } from "socket.io";
+import fs from "fs";
 
-const dir = __dirname;
 
-const app = fastify({ logger: true });
+async function start() {
+  const dir = __dirname;
 
-app.register(socketioServer);
+  const app = fastify({
+    logger: true,
+    https: {
+      key: fs.readFileSync("/app/certs/key.pem"),
+      cert: fs.readFileSync("/app/certs/cert.pem")
+    }
+  });
 
-app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
-app.register(autoLoad, { dir: join(dir, "routes/") });
+  await app.register(cors, {
+    origin: "*",
+    credentials: true,
+  });
 
-app.listen({ port: 8082, host: "0.0.0.0" }, (err, address) => {
-  if (err) {
-    app.log.error(err);
-    process.exit(1);
-  }
-  app.log.info(`Server listening at ${address}`);
-});
+  await app.register(fastifyIO, {
+    cors: {
+      origin: "*",
+      credentials: true,
+    },
+  });
 
-declare module "fastify" {
-  interface FastifyInstance {
-    io: Server;
-  }
+  app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
+  app.register(autoLoad, { dir: join(dir, "routes/") });
+
+  app.ready((err) => {
+    if (err) throw err;
+
+    app.io.on("connection", (socket: Socket) => {
+      console.log("Client connected:", socket.id);
+
+      socket.on("message", (msg: string) => {
+        console.log(`Received from ${socket.id}: ${msg}`);
+        socket.emit("message", `Echo: ${msg}`);
+      });
+
+      socket.on("disconnect", () => {
+        console.log(`Client disconnected: ${socket.id}`);
+      });
+    });
+  });
+
+  app.listen({ port: 8082, host: "0.0.0.0" }, (err, address) => {
+    if (err) {
+      app.log.error(err);
+      process.exit(1);
+    }
+    app.log.info(`Server listening at ${address}`);
+  });
 }
+
+start();

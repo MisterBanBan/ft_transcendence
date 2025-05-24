@@ -12,6 +12,27 @@
 
     </div>
 
-    <script type="module" src="/public/router.js"></script>
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+    <h1>Socket.IO test client</h1>
+  <script>
+   const socket = io("https://10.13.4.4:8082", {
+        transports: ["websocket", "polling"],
+        withCredentials: true,
+    });
+
+    socket.on("connect", () => {
+      console.log("Connected with id:", socket.id);
+      socket.emit("message", "Hello from client");
+    });
+
+    socket.on("message", (msg) => {
+      console.log("Received:", msg);
+    });
+
+    socket.on("connect_error", (err) => {
+      console.error("Connection error:", err);
+    });
+  </script>
 </body>
 </html>
