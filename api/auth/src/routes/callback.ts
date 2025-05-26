@@ -1,4 +1,8 @@
 import {FastifyInstance} from "fastify";
+import {getUserByUsername} from "../db/get-user-by-username.js";
+import {addUser} from "../db/add-user.js";
+import {getIdByUsername} from "../db/get-id-by-username.js";
+import {changeUsername} from "../db/change-username.js";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback', async (request, reply) => {
@@ -12,7 +16,29 @@ export default async function (server: FastifyInstance) {
 			const access_token = await exchange(code);
 
 			const data = await getUserProfile(access_token);
-			const login = data.login;
+			const login = data.login as string;
+			const timestamp = Date.now();
+
+			let user = await getUserByUsername(server.db, login);
+			if (user && user.provider == '42')
+			{
+				console.log("Login 42 user")
+				// TODO login
+				// Only add token to cookies
+			}
+			else
+			{
+				if (user && user.provider != '42')
+				{
+					const id = await getIdByUsername(server.db, user.username);
+					const newUsername = user.username + '1';
+					await changeUsername(server.db, id!, newUsername);
+				}
+
+				user = { username: login, provider: "42", provider_id: data.id, updatedAt: timestamp };
+
+				await addUser(server.db, user);
+			}
 
 			return reply.status(200).redirect('/');
 		} catch (error) {

@@ -26,7 +26,7 @@ export default async function (server: FastifyInstance) {
 			const user = await getUserByUsername(server.db, username);
 			const id = await getIdByUsername(server.db, username);
 
-			if (user == undefined || id == undefined)
+			if (user == undefined || id == undefined || (user && user.provider != 'local'))
 				return reply.status(400).send({error: ["Invalid username."], type: "username"});
 
 			const tokenData: TokenPayload = {provider: "local", id, username: user.username, updatedAt: user.updatedAt };
@@ -40,7 +40,7 @@ export default async function (server: FastifyInstance) {
 				maxAge: 3600
 			} as Cookie;
 
-			if (await argon2.verify(user.password, password, { secret: Buffer.from(process.env.ARGON_SECRET!)})) {
+			if (await argon2.verify(user.password!, password, { secret: Buffer.from(process.env.ARGON_SECRET!)})) {
 
 				if (user.tfa)
 				{

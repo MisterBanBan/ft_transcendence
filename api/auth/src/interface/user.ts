@@ -1,6 +1,6 @@
 export interface User {
 	username: string;
-	password: string;
+	password?: string;
 	tfa?: string;
 	provider: string;
 	provider_id?: string;

@@ -99,48 +99,55 @@ export const routes: Route[] = [
 		template: async () => {
 			await new Promise(resolve => setTimeout(resolve, 300));
 			return `<div class="flex m-auto gap-8 w-4/5">
+    <!-- Login Form -->
+    <div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
+        <h2 class="text-white text-2xl mb-4">Sign In</h2>
+        <div id="error-global-login" class="error-message-login text-red-500 text-sm mb-2"></div>
 
-			<!-- Login Form -->
-			<div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
-				<h2 class="text-white text-2xl mb-4">Sign In</h2>
-				<div id="error-global-login" class="error-message-login text-red-500 text-sm mb-2"></div>
+        <label for="username-login" class="text-white">Username:</label>
+        <div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
+        <input type="text" id="username-login" class="p-2 mb-3 rounded border border-gray-300" />
 
-				<label for="username-login" class="text-white">Username:</label>
-				<div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-				<input type="text" id="username-login" class="p-2 mb-3 rounded border border-gray-300" />
+        <label for="password-login" class="text-white">Password:</label>
+        <div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
+        <input type="password" id="password-login" class="p-2 mb-4 rounded border border-gray-300" />
+        
+        <label for="code" class="text-white">2FA Code (if 2FA enabled):</label>
+        <div id="error-code-login" class="error-message-login text-red-500 text-sm mb-1"></div>
+        <input type="text" id="code" class="p-2 mb-4 rounded border border-gray-300" />
 
-				<label for="password-login" class="text-white">Password:</label>
-				<div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-				<input type="password" id="password-login" class="p-2 mb-4 rounded border border-gray-300" />
-				
-				<label for="code" class="text-white">2FA Code (if 2FA enabled):</label>
-				<div id="error-code-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-				<input type="text" id="code" class="p-2 mb-4 rounded border border-gray-300" />
+        <input type="button" id="submit-login" value="Sign In"
+               class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
+    </div>
 
-				<input type="button" id="submit-login" value="Sign In"
-					   class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
-			</div>
+    <!-- Register Form -->
+    <div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
+        <h2 class="text-white text-2xl mb-4">Sign Up</h2>
+        <div id="error-global-register" class="error-message-register text-red-500 text-sm mb-2"></div>
 
-			<!-- Register Form -->
-			<div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
-				<h2 class="text-white text-2xl mb-4">Sign Up</h2>
-				<div id="error-global-register" class="error-message-register text-red-500 text-sm mb-2"></div>
+        <label for="username-register" class="text-white">Username:</label>
+        <div id="error-username-register" class="error-message-register text-red-500 text-sm mb-1"></div>
+        <input type="text" id="username-register" class="p-2 mb-3 rounded border border-gray-300" />
 
-				<label for="username-register" class="text-white">Username:</label>
-				<div id="error-username-register" class="error-message-register text-red-500 text-sm mb-1"></div>
-				<input type="text" id="username-register" class="p-2 mb-3 rounded border border-gray-300" />
+        <label for="password-register" class="text-white">Password:</label>
+        <div id="error-password-register" class="error-message-register text-red-500 text-sm mb-1"></div>
+        <input type="password" id="password-register" class="p-2 mb-3 rounded border border-gray-300" />
 
-				<label for="password-register" class="text-white">Password:</label>
-				<div id="error-password-register" class="error-message-register text-red-500 text-sm mb-1"></div>
-				<input type="password" id="password-register" class="p-2 mb-3 rounded border border-gray-300" />
+        <label for="cpassword" class="text-white">Confirm Password:</label>
+        <input type="password" id="cpassword" class="p-2 mb-4 rounded border border-gray-300" />
 
-				<label for="cpassword" class="text-white">Confirm Password:</label>
-				<input type="password" id="cpassword" class="p-2 mb-4 rounded border border-gray-300" />
+        <input type="button" id="submit-register" value="Sign Up"
+               class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
+    </div>
+</div>
 
-				<input type="button" id="submit-register" value="Sign Up"
-					   class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
-			</div>
-		</div>`;
+<div class="w-4/5 m-auto mt-6 flex justify-center">
+    <a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback&response_type=code" 
+       target="_blank" 
+       class="bg-green-600 hover:bg-green-800 text-white py-2 px-6 rounded cursor-pointer text-center">
+        Sign In with 42 OAuth
+    </a>
+</div>`;
 		}
 	},
 	{

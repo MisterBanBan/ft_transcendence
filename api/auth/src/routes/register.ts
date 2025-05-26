@@ -65,7 +65,7 @@ export default async function (server: FastifyInstance) {
 	})
 
 	function validateUsername(username: string) {
-		const regex = /^[a-zA-Z0-9]{3,16}$/;
+		const regex = /^[a-zA-Z0-9\-]{3,16}$/;
 		return !regex.test(username);
 	}
 
