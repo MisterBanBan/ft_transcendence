@@ -1,5 +1,4 @@
 import type { Database } from 'sqlite';
-import {getUserByUsername} from "./get-user-by-username.js";
 
 export async function changeUsername(
 	db: Database,
@@ -7,8 +6,9 @@ export async function changeUsername(
 	newUsername: string,
 ) {
 	await db.run(
-		`UPDATE auth SET username = ? WHERE id = ?`,
+		`UPDATE auth SET username = ?, updatedAt = ? WHERE id = ?`,
 		newUsername,
+		Date.now(),
 		id,
 	);
 }

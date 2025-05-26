@@ -3,10 +3,11 @@ import {getUserByUsername} from "../db/get-user-by-username.js";
 import {addUser} from "../db/add-user.js";
 import {getIdByUsername} from "../db/get-id-by-username.js";
 import {changeUsername} from "../db/change-username.js";
+import {TokenPayload} from "../interface/token-payload.js";
+import {log} from "node:util";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback', async (request, reply) => {
-		console.log(request.query);
 		const { code } = request.query as { code?: string };
 		if (!code) {
 			return reply.status(400).send('Missing code');
@@ -17,30 +18,40 @@ export default async function (server: FastifyInstance) {
 
 			const data = await getUserProfile(access_token);
 			const login = data.login as string;
-			const timestamp = Date.now();
 
 			let user = await getUserByUsername(server.db, login);
+			let payload: TokenPayload;
+			let id;
 			if (user && user.provider == '42')
 			{
-				console.log("Login 42 user")
-				// TODO login
-				// Only add token to cookies
+				id = (await getIdByUsername(server.db, user.username))!;
+				payload = { id: id, username: login, provider: "42", provider_id: user.provider_id, updatedAt: user.updatedAt };
 			}
 			else
 			{
 				if (user && user.provider != '42')
 				{
-					const id = await getIdByUsername(server.db, user.username);
+					const existingId = await getIdByUsername(server.db, user.username);
 					const newUsername = user.username + '1';
-					await changeUsername(server.db, id!, newUsername);
+					await changeUsername(server.db, existingId!, newUsername);
 				}
 
+				const timestamp = Date.now();
 				user = { username: login, provider: "42", provider_id: data.id, updatedAt: timestamp };
 
-				await addUser(server.db, user);
+				id = await addUser(server.db, user);
+				payload = { id: id!, username: login, provider_id: data.id, provider: "42", updatedAt: timestamp}
 			}
 
-			return reply.status(200).redirect('/');
+			const token = server.jwt.sign(payload, { noTimestamp: true });
+
+			return reply.setCookie('token', token, {
+				path: '/',
+				httpOnly: true,
+				secure: true,
+				sameSite: true,
+				maxAge: 3600
+			}).status(200).redirect('/');
 		} catch (error) {
 			if (error instanceof Error)
 				console.error(error.message);
@@ -63,8 +74,6 @@ export default async function (server: FastifyInstance) {
 
 		if (!response.ok)
 		{
-			console.log(await response.json());
-			console.log(params.toString());
 			throw new Error('Error while exchanging token.');
 		}
 
