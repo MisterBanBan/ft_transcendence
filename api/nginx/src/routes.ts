@@ -141,10 +141,11 @@ export const routes: Route[] = [
     </div>
 </div>
 
-<div class="w-4/5 m-auto mt-6 flex justify-center">
+<div class="w-1/5 m-auto mt-6 flex justify-center">
     <a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Fz3r3p6%3A8443%2Fapi%2Fauth%2Fcallback&response_type=code" 
        target="_blank" 
-       class="bg-green-600 hover:bg-green-800 text-white py-2 px-6 rounded cursor-pointer text-center">
+       class="bg-green-600 hover:bg-green-800 text-white py-2 px-6 rounded cursor-pointer text-center flex items-center gap-2">
+       <img src="https://profile.intra.42.fr/assets/42_logo_black-684989d43d629b3c0ff6fd7e1157ee04db9bb7a73fba8ec4e01543d650a1c607.png" alt="42 logo" class="w-6 h-6" />
        Login/Register with 42 OAuth
     </a>
 </div>`;
