@@ -14,6 +14,8 @@ export default async function (server: FastifyInstance) {
                 return reply.code(404).send({error: 'User not found'});
             }
 
+            console.log(user.avatar_url);
+
             return {
                 id: user.id,
                 username: user.username,

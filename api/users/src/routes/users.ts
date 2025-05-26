@@ -7,7 +7,7 @@ export default async function (server: FastifyInstance) {
                 'INSERT INTO users (username, password, avatar_url) VALUES (?, ?, ?)',
                 'testuser1',
                 'pass1234',
-                'https://play-lh.googleusercontent.com/MPmWB25moeb9kF_Wnwm0mdDM599AIhUgn3iCO6r6vgVo85Iv-l7s_XKWZsD92FJjoMs'
+                'fleur.jpeg'
             );
             reply.code(201).send({ message: "Utilisateur créé !" });
         } catch (err) {

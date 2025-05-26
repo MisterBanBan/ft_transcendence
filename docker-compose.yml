@@ -13,10 +13,10 @@ services:
     networks:
       - ft_transcendence
     env_file:
-      - api/users/.env
+      - .env
     volumes:
       - users-data:/app/database
-      - ./uploads:/app/uploads
+      - /home/anjambon/Documents/transcendence/uploads:/app/uploads
     restart: unless-stopped
 
 #  tournament:
@@ -94,6 +94,8 @@ services:
       context: api/nginx
     ports:
       - "8443:443"
+    volumes:
+      - ./home/anjambon/Documents/transcendence/uploads:/shared/uploads
     depends_on:
       users:
         condition: service_healthy

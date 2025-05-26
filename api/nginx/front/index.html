@@ -34,23 +34,10 @@
             background: #f9f9f9;
         }
 
-        .avatar-placeholder {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 48px;
-            font-weight: bold;
-            margin: 0 auto 1em;
-        }
-
         .upload-section {
             border-top: 1px solid #eee;
             padding-top: 2em;
+            text-align: center;
         }
 
         #preview {
@@ -97,6 +84,15 @@
             color: #666;
             font-size: 14px;
         }
+
+        #status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .file-input {
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
@@ -111,10 +107,12 @@
 
     <div class="upload-section">
         <h3>Modifier l'avatar</h3>
-        <input type="file" id="fileInput" accept="image/*"><br>
-        <img id="preview" src="" alt="Preview" style="display:none;"><br>
+        <div class="file-input">
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        <img id="preview" src="" alt="Preview" style="display:none;">
+        <br>
         <button id="uploadBtn" class="btn" disabled>Mettre à jour l'avatar</button>
-        <button id="refreshBtn" class="btn">Actualiser l'avatar</button>
         <div id="status"></div>
     </div>
 </div>
@@ -123,13 +121,42 @@
     const fileInput = document.getElementById('fileInput');
     const preview = document.getElementById('preview');
     const uploadBtn = document.getElementById('uploadBtn');
-    const refreshBtn = document.getElementById('refreshBtn');
     const status = document.getElementById('status');
     const currentAvatar = document.getElementById('currentAvatar');
     const username = document.getElementById('username');
 
     let selectedFile = null;
     const userId = 1; // ID de l'utilisateur actuel
+
+    function displayAvatar(avatarUrl, userName = 'Utilisateur') {
+        currentAvatar.innerHTML = '';
+        username.textContent = userName;
+
+        if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
+            const img = document.createElement('img');
+            const timestamp = new Date().getTime();
+
+            // Try direct access first, fallback to API route
+            img.src = `/uploads/${avatarUrl}`;
+            img.className = 'avatar-display';
+            img.alt = 'Avatar de ' + userName;
+
+            img.onerror = () => {
+                console.log('Failed to load avatar from /uploads, trying API route');
+                // Fallback to API route if direct access fails
+                img.src = `/uploads/${avatarUrl}`;
+
+                img.onerror = () => {
+                    console.log('Failed to load avatar completely, showing default');
+                    showDefaultImageAvatar(userName);
+                };
+            };
+
+            currentAvatar.appendChild(img);
+        } else {
+            showDefaultImageAvatar(userName);
+        }
+    }
 
     // Function to load and display current user avatar
     async function loadUserAvatar() {
@@ -140,50 +167,23 @@
                 displayAvatar(userData.avatar_url, userData.username);
             } else {
                 console.error('Erreur lors du chargement des données utilisateur');
-                displayDefaultAvatar();
+                displayAvatar();
             }
         } catch (error) {
             console.error('Erreur réseau:', error);
-            displayDefaultAvatar();
+            displayAvatar();
         }
     }
 
-    // Function to display avatar
-    function displayAvatar(avatarUrl, userName = 'Utilisateur') {
-        currentAvatar.innerHTML = '';
-        username.textContent = userName;
-
-        if (avatarUrl && avatarUrl !== 'null') {
-            const img = document.createElement('img');
-            img.src = `/uploads/${avatarUrl}`;
-            console.log(`/uploads/${avatarUrl}`);
-            img.className = 'avatar-display';
-            img.alt = 'Avatar de ' + userName;
-
-            // Fallback si l'image ne charge pas
-            img.onerror = () => {
-                displayDefaultAvatar(userName);
-            };
-
-            currentAvatar.appendChild(img);
-        } else {
-            displayDefaultAvatar(userName);
-        }
-    }
-
-    // Function to display default avatar (initials)
-    function displayDefaultAvatar(userName = 'Utilisateur') {
-        const initials = userName.split(' ')
-            .map(name => name.charAt(0).toUpperCase())
-            .join('')
-            .substring(0, 2);
-
-        const placeholder = document.createElement('div');
-        placeholder.className = 'avatar-placeholder';
-        placeholder.textContent = initials;
+    // Use a default image file
+    function showDefaultImageAvatar() {
+        const img = document.createElement('img');
+        img.src = '/uploads/969b3e4e-ba49-44d4-8581-34dd972aeb32.jpeg';
+        img.className = 'avatar-display';
+        img.alt = 'Avatar par défaut';
 
         currentAvatar.innerHTML = '';
-        currentAvatar.appendChild(placeholder);
+        currentAvatar.appendChild(img);
     }
 
     // Preview selected file
@@ -202,6 +202,7 @@
         } else {
             preview.style.display = 'none';
             uploadBtn.disabled = true;
+            selectedFile = null;
         }
     });
 
@@ -213,6 +214,7 @@
         formData.append('avatar', selectedFile);
 
         status.textContent = 'Upload en cours...';
+        status.style.color = 'blue';
         uploadBtn.disabled = true;
 
         try {
@@ -226,25 +228,29 @@
                 status.textContent = 'Avatar mis à jour avec succès!';
                 status.style.color = 'green';
 
+                // Clear the cache and reload immediately
                 setTimeout(() => {
+                    // Force reload user data
                     loadUserAvatar();
+                    // Reset form
                     preview.style.display = 'none';
                     fileInput.value = '';
-                }, 500); // Délai de 500ms
+                    selectedFile = null;
+                    uploadBtn.disabled = true;
+                    status.textContent = '';
+                }, 1000);
+            } else {
+                const error = await response.json();
+                status.textContent = `Erreur: ${error.error}`;
+                status.style.color = 'red';
             }
         } catch (e) {
+            console.error('Network error:', e);
             status.textContent = 'Erreur réseau';
             status.style.color = 'red';
         }
 
         uploadBtn.disabled = false;
-    });
-
-    // Refresh avatar manually
-    refreshBtn.addEventListener('click', () => {
-        loadUserAvatar();
-        status.textContent = 'Avatar actualisé';
-        status.style.color = 'blue';
     });
 
     // Load avatar on page load

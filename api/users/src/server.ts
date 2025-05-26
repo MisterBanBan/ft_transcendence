@@ -4,9 +4,9 @@ import multipart from "@fastify/multipart";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import corsConfig from './config/cors.js';
-import cors from "@fastify/cors";
 import fileValidationConfig from "./config/file-validation.js";
-import validationErrorHandler from "./error/validation-errors.js";
+import staticConf from "./config/static.js";
+// import validationErrorHandler from "./error/validation-errors.js";
 // import websocket from "@fastify/websocket";
 
 
@@ -27,6 +27,7 @@ async function startServer() {
 
     // Register cors config
     await server.register(corsConfig);
+    await server.register(staticConf);
 
     /*    server.register(websocket);*/
 
