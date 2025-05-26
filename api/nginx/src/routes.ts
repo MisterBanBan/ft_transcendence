@@ -17,186 +17,223 @@ export interface Route {
 	template: (() => Promise<string>) | string;
 }
 
-export const routes: Route[] = [
-	{
-		path: "/",
-		title: "Accueil",
-		template: async () => {
-			await new Promise(resolve => setTimeout(resolve, 300));//bg-[url('/img/fond_outside.jpg')] bg-cover bg-center bg-no-repeat
-			return `
-			<div class="fixed inset-0 overflow-hidden">
-		<!-- 1. Calque procédural plein-écran, derrière tout (z-index -10) -->
-		<div
-	id="procedural-bg"
-	class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-		></div>
-		<div
-	id="cloud"
-	class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-		></div>
-
-		<!-- 2. Contenu principal -->
-		<div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
-	<div class="w-screen h-screen relative">
-			<div class="absolute inset-0 w-full h-full"></div>
-	</div>
-	<div class="w-screen h-screen relative">
-			<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black">
-		<source src="/img/quit.mp4" type="video/mp4">
-			</video>
-	</div>
-	<div id="videoDoor" class="w-screen h-screen relative">
-			<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-		<source src="/img/door.mp4" type="video/mp4">
-			</video>
-			<div id="pressE" class="hidden absolute inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-		<video autoplay loop muted class="w-12 h-12">
-				<source src="/img/pressE.mp4" type="video/mp4">
-		</video>
-			</div>
-	</div>
+	export const routes: Route[] = [
+		{
+			path: "/",
+			title: "Accueil",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));//bg-[url('/img/fond_outside.jpg')] bg-cover bg-center bg-no-repeat
+				return `
+				<div class="fixed inset-0 overflow-hidden">
+			<!-- 1. Calque procédural plein-écran, derrière tout (z-index -10) -->
+			<div
+		id="procedural-bg"
+		class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
+			></div>
+			<div
+		id="cloud"
+		class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
+			></div>
+	
+			<!-- 2. Contenu principal -->
+			<div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
+		<div class="w-screen h-screen relative">
+				<div class="absolute inset-0 w-full h-full"></div>
 		</div>
-
-		<!-- 3. Joueur par-dessus tout -->
-		<div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10"></div>
-    </div>
-`;
-			
-
-			
-		}		
-		
-	},
-	{
-		path: "/game",
-		title: "Game",
-		template: async () => {
-			await new Promise(resolve => setTimeout(resolve, 300));
-			return `<div class="w-screen h-screen relative">
-						<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-			<source id="menu" src="/img/new_game.mp4" type="video/mp4">
+		<div class="w-screen h-screen relative">
+				<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black">
+			<source src="/img/quit.mp4" type="video/mp4">
 				</video>
-				</div>
-			`;
-		}
-	},
-	{
-		path: "/Tv",
-		title: "Tv",
-		template: async () => {
-			await new Promise(resolve => setTimeout(resolve, 300));
-			return `<div id="zoom" class="w-screen h-screen relative">
-						<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-			<source src="/img/Tv.mp4" type="video/mp4">
+		</div>
+		<div id="videoDoor" class="w-screen h-screen relative">
+				<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+			<source src="/img/door.mp4" type="video/mp4">
 				</video>
+				<div id="pressE" class="hidden absolute inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
+			<video autoplay loop muted class="w-12 h-12">
+					<source src="/img/pressE.mp4" type="video/mp4">
+			</video>
 				</div>
-			`;
-		}
-	},
-	{
-		path: "/auth",
-		title: "Authentication",
-		template: async () => {
-			await new Promise(resolve => setTimeout(resolve, 300));
-			return `<div class="flex m-auto gap-8 w-4/5">
-    <!-- Login Form -->
-    <div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
-        <h2 class="text-white text-2xl mb-4">Login</h2>
-        <div id="error-global-login" class="error-message-login text-red-500 text-sm mb-2"></div>
-
-        <label for="username-login" class="text-white">Username:</label>
-        <div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-        <input type="text" id="username-login" class="p-2 mb-3 rounded border border-gray-300" />
-
-        <label for="password-login" class="text-white">Password:</label>
-        <div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-        <input type="password" id="password-login" class="p-2 mb-4 rounded border border-gray-300" />
-        
-        <label for="code" class="text-white">2FA Code (if 2FA enabled):</label>
-        <div id="error-code-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-        <input type="text" id="code" class="p-2 mb-4 rounded border border-gray-300" />
-
-        <input type="button" id="submit-login" value="Login"
-               class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
-    </div>
-
-    <!-- Register Form -->
-    <div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
-        <h2 class="text-white text-2xl mb-4">Register</h2>
-        <div id="error-global-register" class="error-message-register text-red-500 text-sm mb-2"></div>
-
-        <label for="username-register" class="text-white">Username:</label>
-        <div id="error-username-register" class="error-message-register text-red-500 text-sm mb-1"></div>
-        <input type="text" id="username-register" class="p-2 mb-3 rounded border border-gray-300" />
-
-        <label for="password-register" class="text-white">Password:</label>
-        <div id="error-password-register" class="error-message-register text-red-500 text-sm mb-1"></div>
-        <input type="password" id="password-register" class="p-2 mb-3 rounded border border-gray-300" />
-
-        <label for="cpassword" class="text-white">Confirm Password:</label>
-        <input type="password" id="cpassword" class="p-2 mb-4 rounded border border-gray-300" />
-
-        <input type="button" id="submit-register" value="Register"
-               class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
-    </div>
-</div>
-
-<div class="w-1/5 m-auto mt-6 flex justify-center">
-    <a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Fz3r3p6%3A8443%2Fapi%2Fauth%2Fcallback&response_type=code" 
-       target="_blank" 
-       class="bg-green-600 hover:bg-green-800 text-white py-2 px-6 rounded cursor-pointer text-center flex items-center gap-2">
-       <img src="https://profile.intra.42.fr/assets/42_logo_black-684989d43d629b3c0ff6fd7e1157ee04db9bb7a73fba8ec4e01543d650a1c607.png" alt="42 logo" class="w-6 h-6" />
-       Login/Register with 42 OAuth
-    </a>
-</div>`;
-		}
-	},
-	{
-		path: "/2fa",
-		title: "2FA",
-		template: async () => {
-			await new Promise(resolve => setTimeout(resolve, 300));
-			return `
-		<div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
-	<!-- Titre -->
-	<h2 class="text-2xl font-semibold text-center text-gray-800">Vérification en 2 étapes</h2>
-
-	<!-- Boîte pour l'image -->
-	<div class="flex justify-center">
-			<div class="w-32 h-32 bg-gray-200 rounded flex items-center justify-center">
-		<img id="qrCodeImage" src="" alt="QR Code" />
+		</div>
 			</div>
+	
+			<!-- 3. Joueur par-dessus tout -->
+			<div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10"></div>
+		</div>
+	`;
+
+
+
+			}
+
+		},
+		{
+			path: "/game",
+			title: "Game",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));
+				return `<div class="w-screen h-screen relative">
+							<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
+				<source id="menu" src="/img/new_game.mp4" type="video/mp4">
+					</video>
+					</div>
+				`;
+			}
+		},
+		{
+			path: "/Tv",
+			title: "Tv",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));
+				return `<div id="zoom" class="w-screen h-screen relative">
+							<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
+				<source src="/img/Tv.mp4" type="video/mp4">
+					</video>
+					</div>
+				`;
+			}
+		},
+		{
+			path: "/auth",
+			title: "Authentication",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));
+				return `<div class="flex m-auto gap-8 w-4/5">
+		<!-- Login Form -->
+		<div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
+			<h2 class="text-white text-2xl mb-4">Login</h2>
+			<div id="error-global-login" class="error-message-login text-red-500 text-sm mb-2"></div>
+	
+			<label for="username-login" class="text-white">Username:</label>
+			<div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
+			<input type="text" id="username-login" class="p-2 mb-3 rounded border border-gray-300" />
+	
+			<label for="password-login" class="text-white">Password:</label>
+			<div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
+			<input type="password" id="password-login" class="p-2 mb-4 rounded border border-gray-300" />
+	
+			<input type="button" id="submit-login" value="Login"
+				   class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
+		</div>
+	
+		<!-- Register Form -->
+		<div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
+			<h2 class="text-white text-2xl mb-4">Register</h2>
+			<div id="error-global-register" class="error-message-register text-red-500 text-sm mb-2"></div>
+	
+			<label for="username-register" class="text-white">Username:</label>
+			<div id="error-username-register" class="error-message-register text-red-500 text-sm mb-1"></div>
+			<input type="text" id="username-register" class="p-2 mb-3 rounded border border-gray-300" />
+	
+			<label for="password-register" class="text-white">Password:</label>
+			<div id="error-password-register" class="error-message-register text-red-500 text-sm mb-1"></div>
+			<input type="password" id="password-register" class="p-2 mb-3 rounded border border-gray-300" />
+	
+			<label for="cpassword" class="text-white">Confirm Password:</label>
+			<input type="password" id="cpassword" class="p-2 mb-4 rounded border border-gray-300" />
+	
+			<input type="button" id="submit-register" value="Register"
+				   class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
+		</div>
 	</div>
-
-	<!-- Texte explicatif -->
-	<p class="text-gray-600 text-center text-sm">
-			Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
-	</p>
-
-	<!-- Zone de texte pour le code -->
-	<input
-			id="codeInput"
-			type="text"
-			placeholder="Entrez le code 2FA"
-			class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-	/>
-
-	<!-- Bouton de validation -->
-	<button
-			id="submit"
-			type="submit"
-			class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-	>
-			Vérifier
-	</button>
-		</div>`;
+	
+	<div class="w-1/5 m-auto mt-6 flex justify-center">
+		<a href="https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Fz3r3p6%3A8443%2Fapi%2Fauth%2Fcallback&response_type=code" 
+		   target="_blank" 
+		   class="bg-green-600 hover:bg-green-800 text-white py-2 px-6 rounded cursor-pointer text-center flex items-center gap-2">
+		   <img src="https://profile.intra.42.fr/assets/42_logo_black-684989d43d629b3c0ff6fd7e1157ee04db9bb7a73fba8ec4e01543d650a1c607.png" alt="42 logo" class="w-6 h-6" />
+		   Login/Register with 42 OAuth
+		</a>
+	</div>
+	
+	<!-- 2FA Popup -->
+	<div id="popup-2fa" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
+	  <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+		<h2 class="text-xl font-semibold mb-4 text-gray-800">Vérification 2FA requise</h2>
+		
+		<p class="mb-2 text-sm text-gray-600">Veuillez entrer votre code d'authentification à deux facteurs pour continuer.</p>
+	
+		<div id="error-popup-2fa" class="text-red-600 text-sm mb-2"></div>
+		
+		<input type="text" id="popup-2fa-code" placeholder="Code 2FA" class="border border-gray-300 rounded px-3 py-2 w-full mb-4 focus:outline-none focus:ring focus:ring-blue-300">
+	
+		<div class="flex justify-end space-x-2">
+		  <button onclick="document.getElementById('popup-2fa').classList.add('hidden');" class="px-4 py-2 rounded bg-gray-300 text-gray-700 hover:bg-gray-400">Annuler</button>
+		  <button id="submit-2fa" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-800">Valider</button>
+		</div>
+	  </div>
+	</div>`;
+			}
+		},
+		{
+			path: "/2fa/create",
+			title: "2FA create",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));
+				return `
+			<div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
+		<!-- Titre -->
+		<h2 class="text-2xl font-semibold text-center text-gray-800">Vérification en 2 étapes</h2>
+	
+		<!-- Boîte pour l'image -->
+		<div class="flex justify-center">
+				<div class="w-32 h-32 bg-gray-200 rounded flex items-center justify-center">
+			<img id="qrCodeImage" src="" alt="QR Code" />
+				</div>
+		</div>
+	
+		<!-- Texte explicatif -->
+		<p class="text-gray-600 text-center text-sm">
+				Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
+		</p>
+	
+		<!-- Zone de texte pour le code -->
+		<input
+				id="codeInput"
+				type="text"
+				placeholder="Entrez le code 2FA"
+				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+	
+		<!-- Bouton de validation -->
+		<button
+				id="submit"
+				type="submit"
+				class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+		>
+				Vérifier
+		</button>
+			</div>`;
+			}
+		},
+		{
+			path: "/2fa",
+			title: "2FA",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));
+				return `
+			<div id="2fa" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+	  <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+		<h2 class="text-xl font-semibold mb-4 text-gray-800">Vérification 2FA requise</h2>
+		
+		<p class="mb-2 text-sm text-gray-600">Veuillez entrer votre code d'authentification à deux facteurs pour continuer.</p>
+	
+		<div id="error-popup-2fa" class="text-red-600 text-sm mb-2"></div>
+		
+		<input type="text" id="2fa-code" placeholder="Code 2FA" class="border border-gray-300 rounded px-3 py-2 w-full mb-4 focus:outline-none focus:ring focus:ring-blue-300">
+	
+		<div class="flex justify-end space-x-2">
+		  <button id="submit" class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-800">Valider</button>
+		</div>
+	  </div>
+	</div>`;
+			}
+		},
+		{
+			path: "*",
+			title: "404 - Page not found",
+			template: `
+				`
 		}
-	},
-	{
-		path: "*",
-		title: "404 - Page not found",
-		template: `
-			`
-	}
-];
+	];
 

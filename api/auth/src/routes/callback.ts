@@ -4,6 +4,8 @@ import {addUser} from "../db/add-user.js";
 import {getIdByUsername} from "../db/get-id-by-username.js";
 import {changeUsername} from "../db/change-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
+import {createToken} from "./2fa/validate.js";
+import {log} from "node:util";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback', async (request, reply) => {
@@ -44,13 +46,18 @@ export default async function (server: FastifyInstance) {
 
 			const token = server.jwt.sign(payload, { noTimestamp: true });
 
-			return reply.setCookie('token', token, {
-				path: '/',
-				httpOnly: true,
-				secure: true,
-				sameSite: true,
-				maxAge: 3600
-			}).status(302).redirect('/');
+			if (!user.tfa)
+			{
+				return reply.setCookie('token', token, {
+					path: '/',
+					httpOnly: true,
+					secure: true,
+					sameSite: true,
+					maxAge: 3600
+				}).status(302).redirect('/');
+			}
+			else
+				return reply.status(302).redirect(`/2fa?token=${await createToken(login, token)}`);
 		} catch (error) {
 			if (error instanceof Error)
 				console.error(error.message);

@@ -1,6 +1,6 @@
-import {Component} from "../component.js";
+import {Component} from "../../component";
 
-export class TFA implements Component {
+export class TFACreate implements Component {
 
 	private submitButton = document.getElementById("submit");
 
@@ -16,7 +16,7 @@ export class TFA implements Component {
 
 		async function req() {
 			try {
-				const response = await fetch("/api/auth/2fa", {
+				const response = await fetch("/api/auth/2fa/create", {
 					method: "GET",
 					headers: {"Content-Type": "text/html"},
 				});
@@ -40,7 +40,7 @@ export class TFA implements Component {
 			const code: string = codeInput.value;
 
 			try {
-				const response = await fetch("/api/auth/2fa", {
+				const response = await fetch("/api/auth/2fa/create", {
 					method: "POST",
 					body: code,
 				});

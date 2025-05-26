@@ -4,7 +4,6 @@ import { Component } from "../component.js";
 interface Payload {
 	username: string;
 	password: string;
-	code: string;
 }
 
 export class Login implements Component{
@@ -26,13 +25,11 @@ export class Login implements Component{
 
 			const usernameInput = document.getElementById("username-login") as HTMLInputElement;
 			const passwordInput = document.getElementById("password-login") as HTMLInputElement;
-			const codeInput = document.getElementById("code") as HTMLInputElement;
 			let errorSpan = document.getElementById("error-global-login") as HTMLTextAreaElement;
 
 			const username: string = usernameInput.value;
 			const password: string = passwordInput.value;
-			const code: string = codeInput.value;
-			const body = {username, password, code} as Payload;
+			const body = {username, password} as Payload;
 
 			try {
 				const response = await fetch("/api/auth/login", {
@@ -41,8 +38,42 @@ export class Login implements Component{
 					body: JSON.stringify(body),
 				});
 
+				const data = await response.json();
+
+				if (data.status === "2AF-REQUIRED") {
+					const popup = document.getElementById('popup-2fa');
+					if (!popup) {
+						errorSpan.innerText = "Can't access to the 2FA verification";
+						return;
+					}
+
+					popup.removeEventListener('click', async (event) => {});
+					popup.addEventListener("click", async (event) => {
+						const code = (document.getElementById('popup-2fa-code') as HTMLInputElement).value;
+						const tfaPayload = { token: data.token, code } as { token: string, code: string }
+
+						const response = await fetch("/api/auth/2fa/validate", {
+							method: "POST",
+							headers: {"Content-Type": "application/json"},
+							body: JSON.stringify(tfaPayload),
+						});
+
+						if (!response.ok)
+							return await showError(await response.json(), "2fa", response.ok);
+
+						if (data.success)
+						{
+							console.log("Redirecting to /.");
+							return window.location.href = '/';
+						}
+					});
+					popup.classList.remove('hidden');
+				}
+				else if (data.status === "LOGGED-IN")
+					return
+
 				if (!response.ok)
-					return await showError(response, "login");
+					return await showError(data, "login", response.ok);
 
 				document.querySelectorAll(`.error-message-login`).forEach(errorSpan => errorSpan.innerHTML = "");
 

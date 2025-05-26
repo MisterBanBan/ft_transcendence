@@ -1,15 +1,15 @@
 import {FastifyInstance} from "fastify";
 import authenticator from "authenticator";
 import qrcode from "qrcode";
-import {TokenPayload} from "../interface/token-payload.js";
-import {addTfa} from "../db/add-tfa.js";
-import {getUserByUsername} from "../db/get-user-by-username.js";
+import {TokenPayload} from "../../interface/token-payload.js";
+import {addTfa} from "../../db/add-tfa.js";
+import {getUserByUsername} from "../../db/get-user-by-username.js";
 
 const tempKeys = new Map<string, string>();
 
 export default async function (server: FastifyInstance) {
-	server.get('/api/auth/2fa', async function (request, reply) {
-		console.log("GET /api/auth/2fa");
+	server.get('/api/auth/2fa/create', async function (request, reply) {
+		console.log("GET /api/auth/2fa/create");
 
 		if (!request.cookies || !request.cookies.token)
 			return reply.status(400).send("Not logged in");
@@ -30,7 +30,7 @@ export default async function (server: FastifyInstance) {
 		reply.status(200).send(await qrcode.toDataURL(url));
 	});
 
-	server.post('/api/auth/2fa', async function (request, reply) {
+	server.post('/api/auth/2fa/create', async function (request, reply) {
 		if (!request.cookies || !request.cookies.token)
 			return reply.status(400).send("Not logged in");
 

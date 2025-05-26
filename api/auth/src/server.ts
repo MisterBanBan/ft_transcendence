@@ -16,6 +16,10 @@ async function startServer() {
 		});
 
 		await server.register(autoLoad, {
+			dir: join(dir, "routes/2fa/")
+		});
+
+		await server.register(autoLoad, {
 			dir: join(dir, "plugins/"),
 			encapsulate: false
 		});

@@ -42,7 +42,7 @@ export class Register implements Component{
 				});
 
 				if (!response.ok)
-					return await showError(response, "register");
+					return await showError(await response.json(), "register", response.ok);
 
 				document.querySelectorAll(`.error-message-register`).forEach(errorSpan => errorSpan.innerHTML = "");
 

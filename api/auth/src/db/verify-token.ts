@@ -12,10 +12,22 @@ export async function verifyToken(
 		`SELECT * FROM auth WHERE username = ?`,
 		[decodedToken.username]
 	);
+
+	console.log(user);
+	if (user)
+	{
+		console.log(await getIdByUsername(db, user.username) == decodedToken.id);
+		console.log(user.username == decodedToken.username, user.username, decodedToken.username);
+		console.log(user.updatedAt == decodedToken.updatedAt, user.updatedAt, decodedToken.updatedAt);
+		console.log(user.provider == decodedToken.provider, user.provider, decodedToken.provider);
+		console.log(user.provider_id == decodedToken.provider_id, user.provider_id, decodedToken.provider_id);
+		console.log(user.provider_id, decodedToken.provider_id, typeof user.provider_id, typeof decodedToken.provider_id);
+	}
+
 	return !!(user
-		&& await getIdByUsername(db, user.username) === decodedToken.id
-		&& user.username === decodedToken.username
-		&& user.updatedAt === decodedToken.updatedAt
-		&& user.provider === decodedToken.provider
-		&& user.provider_id === decodedToken.provider_id);
+		&& await getIdByUsername(db, user.username) == decodedToken.id
+		&& user.username == decodedToken.username
+		&& user.updatedAt == decodedToken.updatedAt
+		&& user.provider == decodedToken.provider
+		&& user.provider_id == decodedToken.provider_id);
 }

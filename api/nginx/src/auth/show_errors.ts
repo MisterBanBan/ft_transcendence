@@ -1,17 +1,21 @@
-export async function showError(response: Response, extension: string) {
+export async function showError(response: JSON, extension: string, status: boolean) {
 	document.querySelectorAll(`.error-message-${extension}`).forEach(errorSpan => errorSpan.innerHTML = "");
 
-	const data = await response.json();
+	let data
+	if (response instanceof Response)
+		data = await response.json();
+	else
+		data = response;
 
 	const errorSpan: HTMLElement | null = document.getElementById(`error-${data.type}-${extension}`);
 
 	if (errorSpan == null) {
-		// TODO error
+		console.error("Can't display error message(s):", data.error);
 		return;
 	}
 
 	errorSpan.innerHTML = "";
 
-	if (!response.ok)
+	if (!status)
 		errorSpan.innerHTML = data.error.map((err: string) => `${err}<br>`).join("");
 }
