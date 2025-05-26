@@ -4,7 +4,6 @@ import {addUser} from "../db/add-user.js";
 import {getIdByUsername} from "../db/get-id-by-username.js";
 import {changeUsername} from "../db/change-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
-import {log} from "node:util";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback', async (request, reply) => {
@@ -51,7 +50,7 @@ export default async function (server: FastifyInstance) {
 				secure: true,
 				sameSite: true,
 				maxAge: 3600
-			}).status(200).redirect('/');
+			}).status(302).redirect('/');
 		} catch (error) {
 			if (error instanceof Error)
 				console.error(error.message);
@@ -64,7 +63,7 @@ export default async function (server: FastifyInstance) {
 		params.append('client_id', process.env.CLIENT_ID_42!);
 		params.append('client_secret', process.env.CLIENT_SECRET_42!);
 		params.append('code', code);
-		params.append('redirect_uri', 'https://localhost:8443/api/auth/callback');
+		params.append('redirect_uri', 'https://z3r3p6:8443/api/auth/callback');
 
 		const response = await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',
@@ -74,6 +73,7 @@ export default async function (server: FastifyInstance) {
 
 		if (!response.ok)
 		{
+			console.error(response);
 			throw new Error('Error while exchanging token.');
 		}
 
