@@ -263,15 +263,20 @@ export interface Route {
     <form>
       <div class="mb-4">
         <label for="current_password" class="block text-gray-700 font-medium mb-2">Mot de passe actuel</label>
-        <input type="password" id="current_password" name="current_password" required
+        <input type="password" id="current_password" name="current_password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div class="mb-4">
         <label for="new_password" class="block text-gray-700 font-medium mb-2">Nouveau mot de passe</label>
-        <input type="password" id="new_password" name="new_password" required
+        <input type="password" id="new_password" name="new_password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
-      <button type="button"
+      <div class="mb-4">
+        <label for="confirm_new_password" class="block text-gray-700 font-medium mb-2">Confirmer le nouveau mot de passe</label>
+        <input type="password" id="confirm_new_password" name="confirm_new_password"
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <button type="button" id="submit-new-password"
               class="w-full bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600">
         Changer le mot de passe
       </button>

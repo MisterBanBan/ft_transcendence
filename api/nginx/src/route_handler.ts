@@ -16,6 +16,7 @@ import { Register } from "./auth/register.js";
 import { TFACreate } from "./auth/2fa/create.js";
 import {TFA} from "./auth/2fa/2fa.js";
 import {ChangeUsername} from "./auth/change-username.js";
+import {ChangePassword} from "./auth/change-password.js";
 // import { introduction } from './intro.js';
 // import { menu } from './menu.js';
 // import { Zoom } from './zoom.js';
@@ -31,11 +32,13 @@ const routeComponents: Record<string, Component> = {
 			activeComponent?.destroy?.();
 
 			const changeUsername = new ChangeUsername();
+			const changePassword = new ChangePassword();
 			changeUsername.init();
+			changePassword.init();
 
 			activeComponent = {
 				init: () => {},
-				destroy: () => { changeUsername.destroy(); },
+				destroy: () => { changeUsername.destroy(); changePassword.destroy(); },
 			};
 		},
 		destroy: () => {}
