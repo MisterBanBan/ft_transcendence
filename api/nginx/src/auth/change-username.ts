@@ -1,15 +1,13 @@
 import { Component } from "../component.js";
 
 interface Payload {
-	username: string;
+	newUsername: string;
 	password: string;
 }
 
 export class ChangeUsername implements Component{
 
 	private submitButton = document.getElementById("submit-username");
-
-	constructor() {}
 
 	public init(): void {
 		if (this.submitButton) {
@@ -22,20 +20,22 @@ export class ChangeUsername implements Component{
 
 		async function submitForm() {
 
-			// const usernameInput = document.getElementById("username-login") as HTMLInputElement;
-			// const passwordInput = document.getElementById("password-login") as HTMLInputElement;
-			//
-			// const username: string = usernameInput.value;
-			// const password: string = passwordInput.value;
-			// const body = {username, password} as Payload;
+			const usernameInput = document.getElementById("username") as HTMLInputElement;
+			const passwordInput = document.getElementById("password") as HTMLInputElement;
+
+			const username: string = usernameInput.value;
+			const password: string = passwordInput.value;
+			const body = {newUsername: username, password} as Payload;
 
 			try {
 				const response = await fetch("/api/auth/change-username", {
 					method: "POST",
-					// headers: {"Content-Type": "application/json"},
-					// body: JSON.stringify(body),
+					headers: {"Content-Type": "application/json"},
+					body: JSON.stringify(body),
 				});
-				// const data = await response.json();
+				const data = await response.json();
+
+				console.log(data);
 
 			} catch (err) {
 				console.error("Error: ", err);

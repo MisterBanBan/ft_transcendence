@@ -5,8 +5,9 @@ export async function getUserByUsername(
 	db: Database,
 	username: string,
 ): Promise<User | undefined> {
+
 	return await db.get<User>(
-		`SELECT * FROM auth WHERE username = ?`,
+		`SELECT id, username, password, tfa, provider, provider_id, updatedAt FROM auth WHERE username = ?`,
 		[username]
 	);
 }

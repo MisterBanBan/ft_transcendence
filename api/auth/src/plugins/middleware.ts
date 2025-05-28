@@ -4,11 +4,12 @@ import {decodeToken} from "../utils/decode-token.js";
 export default async function (server: FastifyInstance) {
 	server.addHook('preHandler', async (request, reply) => {
 
-		console.log("preHandler called");
 		const authorizedRoutes = [
+			"/api/auth/change-username",
+			"/api/auth/change-password",
 			"/api/auth/login",
 			"/api/auth/register",
-			"/api/auth/2fa",
+			"/api/auth/2fa/validate",
 			"/api/auth/callback",
 			"/api/auth/verify",
 			"/health"

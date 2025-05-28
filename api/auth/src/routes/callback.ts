@@ -10,8 +10,11 @@ export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback', async (request, reply) => {
 		const { code } = request.query as { code?: string };
 		if (!code) {
-			return reply.status(400).send('Missing code');
+			return reply.status(400).send({ error: "Missing code" });
 		}
+
+		if (request.cookies?.token)
+			return reply.status(401).send({ error: "Already logged" });
 
 		try {
 			const access_token = await exchange(code);
@@ -20,15 +23,18 @@ export default async function (server: FastifyInstance) {
 			const login = data.login as string;
 
 			let user = await getUserByUsername(server.db, login);
+			console.log(user);
 			let payload: TokenPayload;
 			let id;
 			if (user && user.provider == '42')
 			{
+				console.log("found user", user);
 				id = (await getIdByUsername(server.db, user.username))!;
 				payload = { id: id, username: login, provider: "42", provider_id: user.provider_id, updatedAt: user.updatedAt };
 			}
 			else
 			{
+				console.log("new user");
 				let timestamp = Date.now();
 				if (user && user.provider != '42')
 				{

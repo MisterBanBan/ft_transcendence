@@ -18,16 +18,18 @@ export default async function (server: FastifyInstance) {
 		console.log("POST /api/auth/login");
 		const {username, password, code} = request.body as { username: string; password: string, code: string };
 
-		if (request.cookies && request.cookies.token)
-			return reply.status(400).send({error: ["Already logged."], type: "global"});
+		if (request.cookies?.token)
+			return reply.status(401).send({ error: ["Already logged"], type: "global" });
 
 		try {
 
 			const user = await getUserByUsername(server.db, username);
 			const id = await getIdByUsername(server.db, username);
 
-			if (user == undefined || id == undefined || (user && user.provider != 'local'))
+			if (user == undefined || id == undefined)
 				return reply.status(400).send({error: ["Invalid username."], type: "username"});
+			if (user && user.provider != 'local')
+				return reply.status(400).send({error: `Invalid username or your username may have changed because of an external provider (try ${user.username}1).`});
 
 			const tokenData: TokenPayload = {provider: "local", id, username: user.username, updatedAt: user.updatedAt };
 			const token = server.jwt.sign(tokenData, { noTimestamp: true });
@@ -50,5 +52,8 @@ export default async function (server: FastifyInstance) {
 		} catch (err) {
 			return reply.status(400).send({error: [err], type: "global"});
 		}
+
+		if (request.cookies?.token)
+			return reply.status(400).send({error: ["Already logged."], type: "global"});
 	});
 }

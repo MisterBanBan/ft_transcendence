@@ -10,7 +10,7 @@ export default async function (server: FastifyInstance) {
 
 		let {username, password, cpassword} = request.body as { username: string, password: string, cpassword: string };
 
-		if (request.cookies && request.cookies.token)
+		if (request.cookies?.token)
 			return reply.status(400).send({error: ["Already logged."], type: "global"});
 
 		if (!username || !password || !cpassword) {

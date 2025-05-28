@@ -1,7 +1,7 @@
 import {FastifyInstance} from "fastify";
 
 export default async function (server: FastifyInstance) {
-	server.get('/change-password', async (request, reply) => {
+	server.get('/api/auth/change-password', async (request, reply) => {
 		
 	});
 }
