@@ -29,7 +29,7 @@ export default async function (server: FastifyInstance) {
 			if (user == undefined || id == undefined)
 				return reply.status(400).send({error: ["Invalid username."], type: "username"});
 			if (user && user.provider != 'local')
-				return reply.status(400).send({error: `Invalid username or your username may have changed because of an external provider (try ${user.username}1).`});
+				return reply.status(400).send({error: [`Invalid username or your username may have changed because of an external provider (try ${user.username}1).`], type: "global"});
 
 			const tokenData: TokenPayload = {provider: "local", id, username: user.username, updatedAt: user.updatedAt };
 			const token = server.jwt.sign(tokenData, { noTimestamp: true });
