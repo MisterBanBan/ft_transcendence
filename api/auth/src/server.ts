@@ -25,7 +25,7 @@ async function startServer() {
 		});
 
 		await server.listen({ port: 8084, host: '0.0.0.0' });
-		console.log(`Users service is running on 0.0.0.0:8084`);
+		console.log(`Auth service is running on 0.0.0.0:8084`);
 	} catch (err) {
 		server.log.error(err);
 		process.exit(1);

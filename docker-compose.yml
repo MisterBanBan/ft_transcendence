@@ -75,6 +75,8 @@ services:
     volumes:
       - auth-data:/app/database
     restart: on-failure
+    env_file:
+      - .env
 
   nginx:
     image: nginx
