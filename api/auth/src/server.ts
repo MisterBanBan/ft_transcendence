@@ -2,6 +2,7 @@ import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import {decodeToken} from "./utils/decode-token.js";
 
 async function startServer() {
 
@@ -11,17 +12,18 @@ async function startServer() {
 	const dir = dirname(filename);
 
 	try {
+
+		await server.register(autoLoad, {
+			dir: join(dir, "plugins/"),
+			encapsulate: false
+		});
+
 		await server.register(autoLoad, {
 			dir: join(dir, "routes/")
 		});
 
 		await server.register(autoLoad, {
 			dir: join(dir, "routes/2fa/")
-		});
-
-		await server.register(autoLoad, {
-			dir: join(dir, "plugins/"),
-			encapsulate: false
 		});
 
 		await server.listen({ port: 8084, host: '0.0.0.0' });

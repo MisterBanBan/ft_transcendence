@@ -108,14 +108,15 @@ export interface Route {
 	
 			<label for="username-login" class="text-white">Username:</label>
 			<div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-			<input type="text" id="username-login" class="p-2 mb-3 rounded border border-gray-300" />
+			<input type="text" id="username-login" required
+					class="p-2 mb-3 rounded border border-gray-300" />
 	
 			<label for="password-login" class="text-white">Password:</label>
 			<div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-			<input type="password" id="password-login" class="p-2 mb-4 rounded border border-gray-300" />
+			<input type="password" id="password-login" required
+					class="p-2 mb-4 rounded border border-gray-300" />
 	
-			<input type="button" id="submit-login" value="Login"
-				   class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
+			<input type="button" id="submit-login" value="Login" class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
 		</div>
 	
 		<!-- Register Form -->
@@ -125,14 +126,17 @@ export interface Route {
 	
 			<label for="username-register" class="text-white">Username:</label>
 			<div id="error-username-register" class="error-message-register text-red-500 text-sm mb-1"></div>
-			<input type="text" id="username-register" class="p-2 mb-3 rounded border border-gray-300" />
+			<input type="text" id="username-register" required
+					class="p-2 mb-3 rounded border border-gray-300" />
 	
 			<label for="password-register" class="text-white">Password:</label>
 			<div id="error-password-register" class="error-message-register text-red-500 text-sm mb-1"></div>
-			<input type="password" id="password-register" class="p-2 mb-3 rounded border border-gray-300" />
+			<input type="password" id="password-register" required
+					class="p-2 mb-3 rounded border border-gray-300" />
 	
 			<label for="cpassword" class="text-white">Confirm Password:</label>
-			<input type="password" id="cpassword" class="p-2 mb-4 rounded border border-gray-300" />
+			<input type="password" id="cpassword" required
+					class="p-2 mb-4 rounded border border-gray-300" />
 	
 			<input type="button" id="submit-register" value="Register"
 				   class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
@@ -229,6 +233,50 @@ export interface Route {
 		</div>
 	  </div>
 	</div>`;
+			}
+		},
+		{
+			path: "/settings",
+			title: "Settings",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));
+				return ` <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+    <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Paramètres du compte</h2>
+
+    <!-- Formulaire pour changer de pseudo -->
+    <form class="mb-6">
+      <div class="mb-4">
+        <label for="username" class="block text-gray-700 font-medium mb-2">Nouveau pseudo</label>
+        <input type="text" id="username" name="username"
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <label for="password" class="block text-gray-700 font-medium mb-2">Mot de passe</label>
+        <input type="password" id="password" name="password"
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <button type="button" id="submit-username"
+              class="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600">
+        Changer le pseudo
+      </button>
+    </form>
+
+    <!-- Formulaire pour changer de mot de passe -->
+    <form>
+      <div class="mb-4">
+        <label for="current_password" class="block text-gray-700 font-medium mb-2">Mot de passe actuel</label>
+        <input type="password" id="current_password" name="current_password" required
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div class="mb-4">
+        <label for="new_password" class="block text-gray-700 font-medium mb-2">Nouveau mot de passe</label>
+        <input type="password" id="new_password" name="new_password" required
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <button type="button"
+              class="w-full bg-green-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-green-600">
+        Changer le mot de passe
+      </button>
+    </form>
+  </div>`;
 			}
 		},
 		{

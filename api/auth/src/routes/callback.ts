@@ -29,14 +29,14 @@ export default async function (server: FastifyInstance) {
 			}
 			else
 			{
+				let timestamp = Date.now();
 				if (user && user.provider != '42')
 				{
 					const existingId = await getIdByUsername(server.db, user.username);
 					const newUsername = user.username + '1';
-					await changeUsername(server.db, existingId!, newUsername);
+					timestamp = await changeUsername(server.db, existingId!, newUsername);
 				}
 
-				const timestamp = Date.now();
 				user = { username: login, provider: "42", provider_id: data.id, updatedAt: timestamp };
 
 				id = await addUser(server.db, user);

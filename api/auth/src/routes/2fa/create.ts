@@ -1,26 +1,38 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import authenticator from "authenticator";
 import qrcode from "qrcode";
 import {TokenPayload} from "../../interface/token-payload.js";
 import {addTfa} from "../../db/add-tfa.js";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
+import {decodeToken} from "../../utils/decode-token.js";
+import {User} from "../../interface/user.js";
 
 const tempKeys = new Map<string, string>();
 
 export default async function (server: FastifyInstance) {
-	server.get('/api/auth/2fa/create', async function (request, reply) {
-		console.log("GET /api/auth/2fa/create");
 
-		if (!request.cookies || !request.cookies.token)
+	async function getUser(request: FastifyRequest, reply: FastifyReply): Promise<User> {
+		const token = request.cookies?.token;
+		if (!token)
 			return reply.status(400).send("Not logged in");
 
-		const decodedToken = server.jwt.decode(request.cookies.token) as TokenPayload;
+		const decodedToken = await decodeToken(server, token, reply);
+		if (!decodedToken)
+			return reply.status(401).send("Invalid token");
+
 		const user = await getUserByUsername(server.db, decodedToken.username);
 		if (!user)
 			return reply.status(400).send("Couldn't find user");
 
 		if (user.tfa)
 			return reply.status(400).send("2FA already set up");
+
+		return user;
+	}
+
+	server.get('/api/auth/2fa/create', async function (request, reply) {
+
+		const user = await getUser(request, reply);
 
 		const formattedKey = authenticator.generateKey();
 
@@ -31,17 +43,8 @@ export default async function (server: FastifyInstance) {
 	});
 
 	server.post('/api/auth/2fa/create', async function (request, reply) {
-		if (!request.cookies || !request.cookies.token)
-			return reply.status(400).send("Not logged in");
 
-		const decodedToken = server.jwt.decode(request.cookies.token) as TokenPayload;
-
-		const user = await getUserByUsername(server.db, decodedToken.username);
-		if (!user)
-			return reply.status(400).send("Couldn't find user");
-
-		if (user.tfa)
-			return reply.status(400).send("2FA already set up")
+		const user = await getUser(request, reply);
 
 		const body = request.body as string;
 		if (!/^\d{6}$/.test(body)) {

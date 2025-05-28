@@ -1,6 +1,5 @@
 import {FastifyInstance} from "fastify";
-import {TokenPayload} from "../interface/token-payload.js";
-import {verifyToken} from "../db/verify-token.js";
+import {decodeToken} from "../utils/decode-token.js";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/verify', async function (request, reply) {
@@ -19,14 +18,9 @@ export default async function (server: FastifyInstance) {
 		if (!token) return reply.send(false);
 
 		try {
-			const decodedToken = server.jwt.decode(token) as TokenPayload;
-			const isValid = await verifyToken(server.db, decodedToken);
-			if (!isValid) {
-				return reply.clearCookie('token', cookieOptions).send(false);
-			}
-			return reply.send(isValid);
+			await decodeToken(server, token, reply);
 		} catch {
-			return reply.clearCookie('token', cookieOptions).send(false);
+			return reply.send(false);
 		}
 	});
 }
