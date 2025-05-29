@@ -8,7 +8,7 @@ export async function up({ context }: { context: Database }) {
 			password TEXT,
 			tfa TEXT,
 			provider TEXT NOT NULL DEFAULT 'local',
-			provider_id INTEGER,
+			provider_id TEXT,
 			updatedAt INTEGER NOT NULL
 		)
 	`);

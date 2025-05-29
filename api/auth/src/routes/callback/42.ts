@@ -16,6 +16,7 @@ export default async function (server: FastifyInstance) {
 			return reply.status(400).send({ error: "Missing code" });
 		}
 
+		console.log("token:", request.cookies?.token);
 		if (request.cookies?.token)
 			return reply.status(401).send({ error: "Already logged" });
 
@@ -28,10 +29,8 @@ export default async function (server: FastifyInstance) {
 			let user = await getUserByUsername(server.db, login);
 			let payload: TokenPayload;
 			let id;
-			if (user && user.provider == '42')
-			{
-				id = (await getIdByUsername(server.db, user.username))!;
-				payload = { id: id, username: login, provider: "42", provider_id: user.provider_id, updatedAt: user.updatedAt };
+			if (user && user.provider == '42') {
+				payload = { id: user.id!, username: login, provider: user.provider, provider_id: user.provider_id, updatedAt: user.updatedAt };
 			}
 			else
 			{
@@ -70,7 +69,7 @@ export default async function (server: FastifyInstance) {
 		params.append('client_id', process.env.CLIENT_ID_42!);
 		params.append('client_secret', process.env.CLIENT_SECRET_42!);
 		params.append('code', code);
-		params.append('redirect_uri', `https://${process.env.HOSTNAME}:8443/api/auth/callback/42`);
+		params.append('redirect_uri', `https://localhost:8443/api/auth/callback/42`);
 
 		const response = await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',

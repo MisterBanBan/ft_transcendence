@@ -4,7 +4,6 @@ import {verifyToken} from "../db/verify-token.js";
 
 export async function decodeToken(server: FastifyInstance, token: string, reply: FastifyReply): Promise<TokenPayload | undefined> {
 
-	console.log("decodeToken");
 	const cookieOpts = {
 		path: '/',
 		httpOnly: true,
@@ -18,7 +17,6 @@ export async function decodeToken(server: FastifyInstance, token: string, reply:
 		await verifyToken(server.db, decodedToken);
 	} catch {
 		reply.clearCookie("token", cookieOpts);
-		console.log("Remove cookie");
 		return undefined;
 	}
 

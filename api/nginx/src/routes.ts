@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-const ft_url = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Fz3r4p3%3A8443%2Fapi%2Fauth%2Fcallback%2F42&response_type=code";
+const ft_url = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2F42&response_type=code";
+const google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=570055045570-c95opdokftohj6c4l7u9t7b46bpmnrkl.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2Fgoogle&response_type=code&scope=profile%20email&access_type=offline&include_granted_scopes=true"
 
 export interface Route {
 	path: string;
@@ -153,6 +154,14 @@ export interface Route {
 		   class="bg-green-600 hover:bg-green-800 text-white py-2 px-6 rounded cursor-pointer text-center flex items-center gap-2">
 		   <img src="https://profile.intra.42.fr/assets/42_logo_black-684989d43d629b3c0ff6fd7e1157ee04db9bb7a73fba8ec4e01543d650a1c607.png" alt="42 logo" class="w-6 h-6" />
 		   Login/Register with 42 OAuth
+		</a>
+	</div>
+	
+	<div class="w-1/5 m-auto mt-6 flex justify-center">
+		<a href="${google_url}"
+		   target="_blank" 
+		   class="bg-red-600 hover:bg-red-800 text-white py-2 px-6 rounded cursor-pointer text-center flex items-center gap-2">
+		   Login/Register with Google OAuth
 		</a>
 	</div>
 	

@@ -11,6 +11,7 @@ export default async function (server: FastifyInstance) {
 			"/api/auth/register",
 			"/api/auth/2fa/validate",
 			"/api/auth/callback/42",
+			"/api/auth/callback/google",
 			"/api/auth/verify",
 			"/health"
 		]

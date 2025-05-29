@@ -13,8 +13,8 @@ export async function verifyToken(
 		[decodedToken.username]
 	);
 
-	 console.log("verify token", decodedToken);
-
+	//  console.log("verify token", decodedToken);
+	//
 	// console.log(user);
 	// if (user)
 	// {
