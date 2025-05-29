@@ -1,7 +1,6 @@
 import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import authenticator from "authenticator";
 import qrcode from "qrcode";
-import {TokenPayload} from "../../interface/token-payload.js";
 import {addTfa} from "../../db/add-tfa.js";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
 import {decodeToken} from "../../utils/decode-token.js";
@@ -39,7 +38,7 @@ export default async function (server: FastifyInstance) {
 		tempKeys.set(user.username, formattedKey);
 		const url = authenticator.generateTotpUri(formattedKey, user.username, "localhost", "SHA1", 6, 30);
 
-		reply.status(200).send(await qrcode.toDataURL(url));
+		return reply.status(200).send(await qrcode.toDataURL(url));
 	});
 
 	server.post('/api/auth/2fa/create', async function (request, reply) {
@@ -60,7 +59,7 @@ export default async function (server: FastifyInstance) {
 
 		if (isValid) {
 			await addTfa(server.db, user.username, key)
-			return reply.status(200).send("2FA method created");
+			return reply.status(201).send("2FA method created");
 		}
 
 		return reply.status(400).send("Invalid 2FA code");

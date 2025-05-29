@@ -100,7 +100,8 @@ export interface Route {
 			title: "Authentication",
 			template: async () => {
 				await new Promise(resolve => setTimeout(resolve, 300));
-				return `<div class="flex m-auto gap-8 w-4/5">
+				return `
+	<div class="flex m-auto gap-8 w-4/5">
 		<!-- Login Form -->
 		<form id="form-login" class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
 			<h2 class="text-white text-2xl mb-4">Login</h2>
@@ -109,11 +110,13 @@ export interface Route {
 		
 			<label for="username-login" class="text-white">Username:</label>
 			<div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-			<input type="text" id="username-login" aria-describedby="error-username-login" required class="p-2 mb-3 rounded border border-gray-300" />
+			<input type="text" id="username-login" aria-describedby="error-username-login" required
+				class="p-2 mb-3 rounded border border-gray-300" />
 		
 			<label for="password-login" class="text-white">Password:</label>
 			<div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-			<input type="password" id="password-login" aria-describedby="error-password-login" required class="p-2 mb-4 rounded border border-gray-300" />
+			<input type="password" id="password-login" aria-describedby="error-password-login" required
+				class="p-2 mb-4 rounded border border-gray-300" />
 		
 			<button type="submit" id="submit-login" class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer">
 				Login
@@ -121,7 +124,7 @@ export interface Route {
 		</form>
 	
 		<!-- Register Form -->
-		<div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
+		<form id="form-register" class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
 			<h2 class="text-white text-2xl mb-4">Register</h2>
 			<div id="error-global-register" class="error-message-register text-red-500 text-sm mb-2"></div>
 	
@@ -141,7 +144,7 @@ export interface Route {
 	
 			<input type="button" id="submit-register" value="Register"
 				   class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
-		</div>
+		</form>
 	</div>
 	
 	<div class="w-1/5 m-auto mt-6 flex justify-center">
@@ -219,7 +222,7 @@ export interface Route {
 			template: async () => {
 				await new Promise(resolve => setTimeout(resolve, 300));
 				return `
-			<div id="2fa" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+	<div id="2fa" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
 	  <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
 		<h2 class="text-xl font-semibold mb-4 text-gray-800">Vérification 2FA requise</h2>
 		
