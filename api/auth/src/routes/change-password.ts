@@ -38,7 +38,7 @@ export default async function (server: FastifyInstance) {
 		const timestamp = await changePassword(server.db, user.id!, hashedPass)
 
 		const tokenData: TokenPayload = {provider: "local", id: user.id!, username: user.username, updatedAt: timestamp };
-		const newToken = signToken(server, tokenData);
+		const newToken = await signToken(server, tokenData);
 
 		return reply.setCookie('token', newToken, {
 			path: '/',

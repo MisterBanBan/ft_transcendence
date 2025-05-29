@@ -33,7 +33,7 @@ export default async function (server: FastifyInstance) {
 				return reply.status(400).send({error: [`Invalid username or your username may have changed because of an external provider (try ${user.username}1).`], type: "global"});
 
 			const tokenData: TokenPayload = {provider: "local", id, username: user.username, updatedAt: user.updatedAt };
-			const token = signToken(server, tokenData);
+			const token = await signToken(server, tokenData);
 
 			const cookieOpts = {
 				path: '/',

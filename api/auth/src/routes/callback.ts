@@ -47,7 +47,7 @@ export default async function (server: FastifyInstance) {
 				payload = { id: id!, username: login, provider_id: data.id, provider: "42", updatedAt: timestamp}
 			}
 
-			const token = signToken(server, payload);
+			const token = await signToken(server, payload);
 
 			if (!user.tfa)
 			{

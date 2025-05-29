@@ -50,7 +50,7 @@ export default async function (server: FastifyInstance) {
 				return reply.status(400).send({error: ["An error occured while registering."], type: "global"});
 
 			const tokenData: TokenPayload = {provider: "local", id: id, username, updatedAt: timestamp };
-			const token = signToken(server, tokenData);
+			const token = await signToken(server, tokenData);
 
 			return reply.setCookie('token', token, {
 				path: '/',
