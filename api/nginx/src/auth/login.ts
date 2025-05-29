@@ -59,18 +59,18 @@ export class Login implements Component{
 
 			let data = await response.json();
 
-			if (!response.ok) {
-				await showError(data, "login", response.ok);
-				return;
-			}
-
-			if (data.status === "2AF-REQUIRED") {
+			if (data.status === "2FA-REQUIRED") {
 				await this.handle2FA(data.token, errorSpan);
 				return;
 			}
 
 			if (data.status === "LOGGED-IN") {
 				window.location.href = '/'
+				return;
+			}
+
+			if (!response.ok) {
+				await showError(data, "login", response.ok);
 				return;
 			}
 

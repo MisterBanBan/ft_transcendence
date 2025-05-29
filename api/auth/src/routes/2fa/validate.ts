@@ -39,6 +39,6 @@ export default async function (server: FastifyInstance) {
 			secure: true,
 			sameSite: true,
 			maxAge: 3600
-		}).status(302).send({ success: true });
+		}).status(200).send({ success: true });
 	});
 }

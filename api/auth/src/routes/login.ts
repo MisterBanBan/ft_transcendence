@@ -47,7 +47,7 @@ export default async function (server: FastifyInstance) {
 				if (!user.tfa)
 					return reply.setCookie('token', token, cookieOpts).status(200).send({ status: "LOGGED-IN" });
 				else
-					return reply.status(401).send({ status: "2AF-REQUIRED", token: await createToken(user.username, token) });
+					return reply.status(401).send({ status: "2FA-REQUIRED", token: await createToken(user.username, token) });
 			} else
 				return reply.status(400).send({error: ["Invalid password."], type: "password"});
 		} catch (err) {
