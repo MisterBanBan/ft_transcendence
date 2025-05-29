@@ -1,53 +1,74 @@
 import fastify from "fastify";
+import fastifyIO from "fastify-socket.io";
 import autoLoad from "@fastify/autoload";
-// import cors from "@fastify/cors";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
-// import websocket from "@fastify/websocket";
-// import multipart from "@fastify/multipart";
-// import { existsSync } from "node:fs";
+import { join } from "path";
+import cors from "@fastify/cors";
+import { Socket } from "socket.io";
+import fs from "fs";
 
-async function startServer() {
+async function start() {
+  const dir = __dirname;
 
-    const server = fastify();
+  const app = fastify({
+    logger: true,
+    https: {
+      key: fs.readFileSync("/app/certs/key.pem"),
+      cert: fs.readFileSync("/app/certs/cert.pem"),
+    },
+  });
 
-    console.log("server started");
+  await app.register(cors, {
+    origin: "*",
+    credentials: true,
+  });
 
-    const filename = fileURLToPath(import.meta.url);
-    const dir = dirname(filename);
+  await app.register(fastifyIO, {
+    cors: {
+      origin: "*",
+      credentials: true,
+    },
+  });
 
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "routes/")
-        });
-    } catch (err) {
-        console.error(err);
+  app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
+  app.register(autoLoad, { dir: join(dir, "routes/") });
+
+  const connectedClients: Socket[] = [];
+
+  app.ready((err) => {
+    if (err) throw err;
+
+    app.io.on("connection", (socket: Socket) => {
+      console.log("Client connected:", socket.id);
+
+      connectedClients.push(socket);
+
+      if (connectedClients.length === 2) {
+        console.log("Deux clients connectés !");
+        connectedClients.forEach((s) =>
+          s.emit("message", "Deux joueurs sont connectés !")
+        );
+      }
+
+      socket.on("message", (msg: string) => {
+        console.log(`Received from ${socket.id}: ${msg}`);
+        socket.emit("message", `Echo: ${msg}`);
+      });
+
+      socket.on("disconnect", () => {
+        console.log(`Client disconnected: ${socket.id}`);
+        const index = connectedClients.indexOf(socket);
+        if (index !== -1) connectedClients.splice(index, 1);
+      });
+    });
+  });
+
+  app.listen({ port: 8083, host: "0.0.0.0" }, (err, address) => {
+    if (err) {
+      app.log.error(err);
+      process.exit(1);
     }
-
-/*    server.register(cors, {
-        origin: "*",
-        methods: ["GET", "POST"]
-    });*/
-
-    /*    server.register(websocket);*/
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "plugins/"),
-            encapsulate: false
-        });
-    } catch (err) {
-        console.error(err);
-    }
-
-    /*    server.register(multipart);*/
-
-    try {
-        await server.listen({ port: 8083, host: '0.0.0.0' });
-        console.log(`Users service is running on 0.0.0.0:8083`);
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1);
-    }
+    app.log.info(`Server listening at ${address}`);
+  });
 }
 
-startServer();
+start();

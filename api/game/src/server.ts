@@ -32,6 +32,10 @@ async function start() {
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
   app.register(autoLoad, { dir: join(dir, "routes/") });
+  
+  app.io.of("/").adapter.on("create-room", (test1: any) => {
+    console.log(`room ${test1} was created`);
+  });
 
   app.ready((err) => {
     if (err) throw err;
@@ -39,6 +43,9 @@ async function start() {
     app.io.on("connection", (socket: Socket) => {
       console.log("Client connected:", socket.id);
 
+      app.io.of("/").adapter.on("join-room", (test1: any, id: any) => {
+        console.log(`socket ${id} has joined room ${test1}`);
+      });
       socket.on("message", (msg: string) => {
         console.log(`Received from ${socket.id}: ${msg}`);
         socket.emit("message", `Echo: ${msg}`);
