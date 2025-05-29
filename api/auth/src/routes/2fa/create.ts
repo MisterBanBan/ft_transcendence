@@ -14,7 +14,7 @@ export default async function (server: FastifyInstance) {
 	async function getUser(request: FastifyRequest, reply: FastifyReply): Promise<User> {
 		const token = request.cookies?.token;
 		if (!token)
-			return reply.status(400).send("Not logged in");
+			return reply.status(401).send("Not logged in");
 
 		const decodedToken = await decodeToken(server, token, reply);
 		if (!decodedToken)
@@ -25,7 +25,7 @@ export default async function (server: FastifyInstance) {
 			return reply.status(400).send("Couldn't find user");
 
 		if (user.tfa)
-			return reply.status(400).send("2FA already set up");
+			return reply.status(401).send("2FA already set up");
 
 		return user;
 	}
@@ -54,14 +54,15 @@ export default async function (server: FastifyInstance) {
 		const key = tempKeys.get(user.username);
 
 		if (!key)
-			return reply.status(400).send("The 2FA key doesn't exist");
+			return reply.status(401).send("The 2FA key doesn't exist");
 
 		const isValid = authenticator.verifyToken(key, body)
-		if (isValid)
-		{
+
+		if (isValid) {
 			await addTfa(server.db, user.username, key)
 			return reply.status(200).send("2FA method created");
 		}
+
 		return reply.status(400).send("Invalid 2FA code");
 	})
 };

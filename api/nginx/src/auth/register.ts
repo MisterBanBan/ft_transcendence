@@ -9,52 +9,65 @@ interface Payload {
 
 export class Register implements Component{
 
-	private submitButton = document.getElementById("submit-register");
+	private submitButton: HTMLElement | null = null;
+	private readonly handleSubmitBound: (event: Event) => void;
 
-	constructor() {}
+	constructor() {
+		this.handleSubmitBound = this.handleSubmit.bind(this);
+	}
 
 	public init() {
-		if (this.submitButton) {
-			this.submitButton.addEventListener("click", async (event) => {
-				await submitForm();
-			});
-		} else {
+		this.submitButton = document.getElementById("submit-register");
+
+		if (!this.submitButton) {
 			console.error("Submit button not found!");
+			return;
 		}
 
-		async function submitForm() {
+		this.submitButton.addEventListener("click", this.handleSubmitBound);
+	}
 
-			const usernameInput = document.getElementById("username-register") as HTMLInputElement;
-			const passwordInput = document.getElementById("password-register") as HTMLInputElement;
-			const cpasswordInput = document.getElementById("cpassword") as HTMLInputElement;
-			let errorSpan = document.getElementById("error-global-register") as HTMLTextAreaElement;
+	private async handleSubmit(event: Event): Promise<void> {
+		event.preventDefault();
 
-			const username = usernameInput.value;
-			const password = passwordInput.value;
-			const cpassword = cpasswordInput.value;
-			const auth = { username, password, cpassword } as Payload;
+		const usernameInput = document.getElementById("username-register") as HTMLInputElement | null;
+		const passwordInput = document.getElementById("password-register") as HTMLInputElement | null;
+		const cpasswordInput = document.getElementById("cpassword") as HTMLInputElement | null;
+		const errorSpan = document.getElementById("error-global-register") as HTMLTextAreaElement | null;
 
-			try {
-				const response = await fetch("/api/auth/register", {
-					method: "POST",
-					headers: { "Content-Type": "application/json" },
-					body: JSON.stringify(auth)
-				});
+		if (!usernameInput || !passwordInput || !cpasswordInput || !errorSpan) {
+			console.error("One or multiple form's fields are missing.");
+			return;
+		}
 
-				if (!response.ok)
-					return await showError(await response.json(), "register", response.ok);
+		const auth: Payload = {
+			username: usernameInput.value,
+			password: passwordInput.value,
+			cpassword: cpasswordInput.value
+		};
 
-				document.querySelectorAll(`.error-message-register`).forEach(errorSpan => errorSpan.innerHTML = "");
+		try {
+			const response = await fetch("/api/auth/register", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(auth)
+			});
 
-			} catch (err) {
-				console.error("Error: ", err);
-				errorSpan.style.display = "block";
-				errorSpan.innerHTML = `<span>Erreur de connexion au serveur.</span>`;
+			if (!response.ok) {
+				await showError(await response.json(), "register", response.ok);
+				return;
 			}
+
+			window.location.href = '/';
+		} catch (err) {
+			console.error("Error: ", err);
+			errorSpan.style.display = "block";
+			errorSpan.innerHTML = `<span>Erreur de connexion au serveur.</span>`;
 		}
 	}
 
 	public destroy() {
-		this.submitButton?.removeEventListener("click", async (event) => {})
+		if (this.submitButton)
+			this.submitButton.removeEventListener("click", this.handleSubmitBound)
 	}
 }

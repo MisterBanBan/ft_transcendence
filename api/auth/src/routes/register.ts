@@ -58,7 +58,7 @@ export default async function (server: FastifyInstance) {
 				secure: true,
 				sameSite: true,
 				maxAge: 3600
-			}).status(200).send();
+			}).status(200).send({});
 
 		} catch (err) {
 			return reply.status(400).send({error: [`An error occurred: ${err}.`], type: "global"});

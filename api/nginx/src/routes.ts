@@ -102,22 +102,23 @@ export interface Route {
 				await new Promise(resolve => setTimeout(resolve, 300));
 				return `<div class="flex m-auto gap-8 w-4/5">
 		<!-- Login Form -->
-		<div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
+		<form id="form-login" class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
 			<h2 class="text-white text-2xl mb-4">Login</h2>
+		
 			<div id="error-global-login" class="error-message-login text-red-500 text-sm mb-2"></div>
-	
+		
 			<label for="username-login" class="text-white">Username:</label>
 			<div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-			<input type="text" id="username-login" required
-					class="p-2 mb-3 rounded border border-gray-300" />
-	
+			<input type="text" id="username-login" aria-describedby="error-username-login" required class="p-2 mb-3 rounded border border-gray-300" />
+		
 			<label for="password-login" class="text-white">Password:</label>
 			<div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
-			<input type="password" id="password-login" required
-					class="p-2 mb-4 rounded border border-gray-300" />
-	
-			<input type="button" id="submit-login" value="Login" class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
-		</div>
+			<input type="password" id="password-login" aria-describedby="error-password-login" required class="p-2 mb-4 rounded border border-gray-300" />
+		
+			<button type="submit" id="submit-login" class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer">
+				Login
+			</button>
+		</form>
 	
 		<!-- Register Form -->
 		<div class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
