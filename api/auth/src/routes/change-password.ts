@@ -5,6 +5,8 @@ import argon2 from "argon2";
 import {changeUsername} from "../db/change-username.js";
 import {changePassword} from "../db/change-password.js";
 import {signToken} from "../utils/sign-token.js";
+import {setCookie} from "../utils/set-cookie.js";
+import * as repl from "node:repl";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/change-password', async (request, reply) => {
@@ -40,13 +42,9 @@ export default async function (server: FastifyInstance) {
 		const tokenData: TokenPayload = {provider: "local", id: user.id!, username: user.username, updatedAt: timestamp };
 		const newToken = await signToken(server, tokenData);
 
-		return reply.setCookie('token', newToken, {
-			path: '/',
-			httpOnly: true,
-			secure: true,
-			sameSite: true,
-			maxAge: 3600
-		}).status(200).send({ success: true });
+		await setCookie(reply, newToken);
+
+		return reply.status(200).send({ success: true });
 	});
 
 	function validatePassword(password: string, cpassword: string): string[] | null {

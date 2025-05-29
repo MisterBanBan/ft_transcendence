@@ -5,6 +5,7 @@ import {TokenPayload} from "../interface/token-payload.js";
 import {getIdByUsername} from "../db/get-id-by-username.js";
 import {createToken} from "./2fa/validate.js"
 import {signToken} from "../utils/sign-token.js";
+import {setCookie} from "../utils/set-cookie.js";
 
 interface Cookie {
 	path: string,
@@ -27,29 +28,37 @@ export default async function (server: FastifyInstance) {
 			const user = await getUserByUsername(server.db, username);
 			const id = await getIdByUsername(server.db, username);
 
-			if (user == undefined || id == undefined)
-				return reply.status(400).send({error: ["Invalid username."], type: "username"});
-			if (user && user.provider != 'local')
-				return reply.status(400).send({error: [`Invalid username or your username may have changed because of an external provider (try ${user.username}1).`], type: "global"});
+			if (user == undefined || id == undefined) {
+				return reply.status(400).send({
+					error: ["Invalid username."],
+					type: "username"
+				});
+			}
+
+			if (user && user.provider != 'local') {
+				return reply.status(400).send({
+					error: [`Invalid username or your username may have changed because of an external provider (try ${user.username}1).`],
+					type: "global"
+				});
+			}
 
 			const tokenData: TokenPayload = {provider: "local", id, username: user.username, updatedAt: user.updatedAt };
 			const token = await signToken(server, tokenData);
 
-			const cookieOpts = {
-				path: '/',
-				httpOnly: true,
-				secure: true,
-				sameSite: true,
-				maxAge: 3600
-			} as Cookie;
-
 			if (await argon2.verify(user.password!, password, { secret: Buffer.from(process.env.ARGON_SECRET!)})) {
-				if (!user.tfa)
-					return reply.setCookie('token', token, cookieOpts).status(200).send({ status: "LOGGED-IN" });
-				else
-					return reply.status(401).send({ status: "2FA-REQUIRED", token: await createToken(user.username, token) });
-			} else
-				return reply.status(400).send({error: ["Invalid password."], type: "password"});
+				if (!user.tfa) {
+					await setCookie(reply, token);
+					return reply.status(200).send({status: "LOGGED-IN"});
+				}
+
+				return reply.status(401).send({
+					status: "2FA-REQUIRED",
+					token: await createToken(user.username, token)
+				});
+			}
+
+			return reply.status(400).send({error: ["Invalid password."], type: "password"});
+
 		} catch (err) {
 			return reply.status(400).send({error: [err], type: "global"});
 		}

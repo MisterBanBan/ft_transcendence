@@ -6,6 +6,7 @@ import {changeUsername} from "../db/change-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
 import {createToken} from "./2fa/validate.js";
 import {signToken} from "../utils/sign-token.js";
+import {setCookie} from "../utils/set-cookie.js";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback', async (request, reply) => {
@@ -51,13 +52,8 @@ export default async function (server: FastifyInstance) {
 
 			if (!user.tfa)
 			{
-				return reply.setCookie('token', token, {
-					path: '/',
-					httpOnly: true,
-					secure: true,
-					sameSite: true,
-					maxAge: 3600
-				}).status(302).redirect('/');
+				await setCookie(reply, token);
+				return reply.status(302).redirect('/');
 			}
 			else
 				return reply.status(302).redirect(`/2fa?token=${await createToken(login, token)}`);

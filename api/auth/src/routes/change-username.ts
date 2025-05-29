@@ -5,6 +5,7 @@ import {TokenPayload} from "../interface/token-payload.js";
 import argon2 from "argon2";
 import {changeUsername} from "../db/change-username.js";
 import {signToken} from "../utils/sign-token.js";
+import {setCookie} from "../utils/set-cookie.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/change-username', async (request, reply) => {
@@ -44,12 +45,8 @@ export default async function (server: FastifyInstance) {
 		const tokenData: TokenPayload = {provider: "local", id: user.id!, username: newUsername, updatedAt: timestamp };
 		const newToken = await signToken(server, tokenData);
 
-		return reply.setCookie('token', newToken, {
-			path: '/',
-			httpOnly: true,
-			secure: true,
-			sameSite: true,
-			maxAge: 3600
-		}).status(200).send({ success: true });
+		await setCookie(reply, newToken);
+
+		return reply.status(200).send({ success: true });
 	});
 }

@@ -2,6 +2,8 @@ import {FastifyInstance} from "fastify";
 import "crypto"
 import authenticator from "authenticator";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
+import * as repl from "node:repl";
+import {setCookie} from "../../utils/set-cookie.js";
 
 const tempKeys = new Map<string, { username: string, authToken: string, eat: number }>();
 
@@ -33,12 +35,9 @@ export default async function (server: FastifyInstance) {
 			return reply.status(400).send({error: ["Invalid 2FA Code"], type: "popup"});
 
 		tempKeys.delete(token);
-		return reply.setCookie('token', key.authToken, {
-			path: '/',
-			httpOnly: true,
-			secure: true,
-			sameSite: true,
-			maxAge: 3600
-		}).status(200).send({ success: true });
+
+		await setCookie(reply, key.authToken);
+
+		return reply.status(200).send({ success: true });
 	});
 }

@@ -5,6 +5,7 @@ import {User} from "../interface/user.js";
 import {getUserByUsername} from "../db/get-user-by-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
 import {signToken} from "../utils/sign-token.js";
+import {setCookie} from "../utils/set-cookie.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/register', async (request, reply) => {
@@ -52,13 +53,9 @@ export default async function (server: FastifyInstance) {
 			const tokenData: TokenPayload = {provider: "local", id: id, username, updatedAt: timestamp };
 			const token = await signToken(server, tokenData);
 
-			return reply.setCookie('token', token, {
-				path: '/',
-				httpOnly: true,
-				secure: true,
-				sameSite: true,
-				maxAge: 3600
-			}).status(200).send({});
+			await setCookie(reply, token);
+
+			return reply.status(200).send({});
 
 		} catch (err) {
 			return reply.status(400).send({error: [`An error occurred: ${err}.`], type: "global"});
