@@ -1,16 +1,17 @@
 import {FastifyInstance} from "fastify";
-import {getUserByUsername} from "../db/get-user-by-username.js";
-import {addUser} from "../db/add-user.js";
-import {getIdByUsername} from "../db/get-id-by-username.js";
-import {changeUsername} from "../db/change-username.js";
-import {TokenPayload} from "../interface/token-payload.js";
-import {createToken} from "./2fa/validate.js";
-import {signToken} from "../utils/sign-token.js";
-import {setCookie} from "../utils/set-cookie.js";
+import {getUserByUsername} from "../../db/get-user-by-username.js";
+import {addUser} from "../../db/add-user.js";
+import {getIdByUsername} from "../../db/get-id-by-username.js";
+import {changeUsername} from "../../db/change-username.js";
+import {TokenPayload} from "../../interface/token-payload.js";
+import {createToken} from "../2fa/validate.js";
+import {signToken} from "../../utils/sign-token.js";
+import {setCookie} from "../../utils/set-cookie.js";
 
 export default async function (server: FastifyInstance) {
-	server.get('/api/auth/callback', async (request, reply) => {
+	server.get('/api/auth/callback/42', async (request, reply) => {
 		const { code } = request.query as { code?: string };
+
 		if (!code) {
 			return reply.status(400).send({ error: "Missing code" });
 		}
@@ -69,7 +70,7 @@ export default async function (server: FastifyInstance) {
 		params.append('client_id', process.env.CLIENT_ID_42!);
 		params.append('client_secret', process.env.CLIENT_SECRET_42!);
 		params.append('code', code);
-		params.append('redirect_uri', `https://${process.env.HOSTNAME}:8443/api/auth/callback`);
+		params.append('redirect_uri', `https://${process.env.HOSTNAME}:8443/api/auth/callback/42`);
 
 		const response = await fetch('https://api.intra.42.fr/oauth/token', {
 			method: 'POST',

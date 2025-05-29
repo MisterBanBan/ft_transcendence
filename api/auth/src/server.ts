@@ -26,6 +26,10 @@ async function startServer() {
 			dir: join(dir, "routes/2fa/")
 		});
 
+		await server.register(autoLoad, {
+			dir: join(dir, "routes/callback/")
+		});
+
 		await server.listen({ port: 8084, host: '0.0.0.0' });
 		console.log(`Auth service is running on 0.0.0.0:8084`);
 	} catch (err) {
