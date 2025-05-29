@@ -4,6 +4,7 @@ import {getUserByUsername} from "../db/get-user-by-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
 import {getIdByUsername} from "../db/get-id-by-username.js";
 import {createToken} from "./2fa/validate.js"
+import {signToken} from "../utils/sign-token.js";
 
 interface Cookie {
 	path: string,
@@ -32,7 +33,7 @@ export default async function (server: FastifyInstance) {
 				return reply.status(400).send({error: [`Invalid username or your username may have changed because of an external provider (try ${user.username}1).`], type: "global"});
 
 			const tokenData: TokenPayload = {provider: "local", id, username: user.username, updatedAt: user.updatedAt };
-			const token = server.jwt.sign(tokenData, { noTimestamp: true });
+			const token = signToken(server, tokenData);
 
 			const cookieOpts = {
 				path: '/',

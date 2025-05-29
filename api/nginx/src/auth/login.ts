@@ -63,7 +63,6 @@ export class Login implements Component{
 
 						if (data.success)
 						{
-							console.log("Redirecting to /.");
 							return window.location.href = '/';
 						}
 					});

@@ -5,6 +5,7 @@ import {getIdByUsername} from "../db/get-id-by-username.js";
 import {changeUsername} from "../db/change-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
 import {createToken} from "./2fa/validate.js";
+import {signToken} from "../utils/sign-token.js";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback', async (request, reply) => {
@@ -23,18 +24,15 @@ export default async function (server: FastifyInstance) {
 			const login = data.login as string;
 
 			let user = await getUserByUsername(server.db, login);
-			console.log(user);
 			let payload: TokenPayload;
 			let id;
 			if (user && user.provider == '42')
 			{
-				console.log("found user", user);
 				id = (await getIdByUsername(server.db, user.username))!;
 				payload = { id: id, username: login, provider: "42", provider_id: user.provider_id, updatedAt: user.updatedAt };
 			}
 			else
 			{
-				console.log("new user");
 				let timestamp = Date.now();
 				if (user && user.provider != '42')
 				{
@@ -49,7 +47,7 @@ export default async function (server: FastifyInstance) {
 				payload = { id: id!, username: login, provider_id: data.id, provider: "42", updatedAt: timestamp}
 			}
 
-			const token = server.jwt.sign(payload, { noTimestamp: true });
+			const token = signToken(server, payload);
 
 			if (!user.tfa)
 			{

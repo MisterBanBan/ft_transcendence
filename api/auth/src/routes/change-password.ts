@@ -4,13 +4,12 @@ import {getUserByUsername} from "../db/get-user-by-username.js";
 import argon2 from "argon2";
 import {changeUsername} from "../db/change-username.js";
 import {changePassword} from "../db/change-password.js";
+import {signToken} from "../utils/sign-token.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/change-password', async (request, reply) => {
 		const { currentPassword, newPassword, confirmNewPassword } = request.body as { currentPassword: string; newPassword: string, confirmNewPassword: string };
 		const token = request.cookies.token!;
-
-		console.log(currentPassword, newPassword, confirmNewPassword);
 
 		if (!currentPassword || !newPassword || !confirmNewPassword) {
 			return reply.code(400).send({ error: "Current password, new password, and confirm new password are required" });
@@ -35,13 +34,11 @@ export default async function (server: FastifyInstance) {
 		if (isValid)
 			return reply.code(400).send({ error: isValid });
 
-		console.log(isValid);
-
 		const hashedPass = await argon2.hash(newPassword, {secret: Buffer.from(process.env.ARGON_SECRET!)});
 		const timestamp = await changePassword(server.db, user.id!, hashedPass)
 
 		const tokenData: TokenPayload = {provider: "local", id: user.id!, username: user.username, updatedAt: timestamp };
-		const newToken = server.jwt.sign(tokenData, { noTimestamp: true });
+		const newToken = signToken(server, tokenData);
 
 		return reply.setCookie('token', newToken, {
 			path: '/',

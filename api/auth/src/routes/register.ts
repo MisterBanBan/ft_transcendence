@@ -4,6 +4,7 @@ import {addUser} from "../db/add-user.js";
 import {User} from "../interface/user.js";
 import {getUserByUsername} from "../db/get-user-by-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
+import {signToken} from "../utils/sign-token.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/register', async (request, reply) => {
@@ -49,7 +50,7 @@ export default async function (server: FastifyInstance) {
 				return reply.status(400).send({error: ["An error occured while registering."], type: "global"});
 
 			const tokenData: TokenPayload = {provider: "local", id: id, username, updatedAt: timestamp };
-			const token = server.jwt.sign(tokenData, { noTimestamp: true});
+			const token = signToken(server, tokenData);
 
 			return reply.setCookie('token', token, {
 				path: '/',

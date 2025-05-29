@@ -45,8 +45,6 @@ export class TFACreate implements Component {
 					body: code,
 				});
 
-				console.log(response);
-
 			} catch (err) {
 				console.error("Error: ", err);
 			}

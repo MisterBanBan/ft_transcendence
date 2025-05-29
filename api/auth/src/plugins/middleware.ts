@@ -21,11 +21,8 @@ export default async function (server: FastifyInstance) {
 			return;
 		}
 
-		console.log(path, "not an authorized route");
-
 		const token = request.cookies?.token
 
-		console.log(token);
 		if (!token)
 			return reply.redirect('/auth');
 

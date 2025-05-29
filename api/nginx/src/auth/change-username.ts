@@ -35,8 +35,6 @@ export class ChangeUsername implements Component{
 				});
 				const data = await response.json();
 
-				console.log(data);
-
 			} catch (err) {
 				console.error("Error: ", err);
 			}

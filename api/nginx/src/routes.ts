@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-const ft_url = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Fz3r3p4%3A8443%2Fapi%2Fauth%2Fcallback&response_type=code";
+const ft_url = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Fz3r4p3%3A8443%2Fapi%2Fauth%2Fcallback&response_type=code";
 
 export interface Route {
 	path: string;
