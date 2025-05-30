@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/30 15:46:41 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/05/30 19:07:52 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,18 +92,7 @@ export class menu implements Component {
             this.registerForm.classList.add('hidden');
             this.loginForm.classList.remove('hidden');
         });
-        /*this.authBtn.addEventListener('click', () => {
-            this.formWrapper.classList.toggle('hidden');
-            this.showLoginForm();
-        });
         
-        // Gestion Login/Register
-        /*this.formWrapper.querySelector('#login_btn')!.addEventListener('click', () => this.showLoginForm());
-        this.formWrapper.querySelector('#register_btn')!.addEventListener('click', () => this.showRegisterForm());
-
-        // Redimensionnement automatique de l'overlay
-        window.addEventListener('resize', this.fitOverlayToVideo);
-        this.fitOverlayToVideo();*/
     }
 
     private resize = () => {
@@ -123,64 +112,3 @@ export class menu implements Component {
         
     }
 }
-
-/*
-    private resize = () => {
-        console.log("Resize appelé !");
-    const video = this.videoMain;
-    console.log("Video dimensions:", video.videoWidth, video.videoHeight);
-        const rect = video.getBoundingClientRect();
-        const containerWidth = rect.width;
-        const containerHeight = rect.height;
-    
-        // S'assure que les métadonnées sont chargées
-        if (video.videoWidth === 0 || video.videoHeight === 0) return;
-    
-        const videoRatio = video.videoWidth / video.videoHeight;
-        const containerRatio = containerWidth / containerHeight;
-    
-        let displayedWidth: number, displayedHeight: number, offsetX: number, offsetY: number;
-    
-        if (containerRatio > videoRatio) {
-            // bandes noires à gauche/droite
-            displayedHeight = containerHeight;
-            displayedWidth = containerHeight * videoRatio;
-            offsetX = (containerWidth - displayedWidth) / 2;
-            offsetY = 0;
-        } else { 
-            // bandes noires en haut/bas
-            displayedWidth = containerWidth;
-            displayedHeight = containerWidth / videoRatio;
-            offsetX = 0;
-            offsetY = (containerHeight - displayedHeight) / 2;
-        }
-    
-        // Positionne ton overlay/formulaire exactement sur la vidéo affichée :
-        this.containerForm.style.left = `${rect.left + offsetX}px`;
-        this.containerForm.style.top = `${rect.top + offsetY}px`;
-        this.containerForm.style.width = `${displayedWidth}px`;
-        this.containerForm.style.height = `${displayedHeight}px`;
-        this.containerForm.style.position = "absolute";
-    }
-    */
-
-
-        /*private showLoginForm(): void {
-        this.loginForm.classList.remove('hidden');
-        this.registerForm.classList.add('hidden');
-    }
-
-    private showRegisterForm(): void {
-        this.registerForm.classList.add('hidden');
-        this.loginForm.classList.remove('hidden');
-    }
-
-    private fitOverlayToVideo = () => {
-        const videoRect = this.videoMenu.getBoundingClientRect();
-        const overlay = this.formWrapper.parentElement!;
-        
-        overlay.style.width = `${videoRect.width}px`;
-        overlay.style.height = `${videoRect.height}px`;
-        overlay.style.left = `${videoRect.left}px`;
-        overlay.style.top = `${videoRect.top}px`;
-    }*/
