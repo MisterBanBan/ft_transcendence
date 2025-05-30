@@ -27,6 +27,24 @@ function draw() {
   requestAnimationFrame(draw);
 }
 
+let score_player1 = 0;
+let score_player2 = 0;
+
+function updateScore(newScore_player1: number, newScore_player2: number) {
+	score_player1 = newScore_player1;
+	score_player2 = newScore_player2;
+
+	const scoreElement_player1 = document.getElementById("score-player1");
+	if (scoreElement_player1) {
+		scoreElement_player1.textContent = score_player1.toString();
+	}
+
+	const scoreElement_player2 = document.getElementById("score-player2");
+	if (scoreElement_player2) {
+		scoreElement_player2.textContent = score_player2.toString();
+	}
+}
+
 draw();
 
 socket.on("connect", () => {
@@ -40,13 +58,15 @@ socket.on("game-started", (data: any) => {
 });
 
 socket.on("game-update", (data: { gameId: string, state: {
-  players: { id: string, x: number }[],
-  ball: { x: number, y: number, vx: number, vy: number },
-}}) => {
-  if (data && data.state && data.state.ball) {
-    ball = data.state.ball;
-    console.log("Game Update - Ball:", ball);
-  }
+	players: { id: string, x: number }[],
+	ball: { x: number, y: number, vx: number, vy: number },
+	score: {player1: number, player2: number}}}) => {
+	if (data && data.state && data.state.ball) {
+    	ball = data.state.ball;
+	if (data && data.state && data.state.score)
+		updateScore(data.state.score.player1, data.state.score.player2);
+	console.log("Game Update - Ball:", ball);
+	}
 });
 
 socket.on("connect_error", (err: any) => {
