@@ -6,6 +6,8 @@
     <title>Transcendence</title>
     <link href="/css/tailwind.css" rel="stylesheet">
     <link href="/css/output.css" rel="stylesheet">
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script type="module" src="/public/launch_game.js"></script>
 </head>
 <body class="overflow-hidden h-screen">
     <div id="app">
@@ -15,8 +17,6 @@
     
 
     <h1>Socket.IO test client</h1>
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script type="module" src="/public/launch_game.js"></script>
-    
+    <button id="send-input-btn">Envoyer player-input de test</button>
 </body>
 </html>
