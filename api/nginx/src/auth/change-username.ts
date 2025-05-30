@@ -19,11 +19,14 @@ export class ChangeUsername implements Component{
 
 		async function submitForm() {
 
-			const usernameInput = document.getElementById("username") as HTMLInputElement;
+			const usernameInput = document.getElementById("username") as HTMLInputElement | null;
 
-			const username: string = usernameInput.value;
+			if (!usernameInput) {
+				console.error("Username input is missing.");
+				return;
+			}
 			const body: Payload = {
-				newUsername: username
+				newUsername: usernameInput.value.trim()
 			};
 
 			try {
@@ -33,6 +36,17 @@ export class ChangeUsername implements Component{
 					body: JSON.stringify(body),
 				});
 				const data = await response.json();
+
+				if (!response.ok) {
+					const error = document.getElementById("error-username")
+					if (!error) {
+						console.error("Can't display error");
+						return;
+					}
+
+					error.textContent = data.error;
+					return;
+				}
 
 			} catch (err) {
 				console.error("Error: ", err);

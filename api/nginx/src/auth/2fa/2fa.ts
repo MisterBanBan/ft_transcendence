@@ -38,8 +38,16 @@ export class TFA implements Component {
 
 				const data = await response.json();
 
-				if (!response.ok)
-					return await showError(data, "2fa", response.ok);
+				if (!response.ok) {
+					const error = document.getElementById(`error-popup-2fa`)
+					if (!error) {
+						console.error("Can't display error");
+						return;
+					}
+
+					error.textContent = data.error;
+					return;
+				}
 
 				if (data.success)
 				{

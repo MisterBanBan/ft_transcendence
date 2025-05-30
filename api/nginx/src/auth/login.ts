@@ -70,14 +70,20 @@ export class Login implements Component{
 			}
 
 			if (!response.ok) {
-				await showError(data, "login", response.ok);
+				document.querySelectorAll(`.error-message-login`).forEach(el => el.textContent = "");
+
+				const error = document.createElement(`error-${data.type}-login`);
+				if (!error) {
+					console.error("Can't display error");
+					return;
+				}
+				error.textContent = data.error;
 				return;
 			}
 
 		} catch (err) {
 			console.error("Error: ", err);
-			errorSpan.style.display = "block";
-			errorSpan.innerHTML = `<span>Erreur de connexion au serveur.</span>`;
+			errorSpan.textContent = "Erreur de connexion au serveur.";
 		}
 	}
 
@@ -85,14 +91,14 @@ export class Login implements Component{
 		const popup = document.getElementById('popup-2fa');
 
 		if (!popup) {
-			errorSpan.innerText = "Can't access to the 2FA verification";
+			errorSpan.textContent = "Can't access to the 2FA verification";
 			console.error("Missing 2fa popup.");
 			return;
 		}
 
 		this.submit2FAButton = document.getElementById("submit-2fa");
 		if (!this.submit2FAButton) {
-			errorSpan.innerText = "Can't access to the 2FA verification";
+			errorSpan.textContent = "Can't access to the 2FA verification";
 			console.error("Missing submit button for 2FA verification.");
 			return;
 		}
@@ -132,7 +138,13 @@ export class Login implements Component{
 			const data = await response.json();
 
 			if (!response.ok) {
-				await showError(data, "2fa", response.ok)
+				const error = document.getElementById(`error-popup-2fa`)
+				if (!error) {
+					console.error("Can't display error");
+					return;
+				}
+
+				error.textContent = data.error;
 				return;
 			}
 

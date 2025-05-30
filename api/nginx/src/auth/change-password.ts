@@ -21,14 +21,20 @@ export class ChangePassword implements Component{
 
 		async function submitForm() {
 
-			const currentPasswordInput = document.getElementById("current_password") as HTMLInputElement;
-			const newPassInput = document.getElementById("new_password") as HTMLInputElement;
-			const confirmNewPassInput = document.getElementById("confirm_new_password") as HTMLInputElement;
+			const currentPasswordInput = document.getElementById("current_password") as HTMLInputElement | null;
+			const newPasswordInput = document.getElementById("new_password") as HTMLInputElement | null;
+			const confirmNewPasswordInput = document.getElementById("confirm_new_password") as HTMLInputElement | null;
 
-			const currentPassword: string = currentPasswordInput.value;
-			const newPassword: string = newPassInput.value;
-			const confirmNewPassword: string = confirmNewPassInput.value;
-			const body = {currentPassword: currentPassword, newPassword: newPassword, confirmNewPassword: confirmNewPassword} as Payload;
+			if (!currentPasswordInput || !newPasswordInput || !confirmNewPasswordInput) {
+				console.error("One or multiple form's fields are missing.");
+				return;
+			}
+
+			const body: Payload = {
+				currentPassword: currentPasswordInput.value,
+				newPassword: newPasswordInput.value,
+				confirmNewPassword: confirmNewPasswordInput.value
+			};
 
 			try {
 				const response = await fetch("/api/auth/change-password", {
@@ -37,6 +43,19 @@ export class ChangePassword implements Component{
 					body: JSON.stringify(body),
 				});
 				const data = await response.json();
+
+				console.log(data);
+				if (!response.ok) {
+					document.querySelectorAll(`.error-message-password`).forEach(el => el.textContent = "");
+					const error = document.getElementById(`error-${data.type}`)
+					if (!error) {
+						console.error("Can't display error");
+						return;
+					}
+
+					error.textContent = data.error;
+					return;
+				}
 
 			} catch (err) {
 				console.error("Error: ", err);

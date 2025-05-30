@@ -53,16 +53,24 @@ export class Register implements Component{
 				body: JSON.stringify(auth)
 			});
 
+			const data = await response.json();
+
 			if (!response.ok) {
-				await showError(await response.json(), "register", response.ok);
+				document.querySelectorAll(`.error-message-register`).forEach(el => el.textContent = "");
+
+				const error = document.createElement(`error-${data.type}-register`);
+				if (!error) {
+					console.error("Can't display error");
+					return;
+				}
+				error.textContent = data.error;
 				return;
 			}
 
 			window.location.href = '/';
 		} catch (err) {
 			console.error("Error: ", err);
-			errorSpan.style.display = "block";
-			errorSpan.innerHTML = `<span>Erreur de connexion au serveur.</span>`;
+			errorSpan.textContent = 'Erreur de connexion au serveur.';
 		}
 	}
 

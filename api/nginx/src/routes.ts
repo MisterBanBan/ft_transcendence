@@ -253,13 +253,15 @@ export interface Route {
 			title: "Settings",
 			template: async () => {
 				await new Promise(resolve => setTimeout(resolve, 300));
-				return ` <div class="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+				return `
+<div class="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
     <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Paramètres du compte</h2>
 
     <!-- Formulaire pour changer de pseudo -->
     <form class="mb-6">
       <div class="mb-4">
         <label for="username" class="block text-gray-700 font-medium mb-2">Nouveau pseudo</label>
+      	<div id="error-username" class="text-red-500 text-sm mb-2"></div>
         <input type="text" id="username" name="username"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
@@ -271,18 +273,22 @@ export interface Route {
 
     <!-- Formulaire pour changer de mot de passe -->
     <form>
+      <div id="error-global" class="error-message-password text-red-500 text-sm mb-2"></div>
       <div class="mb-4">
         <label for="current_password" class="block text-gray-700 font-medium mb-2">Mot de passe actuel</label>
+      	<div id="error-current_password" class="text-red-500 text-sm mb-2"></div>
         <input type="password" id="current_password" name="current_password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div class="mb-4">
         <label for="new_password" class="block text-gray-700 font-medium mb-2">Nouveau mot de passe</label>
+      	<div id="error-new_password" class="error-message-password text-red-500 text-sm mb-2"></div>
         <input type="password" id="new_password" name="new_password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div class="mb-4">
         <label for="confirm_new_password" class="block text-gray-700 font-medium mb-2">Confirmer le nouveau mot de passe</label>
+      	<div id="error-confirm_new_password" class="error-message-password text-red-500 text-sm mb-2"></div>
         <input type="password" id="confirm_new_password" name="confirm_new_password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>

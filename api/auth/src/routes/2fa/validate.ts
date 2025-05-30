@@ -24,7 +24,7 @@ export default async function (server: FastifyInstance) {
 		{
 			if (key)
 				tempKeys.delete(token);
-			return reply.status(403).send({ error: ["Invalid or expired 2FA session"], type: "popup" });
+			return reply.status(403).send({ error: "Invalid or expired 2FA session", type: "popup" });
 		}
 
 
@@ -32,7 +32,7 @@ export default async function (server: FastifyInstance) {
 		if (!user || !user.tfa)
 			return reply.status(404).send({ error: "User not found or doesn't have 2FA activated", type: "popup" });
 		if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(user.tfa, code))
-			return reply.status(400).send({error: ["Invalid 2FA Code"], type: "popup"});
+			return reply.status(400).send({error: "Invalid 2FA Code", type: "popup"});
 
 		tempKeys.delete(token);
 
