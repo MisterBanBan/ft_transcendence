@@ -17,6 +17,9 @@ module.exports = {
           'wiggle': 'wiggle 1s ease-in-out infinite',
           'pulse-grow': 'pulseGrow 1.5s infinite',
         },
+        fontFamily: {
+          omori: ['OMORI_GAME2', 'sans-serif'],
+        },
         keyframes: {
           wiggle: {
             '0%, 100%': { transform: 'rotate(-3deg)' },
