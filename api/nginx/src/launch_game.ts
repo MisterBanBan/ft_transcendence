@@ -5,35 +5,43 @@ const socket = io("https://10.13.6.2:8083", {
   withCredentials: true,
 });
 
+let gameId: string | null = null;
+let playerId: string | null = null;
+
 socket.on("connect", () => {
   console.log("Connected with id:", socket.id);
-  socket.emit("message", "Hello from client");
 });
 
-socket.on("message", (msg: string) => {
-  console.log("Received:", msg);
+socket.on("game-started", (data: any) => {
+  gameId = data.gameId;
+  playerId = data.playerId;
+  console.log("Game started! Game ID:", gameId, "Player ID:", playerId);
 });
 
 socket.on("game-update", (data: any) => {
-  console.log("game:", data);
+  console.log("Game Update:", data);
 });
 
 socket.on("connect_error", (err: any) => {
   console.error("Connection error:", err);
 });
 
-// Fonction qui envoie un player-input de test
+// Fonction pour envoyer un input de test
 function sendTestPlayerInput() {
-  const testInput = {
-    action: "test-move",
+  if (!gameId || !playerId) {
+    console.warn("Game not started yet");
+    return;
+  }
+
+  const input = {
+    direction: "left",
     timestamp: Date.now(),
-    playerId: socket.id
   };
-  socket.emit("player-input", testInput);
-  console.log("Sent test player-input:", testInput);
+
+  socket.emit("player-input", input);
+  console.log("Sent input:", input);
 }
 
-// Attacher l'événement click après le chargement de la page
 window.addEventListener("DOMContentLoaded", () => {
   const btn = document.getElementById("send-input-btn");
   if (btn) {
