@@ -6,7 +6,6 @@ export async function setCookie(reply: FastifyReply, token: string): Promise<voi
 		path: '/',
 		httpOnly: true,
 		secure: true,
-		sameSite: true,
-		maxAge: 3600
+		sameSite: true
 	})
 }
