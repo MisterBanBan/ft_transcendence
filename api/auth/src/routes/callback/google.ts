@@ -1,16 +1,6 @@
-// https://accounts.google.com/o/oauth2/v2/auth?
-// 	client_id=570055045570-c95opdokftohj6c4l7u9t7b46bpmnrkl.apps.googleusercontent.com
-// 	&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2Fgoogle
-// &response_type=code
-// &scope=profile
-// &access_type=offline
-// &include_granted_scopes=true
-
 import {FastifyInstance} from "fastify";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
 import {addUser} from "../../db/add-user.js";
-import {getIdByUsername} from "../../db/get-id-by-username.js";
-import {changeUsername} from "../../db/change-username.js";
 import {TokenPayload} from "../../interface/token-payload.js";
 import {createToken} from "../2fa/validate.js";
 import {signToken} from "../../utils/sign-token.js";
@@ -22,14 +12,13 @@ export default async function (server: FastifyInstance) {
 
 		const { code } = request.query as { code?: string };
 
-		console.log(code);
-
 		if (!code) {
 			return reply.status(400).send({ error: "Missing code" });
 		}
 
-		if (request.cookies?.token)
-			return reply.status(401).send({ error: "Already logged" });
+		if (request.cookies?.token) {
+			return reply.status(401).send({error: "Already logged"});
+		}
 
 		try {
 			const access_token = await exchange(code);
@@ -37,16 +26,19 @@ export default async function (server: FastifyInstance) {
 			const data = await getUserProfile(access_token);
 			const provider_id = data.sub as number;
 
-			console.log(data);
-
 			let user = await getUserByProviderId(server.db, provider_id);
 			let payload: TokenPayload;
 
 			if (user && user.provider == 'google' && user.provider_id == provider_id) {
-				payload = { id: user.id!, username: user.username, provider: user.provider, provider_id: user.provider_id, updatedAt: user.updatedAt };
+				payload = {
+					id: user.id!,
+					username: user.username,
+					provider: user.provider,
+					provider_id: user.provider_id,
+					updatedAt: user.updatedAt
+				};
 			}
-			else
-			{
+			else {
 				let timestamp = Date.now();
 
 				const username = await generateUniqueUsername(server.db, data.given_name);
@@ -54,18 +46,24 @@ export default async function (server: FastifyInstance) {
 				user = { username: username, provider: "google", provider_id: data.sub, updatedAt: timestamp };
 
 				const id = await addUser(server.db, user);
-				payload = { id: id!, username: username, provider_id: data.sub, provider: "google", updatedAt: timestamp}
+				payload = {
+					id: id!,
+					username: username,
+					provider_id: data.sub,
+					provider: "google",
+					updatedAt: timestamp
+				};
 			}
 
 			const token = await signToken(server, payload);
 
-			if (!user.tfa)
-			{
+			if (!user.tfa) {
 				await setCookie(reply, token);
 				return reply.status(302).redirect('/');
 			}
-			else
+			else {
 				return reply.status(302).redirect(`/2fa?token=${await createToken("google_test", token)}`);
+			}
 		} catch (error) {
 			if (error instanceof Error)
 				console.error(error.message);

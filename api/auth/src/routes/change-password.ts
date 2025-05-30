@@ -55,7 +55,13 @@ export default async function (server: FastifyInstance) {
 		const hashedPass = await argon2.hash(newPassword, {secret: Buffer.from(process.env.ARGON_SECRET!)});
 		const timestamp = await changePassword(server.db, user.id!, hashedPass)
 
-		const tokenData: TokenPayload = {provider: "local", id: user.id!, username: user.username, updatedAt: timestamp };
+		const tokenData: TokenPayload = {
+			provider: "local",
+			id: user.id!,
+			username: user.username,
+			updatedAt: timestamp
+		};
+
 		const newToken = await signToken(server, tokenData);
 
 		await setCookie(reply, newToken);

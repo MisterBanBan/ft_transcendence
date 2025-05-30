@@ -1,7 +1,6 @@
 import {FastifyInstance} from "fastify";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
 import {addUser} from "../../db/add-user.js";
-import {getIdByUsername} from "../../db/get-id-by-username.js";
 import {changeUsername} from "../../db/change-username.js";
 import {TokenPayload} from "../../interface/token-payload.js";
 import {createToken} from "../2fa/validate.js";
@@ -13,12 +12,16 @@ export default async function (server: FastifyInstance) {
 		const { code } = request.query as { code?: string };
 
 		if (!code) {
-			return reply.status(400).send({ error: "Missing code" });
+			return reply.status(400).send({
+				error: "Missing code"
+			});
 		}
 
-		console.log("token:", request.cookies?.token);
-		if (request.cookies?.token)
-			return reply.status(401).send({ error: "Already logged" });
+		if (request.cookies?.token) {
+			return reply.status(401).send({
+				error: "Already logged"
+			});
+		}
 
 		try {
 			const access_token = await exchange(code);
@@ -30,22 +33,36 @@ export default async function (server: FastifyInstance) {
 			let payload: TokenPayload;
 			let id;
 			if (user && user.provider == '42') {
-				payload = { id: user.id!, username: login, provider: user.provider, provider_id: user.provider_id, updatedAt: user.updatedAt };
+				payload = {
+					id: user.id!,
+					username: login,
+					provider: user.provider,
+					provider_id: user.provider_id,
+					updatedAt: user.updatedAt
+				};
 			}
-			else
-			{
+			else {
 				let timestamp = Date.now();
-				if (user && user.provider != '42')
-				{
-					const existingId = await getIdByUsername(server.db, user.username);
+				if (user && user.provider != '42') {
 					const newUsername = user.username + '1';
-					timestamp = await changeUsername(server.db, existingId!, newUsername);
+					timestamp = await changeUsername(server.db, user.id!, newUsername);
 				}
 
-				user = { username: login, provider: "42", provider_id: data.id, updatedAt: timestamp };
+				user = {
+					username: login,
+					provider: "42",
+					provider_id: data.id,
+					updatedAt: timestamp
+				};
 
 				id = await addUser(server.db, user);
-				payload = { id: id!, username: login, provider_id: data.id, provider: "42", updatedAt: timestamp}
+				payload = {
+					id: id!,
+					username: login,
+					provider_id: data.id,
+					provider: "42",
+					updatedAt: timestamp
+				};
 			}
 
 			const token = await signToken(server, payload);
@@ -77,8 +94,7 @@ export default async function (server: FastifyInstance) {
 			body: params
 		});
 
-		if (!response.ok)
-		{
+		if (!response.ok) {
 			console.error(response);
 			throw new Error('Error while exchanging token.');
 		}

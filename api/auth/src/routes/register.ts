@@ -13,20 +13,35 @@ export default async function (server: FastifyInstance) {
 
 		let {username, password, cpassword} = request.body as { username: string, password: string, cpassword: string };
 
-		if (request.cookies?.token)
-			return reply.status(400).send({error: "Already logged.", type: "global"});
+		if (request.cookies?.token) {
+			return reply.status(400).send({
+				error: "Already logged.",
+				type: "global"
+			});
+		}
 
 		if (!username || !password || !cpassword) {
-			return reply.status(400).send({error: 'Tous les champs sont requis.', type: 'global'});
+			return reply.status(400).send({
+				error: 'Tous les champs sont requis.',
+				type: 'global'
+			});
 		}
 
 		const errUsername = validateUsername(username);
-		if (errUsername)
-			return reply.status(400).send({error: 'Invalid username.', type: "username"});
+		if (errUsername) {
+			return reply.status(400).send({
+				error: 'Invalid username.',
+				type: "username"
+			});
+		}
 
 		const errPassword = await validatePassword(password, cpassword)
-		if (errPassword)
-			return reply.status(400).send({error: errPassword, type: "password"});
+		if (errPassword) {
+			return reply.status(400).send({
+				error: errPassword,
+				type: "password"
+			});
+		}
 
 		try {
 			password = await argon2.hash(password, {secret: Buffer.from(process.env.ARGON_SECRET!)});
@@ -39,19 +54,36 @@ export default async function (server: FastifyInstance) {
 
 		try {
 			let user = await getUserByUsername(server.db, username);
-			if (user)
-				return reply.status(400).send({error: "Username already in use.", type: "username"});
-
-			console.log("\x1b[32mCreating token\x1b[0m");
+			if (user) {
+				return reply.status(400).send({
+					error: "Username already in use.",
+					type: "username"
+				});
+			}
 
 			const timestamp = Date.now();
-			const userData: User = {provider: "local", username, password, tfa: undefined ,updatedAt: timestamp };
+			const userData: User = {
+				provider: "local",
+				username: username,
+				password: password,
+				tfa: undefined,
+				updatedAt: timestamp
+			};
 
 			const id = await addUser(server.db, userData);
-			if (id == undefined)
-				return reply.status(400).send({error: "An error occured while registering.", type: "global"});
+			if (id == undefined) {
+				return reply.status(400).send({
+					error: "An error occured while registering.",
+					type: "global"
+				});
+			}
 
-			const tokenData: TokenPayload = {provider: "local", id: id, username, updatedAt: timestamp };
+			const tokenData: TokenPayload = {
+				provider: "local",
+				id: id, username,
+				updatedAt: timestamp
+			};
+
 			const token = await signToken(server, tokenData);
 
 			await setCookie(reply, token);
@@ -59,7 +91,10 @@ export default async function (server: FastifyInstance) {
 			return reply.status(200).send({});
 
 		} catch (err) {
-			return reply.status(400).send({error: `An error occurred: ${err}.`, type: "global"});
+			return reply.status(400).send({
+				error: `An error occurred: ${err}.`,
+				type: "global"
+			});
 		}
 	})
 

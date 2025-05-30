@@ -1,8 +1,6 @@
 import type {Database} from 'sqlite';
 import {User} from "../interface/user.js";
 import {TokenPayload} from "../interface/token-payload.js";
-import {getIdByUsername} from "./get-id-by-username.js";
-import {type} from "node:os";
 
 export async function verifyToken(
 	db: Database,

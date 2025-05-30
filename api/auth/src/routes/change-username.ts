@@ -29,8 +29,6 @@ export default async function (server: FastifyInstance) {
 		const key = tempKeys.get(decoded.id);
 		const date = await createDate(new Date());
 
-		console.log(key)
-		console.log(date);
 		if (key && key >= date) {
 			return reply.code(401).send({ error: "You already changed your username today."});
 		}
@@ -44,14 +42,21 @@ export default async function (server: FastifyInstance) {
 		}
 
 		const regex = /^[a-zA-Z0-9\-]{3,16}$/;
-		if (!regex.test(newUsername))
-			return reply.code(400).send({ error: "Invalid new username (Must be between 3 and 16 characters, letters and - only)." });
+		if (!regex.test(newUsername)) {
+			return reply.code(400).send({error: "Invalid new username (Must be between 3 and 16 characters, letters and - only)."});
+		}
 
 		tempKeys.set(decoded.id, await createDate(new Date()));
 
 		const timestamp = await changeUsername(server.db, user.id!, newUsername)
 
-		const tokenData: TokenPayload = {provider: "local", id: user.id!, username: newUsername, updatedAt: timestamp };
+		const tokenData: TokenPayload = {
+			provider: "local",
+			id: user.id!,
+			username: newUsername,
+			updatedAt: timestamp
+		};
+
 		const newToken = await signToken(server, tokenData);
 
 		await setCookie(reply, newToken);
