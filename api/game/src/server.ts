@@ -17,7 +17,7 @@ class GameInstance {
   ) {
     this.state = {
       players: players.map((id, idx) => ({ id, x: 100 + idx * 50 })),
-      ball: { x: 150, y: 200 },
+      ball: { x: 300, y: 200, vx: Math.cos(Math.PI / 4), vy: Math.sin(Math.PI / 4) },
     };
     this.startGameLoop();
   }
@@ -30,9 +30,18 @@ class GameInstance {
   }
 
   updateGame() {
-    this.state.ball.x += 1;
+    const speed = 4;
+  	this.state.ball.x += this.state.ball.vx * speed;
+  	this.state.ball.y += this.state.ball.vy * speed;
 
-    console.log("Try send game-update");
+	  // Collision avec murs du canvas
+ 	 if (this.state.ball.x <= 5 || this.state.ball.x >= 595) {
+		this.state.ball.vx *= -1;
+  	}
+  	if (this.state.ball.y <= 5 || this.state.ball.y >= 395) {
+		this.state.ball.vy *= -1;
+  	}
+
     const matchmakingSocket = this.getMatchmakingSocket();
     if (matchmakingSocket) {
       matchmakingSocket.emit("game-update", {
@@ -78,9 +87,6 @@ async function start() {
         const { gameId, playerIds } = data;
 
         console.log(`Creating game ${gameId} for players:`, playerIds);
-
-        // Optionnel : faire rejoindre les joueurs à une salle
-        // playerIds.forEach(id => app.io.sockets.sockets.get(id)?.join(gameId));
 
         const instance = new GameInstance(gameId, playerIds, app.io, () => matchmakingSocket);
         gameInstances.set(gameId, instance);

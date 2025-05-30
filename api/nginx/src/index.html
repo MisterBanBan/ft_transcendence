@@ -1,22 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transcendence</title>
-    <link href="/css/tailwind.css" rel="stylesheet">
-    <link href="/css/output.css" rel="stylesheet">
-    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-    <script type="module" src="/public/launch_game.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transcendence</title>
+  <link href="/css/tailwind.css" rel="stylesheet" />
+  <link href="/css/output.css" rel="stylesheet" />
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script type="module" src="/public/launch_game.js"></script>
 </head>
-<body class="overflow-hidden h-screen">
-    <div id="app">
+<body class="overflow-hidden h-screen bg-gray-100 flex flex-col items-center justify-center gap-4">
+  <h1 class="text-xl font-bold">Socket.IO Test Client</h1>
 
-    </div>
+  <canvas id="game-canvas" width="600" height="400" class="border border-gray-700 bg-white shadow"></canvas>
 
-    
-
-    <h1>Socket.IO test client</h1>
-    <button id="send-input-btn">Envoyer player-input de test</button>
+  <button id="send-input-btn" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+    Envoyer player-input de test
+  </button>
 </body>
 </html>

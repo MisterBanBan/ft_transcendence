@@ -63,7 +63,6 @@ async function start() {
         playerToGame.set(socket.id, gameId);
         playerToGame.set(waitingPlayer.id, gameId);
 
-        // Important : informer game de créer la partie avec les vrais playerIds
         gameSocket.emit("create-game", { gameId, playerIds: [waitingPlayer.id, socket.id] });
 
         waitingPlayer.emit("game-started", { gameId, playerId: waitingPlayer.id });
