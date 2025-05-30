@@ -7,7 +7,18 @@
   .key-prompt {
     @apply absolute bg-contain bg-no-repeat bg-center z-20;
   }
+  .responsive-placeholder {
+    @apply placeholder:font-omori placeholder:text-sm 
+    sm:placeholder:text-base md:placeholder:text-xl
+    lg:placeholder:text-2xl;
+  }
+  .responsive-text {
+    @apply font-omori text-sm sm:text-base md:text-xl
+    lg:text-2xl;
+  }
 }
+
+
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
@@ -19,6 +30,11 @@
   to { transform: translateX(100vw); }
 }
 
+@font-face {
+  font-family: 'OMORI_GAME2';
+  src: url('/img/OMORI_GAME2.ttf');
+}
+
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
@@ -26,4 +42,12 @@
 .animate-cloud {
   animation: cloud 20s linear infinite;
 }
+/*
+input {
+  background: rgba(0,255,0,0.15);
+  border: 1px dashed lime;
+  z-index: 10;
+}*/
+
+
 
