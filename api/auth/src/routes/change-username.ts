@@ -10,11 +10,11 @@ import {setCookie} from "../utils/set-cookie.js";
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/change-username', async (request, reply) => {
 
-		const { newUsername, password } = request.body as { newUsername: string; password: string }
+		const { newUsername } = request.body as { newUsername: string; }
 		const token = request.cookies.token!;
 
-		if (!newUsername || !password) {
-			return reply.code(400).send({ error: "New username and password are required" });
+		if (!newUsername) {
+			return reply.code(400).send({ error: "New username is required" });
 		}
 
 		const decoded = server.jwt.decode(token) as TokenPayload;
@@ -24,12 +24,8 @@ export default async function (server: FastifyInstance) {
 			return reply.code(401).send({ error: "User not found" });
 		}
 
-		if (user.provider != "local") {
-			return reply.code(401).send({ error: `Since you are using a different provider (${user.provider}) than transcendence, you can't change your username` });
-		}
-
-		if (!await argon2.verify(user.password!, password, { secret: Buffer.from(process.env.ARGON_SECRET!) })) {
-			return reply.code(401).send({ error: "Invalid password" });
+		if (user.provider == "42") {
+			return reply.code(401).send({ error: `Since you are using 42 as a provider (${user.provider}), you can't change your username` });
 		}
 
 		if (await getUserByUsername(server.db, newUsername)) {

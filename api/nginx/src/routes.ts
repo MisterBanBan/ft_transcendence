@@ -143,7 +143,7 @@ export interface Route {
 			<input type="password" id="cpassword" required
 					class="p-2 mb-4 rounded border border-gray-300" />
 	
-			<input type="button" id="submit-register" value="Register"
+			<input type="submit" id="submit-register" value="Register"
 				   class="bg-blue-600 hover:bg-blue-800 text-white py-2 rounded cursor-pointer" />
 		</form>
 	</div>
@@ -261,9 +261,6 @@ export interface Route {
       <div class="mb-4">
         <label for="username" class="block text-gray-700 font-medium mb-2">Nouveau pseudo</label>
         <input type="text" id="username" name="username"
-               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <label for="password" class="block text-gray-700 font-medium mb-2">Mot de passe</label>
-        <input type="password" id="password" name="password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <button type="button" id="submit-username"

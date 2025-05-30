@@ -2,7 +2,6 @@ import { Component } from "../component.js";
 
 interface Payload {
 	newUsername: string;
-	password: string;
 }
 
 export class ChangeUsername implements Component{
@@ -21,11 +20,11 @@ export class ChangeUsername implements Component{
 		async function submitForm() {
 
 			const usernameInput = document.getElementById("username") as HTMLInputElement;
-			const passwordInput = document.getElementById("password") as HTMLInputElement;
 
 			const username: string = usernameInput.value;
-			const password: string = passwordInput.value;
-			const body = {newUsername: username, password} as Payload;
+			const body: Payload = {
+				newUsername: username
+			};
 
 			try {
 				const response = await fetch("/api/auth/change-username", {
