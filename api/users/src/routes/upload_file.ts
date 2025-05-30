@@ -6,7 +6,7 @@ export default async function (server: FastifyInstance) {
     server.get('/uploads/:filename', async (request, reply) => {
         try {
             const filename = (request.params as { filename: string }).filename;
-            const filePath = path.join('./uploads', filename);
+            const filePath = path.join('../../uploads/', filename);
 
             if (!fs.existsSync(filePath)) {
                 return reply.code(404).send({ error: 'File not found' });

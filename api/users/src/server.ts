@@ -27,7 +27,7 @@ async function startServer() {
 
     // Register cors config
     await server.register(corsConfig);
-    await server.register(staticConf);
+    // await server.register(staticConf);
 
     /*    server.register(websocket);*/
 

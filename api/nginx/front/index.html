@@ -138,6 +138,7 @@
 
             // Try direct access first, fallback to API route
             img.src = `/uploads/${avatarUrl}`;
+            console.log(img.src);
             img.className = 'avatar-display';
             img.alt = 'Avatar de ' + userName;
 
@@ -178,7 +179,7 @@
     // Use a default image file
     function showDefaultImageAvatar() {
         const img = document.createElement('img');
-        img.src = '/uploads/969b3e4e-ba49-44d4-8581-34dd972aeb32.jpeg';
+        img.src = '/uploads/fleur.jpeg';
         img.className = 'avatar-display';
         img.alt = 'Avatar par défaut';
 

@@ -24,7 +24,7 @@ export default async function (server: FastifyInstance) {
             console.log(`Upload attempt for user ${userId}`);
 
             // Use environment variable or fallback to relative path
-            const uploadDir = process.env.UPLOAD_DIR || './uploads';
+            const uploadDir = '/app/uploads/';
 
             if (!fs.existsSync(uploadDir)) {
                 fs.mkdirSync(uploadDir, { recursive: true });

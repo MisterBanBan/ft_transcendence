@@ -9,7 +9,7 @@ export default async function staticConf(server: FastifyInstance) {
     const dir = dirname(filename);
 
     server.register(staticFiles, {
-        root: path.join(dir, 'uploads'),
+        root: path.join(dir, '../../uploads/'),
         prefix: '/uploads/',
         setHeaders: (res, path) => {
             res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');

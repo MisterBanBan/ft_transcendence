@@ -16,7 +16,7 @@ services:
       - .env
     volumes:
       - users-data:/app/database
-      - /home/anjambon/Documents/transcendence/uploads:/app/uploads
+      - ./uploads:/app/uploads
     restart: unless-stopped
 
 #  tournament:
@@ -92,10 +92,10 @@ services:
     container_name: nginx
     build:
       context: api/nginx
+    volumes:
+      - ./uploads:/usr/share/nginx/front/uploads
     ports:
       - "8443:443"
-    volumes:
-      - ./home/anjambon/Documents/transcendence/uploads:/shared/uploads
     depends_on:
       users:
         condition: service_healthy
