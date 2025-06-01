@@ -37,7 +37,6 @@ export default async function (server: FastifyInstance, opts: any) {
     }
 
     const usersTableExists = await db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='users'");
-// Check if the 'relationships' table exists
     const relationshipsTableExists = await db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='relationships'");
 
 // Verify if both tables exist and provide appropriate feedback
