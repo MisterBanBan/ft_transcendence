@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/02 19:02:20 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/02 22:06:12 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,35 +83,52 @@ export const routes: Route[] = [
                 <button type="button" id="user" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-indigo-500 flex text-white shadow-lg hover:bg-indigo-600 focus:outline-none">
   +
 </button>
-                <form id="login" class="flex hidden responsive-form-login flex-col items-center justify-center">
-                  <input
+                <form id="login" autocomplete="off" class="flex hidden responsive-form-login flex-col items-center justify-center">
+                
+                
+                <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
+                <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
+                
+                
+                <input
                     type="text"
                     placeholder="Username"
+                    autocomplete="off"
                     class="responsive-case-login responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-black/60 rounded focus:outline-none bg-[length:100%_100%]"
                   />
                   <input
                     type="password"
                     placeholder="Password"
+                    autocomplete="off"
                     class="responsive-case-login responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center  rounded focus:outline-none bg-[length:100%_100%]"
                   />
                     <button type="submit" class="responsive-case-login responsive-text bg-[url('/img/case.png')] bg-no-repeat  bg-black/60 bg-center  text-white rounded focus:outline-none bg-[length:100%_100%] ">Login</button>
                     <button type="button" id="registerBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">register</button>
                 </form>
                 
-                <form id="register" class="flex hidden responsive-form-register flex-col items-center justify-center">
-                  <input
+                <form id="register" autocomplete="off" class="flex hidden responsive-form-register flex-col items-center justify-center">
+                  
+                
+                <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
+                <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
+                
+                
+                <input
                     type="text"
                     placeholder="Username"
+                    autocomplete="off"
                     class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-black/60  rounded focus:outline-none bg-[length:100%_100%]"
                   />
                   <input
                     type="password"
                     placeholder="Password"
+                    autocomplete="off"
                     class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center   rounded focus:outline-none bg-[length:100%_100%]"
                   />
                   <input
                     type="password"
                     placeholder="Password"
+                    autocomplete="off"
                     class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center   rounded focus:outline-none bg-[length:100%_100%]"
                   />
                     <button type="submit" class="responsive-case-register responsive-text bg-[url('/img/case.png')] bg-no-repeat bg-black/60 bg-center  text-white rounded focus:outline-none bg-[length:100%_100%]">Login</button>
