@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/30 18:54:47 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/02 19:02:20 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,45 +76,45 @@ export const routes: Route[] = [
             return `
             <section id="sec_video" class="w-screen h-screen relative overflow-hidden flex items-center justify-center">
               <video autoplay loop muted id="video_main"
-                class="block max-w-full max-h-full object-contain"
+                class="block max-w-full max-h-full object-contain">
                 <source src="/img/game.mp4" type="video/mp4">
               </video>
               <div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
                 <button type="button" id="user" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-indigo-500 flex text-white shadow-lg hover:bg-indigo-600 focus:outline-none">
   +
 </button>
-                <form id="login" class="flex hidden flex-col sm:gap-1 md:gap-2 lg:gap-3 xl:gap-4 w-full max-w-[200px] sm:max-w-[250px] xl:max-w-[350px] h-full items-center justify-center">
+                <form id="login" class="flex hidden responsive-form-login flex-col items-center justify-center">
                   <input
                     type="text"
                     placeholder="Username"
-                    class="w-full h-8 top-2 sm:h-12 md:h-14 lg:h-16 xl:h-[96px] responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat bg-center pl-10 pr-4 bg-black text-white rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-login responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-black/60 rounded focus:outline-none bg-[length:100%_100%]"
                   />
                   <input
                     type="password"
                     placeholder="Password"
-                    class="w-full h-8 sm:h-12 md:h-14 lg:h-16 xl:h-[96px] responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat pl-10 pr-4 bg-black bg-center  text-white rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-login responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center  rounded focus:outline-none bg-[length:100%_100%]"
                   />
-                    <button type="submit" class="w-full h-8 sm:h-12 md:h-14 lg:h-16 xl:h-[96px] responsive-text bg-[url('/img/case.png')] bg-no-repeat bg-black bg-center  text-white rounded focus:outline-none bg-[length:100%_100%]">Login</button>
-                    <button type="button" id="registerBtn" class="text-white responsive-text relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">register</button>
+                    <button type="submit" class="responsive-case-login responsive-text bg-[url('/img/case.png')] bg-no-repeat  bg-black/60 bg-center  text-white rounded focus:outline-none bg-[length:100%_100%] ">Login</button>
+                    <button type="button" id="registerBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">register</button>
                 </form>
                 
-                <form id="register" class="flex hidden flex-col gap-1 w-full max-w-[200px] sm:max-w-[250px] xl:max-w-[350px] h-full items-center justify-center">
+                <form id="register" class="flex hidden responsive-form-register flex-col items-center justify-center">
                   <input
                     type="text"
                     placeholder="Username"
-                    class="w-full h-8 top-2 sm:h-12 md:h-14 lg:h-16 xl:h-[96px] responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat bg-center pl-10 pr-4 bg-black text-white rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-black/60  rounded focus:outline-none bg-[length:100%_100%]"
                   />
                   <input
                     type="password"
                     placeholder="Password"
-                    class="w-full h-8 sm:h-12 md:h-14 lg:h-16 xl:h-[96px] responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat pl-10 pr-4 bg-black bg-center  text-white rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center   rounded focus:outline-none bg-[length:100%_100%]"
                   />
                   <input
                     type="password"
                     placeholder="Password"
-                    class="w-full h-8 sm:h-12 md:h-14 lg:h-16 xl:h-[96px] responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat pl-10 pr-4 bg-black bg-center  text-white rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center   rounded focus:outline-none bg-[length:100%_100%]"
                   />
-                    <button type="submit" class="w-full h-8 sm:h-12 md:h-14 lg:h-16 xl:h-[96px] responsive-text bg-[url('/img/case.png')] bg-no-repeat bg-black bg-center  text-white rounded focus:outline-none bg-[length:100%_100%]">Login</button>
+                    <button type="submit" class="responsive-case-register responsive-text bg-[url('/img/case.png')] bg-no-repeat bg-black/60 bg-center  text-white rounded focus:outline-none bg-[length:100%_100%]">Login</button>
                     <button type="button" id="loginBtn" class="text-white responsive-text ">LOGIN</button>
                 </form>
               </div>
