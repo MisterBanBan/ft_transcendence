@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/02 22:06:12 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/03 22:10:22 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,45 +22,44 @@ export const routes: Route[] = [
         path: "/",
         title: "Accueil",
         template: async () => {
-            await new Promise(resolve => setTimeout(resolve, 300));//bg-[url('/img/fond_outside.jpg')] bg-cover bg-center bg-no-repeat
+            await new Promise(resolve => setTimeout(resolve, 300));
             return `
-            <div class="fixed inset-0 overflow-hidden">
-  <!-- 1. Calque procédural plein-écran, derrière tout (z-index -10) -->
-  <div
-    id="procedural-bg"
-    class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-  ></div>
-  <div
-    id="cloud"
-    class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-  ></div>
-<canvas id="forest" class="absolute inset-0 -z-20"></canvas>
-<div id="procedural-bg" class="absolute inset-0 -z-10"></div>
-<!-- puis ton contenu principal en z-0 ou plus -->
-
-
-
-  <!-- 2. Contenu principal -->
-  <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
-    <div class="w-screen h-screen relative">
-      <div class="absolute inset-0 w-full h-full"></div>
-    </div>
-
-    <div id="videoDoor" class="w-screen h-screen relative">
-      <video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-        <source src="/img/door.mp4" type="video/mp4">
-      </video>
-      <div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
-        <video autoplay loop muted class="w-12 h-12">
-          <source src="/img/pressE.mp4" type="video/mp4">
-        </video>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Joueur par-dessus tout -->
-  <div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10"></div>
+            <div class="fixed inset-0 h-full w-full relative overflow-hidden">
+                <div
+                  id="procedural-bg"
+                  class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
+                ></div>
+                <canvas id="forest" class="absolute inset-0 -z-20"></canvas>
+                <div class="absolute left-0 bottom-0 w-full h-full z-10">
+  <img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[30%] object-cover pointer-events-none translate-y-2" />
+  <img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[17%] object-cover pointer-events-none translate-y-2" />
 </div>
+
+
+
+
+                <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
+                  <div class="w-screen h-screen relative">
+                    <div class="absolute inset-0 w-full h-full"></div>
+                  </div>
+
+                  <div id="videoDoor" class="w-screen h-screen relative">
+                    <video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+                      <source src="/img/door.mp4" type="video/mp4">
+                    </video>
+                    <div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
+                      <video autoplay loop muted class="w-12 h-12">
+                        <source src="/img/pressE.mp4" type="video/mp4">
+                      </video>
+                    </div>
+                  </div>
+                </div>
+</div>
+                <!-- 3. Joueur par-dessus tout -->
+<div id="player"
+     class="fixed bottom-0 left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
+</div>
+              
 `;
             
 
