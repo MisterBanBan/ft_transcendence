@@ -17,7 +17,6 @@ RUN npm install
 
 # Créer le fichier CSS Tailwind avant la construction principale
 RUN npx tailwindcss -i ./src/css/input.css -o ./src/css/output.css
-RUN npm install --build-from-source sharp
 
 # Construire l'application
 RUN npm run build
