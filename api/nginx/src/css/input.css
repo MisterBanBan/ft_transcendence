@@ -9,13 +9,13 @@
   }
   .responsive-placeholder {
     @apply placeholder:font-omori placeholder:text-sm 
-    sm:placeholder:text-base md:placeholder:text-xl
-    lg:placeholder:text-2xl placeholder:text-white
+    sm:placeholder:text-base md:placeholder:text-2xl
+    lg:placeholder:text-4xl placeholder:text-white
     text-white text-center;
   }
   .responsive-text {
-    @apply font-omori text-sm sm:text-base md:text-xl
-    lg:text-2xl;
+    @apply font-omori text-sm sm:text-base md:text-2xl
+    lg:text-4xl;
   }
   .responsive-form-login {
     @apply xs:gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-6 2xl:gap-8
@@ -28,12 +28,12 @@
    h-full w-full;
   }
   .responsive-case-login {
-    @apply h-xxs:h-[15%] h-xs:h-[15%] h-sm:h-[15%] h-md:h-[15%] 
+    @apply  top-2
+    h-xxs:h-[15%] h-xs:h-[15%] h-sm:h-[15%] h-md:h-[15%] 
     h-lg:h-[15%] h-xl:h-[15%] h-2xl:h-[15%]
 
     w-[50%] xxs:w-[50%] xs:w-[50%]
-    sm:w-[50%] lg:w-[60%] xl:w-[60%] 2xl:w-[60%]
-    top-2; 
+    sm:w-[50%] lg:w-[60%] xl:w-[60%] 2xl:w-[60%]; 
   }
   .responsive-case-register {
     @apply  top-2 
@@ -42,6 +42,10 @@
 
     w-[50%] xxs:w-[50%] xs:w-[50%]
     sm:w-[50%] lg:w-[60%] xl:w-[60%] 2xl:w-[60%];
+  }
+  .responsive-case {
+    @apply bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-black/60 
+    focus:outline-none bg-[length:100%_100%];
   }
 }
 
