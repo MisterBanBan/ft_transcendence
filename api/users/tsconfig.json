@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "NodeNext",
+<<<<<<< HEAD
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
@@ -9,5 +10,19 @@
     "moduleResolution": "NodeNext"
   },
   "include": ["src/**/*.ts"],
+=======
+    "moduleResolution": "NodeNext",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "dist",
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ]
+  },
+  "include": ["src/**/*"],
+>>>>>>> server-side-pong
   "exclude": ["dist", "node_modules"]
 }

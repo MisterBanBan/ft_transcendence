@@ -22,4 +22,4 @@ COPY package.json .
 
 RUN npm install --production
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/server.js"]
