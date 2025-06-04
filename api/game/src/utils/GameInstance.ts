@@ -18,31 +18,26 @@ export class GameInstance {
 	  this.startGameLoop();
 	}
   
-	startGameLoop() {
+	private startGameLoop() {
 	  console.log(`[${this.id}] startGameLoop called`);
 	  this.interval = setInterval(() => {
 		this.updateGame();
 	  }, 1000 / 60);
 	}
   
-	updateGame() {
-  
+	private updateGame() {
+
 		this.state.ball.x += this.state.ball.vx * this.state.ball.speed;
 		this.state.ball.y += this.state.ball.vy * this.state.ball.speed;
-  
-	   if (this.state.ball.x <= 5 || this.state.ball.x >= 595) {
-		  if (this.state.ball.speed < 50)
-			  this.state.ball.speed += 0.5;
-		  this.state.ball.vx *= -1;
-		  if (this.state.ball.x <= 5)
-			  this.state.score.player2 += 1;
-		  else
-			  this.state.score.player1 += 1;
+		
+		if (this.state.ball.x <= 10 || this.state.ball.x >= 590) {
+			this.updateScore();
 		}
-		if (this.state.ball.y <= 5 || this.state.ball.y >= 395) {
-		  if (this.state.ball.speed < 50)
-			  this.state.ball.speed += 0.5;
-		  this.state.ball.vy *= -1;
+
+		if (this.state.ball.y <= 10 || this.state.ball.y >= 390) {
+			if (this.state.ball.speed < 50)
+				this.state.ball.speed += 0.5;
+			this.state.ball.vy *= -1;
 		}
   
 	  const matchmakingSocket = this.getMatchmakingSocket();
@@ -53,15 +48,30 @@ export class GameInstance {
 		});
 	  }
 	}
+
+	private updateScore()
+	{
+		if (this.state.ball.x <= 10)
+			this.state.score.player2 += 1;
+		else
+			this.state.score.player1 += 1;
+		
+			this.state.ball.x = 300;
+		this.state.ball.y = 200;
+
+		this.state.ball.vx = Math.random() * (1 - -1) + -1;
+		this.state.ball.vy = Math.random() * (1 - -1) + -1;
+		this.state.ball.speed = 4;
+	}
   
-	handleInput(playerId: string, input: any) {
+	public handleInput(playerId: string, input: any) {
 	  const player = this.state.players.find((p: any) => p.id === playerId);
 	  if (player && input.direction) {
 		player.x += input.direction === "left" ? -5 : 5;
 	  }
 	}
   
-	stop() {
+	private stop() {
 	  clearInterval(this.interval);
 	}
   }
