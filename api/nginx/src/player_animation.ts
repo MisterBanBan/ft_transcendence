@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:44 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/03 22:23:42 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/04 08:01:11 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ export class PlayerAnimation{
     }
     updatePosition(x: number, y: number) {
         this.element.style.left = `${x}px`;
-        //this.element.style.top = `${y}px`;
+        this.element.style.top = `${y}px`;
     }
     
 }

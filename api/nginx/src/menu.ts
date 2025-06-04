@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/02 22:02:09 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/04 11:25:47 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ export class menu implements Component {
             this.resize();
         }
 
-        this.authBtn.addEventListener('click', () => {
+        this.authBtnHandler = () => {
             if(!this.loginForm.classList.contains('hidden')  || 
             !this.registerForm.classList.contains('hidden')) {
                 this.loginForm.classList.add('hidden');
@@ -80,22 +80,27 @@ export class menu implements Component {
                 this.resize();
             }
             
-        });
+        };
 
-        this.registerBtn.addEventListener('click', () => { 
+        this.registerBtnHandler = () => { 
             this.loginForm.classList.add('hidden');
             this.registerForm.classList.remove('hidden');
             
-        });
+        };
 
-        this.loginBtn.addEventListener('click', () => { 
+        this.loginBtnHandler = () => { 
             this.registerForm.classList.add('hidden');
             this.loginForm.classList.remove('hidden');
-        });
-          
-        
+        };
+        this.authBtn.addEventListener('click', this.authBtnHandler);
+        this.registerBtn.addEventListener('click', this.registerBtnHandler);
+        this.loginBtn.addEventListener('click', this.loginBtnHandler);
     }
 
+    private authBtnHandler = () => {};
+    private registerBtnHandler = () => {};
+    private loginBtnHandler = () => {};
+    
     private resize = () => {
         const rect = this.videoMain.getBoundingClientRect();
             
@@ -110,6 +115,8 @@ export class menu implements Component {
 
     public destroy(): void {
         window.removeEventListener('resize', this.resize);
-        
+        this.authBtn.removeEventListener('click', this.authBtnHandler);
+        this.registerBtn.removeEventListener('click', this.registerBtnHandler);
+        this.loginBtn.removeEventListener('click', this.loginBtnHandler);
     }
 }
