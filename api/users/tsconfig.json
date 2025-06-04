@@ -2,15 +2,6 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "NodeNext",
-<<<<<<< HEAD
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "moduleResolution": "NodeNext"
-  },
-  "include": ["src/**/*.ts"],
-=======
     "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
@@ -23,6 +14,5 @@
     ]
   },
   "include": ["src/**/*"],
->>>>>>> server-side-pong
   "exclude": ["dist", "node_modules"]
 }

@@ -21,10 +21,10 @@ export class menu implements Component {
     private registerForm: HTMLElement;
     private registerBtn: HTMLElement;
     private loginBtn: HTMLElement;
-    private ffaDiv: HTMLElement;
-    private ffaBtn: HTMLElement;
+    // private ffaDiv: HTMLElement;
+    // private ffaBtn: HTMLElement;
     
-    constructor(videoId: string, containerFormId: string, authBtnId: string, loginFormId: string, registerFormId: string, registerBtnId: string, loginBtnId: string, ffaId: string) { 
+    constructor(videoId: string, containerFormId: string, authBtnId: string, loginFormId: string, registerFormId: string, registerBtnId: string, loginBtnId: string) { 
         const video = document.getElementById(videoId) as HTMLVideoElement;
         if (!video) throw new Error('Video element not found');
         this.videoMain = video;
@@ -53,9 +53,9 @@ export class menu implements Component {
         if (!loginBtn) throw new Error('Form wrapper not found');
         this.loginBtn= loginBtn;
 
-        const ffaDiv = document.getElementById(ffaId);
-        if (!ffaDiv) throw new Error('Form wrapper not found');
-        this.ffaDiv= ffaDiv;
+        // const ffaDiv = document.getElementById(ffaId);
+        // if (!ffaDiv) throw new Error('Form wrapper not found');
+        // this.ffaDiv= ffaDiv;
     }
 
     public init(): void {
