@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/04 11:25:47 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/04 15:33:12 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,10 @@ export class menu implements Component {
     private registerForm: HTMLElement;
     private registerBtn: HTMLElement;
     private loginBtn: HTMLElement;
-    //private videoMenu: HTMLVideoElement;
-    //private loginForm: HTMLElement;
-    //private registerForm: HTMLElement;
+    private ffaDiv: HTMLElement;
+    private ffaBtn: HTMLElement;
     
-    constructor(videoId: string, containerFormId: string, authBtnId: string, loginFormId: string, registerFormId: string, registerBtnId: string, loginBtnId: string) { 
+    constructor(videoId: string, containerFormId: string, authBtnId: string, loginFormId: string, registerFormId: string, registerBtnId: string, loginBtnId: string, ffaId: string) { 
         const video = document.getElementById(videoId) as HTMLVideoElement;
         if (!video) throw new Error('Video element not found');
         this.videoMain = video;
@@ -53,6 +52,10 @@ export class menu implements Component {
         const loginBtn = document.getElementById(loginBtnId);
         if (!loginBtn) throw new Error('Form wrapper not found');
         this.loginBtn= loginBtn;
+
+        const ffaDiv = document.getElementById(ffaId);
+        if (!ffaDiv) throw new Error('Form wrapper not found');
+        this.ffaDiv= ffaDiv;
     }
 
     public init(): void {
@@ -60,14 +63,9 @@ export class menu implements Component {
         window.addEventListener("resize", this.resize);
         
         this.videoMain.addEventListener("loadedmetadata", () => {
-            console.log("Loadedmetadata déclenché");
+            console.log("Loadedmetadata ready");
             this.resize();
         });
-        
-        if (this.videoMain.readyState >= 1) {
-            console.log("Vidéo déjà chargée, appel resize");
-            this.resize();
-        }
 
         this.authBtnHandler = () => {
             if(!this.loginForm.classList.contains('hidden')  || 
@@ -106,7 +104,6 @@ export class menu implements Component {
             
         this.containerForm.style.left = `${(rect.left )}px`;
         this.containerForm.style.top = `${(rect.top )}px`;
-        //this.containerForm.style.bottom = `${(rect.bottom )}px`;
         this.containerForm.style.width = `${rect.width * 0.8}px`;
         this.containerForm.style.height = `${rect.height}px`;
         this.containerForm.style.position = "absolute";

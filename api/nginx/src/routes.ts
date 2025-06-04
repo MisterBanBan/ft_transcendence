@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/04 08:00:48 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/04 15:32:43 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,10 @@ export const routes: Route[] = [
                 <source src="/img/game.mp4" type="video/mp4">
               </video>
               <div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
-                <button type="button" id="user" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-indigo-500 flex text-white shadow-lg hover:bg-indigo-600 focus:outline-none">
-  +
-</button>
-                <form id="login" autocomplete="off" class="flex hidden responsive-form-login flex-col items-center justify-center">
+                <button type="button" id="user" class="absolute top-6 right-8 w-10 h-10 rounded-full bg-indigo-500 flex text-white shadow-lg hover:bg-indigo-600 focus:outline-none">
+                  +
+                </button>
+                <form id="login"  class="flex hidden responsive-form-login flex-col items-center justify-center">
                 
                 
                 <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
@@ -92,20 +92,19 @@ export const routes: Route[] = [
                 <input
                     type="text"
                     placeholder="Username"
-                    autocomplete="off"
-                    class="responsive-case-login responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-black/60 rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-login responsive-placeholder responsive-case"
                   />
                   <input
                     type="password"
                     placeholder="Password"
-                    autocomplete="off"
-                    class="responsive-case-login responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center  rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-login responsive-placeholder responsive-case"
                   />
-                    <button type="submit" class="responsive-case-login responsive-text bg-[url('/img/case.png')] bg-no-repeat  bg-black/60 bg-center  text-white rounded focus:outline-none bg-[length:100%_100%] ">Login</button>
-                    <button type="button" id="registerBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">register</button>
+                    <button type="submit" class="responsive-case-login responsive-text responsive-case text-white">Login</button>
+                    <button type="button" id="registerBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">2fa</button>
+                    <button type="button" id="2faBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">register</button>
                 </form>
                 
-                <form id="register" autocomplete="off" class="flex hidden responsive-form-register flex-col items-center justify-center">
+                <form id="register"  class="flex hidden responsive-form-register flex-col items-center justify-center">
                   
                 
                 <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
@@ -115,24 +114,30 @@ export const routes: Route[] = [
                 <input
                     type="text"
                     placeholder="Username"
-                    autocomplete="off"
-                    class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-black/60  rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-register responsive-placeholder responsive-case"
                   />
                   <input
                     type="password"
                     placeholder="Password"
-                    autocomplete="off"
-                    class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center   rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-register responsive-placeholder responsive-case"
                   />
                   <input
                     type="password"
                     placeholder="Password"
-                    autocomplete="off"
-                    class="responsive-case-register responsive-placeholder bg-[url('/img/case.png')] bg-no-repeat px-3 bg-black/60 bg-center   rounded focus:outline-none bg-[length:100%_100%]"
+                    class="responsive-case-register responsive-placeholder responsive-case"
                   />
-                    <button type="submit" class="responsive-case-register responsive-text bg-[url('/img/case.png')] bg-no-repeat bg-black/60 bg-center  text-white rounded focus:outline-none bg-[length:100%_100%]">Login</button>
+                    <button type="submit" class="responsive-case-register responsive-text responsive-case text-white">Login</button>
                     <button type="button" id="loginBtn" class="text-white responsive-text ">LOGIN</button>
                 </form>
+                <div id="popup2fa" class="fixed inset-0 flex justify-center items-center bg-black/60 z-20">
+                  <input 
+                    type="text"
+                    placeholder="Enter 2FA code"
+                    class="responsive-placeholder responsive-case"
+                  />
+                  <button type="submit" class="responsive-case-register responsive-text responsive-case text-white">Valider</button>
+                  <button type="button" id="loginBtn" class="text-white responsive-text ">Return</button>
+                  </div>
               </div>
             
             </section>
