@@ -12,25 +12,11 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    env_file:
+      - .env
     volumes:
       - users-data:/app/database
-    restart: unless-stopped
-
-  tournament:
-    image: tournament
-    container_name: tournament
-    build:
-      context: api/tournament/
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    networks:
-      - ft_transcendence
-    volumes:
-      - tournament-data:/app/database
+      - ./uploads:/app/uploads
     restart: unless-stopped
 
   game:
@@ -89,6 +75,8 @@ services:
     container_name: nginx
     build:
       context: api/nginx
+    volumes:
+      - ./uploads:/usr/share/nginx/front/uploads
     ports:
       - "8443:443"
     depends_on:
@@ -100,7 +88,7 @@ services:
         condition: service_healthy
       game:
         condition: service_healthy
-      auth:
+      authentication:
         condition: service_healthy
     networks:
       - ft_transcendence
@@ -141,5 +129,3 @@ volumes:
       type: none
       o: bind
       device: ./api/tournament/database
-
-

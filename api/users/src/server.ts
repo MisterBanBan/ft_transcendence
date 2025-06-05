@@ -1,11 +1,13 @@
 import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
-// import cors from "@fastify/cors";
+import multipart from "@fastify/multipart";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import corsConfig from './config/cors.js';
+import fileValidationConfig from "./config/file-validation.js";
+// import validationErrorHandler from "./error/validation-errors.js";
 // import websocket from "@fastify/websocket";
-// import multipart from "@fastify/multipart";
-// import { existsSync } from "node:fs";
+
 
 async function startServer() {
 
@@ -16,35 +18,32 @@ async function startServer() {
     const filename = fileURLToPath(import.meta.url);
     const dir = dirname(filename);
 
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "routes/")
-        });
-    } catch (err) {
-        console.error(err);
-    }
+    // Register file validation configuration
+    await server.register(fileValidationConfig);
 
-/*    server.register(cors, {
-        origin: "*",
-        methods: ["GET", "POST"]
-    });*/
+    // // Register custom error handler for validation errors
+    // await server.register(validationErrorHandler);
+
+    // Register cors config
+    await server.register(corsConfig);
 
     /*    server.register(websocket);*/
+
     try {
         server.register(autoLoad, {
             dir: join(dir, "plugins/"),
             encapsulate: false
         });
-    } catch (err) {
-        console.error(err);
-    }
 
-    /*    server.register(multipart);*/
-
-    try {
+        server.register(multipart);
+        server.register(autoLoad, {
+            dir: join(dir, "routes/")
+        });
         await server.listen({ port: 8080, host: '0.0.0.0' });
         console.log(`Users service is running on 0.0.0.0:8080`);
+
     } catch (err) {
+        console.error(err);
         server.log.error(err);
         process.exit(1);
     }
