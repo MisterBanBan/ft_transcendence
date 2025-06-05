@@ -10,7 +10,7 @@ const tempKeys = new Map<string, { username: string, authToken: string, eat: num
 export async function createToken(username: string, authToken: string): Promise<string> {
 	const token = crypto.randomUUID();
 
-	tempKeys.set(token, { username, authToken, eat: Date.now() * 2 * 60 * 1000 });
+	tempKeys.set(token, { username, authToken, eat: Date.now() + (2 * 60 * 1000) });
 
 	return token;
 }
@@ -20,13 +20,11 @@ export default async function (server: FastifyInstance) {
 		const { token, code } = request.body as { token: string; code: string };
 
 		const key = tempKeys.get(token);
-		if (!key || key.eat < Date.now())
-		{
+		if (!key || key.eat < Date.now()) {
 			if (key)
 				tempKeys.delete(token);
 			return reply.status(403).send({ error: "Invalid or expired 2FA session", type: "popup" });
 		}
-
 
 		const user = await getUserByUsername(server.db, key.username);
 		if (!user || !user.tfa)

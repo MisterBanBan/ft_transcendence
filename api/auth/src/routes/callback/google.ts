@@ -62,7 +62,7 @@ export default async function (server: FastifyInstance) {
 				return reply.status(302).redirect('/');
 			}
 			else {
-				return reply.status(302).redirect(`/2fa?token=${await createToken("google_test", token)}`);
+				return reply.status(302).redirect(`/2fa?token=${await createToken(user.username, token)}`);
 			}
 		} catch (error) {
 			if (error instanceof Error)

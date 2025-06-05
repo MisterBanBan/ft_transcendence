@@ -17,10 +17,7 @@ import { TFACreate } from "./auth/2fa/create.js";
 import {TFA} from "./auth/2fa/2fa.js";
 import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
-// import { introduction } from './intro.js';
-// import { menu } from './menu.js';
-// import { Zoom } from './zoom.js';
-// import { proceduralBackground } from './proceduralBackground.js';
+import {Toggle2FA} from "./auth/toggle-2fa.js";
 
 //permet de gerer la destruction des new
 let activeComponent: Component | null = null;
@@ -33,12 +30,14 @@ const routeComponents: Record<string, Component> = {
 
 			const changeUsername = new ChangeUsername();
 			const changePassword = new ChangePassword();
+			const toggle2FA = new Toggle2FA();
 			changeUsername.init();
 			changePassword.init();
+			toggle2FA.init();
 
 			activeComponent = {
 				init: () => {},
-				destroy: () => { changeUsername.destroy(); changePassword.destroy(); },
+				destroy: () => { changeUsername.destroy(); changePassword.destroy(); toggle2FA.destroy(); },
 			};
 		},
 		destroy: () => {}
@@ -86,47 +85,6 @@ const routeComponents: Record<string, Component> = {
 		},
 		destroy: () => {}
 	},
-
-	// "/": {
-	//     init: () => {
-	//         activeComponent?.destroy?.();
-	//         const bg = new proceduralBackground('procedural-bg', 'cloud', 7);
-	//         const playerIntro = new introduction('player');
-	//
-	//         bg.init();
-	//         playerIntro.init();
-	//         activeComponent = {
-	//             init: () => {},
-	//             destroy: () => { bg.destroy(); playerIntro.destroy(); }
-	//         };
-	//     },
-	//     destroy: () => {}
-	// },
-	//
-	// "/game": {
-	//     init: () => {
-	//         activeComponent?.destroy?.();
-	//         const me = new menu('menu');
-	//         me.init();
-	//         activeComponent = {
-	//             init: () => {},
-	//             destroy: () => { me.destroy(); }
-	//         };
-	//     },
-	//     destroy: () => {}
-	// },
-	// "/Tv": {
-	//     init: () => {
-	//         activeComponent?.destroy?.();
-	//         const tv = new Zoom('zoom');
-	//         tv.init();
-	//         activeComponent = {
-	//             init: () => {},
-	//             destroy: () => { tv.destroy(); }
-	//         };
-	//     },
-	//     destroy: () => {}
-	// }
 };
 
 export function handleRouteComponents(path: string) {

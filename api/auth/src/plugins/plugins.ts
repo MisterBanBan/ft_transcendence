@@ -1,4 +1,3 @@
-import fastifyStatic from "@fastify/static";
 import path from "path";
 import fastifyCookies from "@fastify/cookie";
 import fastifyFormbody from "@fastify/formbody";
@@ -13,17 +12,16 @@ export default async function (server: FastifyInstance, opts: any) {
 
 	dotenv.config({ path: path.join(__dirname, '../../.env') });
 
+	if (!process.env.COOKIE_SECRET)
+		throw new Error('COOKIE_SECRET environment variable required');
 	if (!process.env.JWT_SECRET)
 		throw new Error('JWT_SECRET environment variable is required');
 	if (!process.env.ARGON_SECRET)
 		throw new Error('ARGON_SECRET environment variable is required');
 	if (!process.env.CLIENT_SECRET_42 || !process.env.CLIENT_ID_42)
 		throw new Error('CLIENT 42 environment variables are required');
-
-	server.register(fastifyStatic, {
-		root: path.join(__dirname, '../dist'),
-		prefix: '/public/',
-	});
+	if (!process.env.CLIENT_SECRET_GOOGLE || !process.env.CLIENT_ID_GOOGLE)
+		throw new Error('CLIENT GOOGLE environment variables are required');
 
 	server.register(fastifyCookies, {
 		secret: process.env.COOKIE_SECRET,

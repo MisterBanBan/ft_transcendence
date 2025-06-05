@@ -8,6 +8,7 @@ import {signToken} from "../utils/sign-token.js";
 import {setCookie} from "../utils/set-cookie.js";
 import * as repl from "node:repl";
 import {validatePassword} from "../utils/validate-password.js";
+import {verifyPassword} from "../utils/verify-password.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/change-password', async (request, reply) => {
@@ -38,7 +39,7 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		if (!await argon2.verify(user.password!, currentPassword, { secret: Buffer.from(process.env.ARGON_SECRET!) })) {
+		if (!await verifyPassword(user, currentPassword)) {
 			return reply.code(401).send({
 				error: "Invalid password",
 				type: "current_password",

@@ -5,6 +5,7 @@ import {TokenPayload} from "../interface/token-payload.js";
 import {createToken} from "./2fa/validate.js"
 import {signToken} from "../utils/sign-token.js";
 import {setCookie} from "../utils/set-cookie.js";
+import {verifyPassword} from "../utils/verify-password.js";
 
 interface Cookie {
 	path: string,
@@ -52,22 +53,22 @@ export default async function (server: FastifyInstance) {
 
 			const token = await signToken(server, tokenData);
 
-			if (await argon2.verify(user.password!, password, { secret: Buffer.from(process.env.ARGON_SECRET!)})) {
-				if (!user.tfa) {
-					await setCookie(reply, token);
-					return reply.status(200).send({ status: "LOGGED-IN" });
-				}
+			if (!await verifyPassword(user, password)) {
+				return reply.status(400).send({
+					error: "Invalid password.",
+					type: "password"
+				});
+			}
 
+			if (user.tfa) {
 				return reply.status(401).send({
 					status: "2FA-REQUIRED",
 					token: await createToken(user.username, token)
 				});
 			}
 
-			return reply.status(400).send({
-				error: "Invalid password.",
-				type: "password"
-			});
+			await setCookie(reply, token);
+			return reply.status(200).send({ status: "LOGGED-IN" });
 
 		} catch (err) {
 			return reply.status(400).send({

@@ -5,26 +5,27 @@ import {addTfa} from "../../db/add-tfa.js";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
 import {decodeToken} from "../../utils/decode-token.js";
 import {User} from "../../interface/user.js";
+import argon2 from "argon2";
+import {verifyPassword} from "../../utils/verify-password.js";
+import {TokenPayload} from "../../interface/token-payload.js";
 
-const tempKeys = new Map<string, string>();
+const tempKeys = new Map<string, {key: string, eat: number}>();
 
 export default async function (server: FastifyInstance) {
 
 	async function getUser(request: FastifyRequest, reply: FastifyReply): Promise<User> {
-		const token = request.cookies?.token;
-		if (!token)
-			return reply.status(401).send("Not logged in");
+		const token = request.cookies.token;
 
-		const decodedToken = await decodeToken(server, token, reply);
-		if (!decodedToken)
-			return reply.status(401).send("Invalid token");
+		const decodedToken = server.jwt.decode(token!) as TokenPayload;
 
 		const user = await getUserByUsername(server.db, decodedToken.username);
-		if (!user)
+		if (!user) {
 			return reply.status(400).send("Couldn't find user");
+		}
 
-		if (user.tfa)
+		if (user.tfa) {
 			return reply.status(401).send("2FA already set up");
+		}
 
 		return user;
 	}
@@ -35,30 +36,40 @@ export default async function (server: FastifyInstance) {
 
 		const formattedKey = authenticator.generateKey();
 
-		tempKeys.set(user.username, formattedKey);
-		const url = authenticator.generateTotpUri(formattedKey, user.username, "localhost", "SHA1", 6, 30);
+		console.log(formattedKey);
+
+		tempKeys.set(user.username, {key: formattedKey, eat: Date.now() + (2 * 60 * 1000) });
+
+		console.log(tempKeys.get(user.username));
+		const url = authenticator.generateTotpUri(formattedKey, user.username, "transendence", "SHA1", 6, 30);
+
+		console.log(url);
 
 		return reply.status(200).send(await qrcode.toDataURL(url));
 	});
 
 	server.post('/api/auth/2fa/create', async function (request, reply) {
+		const { code, password } = request.body as { code: string; password: string };
 
 		const user = await getUser(request, reply);
 
-		const body = request.body as string;
-		if (!/^\d{6}$/.test(body)) {
-			return reply.status(400).send("Invalid 2FA code");
-		}
-
 		const key = tempKeys.get(user.username);
 
-		if (!key)
-			return reply.status(401).send("The 2FA key doesn't exist");
+		if (!key || key.eat < Date.now()) {
+			if (key) {
+				tempKeys.delete(user.username);
+			}
+			return reply.status(401).send("Invalid or expired 2FA session");
+		}
 
-		const isValid = authenticator.verifyToken(key, body)
+		if (user.provider == "local" && (!password || !await verifyPassword(user, password))) {
+			return reply.status(401).send("Invalid password");
+		}
+
+		const isValid = authenticator.verifyToken(key.key, code)
 
 		if (isValid) {
-			await addTfa(server.db, user.username, key)
+			await addTfa(server.db, user.username, key.key)
 			return reply.status(201).send("2FA method created");
 		}
 

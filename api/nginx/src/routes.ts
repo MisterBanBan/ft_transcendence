@@ -254,7 +254,7 @@ export interface Route {
 			template: async () => {
 				await new Promise(resolve => setTimeout(resolve, 300));
 				return `
-<div class="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
+	<div class="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
     <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Paramètres du compte</h2>
 
     <!-- Formulaire pour changer de pseudo -->
@@ -297,7 +297,54 @@ export interface Route {
         Changer le mot de passe
       </button>
     </form>
-  </div>`;
+    <div>
+		<label for="toggle-2fa" class="text-gray-700 font-medium">Activer l'A2F</label>
+		<input type="checkbox" id="toggle-2fa">
+	</div>	
+  </div>
+	<!-- 2FA Toggle -->
+	<div id="toggle-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
+	  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
+		<!-- Titre -->
+		<h2 class="text-2xl font-semibold text-center text-gray-800">Vérification en 2 étapes</h2>
+	
+		<!-- Boîte pour l'image -->
+		<div class="flex justify-center">
+				<div class="w-32 h-32 bg-gray-200 rounded flex items-center justify-center">
+			<img id="qrCodeImage" src="" alt="QR Code" />
+				</div>
+		</div>
+	
+		<!-- Texte explicatif -->
+		<p class="text-gray-600 text-center text-sm">
+				Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
+		</p>
+	
+		<!-- Zone de texte pour le code -->
+		<input
+				id="2fa-code"
+				type="text"
+				placeholder="Entrez le code 2FA"
+				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+		
+		<input
+				id="2fa-password"
+				type="password"
+				placeholder="Entrez votre mot de passe"
+				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+		
+		<!-- Bouton de validation -->
+		<button
+				id="2fa-submit"
+				type="submit"
+				class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+		>
+				Vérifier
+		</button>
+			</div>
+	</div>`;
 			}
 		},
 		{

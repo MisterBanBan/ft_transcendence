@@ -1,4 +1,3 @@
-import {showError} from "./show_errors.js";
 import { Component } from "../component.js";
 
 interface Payload {
