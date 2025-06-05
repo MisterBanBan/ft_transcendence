@@ -20,8 +20,8 @@ export default async function (server: FastifyInstance) {
                 const { userId, username } = request.body as { userId: string; username: string };
 
                 const result = await server.db.run(`
-                    INSERT INTO users (id, username, avatar_url)
-                    VALUES (?, ?, 'fleur.jpeg')
+                    INSERT INTO users (id, username)
+                    VALUES (?, ?)
                 `, userId, username);
 
                 return reply.code(201).send({
@@ -35,12 +35,6 @@ export default async function (server: FastifyInstance) {
 
             } catch (error) {
                 console.error('Error creating user:', error);
-
-                if (error.code === 'SQLITE_CONSTRAINT_UNIQUE') {
-                    return reply.code(409).send({
-                        error: 'Username already exists'
-                    });
-                }
 
                 return reply.code(500).send({
                     error: 'Internal server error'

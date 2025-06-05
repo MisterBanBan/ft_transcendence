@@ -3,7 +3,6 @@ import sqlite3 from 'sqlite3';
 import {Database, open} from 'sqlite'
 import {Umzug, JSONStorage} from 'umzug';
 import fs from 'fs';
-import { createDefaultUser } from '../defaultUserForTest/defaultUserForTest.js';
 
 export default async function (server: FastifyInstance, opts: any) {
     fs.access('/app/database', fs.constants.W_OK, (err) => {
@@ -49,8 +48,6 @@ export default async function (server: FastifyInstance, opts: any) {
     } else {
         console.error("None of the tables were created properly");
     }
-
-    await createDefaultUser(db);
 
     server.decorate('db', db);
 };
