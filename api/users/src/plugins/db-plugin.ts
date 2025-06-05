@@ -3,6 +3,7 @@ import sqlite3 from 'sqlite3';
 import {Database, open} from 'sqlite'
 import {Umzug, JSONStorage} from 'umzug';
 import fs from 'fs';
+import { createDefaultUser } from '../defaultUserForTest/defaultUserForTest.js';
 
 export default async function (server: FastifyInstance, opts: any) {
     fs.access('/app/database', fs.constants.W_OK, (err) => {
@@ -29,6 +30,27 @@ export default async function (server: FastifyInstance, opts: any) {
         context: db,
         storage: new JSONStorage({ path: "./database/migrations.json" })
     });
-    await umzug.up();
+    try {
+        await umzug.up();
+    } catch (error) {
+        console.log(error);
+    }
+
+    const usersTableExists = await db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='users'");
+    const relationshipsTableExists = await db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='relationships'");
+
+// Verify if both tables exist and provide appropriate feedback
+    if (usersTableExists && relationshipsTableExists) {
+        console.log("Both 'users' and 'relationships' tables were successfully created");
+    } else if (usersTableExists) {
+        console.error("The 'users' table exists, but the 'relationships' table was not created properly");
+    } else if (relationshipsTableExists) {
+        console.error("The 'relationships' table exists, but the 'users' table was not created properly");
+    } else {
+        console.error("None of the tables were created properly");
+    }
+
+    await createDefaultUser(db);
+
     server.decorate('db', db);
 };

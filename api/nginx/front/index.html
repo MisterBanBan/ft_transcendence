@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile avec Avatar</title>
+    <style>
+        body {
+            background: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 2em;
+        }
+
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 2em;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .avatar-section {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        .avatar-display {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ddd;
+            margin-bottom: 1em;
+            background: #f9f9f9;
+        }
+
+        .upload-section {
+            border-top: 1px solid #eee;
+            padding-top: 2em;
+            text-align: center;
+        }
+
+        #preview {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ccc;
+            margin: 1em 0;
+        }
+
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .btn:hover:not(:disabled) {
+            background: #0056b3;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 2em;
+        }
+
+        .username {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5em;
+        }
+
+        .user-stats {
+            color: #666;
+            font-size: 14px;
+        }
+
+        #status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .file-input {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+<div class="profile-container">
+    <div class="avatar-section">
+        <div id="currentAvatar"></div>
+        <div class="user-info">
+            <div class="username" id="username">Utilisateur</div>
+            <div class="user-stats">Membre depuis 2025</div>
+        </div>
+    </div>
+
+    <div class="upload-section">
+        <h3>Modifier l'avatar</h3>
+        <div class="file-input">
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        <img id="preview" src="" alt="Preview" style="display:none;">
+        <br>
+        <button id="uploadBtn" class="btn" disabled>Mettre à jour l'avatar</button>
+        <div id="status"></div>
+    </div>
+</div>
+
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const status = document.getElementById('status');
+    const currentAvatar = document.getElementById('currentAvatar');
+    const username = document.getElementById('username');
+
+    let selectedFile = null;
+    const userId = 1; // ID de l'utilisateur actuel
+
+    function displayAvatar(avatarUrl, userName = 'Utilisateur') {
+        currentAvatar.innerHTML = '';
+        username.textContent = userName;
+
+        if (avatarUrl && avatarUrl !== 'null' && avatarUrl !== '') {
+            const img = document.createElement('img');
+            const timestamp = new Date().getTime();
+
+            // Try direct access first, fallback to API route
+            img.src = `/uploads/${avatarUrl}`;
+            console.log(img.src);
+            img.className = 'avatar-display';
+            img.alt = 'Avatar de ' + userName;
+
+            img.onerror = () => {
+                console.log('Failed to load avatar from /uploads, trying API route');
+                // Fallback to API route if direct access fails
+                img.src = `/uploads/${avatarUrl}`;
+
+                img.onerror = () => {
+                    console.log('Failed to load avatar completely, showing default');
+                    showDefaultImageAvatar(userName);
+                };
+            };
+
+            currentAvatar.appendChild(img);
+        } else {
+            showDefaultImageAvatar(userName);
+        }
+    }
+
+    // Function to load and display current user avatar
+    async function loadUserAvatar() {
+        try {
+            const response = await fetch(`/api/users/${userId}`);
+            if (response.ok) {
+                const userData = await response.json();
+                displayAvatar(userData.avatar_url, userData.username);
+            } else {
+                console.error('Erreur lors du chargement des données utilisateur');
+                displayAvatar();
+            }
+        } catch (error) {
+            console.error('Erreur réseau:', error);
+            displayAvatar();
+        }
+    }
+
+    // Use a default image file
+    function showDefaultImageAvatar() {
+        const img = document.createElement('img');
+        img.src = '/uploads/fleur.jpeg';
+        img.className = 'avatar-display';
+        img.alt = 'Avatar par défaut';
+
+        currentAvatar.innerHTML = '';
+        currentAvatar.appendChild(img);
+    }
+
+    // Preview selected file
+    fileInput.addEventListener('change', () => {
+        const file = fileInput.files[0];
+        if (file) {
+            selectedFile = file;
+            const reader = new FileReader();
+            reader.onload = e => {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+            uploadBtn.disabled = false;
+            status.textContent = '';
+        } else {
+            preview.style.display = 'none';
+            uploadBtn.disabled = true;
+            selectedFile = null;
+        }
+    });
+
+    // Upload new avatar
+    uploadBtn.addEventListener('click', async () => {
+        if (!selectedFile) return;
+
+        const formData = new FormData();
+        formData.append('avatar', selectedFile);
+
+        status.textContent = 'Upload en cours...';
+        status.style.color = 'blue';
+        uploadBtn.disabled = true;
+
+        try {
+            const response = await fetch(`/api/users/${userId}/avatar`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                status.textContent = 'Avatar mis à jour avec succès!';
+                status.style.color = 'green';
+
+                // Clear the cache and reload immediately
+                setTimeout(() => {
+                    // Force reload user data
+                    loadUserAvatar();
+                    // Reset form
+                    preview.style.display = 'none';
+                    fileInput.value = '';
+                    selectedFile = null;
+                    uploadBtn.disabled = true;
+                    status.textContent = '';
+                }, 1000);
+            } else {
+                const error = await response.json();
+                status.textContent = `Erreur: ${error.error}`;
+                status.style.color = 'red';
+            }
+        } catch (e) {
+            console.error('Network error:', e);
+            status.textContent = 'Erreur réseau';
+            status.style.color = 'red';
+        }
+
+        uploadBtn.disabled = false;
+    });
+
+    // Load avatar on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        loadUserAvatar();
+    });
+</script>
+</body>
+</html>
