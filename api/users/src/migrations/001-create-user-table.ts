@@ -3,10 +3,9 @@ import type { Database } from 'sqlite';
 export async function up({ context }: { context: Database }) {
     await context.run(`
         CREATE TABLE IF NOT EXISTS users (
-             id INTEGER PRIMARY KEY AUTOINCREMENT,
+             id TEXT PRIMARY KEY,
              username TEXT UNIQUE NOT NULL,
-             password TEXT NOT NULL,
-             avatar_url TEXT
+             avatar_url TEXT DEFAULT 'fleur.jpeg'
         );
     `);
     await context.run(`
