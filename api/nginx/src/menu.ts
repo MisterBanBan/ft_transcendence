@@ -6,25 +6,27 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/04 15:33:12 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/05 18:45:46 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Component } from "./component.js";
+import { loginForm } from "./loginForm.js";
+import { registerForm } from "./registerForm.js";
+import { profile } from "./profile.js";
+
 
 
 export class menu implements Component {
     private videoMain: HTMLVideoElement;
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
-    private loginForm: HTMLElement;
-    private registerForm: HTMLElement;
-    private registerBtn: HTMLElement;
-    private loginBtn: HTMLElement;
-    private ffaDiv: HTMLElement;
-    private ffaBtn: HTMLElement;
+    private profileBtn: HTMLElement;
+    private visibleForm: "none" | "login" | "profile" = "none";
+
+    private formsContainer: HTMLElement;
     
-    constructor(videoId: string, containerFormId: string, authBtnId: string, loginFormId: string, registerFormId: string, registerBtnId: string, loginBtnId: string, ffaId: string) { 
+    constructor(videoId: string, containerFormId: string, authBtnId: string, profileBtnId: string) { 
         const video = document.getElementById(videoId) as HTMLVideoElement;
         if (!video) throw new Error('Video element not found');
         this.videoMain = video;
@@ -37,25 +39,13 @@ export class menu implements Component {
         if (!authBtn) throw new Error('Auth button not found');
         this.authBtn = authBtn;
 
-        const loginForm = document.getElementById(loginFormId);
-        if (!loginForm) throw new Error('Form wrapper not found');
-        this.loginForm = loginForm;
-
-        const registerForm = document.getElementById(registerFormId);
-        if (!registerForm) throw new Error('Form wrapper not found');
-        this.registerForm = registerForm;
-
-        const registerBtn = document.getElementById(registerBtnId);
-        if (!registerBtn) throw new Error('Form wrapper not found');
-        this.registerBtn = registerBtn;
-
-        const loginBtn = document.getElementById(loginBtnId);
-        if (!loginBtn) throw new Error('Form wrapper not found');
-        this.loginBtn= loginBtn;
-
-        const ffaDiv = document.getElementById(ffaId);
-        if (!ffaDiv) throw new Error('Form wrapper not found');
-        this.ffaDiv= ffaDiv;
+        const formsContainer = document.getElementById('container_form');
+        if (!formsContainer) throw new Error('Form wrapper not found');
+        this.formsContainer= formsContainer;
+        
+        const profileBtn = document.getElementById(profileBtnId);
+        if (!profileBtn) throw new Error('Form wrapper not found');
+        this.profileBtn= profileBtn;
     }
 
     public init(): void {
@@ -66,38 +56,53 @@ export class menu implements Component {
             console.log("Loadedmetadata ready");
             this.resize();
         });
-
-        this.authBtnHandler = () => {
-            if(!this.loginForm.classList.contains('hidden')  || 
-            !this.registerForm.classList.contains('hidden')) {
-                this.loginForm.classList.add('hidden');
-                this.registerForm.classList.add('hidden');
-            } else {
-                this.loginForm.classList.remove('hidden');
-                this.registerForm.classList.add('hidden');
-                this.resize();
-            }
-            
-        };
-
-        this.registerBtnHandler = () => { 
-            this.loginForm.classList.add('hidden');
-            this.registerForm.classList.remove('hidden');
-            
-        };
-
-        this.loginBtnHandler = () => { 
-            this.registerForm.classList.add('hidden');
-            this.loginForm.classList.remove('hidden');
-        };
+        
         this.authBtn.addEventListener('click', this.authBtnHandler);
-        this.registerBtn.addEventListener('click', this.registerBtnHandler);
-        this.loginBtn.addEventListener('click', this.loginBtnHandler);
+        this.profileBtn.addEventListener('click', this.profileBtnHandler);
     }
 
-    private authBtnHandler = () => {};
-    private registerBtnHandler = () => {};
-    private loginBtnHandler = () => {};
+    private authBtnHandler = () => {
+        if (this.visibleForm !== "login") {
+            this.loadForm('login');
+            this.visibleForm = "login";
+        } else {
+            this.formsContainer.innerHTML = '';
+            this.visibleForm = "none";
+        }
+    };
+    
+
+    private profileBtnHandler = () => {
+        if (this.visibleForm !== "profile") {
+            this.loadProfile();
+            this.visibleForm = "profile";
+        } else {
+            this.formsContainer.innerHTML = '';
+            this.visibleForm = "none";
+        }
+    }
+    
+    private loadProfile() {
+        this.formsContainer.innerHTML = '';
+
+        this.formsContainer.insertAdjacentHTML('beforeend', profile());
+        this.eventFormListeners();
+    }
+    
+    private  async loadForm(formType: 'login' | 'register'){
+        this.formsContainer.innerHTML = '';
+
+        const formHtml = formType === 'login' ? loginForm() : registerForm();
+    
+        this.formsContainer.insertAdjacentHTML('beforeend', formHtml);
+        this.eventFormListeners();
+    }
+    
+    private eventFormListeners() {
+        document.getElementById('registerBtn')?.addEventListener('click', () => this.loadForm('register'));
+        document.getElementById('loginBtn')?.addEventListener('click', () => this.loadForm('login'));
+        document.getElementById('profileReturnBtn')?.addEventListener('click', () => this.profileBtnHandler());
+    }
     
     private resize = () => {
         const rect = this.videoMain.getBoundingClientRect();
@@ -113,7 +118,5 @@ export class menu implements Component {
     public destroy(): void {
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
-        this.registerBtn.removeEventListener('click', this.registerBtnHandler);
-        this.loginBtn.removeEventListener('click', this.loginBtnHandler);
     }
 }
