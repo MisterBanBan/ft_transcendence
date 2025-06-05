@@ -19,6 +19,7 @@ ps:
 
 clean:
 	$(DOCKER_COMPOSE) down --rmi all --volumes --remove-orphans
+	rm -rf ./api/users/database/*
 
 fclean: clean
 	docker system prune --all --volumes --force

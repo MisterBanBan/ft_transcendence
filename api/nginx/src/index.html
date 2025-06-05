@@ -1,3 +1,4 @@
+<!--
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -5,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mouvement au Clavier</title>
     <link href="/css/tailwind.css" rel="stylesheet">
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    &lt;!&ndash; <script src="https://cdn.tailwindcss.com"></script> &ndash;&gt;
     <link rel="stylesheet" href="/css/output.css">
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
     <style>
@@ -20,11 +21,398 @@
 </head>
 <body class="overflow-hidden h-screen bg-black">
 <div id="app" class="p-0">
-    <!-- Le contenu des pages sera chargé ici -->
+    &lt;!&ndash; Le contenu des pages sera chargé ici &ndash;&gt;
 </div>
 
 <script type="module" src="/public/router.js"></script>
 
 
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcendance - Test des Invitations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, select, button {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 200px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .invitation-item, .friend-item {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+
+        .pending {
+            border-left-color: #ffc107;
+        }
+
+        .accepted {
+            border-left-color: #28a745;
+        }
+
+        .response {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<h1>🎮 Transcendance - Test des Invitations</h1>
+
+<!-- Configuration -->
+<div class="container">
+    <h2>⚙️ Configuration</h2>
+    <div class="form-group">
+        <label for="apiUrl">/api/users/</label>
+        <input type="text" id="apiUrl" value="http://localhost:8443/api/users/">
+    </div>
+    <div class="form-group">
+        <label for="currentUserId">ID Utilisateur Actuel:</label>
+        <input type="text" id="currentUserId" value="user1" placeholder="ex: user1">
+    </div>
+</div>
+
+<!-- Envoyer une invitation -->
+<div class="container">
+    <h2>📤 Envoyer une Invitation</h2>
+    <div class="form-group">
+        <label for="inviteUserId">ID de l'utilisateur à inviter:</label>
+        <input type="text" id="inviteUserId" placeholder="ex: user2">
+    </div>
+    <button onclick="sendInvitation()">Envoyer l'invitation</button>
+    <div id="inviteResponse" class="response"></div>
+</div>
+
+<!-- Voir les invitations reçues -->
+<div class="container">
+    <h2>📥 Invitations Reçues</h2>
+    <button onclick="loadInvitations()">Charger les invitations</button>
+    <div id="invitationsList"></div>
+    <div id="invitationsResponse" class="response"></div>
+</div>
+
+<!-- Gérer les invitations -->
+<div class="container">
+    <h2>✅ Gérer les Invitations</h2>
+    <div class="form-group">
+        <label for="requesterIdAccept">ID du demandeur:</label>
+        <input type="text" id="requesterIdAccept" placeholder="ex: user3">
+    </div>
+    <button onclick="acceptInvitation()">Accepter</button>
+    <button onclick="declineInvitation()" style="background-color: #dc3545;">Refuser</button>
+    <div id="manageResponse" class="response"></div>
+</div>
+
+<!-- Liste des amis -->
+<div class="container">
+    <h2>👥 Liste des Amis</h2>
+    <button onclick="loadFriends()">Charger les amis</button>
+    <div id="friendsList"></div>
+    <div id="friendsResponse" class="response"></div>
+</div>
+
+<!-- Créer des utilisateurs de test -->
+<div class="container">
+    <h2>🧪 Outils de Test</h2>
+    <button onclick="createTestUsers()">Créer des utilisateurs de test</button>
+    <button onclick="clearResponses()" style="background-color: #6c757d;">Effacer les réponses</button>
+    <div id="testResponse" class="response"></div>
+</div>
+
+<script>
+    // Get API base URL
+    function getApiUrl() {
+        return document.getElementById('apiUrl').value;
+    }
+
+    // Get current user ID
+    function getCurrentUserId() {
+        return document.getElementById('currentUserId').value;
+    }
+
+    // Display response in a container
+    function displayResponse(containerId, response, isError = false) {
+        const container = document.getElementById(containerId);
+        container.textContent = JSON.stringify(response, null, 2);
+        container.className = `response ${isError ? 'error' : 'success'}`;
+    }
+
+    // Send friend invitation
+    async function sendInvitation() {
+        const apiUrl = getApiUrl();
+        const currentUserId = getCurrentUserId();
+        const addresseeId = document.getElementById('inviteUserId').value;
+
+        if (!addresseeId) {
+            alert('Please enter a user ID to invite');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/users/${currentUserId}/invite`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': currentUserId
+                },
+                body: JSON.stringify({
+                    addressee_id: addresseeId
+                })
+            });
+
+            const data = await response.json();
+            displayResponse('inviteResponse', data, !response.ok);
+        } catch (error) {
+            displayResponse('inviteResponse', { error: error.message }, true);
+        }
+    }
+
+    // Load pending invitations
+    async function loadInvitations() {
+        const apiUrl = getApiUrl();
+        const currentUserId = getCurrentUserId();
+
+        try {
+            const response = await fetch(`${apiUrl}/users/${currentUserId}/invitations`, {
+                headers: {
+                    'user-id': currentUserId
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('invitationsResponse', data, !response.ok);
+
+            // Display invitations in a nice format
+            const invitationsList = document.getElementById('invitationsList');
+            if (data.invitations && data.invitations.length > 0) {
+                invitationsList.innerHTML = data.invitations.map(inv => `
+                        <div class="invitation-item pending">
+                            <strong>${inv.username}</strong> (${inv.requester_id})
+                            <br>Status: ${inv.status}
+                            <br>Avatar: ${inv.avatar_url}
+                        </div>
+                    `).join('');
+            } else {
+                invitationsList.innerHTML = '<p>Aucune invitation en attente</p>';
+            }
+        } catch (error) {
+            displayResponse('invitationsResponse', { error: error.message }, true);
+        }
+    }
+
+    // Accept invitation
+    async function acceptInvitation() {
+        const apiUrl = getApiUrl();
+        const requesterId = document.getElementById('requesterIdAccept').value;
+
+        if (!requesterId) {
+            alert('Please enter the requester ID');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/invitations/${requesterId}/accept`, {
+                method: 'PUT',
+                headers: {
+                    'user-id': getCurrentUserId()
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('manageResponse', data, !response.ok);
+        } catch (error) {
+            displayResponse('manageResponse', { error: error.message }, true);
+        }
+    }
+
+    // Decline invitation
+    async function declineInvitation() {
+        const apiUrl = getApiUrl();
+        const requesterId = document.getElementById('requesterIdAccept').value;
+
+        if (!requesterId) {
+            alert('Please enter the requester ID');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/invitations/${requesterId}/decline`, {
+                method: 'DELETE',
+                headers: {
+                    'user-id': getCurrentUserId()
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('manageResponse', data, !response.ok);
+        } catch (error) {
+            displayResponse('manageResponse', { error: error.message }, true);
+        }
+    }
+
+    // Load friends list
+    async function loadFriends() {
+        const apiUrl = getApiUrl();
+        const currentUserId = getCurrentUserId();
+
+        try {
+            const response = await fetch(`${apiUrl}/users/${currentUserId}/friends`, {
+                headers: {
+                    'user-id': currentUserId
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('friendsResponse', data, !response.ok);
+
+            // Display friends in a nice format
+            const friendsList = document.getElementById('friendsList');
+            if (data.friends && data.friends.length > 0) {
+                friendsList.innerHTML = data.friends.map(friend => `
+                        <div class="friend-item accepted">
+                            <strong>${friend.username}</strong> (${friend.id})
+                            <br>Status: ${friend.status}
+                            <br>Avatar: ${friend.avatar_url}
+                        </div>
+                    `).join('');
+            } else {
+                friendsList.innerHTML = '<p>Aucun ami pour le moment</p>';
+            }
+        } catch (error) {
+            displayResponse('friendsResponse', { error: error.message }, true);
+        }
+    }
+
+    // Create test users (you'll need to implement this endpoint)
+    async function createTestUsers() {
+        const testUsers = [
+            { id: 'user1', username: 'Alice', avatar_url: 'alice.jpeg' },
+            { id: 'user2', username: 'Bob', avatar_url: 'bob.jpeg' },
+            { id: 'user3', username: 'Charlie', avatar_url: 'charlie.jpeg' },
+            { id: 'user4', username: 'Diana', avatar_url: 'diana.jpeg' }
+        ];
+
+        const results = [];
+        const apiUrl = getApiUrl();
+
+        for (const user of testUsers) {
+            try {
+                // This assumes you have a POST /users endpoint
+                const response = await fetch(`${apiUrl}/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                const data = await response.json();
+                results.push({ user: user.username, result: data });
+            } catch (error) {
+                results.push({ user: user.username, error: error.message });
+            }
+        }
+
+        displayResponse('testResponse', {
+            message: 'Test users creation attempted',
+            results: results
+        });
+    }
+
+    // Clear all response containers
+    function clearResponses() {
+        const responseContainers = [
+            'inviteResponse', 'invitationsResponse', 'manageResponse',
+            'friendsResponse', 'testResponse'
+        ];
+
+        responseContainers.forEach(id => {
+            const container = document.getElementById(id);
+            container.textContent = '';
+            container.className = 'response';
+        });
+
+        // Clear lists
+        document.getElementById('invitationsList').innerHTML = '';
+        document.getElementById('friendsList').innerHTML = '';
+    }
+
+    // Load initial data on page load
+    window.addEventListener('load', () => {
+        console.log('🎮 Transcendance Invitation Tester loaded');
+        console.log('Make sure your Fastify server is running on the configured URL');
+    });
+</script>
 </body>
 </html>
