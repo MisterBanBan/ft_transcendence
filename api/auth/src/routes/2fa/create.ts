@@ -66,13 +66,10 @@ export default async function (server: FastifyInstance) {
 			return reply.status(401).send("Invalid password");
 		}
 
-		const isValid = authenticator.verifyToken(key.key, code)
+		if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(key.key, code))
+			return reply.status(400).send("Invalid 2FA code");
 
-		if (isValid) {
-			await addTfa(server.db, user.username, key.key)
-			return reply.status(201).send("2FA method created");
-		}
-
-		return reply.status(400).send("Invalid 2FA code");
+		await addTfa(server.db, user.username, key.key)
+		return reply.status(201).send("2FA method created");
 	})
 };
