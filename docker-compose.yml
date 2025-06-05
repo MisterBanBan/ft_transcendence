@@ -101,11 +101,31 @@ networks:
 volumes:
   users-data:
     driver: local
-  authentication-data:
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/users/database
+  auth-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/auth/database
   matchmaking-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/matchmaking/database
   game-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/game/database
   tournament-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/tournament/database
