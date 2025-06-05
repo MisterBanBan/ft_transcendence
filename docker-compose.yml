@@ -17,73 +17,73 @@ services:
       - ./uploads:/app/uploads
     restart: unless-stopped
 
-  tournament:
-    image: tournament
-    container_name: tournament
-    build:
-      context: api/tournament
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    networks:
-      - ft_transcendence
-    volumes:
-      - tournament-data:/app/database
-    restart: on-failure
-
-  game:
-    image: game
-    container_name: game
-    build:
-      context: api/game
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8082/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    networks:
-      - ft_transcendence
-    volumes:
-      - game-data:/app/database
-    restart: on-failure
-
-  matchmaking:
-    image: matchmaking
-    container_name: matchmaking
-    build:
-      context: api/matchmaking
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8083/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    networks:
-      - ft_transcendence
-    volumes:
-      - matchmaking-data:/app/database
-    restart: on-failure
-
-  auth:
-    image: auth
-    container_name: auth
-    build:
-      context: api/auth
-    healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
-    networks:
-      - ft_transcendence
-    volumes:
-      - auth-data:/app/database
-    restart: on-failure
+#  tournament:
+#    image: tournament
+#    container_name: tournament
+#    build:
+#      context: api/tournament
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+#    networks:
+#      - ft_transcendence
+#    volumes:
+#      - tournament-data:/app/database
+#    restart: on-failure
+#
+#  game:
+#    image: game
+#    container_name: game
+#    build:
+#      context: api/game
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl -f http://localhost:8082/health || exit 1" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+#    networks:
+#      - ft_transcendence
+#    volumes:
+#      - game-data:/app/database
+#    restart: on-failure
+#
+#  matchmaking:
+#    image: matchmaking
+#    container_name: matchmaking
+#    build:
+#      context: api/matchmaking
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl -f http://localhost:8083/health || exit 1" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+#    networks:
+#      - ft_transcendence
+#    volumes:
+#      - matchmaking-data:/app/database
+#    restart: on-failure
+#
+#  auth:
+#    image: auth
+#    container_name: auth
+#    build:
+#      context: api/auth
+#    healthcheck:
+#      test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 5
+#      start_period: 10s
+#    networks:
+#      - ft_transcendence
+#    volumes:
+#      - auth-data:/app/database
+#    restart: on-failure
 
   nginx:
     image: nginx
@@ -97,14 +97,14 @@ services:
     depends_on:
       users:
         condition: service_healthy
-      tournament:
-        condition: service_healthy
-      matchmaking:
-        condition: service_healthy
-      game:
-        condition: service_healthy
-      auth:
-        condition: service_healthy
+#      tournament:
+#        condition: service_healthy
+#      matchmaking:
+#        condition: service_healthy
+#      game:
+#        condition: service_healthy
+#      auth:
+#        condition: service_healthy
     networks:
       - ft_transcendence
     restart: on-failure
@@ -120,27 +120,27 @@ volumes:
       type: none
       o: bind
       device: ./api/users/database
-  auth-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./api/auth/database
-  matchmaking-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./api/matchmaking/database
-  game-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./api/game/database
-  tournament-data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./api/tournament/database
+#  auth-data:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: ./api/auth/database
+#  matchmaking-data:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: ./api/matchmaking/database
+#  game-data:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: ./api/game/database
+#  tournament-data:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      o: bind
+#      device: ./api/tournament/database
