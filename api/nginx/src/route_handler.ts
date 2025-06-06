@@ -13,7 +13,7 @@
 import { Component } from './component.js';
 import { Login } from "./auth/login.js";
 import { Register } from "./auth/register.js";
-import {TFAValidate} from "./auth/2fa-validate";
+import {TFAValidate} from "./auth/2fa-validate.js";
 import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
 import {Toggle2FA} from "./auth/toggle-2fa.js";

@@ -6,15 +6,37 @@ import {TokenPayload} from "../../interface/token-payload.js";
 import {createToken} from "../2fa/validate.js";
 import {signToken} from "../../utils/sign-token.js";
 import {setCookie} from "../../utils/set-cookie.js";
+import {oauthRelogin, tempKeys} from "../2fa/create.js";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback/42', async (request, reply) => {
-		const { code } = request.query as { code?: string };
+		const { code, state } = request.query as { code?: string; state?: string };
 
 		if (!code) {
 			return reply.status(400).send({
 				error: "Missing code"
 			});
+		}
+
+		if (state?.startsWith("relogin_")) {
+			const id = state.split('_')[1];
+			if (!id) {
+				return reply.status(400).send({ error: "Missing id" });
+			}
+
+			const oauthSession = oauthRelogin.get(id);
+			if (!oauthSession) {
+				return reply.status(401).send({ error: "Invalid or expired session" });
+			}
+
+			oauthRelogin.delete(id);
+			const key = tempKeys.get(oauthSession.username);
+			if (!key) {
+				return reply.status(401).send({error: "Invalid session"});
+			}
+
+			key.relogin = false;
+			return reply.status(303).redirect("/2fa/create");
 		}
 
 		if (request.cookies?.token) {

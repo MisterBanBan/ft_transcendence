@@ -10,8 +10,7 @@ import {oauthRelogin, tempKeys} from "../2fa/create.js";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback/google', async (request, reply) => {
-
-		const { code, state } = request.query as { code?: string, state?: string };
+		const { code, state } = request.query as { code?: string; state?: string };
 
 		if (!code) {
 			return reply.status(400).send({ error: "Missing code" });
@@ -35,7 +34,6 @@ export default async function (server: FastifyInstance) {
 			}
 
 			key.relogin = false;
-			console.log("Relog done, redirecting");
 			return reply.status(303).redirect("/2fa/create");
 		}
 

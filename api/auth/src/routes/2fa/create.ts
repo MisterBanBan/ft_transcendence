@@ -52,6 +52,12 @@ export default async function (server: FastifyInstance) {
 					"prompt=login&" +
 					"max_age=0&" +
 					`state=relogin_${token}`).send({});
+			} else if (user.provider == "42") {
+				return reply.status(202).header('Location', "https://api.intra.42.fr/oauth/authorize?" +
+					"client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&" +
+					"redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2F42&" +
+					"response_type=code&" +
+					`state=relogin_${token}`).send({});
 			}
 		}
 	});
