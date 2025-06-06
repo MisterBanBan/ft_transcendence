@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/05 18:38:21 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/06 13:00:32 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,12 +81,10 @@ export const routes: Route[] = [
               <button type="button" id="user" class="absolute top-[10%] right-[30%] w-10 h-10 rounded-full bg-indigo-500 flex text-white shadow-lg hover:bg-indigo-600 focus:outline-none">
                   
               </button>
-              <button type="button" id="profile" class="absolute top-[14%] right-[30%] w-10 h-10 rounded-full bg-red-500 flex text-white shadow-lg hover:bg-red-700 focus:outline-none">
-                  
-              </button>
+             
               <div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
                 
-                
+                 
               </div>
             
             </section>
