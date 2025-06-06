@@ -3,7 +3,7 @@ import {User} from "../interface/user.js";
 
 export async function getUserByProviderId(
 	db: Database,
-	provider_id: number,
+	provider_id: string,
 ): Promise<User | undefined> {
 
 	return await db.get<User>(

@@ -226,9 +226,55 @@ export interface Route {
 				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 		/>
 		
+		<input
+				id="2fa-password"
+				type="password"
+				placeholder="Mot de passe (non requis si vous n'utilisez pas transcendence pour la connexion)"
+				class="w-full px-4 py-2 border text-sm border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+		
 		<!-- Bouton de validation -->
 		<button
 				id="2fa-submit"
+				type="submit"
+				class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+		>
+				Vérifier
+		</button>
+			</div>
+	</div>`;
+			}
+		},
+		{
+			path: "/2fa/remove",
+			title: "2FA remove",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));
+				return `
+			<!-- 2FA Remove -->
+	<div id="remove-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
+	  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
+		<!-- Titre -->
+		<h2 class="text-2xl font-semibold text-center text-gray-800">Suppression de la vérification en 2 étapes</h2>
+	
+		<!-- Zone de texte pour le code -->
+		<input
+				id="2fa-code-remove"
+				type="text"
+				placeholder="Entrez le code 2FA"
+				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+		
+		<input
+				id="2fa-password-remove"
+				type="password"
+				placeholder="Mot de passe (non requis si vous n'utilisez pas transcendence pour la connexion)"
+				class="w-full px-4 py-2 border text-sm border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+		
+		<!-- Bouton de validation -->
+		<button
+				id="2fa-submit-remove"
 				type="submit"
 				class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
 		>
@@ -310,11 +356,14 @@ export interface Route {
         Changer le mot de passe
       </button>
     </form>
+    
+	<!-- Checkbox pour activer/désactiver l'A2F -->
     <div>
 		<label for="toggle-2fa" class="text-gray-700 font-medium">Activer l'A2F</label>
 		<input type="checkbox" id="toggle-2fa">
 	</div>	
   </div>
+  
 	<!-- 2FA Toggle -->
 	<div id="toggle-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
 	  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
@@ -357,7 +406,40 @@ export interface Route {
 				Vérifier
 		</button>
 			</div>
+	</div>
+
+	<!-- 2FA Remove -->
+	<div id="remove-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
+	  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
+		<!-- Titre -->
+		<h2 class="text-2xl font-semibold text-center text-gray-800">Suppression de la vérification en 2 étapes</h2>
+	
+		<!-- Zone de texte pour le code -->
+		<input
+				id="2fa-code-remove"
+				type="text"
+				placeholder="Entrez le code 2FA"
+				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+		
+		<input
+				id="2fa-password-remove"
+				type="password"
+				placeholder="Mot de passe (non requis si vous n'utilisez pas transcendence pour la connexion)"
+				class="w-full px-4 py-2 border text-sm border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+		/>
+		
+		<!-- Bouton de validation -->
+		<button
+				id="2fa-submit-remove"
+				type="submit"
+				class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+		>
+				Vérifier
+		</button>
+			</div>
 	</div>`;
+
 			}
 		},
 		{

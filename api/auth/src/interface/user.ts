@@ -4,6 +4,6 @@ export interface User {
 	password?: string;
 	tfa?: string;
 	provider: string;
-	provider_id?: number;
+	provider_id?: string;
 	updatedAt: number;
 }

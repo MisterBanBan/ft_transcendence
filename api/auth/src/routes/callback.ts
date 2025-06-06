@@ -16,7 +16,7 @@ interface ProviderConfig {
 	profileUrl: string;
 	clientId: string;
 	clientSecret: string;
-	getProviderId(profile: any): number;
+	getProviderId(profile: any): string;
 	getDisplayName(profile: any): string;
 }
 
@@ -28,7 +28,7 @@ const providers: ProviderConfig[] = [
 		profileUrl: "https://www.googleapis.com/oauth2/v3/userinfo",
 		clientId: process.env.CLIENT_ID_GOOGLE!,
 		clientSecret: process.env.CLIENT_SECRET_GOOGLE!,
-		getProviderId: (profile) => profile.sub,
+		getProviderId: (profile) => String(profile.sub),
 		getDisplayName: (profile) => profile.given_name,
 	},
 	{
@@ -38,7 +38,7 @@ const providers: ProviderConfig[] = [
 		profileUrl: "https://api.intra.42.fr/v2/me",
 		clientId: process.env.CLIENT_ID_42!,
 		clientSecret: process.env.CLIENT_SECRET_42!,
-		getProviderId: (profile) => profile.id,
+		getProviderId: (profile) => String(profile.id),
 		getDisplayName: (profile) => profile.login,
 	}
 ];

@@ -28,76 +28,60 @@ export class Toggle2FA implements Component{
 				return;
 			}
 
+			(async () => {
+				try {
+					if (await this.has2FA()) {
+						this.toggleSwitch!.checked = true;
+					}
+				} catch (e) {
+					console.error("Error checking 2FAs status", e);
+				}
+			})();
+
 			this.toggleSwitch.addEventListener("change", this.onToggleSwitchBound);
 		}
 		else {
-			this.handleToggle();
+			(async () => { await this.handleToggle(); })();
 		}
+	}
+
+	private async has2FA(): Promise<boolean> {
+		const response = await fetch("/api/auth/has-2fa", {
+			method: "GET",
+			headers: {"Content-Type": "application/json"},
+		});
+		return (await response.json()).has2FA;
 	}
 
 	private async handleToggle(event?: Event): Promise<void> {
 		if (this.toggleSwitch?.checked || window.location.pathname === "/2fa/create") {
-			const popup = document.getElementById('toggle-2fa-popup') as HTMLDivElement | null;
-
-			if (!popup) {
-				console.error("Missing 2fa popup.");
-				return;
-			}
-
-			try {
-				const response = await fetch("/api/auth/2fa/create", {
-					method: "GET",
-					headers: {"Content-Type": "application/json"},
-				});
-
-				const data = await response.json();
-
-				if (!response.ok) {
-					console.error(data.error);
-					return;
-				}
-
-				if (response.status === 202) {
-					const location = response.headers.get("Location");
-					if (location)
-						window.location.href = location;
-					return;
-				}
-
-				const imageElement = document.getElementById('qrCodeImage') as HTMLImageElement;
-
-				if (imageElement) {
-					imageElement.src = data.url;
-				}
-				this.provider = data.provider
-
-			} catch (err) {
-				console.error(err);
-				return;
-			}
-
-			this.submitButton = document.getElementById("2fa-submit") as HTMLInputElement | null;
-			if (!this.submitButton) {
-				console.error("Missing submit button.");
-				return;
-			}
-
-			if (this.onSubmitBoundWrapper) {
-				this.submitButton.removeEventListener('click', this.onSubmitBoundWrapper);
-			}
-
-			this.onSubmitBoundWrapper = (event: Event) => this.handleSubmit(event);
-			this.submitButton.addEventListener("click", this.onSubmitBoundWrapper);
-
-			popup.classList.remove("hidden");
+			await this.create2FA();
+		}
+		else if (!this.toggleSwitch?.checked || window.location.pathname === "/2fa/remove") {
+			await this.remove2FA();
 		}
 	}
 
-	private async handleSubmit(event: Event): Promise<void> {
+	private async handleSubmit(event: Event, toggle: boolean): Promise<void> {
 		event.preventDefault();
 
-		const codeInput = document.getElementById("2fa-code") as HTMLInputElement | null;
-		const passwordInput = document.getElementById("2fa-password") as HTMLInputElement | null;
+		let codeInput;
+		let passwordInput;
+		let requestUrl;
+		switch (toggle) {
+			case true: {
+				codeInput = document.getElementById("2fa-code") as HTMLInputElement | null;
+				passwordInput = document.getElementById("2fa-password") as HTMLInputElement | null;
+				requestUrl = "/api/auth/2fa/create";
+				break;
+			}
+			case false: {
+				codeInput = document.getElementById("2fa-code-remove") as HTMLInputElement | null;
+				passwordInput = document.getElementById("2fa-password-remove") as HTMLInputElement | null;
+				requestUrl = "/api/auth/2fa/remove";
+				break;
+			}
+		}
 
 		if (!codeInput) {
 			console.error("Code field is missing.");
@@ -106,10 +90,7 @@ export class Toggle2FA implements Component{
 
 		let password = undefined;
 		if (passwordInput) {
-			if (this.provider != "local")
-				passwordInput.remove();
-			else
-				password = passwordInput.value;
+			password = passwordInput.value;
 		}
 
 		const body: Payload = {
@@ -118,7 +99,7 @@ export class Toggle2FA implements Component{
 		}
 
 		try {
-			const response = await fetch("/api/auth/2fa/create", {
+			const response = await fetch(requestUrl, {
 				method: "POST",
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(body),
@@ -138,6 +119,117 @@ export class Toggle2FA implements Component{
 		}
 	}
 
+	private async create2FA() {
+		const popup = document.getElementById('toggle-2fa-popup') as HTMLDivElement | null;
+
+		if (!popup) {
+			console.error("Missing 2fa popup.");
+			return;
+		}
+
+		try {
+			const response = await fetch("/api/auth/2fa/create", {
+				method: "GET",
+				headers: {"Content-Type": "application/json"},
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				console.error(data.error);
+				return;
+			}
+
+			if (response.status === 202) {
+				const location = response.headers.get("Location");
+				if (location)
+					window.location.href = location;
+				return;
+			}
+
+			const imageElement = document.getElementById('qrCodeImage') as HTMLImageElement;
+
+			if (imageElement) {
+				imageElement.src = data.url;
+			}
+			this.provider = data.provider
+
+		} catch (err) {
+			console.error(err);
+			return;
+		}
+
+		this.submitButton = document.getElementById("2fa-submit") as HTMLInputElement | null;
+		if (!this.submitButton) {
+			console.error("Missing submit button.");
+			return;
+		}
+
+		if (this.onSubmitBoundWrapper) {
+			this.submitButton.removeEventListener('click', this.onSubmitBoundWrapper);
+		}
+
+		this.onSubmitBoundWrapper = (event: Event) => this.handleSubmit(event, true);
+		this.submitButton.addEventListener("click", this.onSubmitBoundWrapper);
+
+		popup.classList.remove("hidden");
+	}
+
+	private async remove2FA() {
+		const popup = document.getElementById('remove-2fa-popup') as HTMLDivElement | null;
+
+		if (!popup) {
+			console.error("Missing 2fa popup.");
+			return;
+		}
+
+		try {
+			const response = await fetch("/api/auth/2fa/remove", {
+				method: "GET",
+				headers: {"Content-Type": "application/json"},
+			});
+
+			const data = await response.json();
+
+			if (!response.ok) {
+				console.error(data.error);
+				return;
+			}
+
+			if (response.status === 202) {
+				const location = response.headers.get("Location");
+				if (location)
+					window.location.href = location;
+				return;
+			}
+
+			const imageElement = document.getElementById('qrCodeImage') as HTMLImageElement;
+
+			if (imageElement) {
+				imageElement.src = data.url;
+			}
+			this.provider = data.provider
+
+		} catch (err) {
+			console.error(err);
+			return;
+		}
+
+		this.submitButton = document.getElementById("2fa-submit-remove") as HTMLInputElement | null;
+		if (!this.submitButton) {
+			console.error("Missing submit button.");
+			return;
+		}
+
+		if (this.onSubmitBoundWrapper) {
+			this.submitButton.removeEventListener('click', this.onSubmitBoundWrapper);
+		}
+
+		this.onSubmitBoundWrapper = (event: Event) => this.handleSubmit(event, false);
+		this.submitButton.addEventListener("click", this.onSubmitBoundWrapper);
+
+		popup.classList.remove("hidden");
+	}
 	public destroy(): void {
 		if (this.toggleSwitch)
 			this.toggleSwitch.removeEventListener("change", this.onToggleSwitchBound)

@@ -69,6 +69,20 @@ const routeComponents: Record<string, Component> = {
 		},
 		destroy: () => {}
 	},
+	"/2fa/remove": {
+		init: () => {
+			activeComponent?.destroy?.();
+
+			const toggle2FA = new Toggle2FA();
+			toggle2FA.init();
+
+			activeComponent = {
+				init: () => {},
+				destroy: () => { toggle2FA.destroy(); },
+			};
+		},
+		destroy: () => {}
+	},
 	"/auth": {
 		init: () => {
 			activeComponent?.destroy?.();
