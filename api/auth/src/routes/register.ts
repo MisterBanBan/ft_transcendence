@@ -7,6 +7,7 @@ import {TokenPayload} from "../interface/token-payload.js";
 import {signToken} from "../utils/sign-token.js";
 import {setCookie} from "../utils/set-cookie.js";
 import {validatePassword} from "../utils/validate-password.js";
+import {validateUsername} from "../utils/validate-username.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/register', async (request, reply) => {
@@ -27,8 +28,8 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		const errUsername = validateUsername(username);
-		if (errUsername) {
+		const errUsername = await validateUsername(username);
+		if (!errUsername) {
 			return reply.status(400).send({
 				error: 'Invalid username.',
 				type: "username"
@@ -98,8 +99,5 @@ export default async function (server: FastifyInstance) {
 		}
 	})
 
-	function validateUsername(username: string) {
-		const regex = /^[a-zA-Z0-9\-]{3,16}$/;
-		return !regex.test(username);
-	}
+
 }

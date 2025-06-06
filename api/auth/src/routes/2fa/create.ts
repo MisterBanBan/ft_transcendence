@@ -5,11 +5,7 @@ import {addTfa} from "../../db/add-tfa.js";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
 import {decodeToken} from "../../utils/decode-token.js";
 import {User} from "../../interface/user.js";
-import argon2 from "argon2";
 import {verifyPassword} from "../../utils/verify-password.js";
-import {TokenPayload} from "../../interface/token-payload.js";
-import google from "../callback/google.js";
-import * as repl from "node:repl";
 
 export const tempKeys = new Map<string, {token?:string, key?: string, relogin: boolean, eat?: number, tries?: number}>();
 export const oauthRelogin = new Map<string, { username: string, eat: number }>
@@ -17,8 +13,6 @@ export const oauthRelogin = new Map<string, { username: string, eat: number }>
 export default async function (server: FastifyInstance) {
 
 	server.get('/api/auth/2fa/create', async function (request, reply) {
-
-		//const user = await getUser(request, reply);
 
 		const user = request.currentUser! as User;
 
@@ -84,8 +78,6 @@ export default async function (server: FastifyInstance) {
 			return reply.status(401).send({ error: `Invalid password (${key.tries} tries left)` });
 		}
 
-		console.log(code);
-		console.log("Expected:", authenticator.generateToken(key.key))
 		if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(key.key!, code)) {
 			key.tries--;
 			return reply.status(400).send({ error: `Invalid 2FA code (${key.tries} tries left)` });

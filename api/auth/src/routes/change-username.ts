@@ -6,6 +6,7 @@ import argon2 from "argon2";
 import {changeUsername} from "../db/change-username.js";
 import {signToken} from "../utils/sign-token.js";
 import {setCookie} from "../utils/set-cookie.js";
+import {validateUsername} from "../utils/validate-username.js";
 
 const tempKeys = new Map<number, Date>();
 
@@ -41,8 +42,7 @@ export default async function (server: FastifyInstance) {
 			return reply.code(401).send({ error: "Username already in use." });
 		}
 
-		const regex = /^[a-zA-Z0-9\-]{3,16}$/;
-		if (!regex.test(newUsername)) {
+		if (await validateUsername(newUsername)) {
 			return reply.code(400).send({error: "Invalid new username (Must be between 3 and 16 characters, letters and - only)."});
 		}
 
