@@ -13,8 +13,7 @@
 import { Component } from './component.js';
 import { Login } from "./auth/login.js";
 import { Register } from "./auth/register.js";
-import { TFACreate } from "./auth/2fa/create.js";
-import {TFA} from "./auth/2fa/2fa.js";
+import {TFAValidate} from "./auth/2fa-validate";
 import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
 import {Toggle2FA} from "./auth/toggle-2fa.js";
@@ -46,7 +45,7 @@ const routeComponents: Record<string, Component> = {
 		init: () => {
 			activeComponent?.destroy?.();
 
-			const tfa = new TFA();
+			const tfa = new TFAValidate();
 			tfa.init();
 
 			activeComponent = {

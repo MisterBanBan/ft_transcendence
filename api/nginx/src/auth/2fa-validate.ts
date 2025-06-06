@@ -1,7 +1,7 @@
-import {Component} from "../../component.js";
-import {showError} from "../show_errors.js";
+import {Component} from "../component";
+import {showError} from "./show_errors";
 
-export class TFA implements Component {
+export class TFAValidate implements Component {
 
 	private submitButton = document.getElementById("submit");
 
