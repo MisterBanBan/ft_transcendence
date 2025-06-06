@@ -27,15 +27,6 @@ class Ball {
         this.height = element.offsetHeight;
         this.element.style.willChange = "transform";
     }
-
-    // update(dt: number, containerHeight: number) {
-    //     const margin = containerHeight * 0.1;
-    //     const maxY   = containerHeight - this.height - margin;
-
-    //     this.position.y = Math.max(margin, Math.min(maxY, this.position.y));
-    //     this.element.style.transform = `translate(${this.position.x}px, ${this.position.y}px)`;
-
-    // }
 }
 
 class Bar {
@@ -47,25 +38,6 @@ class Bar {
     constructor(public element: HTMLElement) {
         this.height = element.offsetHeight;
         this.element.style.willChange = "transform";
-    }
-
-    // update(dt: number, containerHeight: number) {
-    //     const margin = containerHeight * 0.1;
-    //     const maxY   = containerHeight - this.height - margin;
-
-    //     this.position.y = Math.max(margin, Math.min(maxY, this.position.y));
-
-    //     this.element.style.transform = `translateY(${this.position.y}px)`;
-    // }
-}
-
-function handleKeyPress(bar: Bar, upKey: string, downKey: string, e: KeyboardEvent) {
-        const k = e.key.toLowerCase();
-    if (k === upKey.toLowerCase() && !bar.upKeyPress) {
-        bar.upKeyPress = true;
-    }
-    if (k === downKey.toLowerCase() && !bar.downKeyPress) {
-        bar.downKeyPress = true;
     }
 }
 
@@ -92,6 +64,10 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
+	private socket = io("https://10.13.6.6:8083", {
+		transports: ["websocket", "polling"],
+		withCredentials: true,
+	});
     
     constructor(leftBarId: string, rightBarId: string, ballId: string, imgPongId: string,containerId: string) {
         const leftBarElement = document.getElementById(leftBarId);
@@ -171,10 +147,7 @@ export class pong implements Component {
             window.addEventListener('keydown', this.onKeyDown);
             window.addEventListener('keyup', this.onKeyUp);
             this.barResize();
-            
-            // this.rafId    = requestAnimationFrame(this.gameLoop);
 			this.socketfct();
-            
             };
             
             if (this.imgPong.complete && this.imgPong.onload) {
@@ -182,13 +155,45 @@ export class pong implements Component {
             }
     }
     private onKeyDown = (e: KeyboardEvent) => {
-        handleKeyPress(this.leftBar, "w", "s", e);
-        handleKeyPress(this.rightBar, "ArrowUp", "ArrowDown", e);
+		const k = e.key.toLowerCase();
+		if (k === "w".toLowerCase() && !this.leftBar.upKeyPress) {
+			this.leftBar.upKeyPress = true;
+			this.socket.emit("player-input", { direction: "up", state: true, player: "left"} );
+		}
+		if (k === "s".toLowerCase() && !this.leftBar.downKeyPress) {
+			this.leftBar.downKeyPress = true;
+			this.socket.emit("player-input", { direction: "down", state: true, player: "left"} );
+		}
+
+		if (k === "ArrowUp".toLowerCase() && !this.rightBar.upKeyPress) {
+			this.rightBar.upKeyPress = true;
+			this.socket.emit("player-input", { direction: "up", state: true, player: "right"} );
+		}
+		if (k === "ArrowDown".toLowerCase() && !this.rightBar.downKeyPress) {
+			this.rightBar.downKeyPress = true;
+			this.socket.emit("player-input", { direction: "down", state: true, player: "right"} );
+		}
     };
     
     private onKeyUp = (e: KeyboardEvent) => {
-        handleKeyRelease(this.leftBar,  "w",        "s",        e);
-        handleKeyRelease(this.rightBar, "ArrowUp",  "ArrowDown", e);
+        const k = e.key.toLowerCase();
+		if (k === "w".toLowerCase() && this.leftBar.upKeyPress) {
+			this.leftBar.upKeyPress = false;
+			this.socket.emit("player-input", { direction: "up", state: false, player: "left"} );
+		}
+		if (k === "s".toLowerCase() && this.leftBar.downKeyPress) {
+			this.leftBar.downKeyPress = false;
+			this.socket.emit("player-input", { direction: "down", state: false, player: "left"} );
+		}
+
+		if (k === "ArrowUp".toLowerCase() && this.rightBar.upKeyPress) {
+			this.rightBar.upKeyPress = false;
+			this.socket.emit("player-input", { direction: "up", state: false, player: "right"} );
+		}
+		if (k === "ArrowDown".toLowerCase() && this.rightBar.downKeyPress) {
+			this.rightBar.downKeyPress = false;
+			this.socket.emit("player-input", { direction: "down", state: false, player: "right"} );
+		}
     };
     
     private gameLoop = (timestamp: number) => {
@@ -208,23 +213,15 @@ export class pong implements Component {
     
         // Update barres
         [this.leftBar, this.rightBar, this.ball].forEach((bar, i) => {
-            // bar.position.y = Math.max(margin, Math.min(maxY, bar.position.y));
             if (i < 2)
             	bar.position.x = imgLeft + imgWidth * (i === 0 ? 0.05 : 0.65);
 
             bar.element.style.left = `${imgLeft + bar.position.x}px`;
             bar.element.style.top = `${imgTop + bar.position.y}px`;
         });
-    
-        // this.rafId = requestAnimationFrame(this.gameLoop);
     };
     
     private socketfct() {
-        const socket = io("https://10.13.6.6:8083", {
-          transports: ["websocket", "polling"],
-          withCredentials: true,
-        });
-
         let gameId: string | null = null;
         let playerId: string | null = null;
 
@@ -248,32 +245,35 @@ export class pong implements Component {
         	}
         }
 
-        socket.on("connect", () => {
-          console.log("Connected with id:", socket.id);
+        this.socket.on("connect", () => {
+          console.log("Connected with id:", this.socket.id);
         });
 
-        socket.on("game-started", (data: any) => {
+        this.socket.on("game-started", (data: any) => {
           gameId = data.gameId;
           playerId = data.playerId;
           console.log("Game started! Game ID:", gameId, "Player ID:", playerId);
         });
 
-        socket.on("game-update", (data: { gameId: string, state: {
+        this.socket.on("game-update", (data: { gameId: string, state: {
         	players: { id: string, x: number }[],
-        	ball: { x: number, y: number, vx: number, vy: number },
+			bar: { left: number, right: number},
+        	ball: { x: number, y: number},
         	score: {player1: number, player2: number}}}) => {
         	if (data && data.state && data.state.ball) {
             	ball = data.state.ball;
                 this.ball.position.x = data.state.ball.x * (this.backRect.width / 4096);
                 this.ball.position.y = data.state.ball.y * (this.backRect.height / 1714);
+				this.leftBar.position.y = data.state.bar.left * (this.backRect.height / 1714);
+				this.rightBar.position.y = data.state.bar.right * (this.backRect.height / 1714);
 				this.rafId    = requestAnimationFrame(this.gameLoop);
             }
             if (data && data.state && data.state.score)
         		updateScore(data.state.score.player1, data.state.score.player2);
-			// console.log("Game Update - Ball:", ball);
+			console.log("Game Update - Ball:", ball);
         });
 
-        socket.on("connect_error", (err: any) => {
+        this.socket.on("connect_error", (err: any) => {
             console.error("Connection error:", err);
         });
     }
