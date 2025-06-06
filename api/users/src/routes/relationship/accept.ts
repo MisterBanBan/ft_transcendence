@@ -4,7 +4,7 @@ import {RequesterParams} from "../../types/request.js";
 export default async function (server: FastifyInstance) {
     server.put<{
         Params: RequesterParams;
-    }>('/invitations/:requesterId/accept', {
+    }>('/api/invitations/:requesterId/accept', {
         schema: {
             params: {
                 type: 'object',

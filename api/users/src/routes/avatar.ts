@@ -4,7 +4,7 @@ import fs from 'fs';
 import { randomUUID } from 'crypto';
 import path from 'path';
 import dotenv from 'dotenv';
-import sharp from 'sharp';
+// import sharp from 'sharp';
 
 // Load environment variables
 dotenv.config();
@@ -62,13 +62,13 @@ export default async function (server: FastifyInstance) {
                 fs.createWriteStream(uploadPath)
             );
 
-            // 2. Use sharp to re-encode the image and remove all metadata
-            const tempPath = uploadPath + '.tmp';
-            await sharp(uploadPath)
-                .toFile(tempPath); // sharp removes all metadata by default
-
-            // 3. Replace the original file with the cleaned version
-            fs.renameSync(tempPath, uploadPath);
+            // // 2. Use sharp to re-encode the image and remove all metadata
+            // const tempPath = uploadPath + '.tmp';
+            // await sharp(uploadPath)
+            //     .toFile(tempPath); // sharp removes all metadata by default
+            //
+            // // 3. Replace the original file with the cleaned version
+            // fs.renameSync(tempPath, uploadPath);
 
             // Update database
             const result = await server.db.run(

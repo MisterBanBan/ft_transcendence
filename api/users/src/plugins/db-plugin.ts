@@ -15,7 +15,7 @@ export default async function (server: FastifyInstance, opts: any) {
 
     let db: Database;
     try {
-        db = await open({ filename: "./database/users_db.sqlite", driver: sqlite3.Database });
+        db = await open({ filename: "/app/database/users_db.sqlite", driver: sqlite3.Database });
         console.log("database connected.");
     } catch (err) {
         console.error("Database error :", err);

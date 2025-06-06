@@ -5,7 +5,7 @@ export default async function (server: FastifyInstance) {
     server.post<{
         Params: UserParams;
         Body: InviteBody;
-    }>('/users/:userId/invite', {
+    }>('/api/users/:userId/invite', {
         schema: {
             params: {
                 type: 'object',

@@ -4,7 +4,7 @@ import {UserParams} from "../../types/request.js";
 export default async function (server: FastifyInstance) {
     server.get<{
         Params: UserParams;
-    }>('/users/:userId/friendsList', {
+    }>('/api/users/:userId/friendsList', {
         schema: {
             params: {
                 type: 'object',

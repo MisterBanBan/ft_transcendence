@@ -4,7 +4,7 @@ import {RequesterParams} from "../../types/request.js";
 export default async function (server: FastifyInstance) {
     server.delete<{
         Params: RequesterParams;
-    }>('/invitations/:requesterId/decline', {
+    }>('/api/invitations/:requesterId/decline', {
         schema: {
             params: {
                 type: 'object',

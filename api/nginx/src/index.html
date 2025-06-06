@@ -35,7 +35,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Transcendance - Test des Invitations</title>
+    <title>Transcendance - Test API Complet</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -125,22 +125,54 @@
             font-family: monospace;
             font-size: 12px;
         }
+
+        .user-list {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .user-card {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
-<h1>🎮 Transcendance - Test des Invitations</h1>
+<h1>🎮 Transcendance - Test API Complet</h1>
 
 <!-- Configuration -->
 <div class="container">
     <h2>⚙️ Configuration</h2>
     <div class="form-group">
-        <label for="apiUrl">/api/users/</label>
-        <input type="text" id="apiUrl" value="http://localhost:8443/api/users/">
+        <label for="apiUrl">URL de l'API:</label>
+        <input type="text" id="apiUrl" value="http://localhost:8443">
     </div>
     <div class="form-group">
         <label for="currentUserId">ID Utilisateur Actuel:</label>
         <input type="text" id="currentUserId" value="user1" placeholder="ex: user1">
     </div>
+</div>
+
+<!-- Créer des utilisateurs -->
+<div class="container">
+    <h2>👤 Créer des Utilisateurs</h2>
+    <div class="form-group">
+        <label for="newUserId">ID Utilisateur:</label>
+        <input type="text" id="newUserId" placeholder="ex: user5">
+    </div>
+    <div class="form-group">
+        <label for="newUsername">Nom d'utilisateur:</label>
+        <input type="text" id="newUsername" placeholder="ex: Emma">
+    </div>
+    <button onclick="createUser()">Créer l'utilisateur</button>
+    <button onclick="createTestUsers()">Créer utilisateurs de test</button>
+    <div id="createUserResponse" class="response"></div>
+
+    <div id="usersList" class="user-list"></div>
 </div>
 
 <!-- Envoyer une invitation -->
@@ -182,11 +214,11 @@
     <div id="friendsResponse" class="response"></div>
 </div>
 
-<!-- Créer des utilisateurs de test -->
+<!-- Outils de test -->
 <div class="container">
     <h2>🧪 Outils de Test</h2>
-    <button onclick="createTestUsers()">Créer des utilisateurs de test</button>
     <button onclick="clearResponses()" style="background-color: #6c757d;">Effacer les réponses</button>
+    <button onclick="testAllRoutes()" style="background-color: #17a2b8;">Tester toutes les routes</button>
     <div id="testResponse" class="response"></div>
 </div>
 
@@ -195,6 +227,8 @@
     function getApiUrl() {
         return document.getElementById('apiUrl').value;
     }
+
+    console.log(getApiUrl());
 
     // Get current user ID
     function getCurrentUserId() {
@@ -208,11 +242,97 @@
         container.className = `response ${isError ? 'error' : 'success'}`;
     }
 
+    // Create a single user
+    async function createUser() {
+        const apiUrl = getApiUrl();
+        const userId = document.getElementById('newUserId').value;
+        const username = document.getElementById('newUsername').value;
+
+        if (!userId || !username) {
+            alert('Please enter both user ID and username');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/api/users/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    username: username
+                })
+            });
+
+            const data = await response.json();
+            displayResponse('createUserResponse', data, !response.ok);
+
+            // Clear form
+            document.getElementById('newUserId').value = '';
+            document.getElementById('newUsername').value = '';
+
+            // Refresh user list
+            updateUsersList();
+        } catch (error) {
+            displayResponse('createUserResponse', { error: error.message }, true);
+        }
+    }
+
+    // Create test users
+    async function createTestUsers() {
+        const testUsers = [
+            { userId: 'user1', username: 'Alice' },
+            { userId: 'user2', username: 'Bob' },
+            { userId: 'user3', username: 'Charlie' },
+            { userId: 'user4', username: 'Diana' }
+        ];
+
+        const results = [];
+        const apiUrl = getApiUrl();
+
+        for (const user of testUsers) {
+            try {
+                const response = await fetch(`${apiUrl}/api/users/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                const data = await response.json();
+                results.push({ user: user.username, result: data });
+            } catch (error) {
+                results.push({ user: user.username, error: error.message });
+            }
+        }
+
+        displayResponse('createUserResponse', {
+            message: 'Test users creation attempted',
+            results: results
+        });
+
+        updateUsersList();
+    }
+
+    // Update users list display
+    function updateUsersList() {
+        const usersList = document.getElementById('usersList');
+        const testUsers = ['user1 (Alice)', 'user2 (Bob)', 'user3 (Charlie)', 'user4 (Diana)'];
+
+        usersList.innerHTML = testUsers.map(user =>
+            `<div class="user-card">${user}</div>`
+        ).join('');
+    }
+
     // Send friend invitation
     async function sendInvitation() {
         const apiUrl = getApiUrl();
         const currentUserId = getCurrentUserId();
+        console.log(currentUserId);
         const addresseeId = document.getElementById('inviteUserId').value;
+        console.log(addresseeId);
 
         if (!addresseeId) {
             alert('Please enter a user ID to invite');
@@ -220,7 +340,7 @@
         }
 
         try {
-            const response = await fetch(`${apiUrl}/users/${currentUserId}/invite`, {
+            const response = await fetch(`${apiUrl}/api/users/${currentUserId}/invite`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -244,7 +364,7 @@
         const currentUserId = getCurrentUserId();
 
         try {
-            const response = await fetch(`${apiUrl}/users/${currentUserId}/invitations`, {
+            const response = await fetch(`${apiUrl}/api/users/${currentUserId}/invitations`, {
                 headers: {
                     'user-id': currentUserId
                 }
@@ -257,12 +377,12 @@
             const invitationsList = document.getElementById('invitationsList');
             if (data.invitations && data.invitations.length > 0) {
                 invitationsList.innerHTML = data.invitations.map(inv => `
-                        <div class="invitation-item pending">
-                            <strong>${inv.username}</strong> (${inv.requester_id})
-                            <br>Status: ${inv.status}
-                            <br>Avatar: ${inv.avatar_url}
-                        </div>
-                    `).join('');
+                    <div class="invitation-item pending">
+                        <strong>${inv.username}</strong> (${inv.requester_id})
+                        <br>Status: ${inv.status}
+                        <br>Avatar: ${inv.avatar_url || 'N/A'}
+                    </div>
+                `).join('');
             } else {
                 invitationsList.innerHTML = '<p>Aucune invitation en attente</p>';
             }
@@ -282,7 +402,7 @@
         }
 
         try {
-            const response = await fetch(`${apiUrl}/invitations/${requesterId}/accept`, {
+            const response = await fetch(`${apiUrl}/api/invitations/${requesterId}/accept`, {
                 method: 'PUT',
                 headers: {
                     'user-id': getCurrentUserId()
@@ -307,7 +427,7 @@
         }
 
         try {
-            const response = await fetch(`${apiUrl}/invitations/${requesterId}/decline`, {
+            const response = await fetch(`${apiUrl}/api/invitations/${requesterId}/decline`, {
                 method: 'DELETE',
                 headers: {
                     'user-id': getCurrentUserId()
@@ -327,7 +447,7 @@
         const currentUserId = getCurrentUserId();
 
         try {
-            const response = await fetch(`${apiUrl}/users/${currentUserId}/friends`, {
+            const response = await fetch(`${apiUrl}/api/users/${currentUserId}/friends`, {
                 headers: {
                     'user-id': currentUserId
                 }
@@ -340,12 +460,12 @@
             const friendsList = document.getElementById('friendsList');
             if (data.friends && data.friends.length > 0) {
                 friendsList.innerHTML = data.friends.map(friend => `
-                        <div class="friend-item accepted">
-                            <strong>${friend.username}</strong> (${friend.id})
-                            <br>Status: ${friend.status}
-                            <br>Avatar: ${friend.avatar_url}
-                        </div>
-                    `).join('');
+                    <div class="friend-item accepted">
+                        <strong>${friend.username}</strong> (${friend.id})
+                        <br>Status: ${friend.status || 'online'}
+                        <br>Avatar: ${friend.avatar_url || 'N/A'}
+                    </div>
+                `).join('');
             } else {
                 friendsList.innerHTML = '<p>Aucun ami pour le moment</p>';
             }
@@ -354,47 +474,56 @@
         }
     }
 
-    // Create test users (you'll need to implement this endpoint)
-    async function createTestUsers() {
-        const testUsers = [
-            { id: 'user1', username: 'Alice', avatar_url: 'alice.jpeg' },
-            { id: 'user2', username: 'Bob', avatar_url: 'bob.jpeg' },
-            { id: 'user3', username: 'Charlie', avatar_url: 'charlie.jpeg' },
-            { id: 'user4', username: 'Diana', avatar_url: 'diana.jpeg' }
-        ];
+    // Test all routes sequentially
+    async function testAllRoutes() {
+        const testResults = [];
 
-        const results = [];
-        const apiUrl = getApiUrl();
+        try {
+            // Test 1: Create users
+            testResults.push("=== Testing user creation ===");
+            await createTestUsers();
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-        for (const user of testUsers) {
-            try {
-                // This assumes you have a POST /users endpoint
-                const response = await fetch(`${apiUrl}/users`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(user)
-                });
+            // Test 2: Send invitation
+            testResults.push("=== Testing invitation sending ===");
+            document.getElementById('inviteUserId').value = 'user2';
+            await sendInvitation();
+            await new Promise(resolve => setTimeout(resolve, 1000));
 
-                const data = await response.json();
-                results.push({ user: user.username, result: data });
-            } catch (error) {
-                results.push({ user: user.username, error: error.message });
-            }
+            // Test 3: Load invitations
+            testResults.push("=== Testing invitations loading ===");
+            document.getElementById('currentUserId').value = 'user2';
+            await loadInvitations();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Test 4: Accept invitation
+            testResults.push("=== Testing invitation acceptance ===");
+            document.getElementById('requesterIdAccept').value = 'user1';
+            await acceptInvitation();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Test 5: Load friends
+            testResults.push("=== Testing friends loading ===");
+            await loadFriends();
+
+            displayResponse('testResponse', {
+                message: 'All routes tested successfully',
+                tests: testResults
+            });
+
+        } catch (error) {
+            displayResponse('testResponse', {
+                error: 'Error during testing',
+                details: error.message
+            }, true);
         }
-
-        displayResponse('testResponse', {
-            message: 'Test users creation attempted',
-            results: results
-        });
     }
 
     // Clear all response containers
     function clearResponses() {
         const responseContainers = [
-            'inviteResponse', 'invitationsResponse', 'manageResponse',
-            'friendsResponse', 'testResponse'
+            'createUserResponse', 'inviteResponse', 'invitationsResponse',
+            'manageResponse', 'friendsResponse', 'testResponse'
         ];
 
         responseContainers.forEach(id => {
@@ -406,12 +535,14 @@
         // Clear lists
         document.getElementById('invitationsList').innerHTML = '';
         document.getElementById('friendsList').innerHTML = '';
+        document.getElementById('usersList').innerHTML = '';
     }
 
     // Load initial data on page load
     window.addEventListener('load', () => {
-        console.log('🎮 Transcendance Invitation Tester loaded');
+        console.log('🎮 Transcendance API Tester loaded');
         console.log('Make sure your Fastify server is running on the configured URL');
+        updateUsersList();
     });
 </script>
 </body>
