@@ -16,15 +16,23 @@
           overflow: hidden;
       }
   </style>
-
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <!-- <script type="module" src="/public/launch_game.js"></script> -->
 </head>
-  <body class="overflow-hidden h-screen bg-black">
-    <div id="app" class="p-0">
-      <!-- Le contenu des pages sera chargé ici -->
-    </div>
 
-    <script type="module" src="/public/router.js"></script>
-    
-    
-  </body>
+  <body class="overflow-hidden h-screen bg-black">
+  <!-- <h1 class="text-xl font-bold">Socket.IO Test Client</h1>
+
+  <div class="text-2xl p-4">
+    <span id="score-player1">0</span>
+    <span id="score-player2">0</span>
+  </div>
+
+  <canvas id="game-canvas" width="600" height="400" class="border border-gray-700 bg-black shadow"></canvas>
+  <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
+  <img id="right-bar" src="/img/bar_left.png" class="absolute" /> -->
+    <div id="app" class="p-0">
+	</div>
+	<script type="module" src="/public/router.js"></script>
+</body>
 </html>

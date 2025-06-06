@@ -72,7 +72,8 @@ const routeComponents: Record<string, Component> = {
             activeComponent?.destroy?.();
             const pongGame = new pong(
                 'left-bar',      // ID de la barre gauche
-                'right-bar',     // ID de la barre droite
+                'right-bar',	// ID de la barre droite
+                'ball',			// ID de la balle
                 'pong-bg', // ID du conteneur de jeu
                 'pong'
               );

@@ -165,12 +165,13 @@ export const routes: Route[] = [
         await new Promise(r => setTimeout(r, 300));
         return `
             <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
-              <img
+            <img
                 id="pong-bg"
                 src="/img/pong.png"
                 alt="Pong background"
                 class="block max-w-full max-h-full object-contain"
               />
+              <img id="ball"  src="/img/ball.png"  class="absolute" />
               <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
               <img id="right-bar" src="/img/bar_left.png" class="absolute" />
             </div>

@@ -12,7 +12,7 @@ export class GameInstance {
 	) {
 	  this.state = {
 		players: players.map((id, idx) => ({ id, x: 100 + idx * 50 })),
-		ball: { x: 300, y: 200, vx: Math.cos(Math.PI / 4), vy: Math.sin(Math.PI / 4), speed: 4 },
+		ball: { x: 1500, y: 700, vx: Math.cos(Math.PI / 4), vy: Math.sin(Math.PI / 4), speed: 10 },
 		score: {player1: 0, player2: 0}
 	  };
 	  this.startGameLoop();
@@ -30,13 +30,13 @@ export class GameInstance {
 		this.state.ball.x += this.state.ball.vx * this.state.ball.speed;
 		this.state.ball.y += this.state.ball.vy * this.state.ball.speed;
 		
-		if (this.state.ball.x <= 10 || this.state.ball.x >= 590) {
+		if (this.state.ball.x <= 10 || this.state.ball.x >= 3000) {
 			this.updateScore();
 		}
 
-		if (this.state.ball.y <= 10 || this.state.ball.y >= 390) {
+		if (this.state.ball.y <= 10 || this.state.ball.y >= 1400) {
 			if (this.state.ball.speed < 50)
-				this.state.ball.speed += 0.5;
+				this.state.ball.speed += 2;
 			this.state.ball.vy *= -1;
 		}
   
@@ -56,12 +56,12 @@ export class GameInstance {
 		else
 			this.state.score.player1 += 1;
 		
-			this.state.ball.x = 300;
-		this.state.ball.y = 200;
+		this.state.ball.x = 1500;
+		this.state.ball.y = 700;
 
 		this.state.ball.vx = Math.random() * (1 - -1) + -1;
 		this.state.ball.vy = Math.random() * (1 - -1) + -1;
-		this.state.ball.speed = 4;
+		this.state.ball.speed = 10;
 	}
   
 	public handleInput(playerId: string, input: any) {

@@ -3,7 +3,7 @@
 
 declare const io: any;
 
-const socket = io("https://10.11.3.4:8083", {
+const socket = io("https://10.13.6.6:8083", {
   transports: ["websocket", "polling"],
   withCredentials: true,
 });
@@ -12,23 +12,6 @@ let gameId: string | null = null;
 let playerId: string | null = null;
 
 let ball = { x: 0, y: 0 };
-
-const canvas = document.getElementById("game-canvas") as HTMLCanvasElement;
-const ctx = canvas.getContext("2d");
-
-function draw() {
-  if (!ctx) return;
-
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  ctx.beginPath();
-  ctx.arc(ball.x, ball.y, 10, 0, Math.PI * 2);
-  ctx.fillStyle = "red";
-  ctx.fill();
-  ctx.closePath();
-
-  requestAnimationFrame(draw);
-}
 
 let score_player1 = 0;
 let score_player2 = 0;
@@ -47,8 +30,6 @@ function updateScore(newScore_player1: number, newScore_player2: number) {
 		scoreElement_player2.textContent = score_player2.toString();
 	}
 }
-
-draw();
 
 socket.on("connect", () => {
   console.log("Connected with id:", socket.id);
@@ -76,24 +57,17 @@ socket.on("connect_error", (err: any) => {
   console.error("Connection error:", err);
 });
 
-function sendTestPlayerInput() {
-  if (!gameId || !playerId) {
-    console.warn("Game not started yet");
-    return;
-  }
+// function sendTestPlayerInput() {
+//   if (!gameId || !playerId) {
+//     console.warn("Game not started yet");
+//     return;
+//   }
 
-  const input = {
-    direction: "left",
-    timestamp: Date.now(),
-  };
+//   const input = {
+//     direction: "left",
+//     timestamp: Date.now(),
+//   };
 
-  socket.emit("player-input", input);
-  console.log("Sent input:", input);
-}
-
-window.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("send-input-btn");
-  if (btn) {
-    btn.addEventListener("click", sendTestPlayerInput);
-  }
-});
+//   socket.emit("player-input", input);
+//   console.log("Sent input:", input);
+// }
