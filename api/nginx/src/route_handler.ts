@@ -60,12 +60,12 @@ const routeComponents: Record<string, Component> = {
 		init: () => {
 			activeComponent?.destroy?.();
 
-			const tfaCreate = new TFACreate();
-			tfaCreate.init();
+			const toggle2FA = new Toggle2FA();
+			toggle2FA.init();
 
 			activeComponent = {
 				init: () => {},
-				destroy: () => { tfaCreate.destroy(); },
+				destroy: () => { toggle2FA.destroy(); },
 			};
 		},
 		destroy: () => {}

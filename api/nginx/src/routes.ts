@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 const ft_url = "https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2F42&response_type=code";
-const google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=570055045570-c95opdokftohj6c4l7u9t7b46bpmnrkl.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2Fgoogle&response_type=code&scope=profile%20email&access_type=offline&include_granted_scopes=true"
+const google_url = "https://accounts.google.com/o/oauth2/v2/auth?client_id=570055045570-c95opdokftohj6c4l7u9t7b46bpmnrkl.apps.googleusercontent.com&redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2Fgoogle&response_type=code&scope=profile%20email&access_type=offline&include_granted_scopes=true&prompt=login"
 
 export interface Route {
 	path: string;
@@ -190,7 +190,9 @@ export interface Route {
 			template: async () => {
 				await new Promise(resolve => setTimeout(resolve, 300));
 				return `
-			<div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
+			<!-- 2FA Toggle -->
+	<div id="toggle-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
+	  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
 		<!-- Titre -->
 		<h2 class="text-2xl font-semibold text-center text-gray-800">Vérification en 2 étapes</h2>
 	
@@ -208,21 +210,22 @@ export interface Route {
 	
 		<!-- Zone de texte pour le code -->
 		<input
-				id="codeInput"
+				id="2fa-code"
 				type="text"
 				placeholder="Entrez le code 2FA"
 				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 		/>
-	
+		
 		<!-- Bouton de validation -->
 		<button
-				id="submit"
+				id="2fa-submit"
 				type="submit"
 				class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
 		>
 				Vérifier
 		</button>
-			</div>`;
+			</div>
+	</div>`;
 			}
 		},
 		{
@@ -331,8 +334,8 @@ export interface Route {
 		<input
 				id="2fa-password"
 				type="password"
-				placeholder="Entrez votre mot de passe"
-				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+				placeholder="Mot de passe (non requis si vous n'utilisez pas transcendence pour la connexion)"
+				class="w-full px-4 py-2 border text-sm border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
 		/>
 		
 		<!-- Bouton de validation -->

@@ -1,5 +1,6 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 import {decodeToken} from "../utils/decode-token.js";
+import {getUserByUsername} from "../db/get-user-by-username.js";
 
 export default async function (server: FastifyInstance) {
 	server.addHook('preHandler', async (request, reply) => {
@@ -23,11 +24,14 @@ export default async function (server: FastifyInstance) {
 		const token = request.cookies?.token
 
 		if (!token) {
-			return reply.redirect('/auth');
+			return reply.status(302).redirect('/auth');
 		}
 
-		if (await decodeToken(server, token, reply) === undefined) {
-			return reply.redirect("/auth");
+		const decodedToken = await decodeToken(server, token, reply);
+		if (decodedToken === undefined) {
+			return reply.status(302).redirect("/auth");
 		}
+
+		(request as any).currentUser = await getUserByUsername(server.db, decodedToken.username);
 	});
 }

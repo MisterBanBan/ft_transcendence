@@ -8,68 +8,84 @@ import {User} from "../../interface/user.js";
 import argon2 from "argon2";
 import {verifyPassword} from "../../utils/verify-password.js";
 import {TokenPayload} from "../../interface/token-payload.js";
+import google from "../callback/google.js";
+import * as repl from "node:repl";
 
-const tempKeys = new Map<string, {key: string, eat: number}>();
+export const tempKeys = new Map<string, {token?:string, key?: string, relogin: boolean, eat?: number, tries?: number}>();
+export const oauthRelogin = new Map<string, { username: string, eat: number }>
 
 export default async function (server: FastifyInstance) {
 
-	async function getUser(request: FastifyRequest, reply: FastifyReply): Promise<User> {
-		const token = request.cookies.token;
-
-		const decodedToken = server.jwt.decode(token!) as TokenPayload;
-
-		const user = await getUserByUsername(server.db, decodedToken.username);
-		if (!user) {
-			return reply.status(400).send("Couldn't find user");
-		}
-
-		if (user.tfa) {
-			return reply.status(401).send("2FA already set up");
-		}
-
-		return user;
-	}
-
 	server.get('/api/auth/2fa/create', async function (request, reply) {
 
-		const user = await getUser(request, reply);
+		//const user = await getUser(request, reply);
 
-		const formattedKey = authenticator.generateKey();
+		const user = request.currentUser! as User;
 
-		console.log(formattedKey);
+		if (user.tfa) {
+			return reply.status(401).send({ error: "2FA already enabled" });
+		}
 
-		tempKeys.set(user.username, {key: formattedKey, eat: Date.now() + (2 * 60 * 1000) });
+		if (user.provider == "local" || (user.provider != "local" && tempKeys.get(user.username)?.relogin === false)) {
 
-		console.log(tempKeys.get(user.username));
-		const url = authenticator.generateTotpUri(formattedKey, user.username, "transendence", "SHA1", 6, 30);
+			const formattedKey = authenticator.generateKey();
+			tempKeys.set(user.username, {key: formattedKey, relogin: false, eat: Date.now() + (2 * 60 * 1000), tries: 5});
 
-		console.log(url);
+			const url = authenticator.generateTotpUri(formattedKey, user.username, "Transcendence", "SHA1", 6, 30);
 
-		return reply.status(200).send(await qrcode.toDataURL(url));
+			return reply.status(200).send({ url: await qrcode.toDataURL(url), provider: user.provider });
+		}
+		else {
+
+			const token = crypto.randomUUID();
+
+			tempKeys.set(user.username,	 {token: token, relogin: false});
+			oauthRelogin.set(token, { username: user.username, eat: Date.now() + (2 * 60 * 1000) });
+
+			if (user.provider == "google") {
+				return reply.status(202).header('Location', "https://accounts.google.com/o/oauth2/v2/auth?" +
+					"client_id=570055045570-c95opdokftohj6c4l7u9t7b46bpmnrkl.apps.googleusercontent.com&" +
+					"redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2Fgoogle&" +
+					"response_type=code&scope=profile%20email&" +
+					"access_type=offline&" +
+					"include_granted_scopes=true&" +
+					"prompt=login&" +
+					"max_age=0&" +
+					`state=relogin_${token}`).send({});
+			}
+		}
 	});
 
 	server.post('/api/auth/2fa/create', async function (request, reply) {
-		const { code, password } = request.body as { code: string; password: string };
+		const { code, password } = request.body as { code: string; password?: string };
+		const user = request.currentUser! as User;
 
-		const user = await getUser(request, reply);
+		if (user.tfa) {
+			return reply.status(401).send({ error: "2FA already enabled" });
+		}
 
 		const key = tempKeys.get(user.username);
 
-		if (!key || key.eat < Date.now()) {
+		if (!key || !key.eat || !key.key || !key.tries || key.eat < Date.now()) {
 			if (key) {
 				tempKeys.delete(user.username);
 			}
-			return reply.status(401).send("Invalid or expired 2FA session");
+			return reply.status(401).send({ error: "Invalid or expired 2FA session" });
 		}
 
 		if (user.provider == "local" && (!password || !await verifyPassword(user, password))) {
-			return reply.status(401).send("Invalid password");
+			key.tries--;
+			return reply.status(401).send({ error: `Invalid password (${key.tries} tries left)` });
 		}
 
-		if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(key.key, code))
-			return reply.status(400).send("Invalid 2FA code");
+		console.log(code);
+		console.log("Expected:", authenticator.generateToken(key.key))
+		if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(key.key!, code)) {
+			key.tries--;
+			return reply.status(400).send({ error: `Invalid 2FA code (${key.tries} tries left)` });
+		}
 
-		await addTfa(server.db, user.username, key.key)
-		return reply.status(201).send("2FA method created");
+		await addTfa(server.db, user.username, key.key!)
+		return reply.status(201).send({ success: true });
 	})
 };

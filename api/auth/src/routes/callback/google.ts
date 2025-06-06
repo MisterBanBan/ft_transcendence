@@ -6,14 +6,37 @@ import {createToken} from "../2fa/validate.js";
 import {signToken} from "../../utils/sign-token.js";
 import {setCookie} from "../../utils/set-cookie.js";
 import {getUserByProviderId} from "../../db/get-user-by-provider-id.js";
+import {oauthRelogin, tempKeys} from "../2fa/create.js";
 
 export default async function (server: FastifyInstance) {
 	server.get('/api/auth/callback/google', async (request, reply) => {
 
-		const { code } = request.query as { code?: string };
+		const { code, state } = request.query as { code?: string, state?: string };
 
 		if (!code) {
 			return reply.status(400).send({ error: "Missing code" });
+		}
+
+		if (state?.startsWith("relogin_")) {
+			const id = state.split('_')[1];
+			if (!id) {
+				return reply.status(400).send({ error: "Missing id" });
+			}
+
+			const oauthSession = oauthRelogin.get(id);
+			if (!oauthSession) {
+				return reply.status(401).send({ error: "Invalid or expired session" });
+			}
+
+			oauthRelogin.delete(id);
+			const key = tempKeys.get(oauthSession.username);
+			if (!key) {
+				return reply.status(401).send({error: "Invalid session"});
+			}
+
+			key.relogin = false;
+			console.log("Relog done, redirecting");
+			return reply.status(303).redirect("/2fa/create");
 		}
 
 		if (request.cookies?.token) {
@@ -84,8 +107,7 @@ export default async function (server: FastifyInstance) {
 			body: params
 		});
 
-		if (!response.ok)
-		{
+		if (!response.ok) {
 			console.error(response);
 			throw new Error('Error while exchanging token.');
 		}
