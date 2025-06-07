@@ -41,16 +41,6 @@ class Bar {
     }
 }
 
-function handleKeyRelease(bar: Bar, upKey: string, downKey: string, e: KeyboardEvent) {
-        const k = e.key.toLowerCase();
-    if (k === upKey.toLowerCase() && bar.upKeyPress) {
-        bar.upKeyPress = false;
-    }
-    if (k === downKey.toLowerCase() && bar.downKeyPress) {
-        bar.downKeyPress = false;
-    }
-}
-
 export class pong implements Component {
     private boundKeyDownHandler!: (e: KeyboardEvent) => void;
     private boundKeyUpHandler!: (e: KeyboardEvent) => void;
@@ -82,7 +72,7 @@ export class pong implements Component {
         
         const ballElement = document.getElementById(ballId);
         if(!ballElement) {
-            throw new Error('Right bar not found');
+            throw new Error('Ball not found');
         }
 
         this.leftBEle = leftBarElement;
@@ -99,7 +89,7 @@ export class pong implements Component {
         const imgWidth = imgRect.width;
         const imgHeight = imgRect.height;
 
-        const barWidth = imgWidth * 0.02;
+        const barWidth = imgWidth * 0.01;
         const barHeight = imgHeight * 0.2;
         console.log(": %d : %d", barHeight, barWidth);
         //definir la taille des barres en fonction de la taille de la fenetre
@@ -107,20 +97,20 @@ export class pong implements Component {
         this.leftBar.element.style.height = `${barHeight}px`;
         this.rightBar.element.style.width = `${barWidth}px`;
         this.rightBar.element.style.height = `${barHeight}px`;
-        this.ball.element.style.width = `${barHeight * 0.5}px`;
-        this.ball.element.style.height = `${barHeight * 0.5}px`;
+        this.ball.element.style.width = `${imgHeight * 0.05}px`;
+        this.ball.element.style.height = `${imgHeight * 0.05}px`;
         
         // Position horizontale (15% et 85% de la largeur de l'image)
         this.leftBar.height = barHeight;
         this.rightBar.height = barHeight;
-        this.ball.height = barHeight;
+        this.ball.height = imgHeight * 0.05;
         
         // Position verticale (definie entre 10% et 90% de la hauteur de l'image)
         const margin = imgHeight * 0.1;
         const maxY = imgHeight - this.leftBar.height - margin;
         this.leftBar.position.y = Math.max(margin, Math.min(maxY, this.leftBar.position.y));
         this.rightBar.position.y = Math.max(margin, Math.min(maxY, this.rightBar.position.y));
-        this.ball.position.y = Math.max(margin, Math.min(maxY, this.ball.position.y));
+        this.ball.position.y = Math.max(margin, Math.min(imgHeight - this.ball.height - margin, this.ball.position.y));
 
         // Applique la position en pixels par rapport au top de l'image
         this.leftBar.element.style.top  = `${imgTop + this.leftBar.position.y}px`;
@@ -197,25 +187,19 @@ export class pong implements Component {
     };
     
     private gameLoop = (timestamp: number) => {
-        const dt = (timestamp - this.lastTime) / 1000;
-        this.lastTime = timestamp;
     
         // Mesure la position réelle de l'image
         this.backRect = this.imgPong.getBoundingClientRect();
         const imgTop = this.backRect.top;
         const imgLeft = this.backRect.left;
         const imgWidth = this.backRect.width;
-        const imgHeight = this.backRect.height;
-    
-        // Clamp vertical
-        const margin = imgHeight * 0.1;
-        const maxY = imgHeight - this.leftBar.height - margin;
     
         // Update barres
         [this.leftBar, this.rightBar, this.ball].forEach((bar, i) => {
-            if (i < 2)
-            	bar.position.x = imgLeft + imgWidth * (i === 0 ? 0.05 : 0.65);
-
+            if (i === 0)
+            	bar.position.x = imgWidth * 0.11284179687;
+            if (i === 1)
+                bar.position.x = imgWidth * 0.69526367187 - this.backRect.width * 0.01;
             bar.element.style.left = `${imgLeft + bar.position.x}px`;
             bar.element.style.top = `${imgTop + bar.position.y}px`;
         });
@@ -262,10 +246,11 @@ export class pong implements Component {
         	score: {player1: number, player2: number}}}) => {
         	if (data && data.state && data.state.ball) {
             	ball = data.state.ball;
-                this.ball.position.x = data.state.ball.x * (this.backRect.width / 4096);
-                this.ball.position.y = data.state.ball.y * (this.backRect.height / 1714);
-				this.leftBar.position.y = data.state.bar.left * (this.backRect.height / 1714);
-				this.rightBar.position.y = data.state.bar.right * (this.backRect.height / 1714);
+                // img ball pos = ball pos * ratio current_size and base_size - ball size / 2 
+                this.ball.position.x =  data.state.ball.x * this.backRect.width / 4096 - (this.ball.height * 0.5);
+                this.ball.position.y = data.state.ball.y * this.backRect.height / 1714 - (this.ball.height * 0.5);
+				this.leftBar.position.y = data.state.bar.left * this.backRect.height / 1714;
+				this.rightBar.position.y = data.state.bar.right * this.backRect.height / 1714;
 				this.rafId    = requestAnimationFrame(this.gameLoop);
             }
             if (data && data.state && data.state.score)
