@@ -139,6 +139,19 @@
             border-radius: 4px;
             font-size: 12px;
         }
+        .remove-friend-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .remove-friend-btn:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -212,6 +225,7 @@
     <button onclick="loadFriends()">Charger les amis</button>
     <div id="friendsList"></div>
     <div id="friendsResponse" class="response"></div>
+    <div id="removeFriendResponse"></div>
 </div>
 
 <!-- Outils de test -->
@@ -340,11 +354,11 @@
         }
 
         try {
-            const response = await fetch(`${apiUrl}/api/users/${currentUserId}/invite`, {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/invite`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'user-id': currentUserId
+                    'userId': currentUserId
                 },
                 body: JSON.stringify({
                     addressee_id: addresseeId
@@ -364,7 +378,7 @@
         const currentUserId = getCurrentUserId();
 
         try {
-            const response = await fetch(`${apiUrl}/api/users/${currentUserId}/invitations`, {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/invitations`, {
                 headers: {
                     'user-id': currentUserId
                 }
@@ -402,7 +416,7 @@
         }
 
         try {
-            const response = await fetch(`${apiUrl}/api/invitations/${requesterId}/accept`, {
+            const response = await fetch(`https://localhost:8443/api/users/${requesterId}/accept`, {
                 method: 'PUT',
                 headers: {
                     'user-id': getCurrentUserId()
@@ -427,7 +441,7 @@
         }
 
         try {
-            const response = await fetch(`${apiUrl}/api/invitations/${requesterId}/decline`, {
+            const response = await fetch(`https://localhost:8443/api/users/${requesterId}/decline`, {
                 method: 'DELETE',
                 headers: {
                     'user-id': getCurrentUserId()
@@ -447,7 +461,7 @@
         const currentUserId = getCurrentUserId();
 
         try {
-            const response = await fetch(`${apiUrl}/api/users/${currentUserId}/friends`, {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/friendsList`, {
                 headers: {
                     'user-id': currentUserId
                 }
@@ -460,17 +474,52 @@
             const friendsList = document.getElementById('friendsList');
             if (data.friends && data.friends.length > 0) {
                 friendsList.innerHTML = data.friends.map(friend => `
-                    <div class="friend-item accepted">
-                        <strong>${friend.username}</strong> (${friend.id})
-                        <br>Status: ${friend.status || 'online'}
-                        <br>Avatar: ${friend.avatar_url || 'N/A'}
-                    </div>
-                `).join('');
+                <div class="friend-item accepted">
+                    <strong>${friend.username}</strong> (${friend.id})
+                    <br>Status: ${friend.status || 'online'}
+                    <br>Avatar: ${friend.avatar_url || 'N/A'}
+                    <br>
+                    <button onclick="removeFriend('${friend.id}')" class="remove-friend-btn">
+                        Remove Friend
+                    </button>
+                </div>
+            `).join('');
             } else {
                 friendsList.innerHTML = '<p>Aucun ami pour le moment</p>';
             }
         } catch (error) {
             displayResponse('friendsResponse', { error: error.message }, true);
+        }
+    }
+
+    async function removeFriend(friendId) {
+        const currentUserId = getCurrentUserId();
+
+        if (!confirm('Are you sure you want to remove this friend?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/removeFriend`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': currentUserId
+                },
+                body: JSON.stringify({
+                    friend_id: friendId
+                })
+            });
+
+            const data = await response.json();
+            displayResponse('removeFriendResponse', data, !response.ok);
+
+            if (response.ok) {
+                // Reload the friends list after successful removal
+                await loadFriends();
+            }
+        } catch (error) {
+            displayResponse('removeFriendResponse', { error: error.message }, true);
         }
     }
 

@@ -1,10 +1,10 @@
 import {FastifyInstance} from "fastify";
-import { UserParams } from "../../types/request.js";
+import {UserParams} from "../types/request.js";
 
 export default async function (server: FastifyInstance) {
     server.get<{
         Params: UserParams;
-    }>('/api/users/:userId/invitations', {
+    }>('/api/users/:userId/friendsList', {
         schema: {
             params: {
                 type: 'object',
@@ -17,17 +17,15 @@ export default async function (server: FastifyInstance) {
                 200: {
                     type: 'object',
                     properties: {
-                        invitations: {
+                        friends: {
                             type: 'array',
                             items: {
                                 type: 'object',
                                 properties: {
-                                    requester_id: { type: 'string' },
-                                    addressee_id: { type: 'string' },
-                                    status: { type: 'string' },
-                                    updated_at: { type: 'string' },
+                                    id: { type: 'string' },
                                     username: { type: 'string' },
-                                    avatar_url: { type: 'string' }
+                                    avatar_url: { type: 'string' },
+                                    status: { type: 'string' }
                                 }
                             }
                         }
@@ -39,14 +37,17 @@ export default async function (server: FastifyInstance) {
         const { userId } = request.params;
 
         try {
-            const invitations = await server.db.all(`
-                SELECT r.*, u.username, u.avatar_url 
-                FROM relationships r 
-                JOIN users u ON r.requester_id = u.id 
-                WHERE r.addressee_id = ? AND r.status = 'pending'
-            `, userId);
+            const friends = await server.db.all(`
+                SELECT DISTINCT u.id, u.username, u.avatar_url, r.status
+                FROM relationships r
+                JOIN users u ON (
+                    (r.requester_id = ? AND r.addressee_id = u.id) OR 
+                    (r.addressee_id = ? AND r.requester_id = u.id)
+                )
+                WHERE r.status = 'accepted' AND u.id != ?
+            `, userId, userId, userId);
 
-            return reply.send({ invitations });
+            return reply.send({ friends });
 
         } catch (error) {
             server.log.error(error);

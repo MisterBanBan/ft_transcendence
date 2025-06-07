@@ -9,3 +9,7 @@ export interface UserParams {
 export interface RequesterParams {
     requesterId: string;
 }
+
+export interface RemoveFriendBody {
+    friend_id: string;
+}

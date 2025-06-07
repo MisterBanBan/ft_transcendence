@@ -1,10 +1,10 @@
 import {FastifyInstance} from "fastify";
-import {RequesterParams} from "../../types/request.js";
+import {RequesterParams} from "../types/request.js";
 
 export default async function (server: FastifyInstance) {
-    server.delete<{
+    server.put<{
         Params: RequesterParams;
-    }>('/api/invitations/:requesterId/decline', {
+    }>('/api/users/:requesterId/accept', {
         schema: {
             params: {
                 type: 'object',
@@ -19,20 +19,31 @@ export default async function (server: FastifyInstance) {
                     properties: {
                         message: { type: 'string' }
                     }
+                },
+                404: {
+                    type: 'object',
+                    properties: {
+                        error: { type: 'string' }
+                    }
                 }
             }
         }
     }, async (request, reply) => {
         const { requesterId: requester_id } = request.params;
+        // In a real app, get from authentication middleware
         const addressee_id = request.headers['user-id'] as string;
 
         try {
-            await server.db.run(
-                'DELETE FROM relationships WHERE requester_id = ? AND addressee_id = ? AND status = ?',
-                requester_id, addressee_id, 'pending'
+            const result = await server.db.run(
+                'UPDATE relationships SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE requester_id = ? AND addressee_id = ? AND status = ?',
+                'accepted', requester_id, addressee_id, 'pending'
             );
 
-            return reply.send({ message: 'Invitation declined' });
+            if (result.changes === 0) {
+                return reply.status(404).send({ error: 'Invitation not found' });
+            }
+
+            return reply.send({ message: 'Invitation accepted' });
 
         } catch (error) {
             server.log.error(error);

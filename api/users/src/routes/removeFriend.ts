@@ -1,11 +1,11 @@
 import {FastifyInstance} from "fastify";
-import {InviteBody, UserParams} from "../../types/request.js";
+import {UserParams, RemoveFriendBody} from "../types/request.js";
 
 export default async function (server: FastifyInstance) {
-    server.post<{
+    server.delete<{
         Params: UserParams;
-        Body: InviteBody;
-    }>('/api/users/:userId/invite', {
+        Body: RemoveFriendBody;
+    }>('/api/users/:userId/removeFriend', {
         schema: {
             params: {
                 type: 'object',
@@ -17,16 +17,16 @@ export default async function (server: FastifyInstance) {
             body: {
                 type: 'object',
                 properties: {
-                    addressee_id: { type: 'string' }
+                    friend_id: { type: 'string' }
                 },
-                required: ['addressee_id']
+                required: ['friend_id']
             },
             response: {
-                201: {
+                200: {
                     type: 'object',
                     properties: {
                         message: { type: 'string' },
-                        invitation: {
+                        removed_relationship: {
                             type: 'object',
                             properties: {
                                 requester_id: { type: 'string' },
@@ -42,7 +42,7 @@ export default async function (server: FastifyInstance) {
                         error: { type: 'string' }
                     }
                 },
-                409: {
+                400: {
                     type: 'object',
                     properties: {
                         error: { type: 'string' }
@@ -52,7 +52,9 @@ export default async function (server: FastifyInstance) {
         }
     }, async (request, reply) => {
         const { userId: requester_id } = request.params;
-        const { addressee_id } = request.body;
+        const { friend_id } = request.body;
+
+        console.log('Removing friend:', friend_id, 'for user:', requester_id);
 
         try {
             // Check if both users exist
@@ -60,42 +62,46 @@ export default async function (server: FastifyInstance) {
                 'SELECT id FROM users WHERE id = ?',
                 requester_id
             );
-            const addresseeExists = await server.db.get(
+            const friendExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
-                addressee_id
+                friend_id
             );
 
-            if (!requesterExists || !addresseeExists) {
+            if (!requesterExists || !friendExists) {
                 return reply.status(404).send({ error: 'User not found' });
             }
 
-            // Prevent self-invitation
-            if (requester_id === addressee_id) {
-                return reply.status(400).send({ error: 'Cannot invite yourself' });
+            // Prevent self-removal
+            if (requester_id === friend_id) {
+                return reply.status(400).send({ error: 'Cannot remove yourself' });
             }
 
-            // Check if relationship already exists
+            // Check if friendship exists (bidirectional check)
             const existingRelation = await server.db.get(
-                'SELECT * FROM relationships WHERE requester_id = ? AND addressee_id = ?',
-                requester_id, addressee_id
+                `SELECT * FROM relationships 
+                 WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))
+                 AND status = 'accepted'`,
+                requester_id, friend_id, friend_id, requester_id
             );
 
-            if (existingRelation) {
-                return reply.status(409).send({ error: 'Invitation already exists' });
+            if (!existingRelation) {
+                return reply.status(404).send({ error: 'Friendship not found' });
             }
 
-            // Create the invitation
+            // Remove the friendship (delete the relationship)
             await server.db.run(
-                'INSERT INTO relationships (requester_id, addressee_id, status) VALUES (?, ?, ?)',
-                requester_id, addressee_id, 'pending'
+                `DELETE FROM relationships 
+                 WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))
+                 AND status = 'accepted'`,
+                requester_id, friend_id, friend_id, requester_id
             );
 
-            return reply.status(201).send({
-                message: 'Invitation sent successfully',
-                invitation: {
-                    requester_id,
-                    addressee_id,
-                    status: 'pending'
+            return reply.status(200).send({
+                message: 'Friend removed successfully',
+                removed_relationship: {
+                    requester_id: existingRelation.requester_id,
+                    addressee_id: existingRelation.addressee_id,
+                    status: existingRelation.status
                 }
             });
 
