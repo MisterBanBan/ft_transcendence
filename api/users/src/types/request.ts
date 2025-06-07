@@ -13,3 +13,11 @@ export interface RequesterParams {
 export interface RemoveFriendBody {
     friend_id: string;
 }
+
+export interface BlockUserBody {
+    blocked_user_id: string;
+}
+
+export interface UnblockUserBody {
+    blocked_user_id: string;
+}
