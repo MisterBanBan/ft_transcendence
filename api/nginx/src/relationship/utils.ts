@@ -1,3 +1,4 @@
+/*
 function getApiUrl() {
     return document.getElementById('apiUrl').value;
 }
@@ -12,4 +13,4 @@ function displayResponse(containerId, response, isError = false) {
     const container = document.getElementById(containerId);
     container.textContent = JSON.stringify(response, null, 2);
     container.className = `response ${isError ? 'error' : 'success'}`;
-}
+}*/

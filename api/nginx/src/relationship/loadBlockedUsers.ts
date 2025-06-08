@@ -1,3 +1,4 @@
+/*
 async function loadBlockedUsers() {
     const apiUrl = getApiUrl();
     const currentUserId = getCurrentUserId();
@@ -32,4 +33,4 @@ async function loadBlockedUsers() {
     } catch (error) {
         displayResponse('blockedResponse', { error: error.message }, true);
     }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 async function acceptInvitation() {
     const apiUrl = getApiUrl();
     const requesterId = document.getElementById('requesterIdAccept').value;
@@ -20,4 +21,4 @@ async function acceptInvitation() {
     } catch (error) {
         displayResponse('manageResponse', { error: error.message }, true);
     }
-}
+}*/

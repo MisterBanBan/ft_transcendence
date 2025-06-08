@@ -1,3 +1,4 @@
+/*
 async function loadInvitations() {
     const apiUrl = getApiUrl();
     const currentUserId = getCurrentUserId();
@@ -28,4 +29,4 @@ async function loadInvitations() {
     } catch (error) {
         displayResponse('invitationsResponse', { error: error.message }, true);
     }
-}
+}*/

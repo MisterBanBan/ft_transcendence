@@ -1,3 +1,4 @@
+/*
 async function removeFriend(friendId) {
     const currentUserId = getCurrentUserId();
 
@@ -27,4 +28,4 @@ async function removeFriend(friendId) {
     } catch (error) {
         displayResponse('removeFriendResponse', { error: error.message }, true);
     }
-}
+}*/

@@ -1,3 +1,4 @@
+/*
 async function loadFriends() {
     const apiUrl = getApiUrl();
     const currentUserId = getCurrentUserId();
@@ -35,4 +36,4 @@ async function loadFriends() {
     } catch (error) {
         displayResponse('friendsResponse', { error: error.message }, true);
     }
-}
+}*/

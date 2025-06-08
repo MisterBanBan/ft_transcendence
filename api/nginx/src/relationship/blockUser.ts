@@ -1,3 +1,4 @@
+/*
 async function blockUser(userIdToBlock) {
     const currentUserId = getCurrentUserId();
 
@@ -23,4 +24,4 @@ async function blockUser(userIdToBlock) {
     } catch (error) {
         displayResponse('blockUserResponse', { error: error.message }, true);
     }
-}
+}*/

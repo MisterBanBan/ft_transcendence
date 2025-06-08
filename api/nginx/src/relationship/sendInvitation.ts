@@ -1,3 +1,4 @@
+/*
 async function sendInvitation() {
     const apiUrl = getApiUrl();
     const currentUserId = getCurrentUserId();
@@ -25,4 +26,4 @@ async function sendInvitation() {
     } catch (error) {
         displayResponse('inviteResponse', { error: error.message }, true);
     }
-}
+}*/

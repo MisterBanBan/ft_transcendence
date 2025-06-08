@@ -1,3 +1,4 @@
+/*
 async function unblockUser(blockedUserId) {
     const currentUserId = getCurrentUserId();
 
@@ -27,4 +28,4 @@ async function unblockUser(blockedUserId) {
     } catch (error) {
         displayResponse('unblockResponse', { error: error.message }, true);
     }
-}
+}*/

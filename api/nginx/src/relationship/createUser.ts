@@ -1,3 +1,4 @@
+/*
 async function createUser() {
     const apiUrl = getApiUrl();
     const userId = document.getElementById('newUserId').value;
@@ -30,4 +31,4 @@ async function createUser() {
     } catch (error) {
         displayResponse('createUserResponse', { error: error.message }, true);
     }
-}
+}*/

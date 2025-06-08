@@ -92,33 +92,34 @@ export default async function (server: FastifyInstance) {
 
             // Check if relationship already exists
             const existingRelation = await server.db.get(
-                'SELECT * FROM relationships WHERE requester_id = ? AND addressee_id = ?',
-                blocker_id, blocked_user_id
+                `SELECT * FROM relationships 
+                 WHERE (requester_id = ? AND addressee_id = ?) 
+                 OR (requester_id = ? AND addressee_id = ?)`,
+                            blocker_id, blocked_user_id, blocked_user_id, blocker_id
             );
 
             if (existingRelation) {
-                // Update existing relationship to blocked
-                await server.db.run(
-                    'UPDATE relationships SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE requester_id = ? AND addressee_id = ?',
-                    'blocked', blocker_id, blocked_user_id
-                );
+                // If the existing relation has the blocker as addressee, we need to delete it first
+                // and create a new one with the blocker as requester
+                if (existingRelation.requester_id === blocked_user_id) {
+                    await server.db.run(
+                        'DELETE FROM relationships WHERE requester_id = ? AND addressee_id = ?',
+                        blocked_user_id, blocker_id
+                    );
+
+                    await server.db.run(
+                        'INSERT INTO relationships (requester_id, addressee_id, status) VALUES (?, ?, ?)',
+                        blocker_id, blocked_user_id, 'blocked'
+                    );
+                } else {
+                    // Update existing relationship to blocked
+                    await server.db.run(
+                        'UPDATE relationships SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE requester_id = ? AND addressee_id = ?',
+                        'blocked', blocker_id, blocked_user_id
+                    );
+                }
 
                 return reply.status(200).send({
-                    message: 'User blocked successfully',
-                    blocked_relationship: {
-                        requester_id: blocker_id,
-                        addressee_id: blocked_user_id,
-                        status: 'blocked'
-                    }
-                });
-            } else {
-                // Create new blocked relationship
-                await server.db.run(
-                    'INSERT INTO relationships (requester_id, addressee_id, status) VALUES (?, ?, ?)',
-                    blocker_id, blocked_user_id, 'blocked'
-                );
-
-                return reply.status(201).send({
                     message: 'User blocked successfully',
                     blocked_relationship: {
                         requester_id: blocker_id,
