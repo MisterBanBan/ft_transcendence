@@ -28,7 +28,6 @@ services:
     networks:
       - ft_transcendence
     restart: unless-stopped
-
   game:
     image: game
     container_name: game
@@ -42,6 +41,8 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - game-data:/app/database
     restart: on-failure
 
   matchmaking:
@@ -109,6 +110,10 @@ volumes:
     driver: local
   game-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/game/database
   tournament-data:
     driver: local
   users-data:

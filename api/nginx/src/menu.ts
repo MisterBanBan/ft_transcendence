@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/06 22:05:25 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/08 16:02:02 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,10 +89,10 @@ export class menu implements Component {
         this.eventFormListeners();
     }
 
-    private loadScore() {
+    private async loadScore() {
         this.formsContainer.innerHTML = '';
-
-        this.formsContainer.insertAdjacentHTML('beforeend', score());
+        const scoreHtml = await score();
+        this.formsContainer.insertAdjacentHTML('beforeend', scoreHtml);
         this.eventFormListeners();
     }
     

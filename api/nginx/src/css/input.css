@@ -17,6 +17,17 @@
     @apply font-omori text-sm sm:text-base md:text-2xl
     lg:text-4xl;
   }
+
+  .responsive-text-score {
+    @apply font-omori text-sm sm:text-xl md:text-4xl
+    lg:text-5xl text-white;
+  }
+
+  .responsive-text-ranking {
+    @apply font-omori text-sm sm:text-base md:text-xl
+    lg:text-2xl text-white;
+  }
+
   .responsive-form-login {
     @apply xs:gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-6 2xl:gap-8
     h-full w-full font-omori;
@@ -78,3 +89,5 @@
 .animate-cloud {
   animation: cloud 20s linear infinite;
 }
+
+
