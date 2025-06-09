@@ -54,7 +54,7 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
-	private socket = io("https://10.13.6.6:8083", {
+	private socket = io("https://10.13.4.6:8083", {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
 	});
@@ -195,11 +195,11 @@ export class pong implements Component {
         const imgWidth = this.backRect.width;
     
         // Update barres
-        [this.leftBar, this.rightBar, this.ball].forEach((bar, i) => {
-            if (i === 0)
-            	bar.position.x = imgWidth * 0.11284179687 - this.backRect.width * 0.01;
-            if (i === 1)
-                bar.position.x = imgWidth * 0.69526367187;
+		// place bar to 10% and 90% of the map
+		this.leftBar.position.x = imgWidth * 0.11284179687 - this.backRect.width * 0.01;
+		this.rightBar.position.x = imgWidth * 0.69526367187;
+        
+		[this.leftBar, this.rightBar, this.ball].forEach((bar, i) => {
             bar.element.style.left = `${imgLeft + bar.position.x}px`;
             bar.element.style.top = `${imgTop + bar.position.y}px`;
         });

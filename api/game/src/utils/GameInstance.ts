@@ -59,7 +59,7 @@ export class GameInstance {
 
 		if (this.state.ball.y <= this.limit.map.top + (this.intern.ball.height / 2) || this.state.ball.y >= this.limit.map.bot - (this.intern.ball.height / 2)) {
 			if (this.intern.ball.speed < this.limit.speed)
-				this.intern.ball.speed += 2;
+				this.intern.ball.speed += 1;
 			this.intern.ball.vy *= -1;
 			if (this.state.ball.y < this.limit.map.top + (this.intern.ball.height / 2))
 				this.state.ball.y = this.limit.map.top + (this.intern.ball.height / 2);
@@ -79,13 +79,13 @@ export class GameInstance {
 	private barUpdate()
 	{
 		if (this.intern.bar.left.Up && this.state.bar.left > this.limit.map.top + this.intern.bar.height / 2)
-			this.state.bar.left -= 10;
+			this.state.bar.left -= 15;
 		if (this.intern.bar.left.Down && this.state.bar.left < this.limit.map.bot - this.intern.bar.height / 2)
-			this.state.bar.left += 10;
+			this.state.bar.left += 15;
 		if (this.intern.bar.right.Up && this.state.bar.right > this.limit.map.top + this.intern.bar.height / 2)
-			this.state.bar.right -= 10;
+			this.state.bar.right -= 15;
 		if (this.intern.bar.right.Down && this.state.bar.right < this.limit.map.bot - this.intern.bar.height / 2)
-			this.state.bar.right += 10;
+			this.state.bar.right += 15;
 
 		const defenseArea = (this.limit.map.right - this.limit.map.left) * 0.1;
 		if (this.state.ball.x - this.intern.ball.width / 2 <= this.limit.map.left + defenseArea)
@@ -105,12 +105,13 @@ export class GameInstance {
 
 			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
 			{
-				// switch to a make the player chose the ball direction when hiting a pad
-				this.intern.ball.vx = this.intern.ball.vx < 0 ? -this.intern.ball.vx : this.intern.ball.vx;
-				if (closest_y >= top + this.intern.bar.height * 0.05)
-					this.intern.ball.vy = this.intern.ball.vy < 0 ? -this.intern.ball.vy : this.intern.ball.vy;
-				if (closest_y <= bot - this.intern.bar.height * 0.05)
-					this.intern.ball.vy = 0.5;
+				const center_dist = this.state.bar.left - closest_y;
+				const bar_ratio = -center_dist / this.intern.bar.height / 2;
+				let new_angle = bar_ratio * Math.PI;
+				this.intern.ball.vx = Math.cos(new_angle);
+				this.intern.ball.vy = Math.sin(new_angle);
+				if (this.intern.ball.speed < this.limit.speed)
+					this.intern.ball.speed += 1;
 			}
 		}
 		if (this.state.ball.x + this.intern.ball.width / 2 >= this.limit.map.right - defenseArea)
@@ -130,11 +131,13 @@ export class GameInstance {
 
 			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
 			{
-				this.intern.ball.vx = this.intern.ball.vx < 0 ? this.intern.ball.vx : -this.intern.ball.vx;
-				if (closest_y >= top + this.intern.bar.height * 0.05)
-					this.intern.ball.vy = this.intern.ball.vy < 0 ? -this.intern.ball.vy : this.intern.ball.vy;
-				if (closest_y <= bot - this.intern.bar.height * 0.05)
-					this.intern.ball.vy = this.intern.ball.vy < 0 ? this.intern.ball.vy : -this.intern.ball.vy;
+				const center_dist = this.state.bar.right - closest_y;
+				const bar_ratio = center_dist / this.intern.bar.height / 2;
+				let new_angle = Math.PI + bar_ratio * Math.PI;
+				this.intern.ball.vx = Math.cos(new_angle);
+				this.intern.ball.vy = Math.sin(new_angle);
+				if (this.intern.ball.speed < this.limit.speed)
+					this.intern.ball.speed += 1;
 			}
 		}
 	}
