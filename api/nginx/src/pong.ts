@@ -120,6 +120,7 @@ export class pong implements Component {
     }
     
     public init(): void{
+		this.socket.emit("local");
         this.imgPong.onload = () => {
             this.leftBar = new Bar(this.leftBEle);
             this.rightBar = new Bar(this.rightBEle);
@@ -246,7 +247,8 @@ export class pong implements Component {
         	score: {player1: number, player2: number}}}) => {
         	if (data && data.state && data.state.ball) {
             	ball = data.state.ball;
-                // img ball pos = ball pos * ratio current_size and base_size - ball size / 2 
+                
+				// img ball pos = ball pos * ratio current_size and base_size - ball size / 2 
                 this.ball.position.x =  data.state.ball.x * this.backRect.width / 4096 - (this.ball.height * 0.5);
                 this.ball.position.y = data.state.ball.y * this.backRect.height / 1714 - (this.ball.height * 0.5);
 				this.leftBar.position.y = data.state.bar.left * this.backRect.height / 1714 - (this.leftBar.height * 0.5) ;
