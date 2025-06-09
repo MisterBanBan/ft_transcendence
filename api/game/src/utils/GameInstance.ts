@@ -43,11 +43,11 @@ export class GameInstance {
   
 	private updateGame() {
 		
-		this.barUpdate();
 		
 		this.state.ball.x += this.intern.ball.vx * this.intern.ball.speed;
 		this.state.ball.y += this.intern.ball.vy * this.intern.ball.speed;
 		
+		this.barUpdate();
 
 		if (this.state.ball.x <= this.limit.map.left + (this.intern.ball.width / 2) || this.state.ball.x >= this.limit.map.right - (this.intern.ball.width / 2)) {
 			this.updateScore();
@@ -90,24 +90,51 @@ export class GameInstance {
 		const defenseArea = (this.limit.map.right - this.limit.map.left) * 0.1;
 		if (this.state.ball.x - this.intern.ball.width / 2 <= this.limit.map.left + defenseArea)
 		{
-			const closest_x = Math.max(this.limit.map.left + defenseArea, Math.min(this.limit.map.left + defenseArea + this.intern.bar.width, this.state.ball.x));
-			const closest_y = Math.max(this.state.bar.left - this.intern.bar.height / 2, Math.min(this.state.bar.left + this.intern.bar.width / 2, this.state.ball.y))
+			const left	= this.limit.map.left + defenseArea;
+			const right = this.limit.map.left + defenseArea + this.intern.bar.width;
+			const top   = this.state.bar.left - this.intern.bar.height / 2;
+			const bot	= this.state.bar.left + this.intern.bar.height / 2;
+
+			const closest_x = Math.max(left, Math.min(right, this.state.ball.x));
+			const closest_y = Math.max(top, Math.min(bot, this.state.ball.y))
 			
 			const dx = this.state.ball.x - closest_x
 			const dy = this.state.ball.y - closest_y
 			
-			const distance_squared = dx*dx + dy*dy
+			const distance_squared = dx*dx + dy*dy;
 
 			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
 			{
-				this.intern.ball.vx *= -1;
+				// switch to a make the player chose the ball direction when hiting a pad
+				this.intern.ball.vx = this.intern.ball.vx < 0 ? -this.intern.ball.vx : this.intern.ball.vx;
+				if (closest_y >= top + this.intern.bar.height * 0.05)
+					this.intern.ball.vy = this.intern.ball.vy < 0 ? -this.intern.ball.vy : this.intern.ball.vy;
+				if (closest_y <= bot - this.intern.bar.height * 0.05)
+					this.intern.ball.vy = 0.5;
 			}
 		}
 		if (this.state.ball.x + this.intern.ball.width / 2 >= this.limit.map.right - defenseArea)
 		{
-			if (this.state.ball.y < this.state.bar.right + this.intern.bar.height / 2 && this.state.ball.y > this.state.bar.right - this.intern.bar.height / 2)
+			const left	= this.limit.map.right - defenseArea - this.intern.bar.width;
+			const right = this.limit.map.right - defenseArea;
+			const top   = this.state.bar.right - this.intern.bar.height / 2;
+			const bot	= this.state.bar.right + this.intern.bar.height / 2;
+
+			const closest_x = Math.max(left, Math.min(right, this.state.ball.x));
+			const closest_y = Math.max(top, Math.min(bot, this.state.ball.y))
+			
+			const dx = this.state.ball.x - closest_x
+			const dy = this.state.ball.y - closest_y
+			
+			const distance_squared = dx*dx + dy*dy;
+
+			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
 			{
-				this.intern.ball.vx *= -1;
+				this.intern.ball.vx = this.intern.ball.vx < 0 ? this.intern.ball.vx : -this.intern.ball.vx;
+				if (closest_y >= top + this.intern.bar.height * 0.05)
+					this.intern.ball.vy = this.intern.ball.vy < 0 ? -this.intern.ball.vy : this.intern.ball.vy;
+				if (closest_y <= bot - this.intern.bar.height * 0.05)
+					this.intern.ball.vy = this.intern.ball.vy < 0 ? this.intern.ball.vy : -this.intern.ball.vy;
 			}
 		}
 	}
