@@ -197,9 +197,9 @@ export class pong implements Component {
         // Update barres
         [this.leftBar, this.rightBar, this.ball].forEach((bar, i) => {
             if (i === 0)
-            	bar.position.x = imgWidth * 0.11284179687;
+            	bar.position.x = imgWidth * 0.11284179687 - this.backRect.width * 0.01;
             if (i === 1)
-                bar.position.x = imgWidth * 0.69526367187 - this.backRect.width * 0.01;
+                bar.position.x = imgWidth * 0.69526367187;
             bar.element.style.left = `${imgLeft + bar.position.x}px`;
             bar.element.style.top = `${imgTop + bar.position.y}px`;
         });
@@ -249,8 +249,8 @@ export class pong implements Component {
                 // img ball pos = ball pos * ratio current_size and base_size - ball size / 2 
                 this.ball.position.x =  data.state.ball.x * this.backRect.width / 4096 - (this.ball.height * 0.5);
                 this.ball.position.y = data.state.ball.y * this.backRect.height / 1714 - (this.ball.height * 0.5);
-				this.leftBar.position.y = data.state.bar.left * this.backRect.height / 1714;
-				this.rightBar.position.y = data.state.bar.right * this.backRect.height / 1714;
+				this.leftBar.position.y = data.state.bar.left * this.backRect.height / 1714 - (this.leftBar.height * 0.5) ;
+				this.rightBar.position.y = data.state.bar.right * this.backRect.height / 1714 - (this.rightBar.height * 0.5);
 				this.rafId    = requestAnimationFrame(this.gameLoop);
             }
             if (data && data.state && data.state.score)

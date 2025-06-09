@@ -28,7 +28,7 @@ export class GameInstance {
 				left: { x: (this.limit.map.right - this.limit.map.left) / 10 ,Up: false, Down: false },
 				right: { x: this.limit.map.right - (this.limit.map.right - this.limit.map.left) / 10 ,Up: false, Down: false},
 				width: 40.96,
-				height: 819.2}
+				height: 342.8}
 		};
 	  
 	  this.startGameLoop();
@@ -42,18 +42,12 @@ export class GameInstance {
 	}
   
 	private updateGame() {
-
+		
+		this.barUpdate();
+		
 		this.state.ball.x += this.intern.ball.vx * this.intern.ball.speed;
 		this.state.ball.y += this.intern.ball.vy * this.intern.ball.speed;
 		
-		if (this.intern.bar.left.Up)
-			this.state.bar.left -= 10;
-		if (this.intern.bar.left.Down)
-			this.state.bar.left += 10;
-		if (this.intern.bar.right.Up)
-			this.state.bar.right -= 10;
-		if (this.intern.bar.right.Down)
-			this.state.bar.right += 10;
 
 		if (this.state.ball.x <= this.limit.map.left + (this.intern.ball.width / 2) || this.state.ball.x >= this.limit.map.right - (this.intern.ball.width / 2)) {
 			this.updateScore();
@@ -80,6 +74,42 @@ export class GameInstance {
 		  state: this.state,
 		});
 	  }
+	}
+
+	private barUpdate()
+	{
+		if (this.intern.bar.left.Up && this.state.bar.left > this.limit.map.top + this.intern.bar.height / 2)
+			this.state.bar.left -= 10;
+		if (this.intern.bar.left.Down && this.state.bar.left < this.limit.map.bot - this.intern.bar.height / 2)
+			this.state.bar.left += 10;
+		if (this.intern.bar.right.Up && this.state.bar.right > this.limit.map.top + this.intern.bar.height / 2)
+			this.state.bar.right -= 10;
+		if (this.intern.bar.right.Down && this.state.bar.right < this.limit.map.bot - this.intern.bar.height / 2)
+			this.state.bar.right += 10;
+
+		const defenseArea = (this.limit.map.right - this.limit.map.left) * 0.1;
+		if (this.state.ball.x - this.intern.ball.width / 2 <= this.limit.map.left + defenseArea)
+		{
+			const closest_x = Math.max(this.limit.map.left + defenseArea, Math.min(this.limit.map.left + defenseArea + this.intern.bar.width, this.state.ball.x));
+			const closest_y = Math.max(this.state.bar.left - this.intern.bar.height / 2, Math.min(this.state.bar.left + this.intern.bar.width / 2, this.state.ball.y))
+			
+			const dx = this.state.ball.x - closest_x
+			const dy = this.state.ball.y - closest_y
+			
+			const distance_squared = dx*dx + dy*dy
+
+			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
+			{
+				this.intern.ball.vx *= -1;
+			}
+		}
+		if (this.state.ball.x + this.intern.ball.width / 2 >= this.limit.map.right - defenseArea)
+		{
+			if (this.state.ball.y < this.state.bar.right + this.intern.bar.height / 2 && this.state.ball.y > this.state.bar.right - this.intern.bar.height / 2)
+			{
+				this.intern.ball.vx *= -1;
+			}
+		}
 	}
 
 	private updateScore()
