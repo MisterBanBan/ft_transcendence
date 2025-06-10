@@ -61,106 +61,12 @@ export class AIInstance {
 	  }
 	}
 
-	private barUpdate()
-	{
-		if (this.intern.bar.left.Up && this.state.bar.left > this.limit.map.top + this.intern.bar.height / 2)
-			this.state.bar.left -= 15;
-		if (this.intern.bar.left.Down && this.state.bar.left < this.limit.map.bot - this.intern.bar.height / 2)
-			this.state.bar.left += 15;
-		if (this.intern.bar.right.Up && this.state.bar.right > this.limit.map.top + this.intern.bar.height / 2)
-			this.state.bar.right -= 15;
-		if (this.intern.bar.right.Down && this.state.bar.right < this.limit.map.bot - this.intern.bar.height / 2)
-			this.state.bar.right += 15;
+	private replaceBar() {
 
-		const defenseArea = (this.limit.map.right - this.limit.map.left) * 0.1;
-		if (this.state.ball.x - this.intern.ball.width / 2 <= this.limit.map.left + defenseArea)
-		{
-			const left	= this.limit.map.left + defenseArea;
-			const right = this.limit.map.left + defenseArea + this.intern.bar.width;
-			const top   = this.state.bar.left - this.intern.bar.height / 2;
-			const bot	= this.state.bar.left + this.intern.bar.height / 2;
-
-			const closest_x = Math.max(left, Math.min(right, this.state.ball.x));
-			const closest_y = Math.max(top, Math.min(bot, this.state.ball.y))
-			
-			const dx = this.state.ball.x - closest_x
-			const dy = this.state.ball.y - closest_y
-			
-			const distance_squared = dx*dx + dy*dy;
-
-			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
-			{
-				const center_dist = this.state.bar.left - closest_y;
-				const bar_ratio = -center_dist / this.intern.bar.height / 2;
-				let new_angle = bar_ratio * Math.PI;
-				this.intern.ball.vx = Math.cos(new_angle);
-				this.intern.ball.vy = Math.sin(new_angle);
-				if (this.intern.ball.speed < this.limit.speed)
-					this.intern.ball.speed += 1;
-			}
-		}
-		if (this.state.ball.x + this.intern.ball.width / 2 >= this.limit.map.right - defenseArea)
-		{
-			const left	= this.limit.map.right - defenseArea - this.intern.bar.width;
-			const right = this.limit.map.right - defenseArea;
-			const top   = this.state.bar.right - this.intern.bar.height / 2;
-			const bot	= this.state.bar.right + this.intern.bar.height / 2;
-
-			const closest_x = Math.max(left, Math.min(right, this.state.ball.x));
-			const closest_y = Math.max(top, Math.min(bot, this.state.ball.y))
-			
-			const dx = this.state.ball.x - closest_x
-			const dy = this.state.ball.y - closest_y
-			
-			const distance_squared = dx*dx + dy*dy;
-
-			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
-			{
-				const center_dist = this.state.bar.right - closest_y;
-				const bar_ratio = center_dist / this.intern.bar.height / 2;
-				let new_angle = Math.PI + bar_ratio * Math.PI;
-				this.intern.ball.vx = Math.cos(new_angle);
-				this.intern.ball.vy = Math.sin(new_angle);
-				if (this.intern.ball.speed < this.limit.speed)
-					this.intern.ball.speed += 1;
-			}
-		}
-	}
-
-	private updateScore()
-	{
-		if (this.state.ball.x <= this.limit.map.left + (this.intern.ball.width / 2))
-			this.state.score.player2 += 1;
-		else
-			this.state.score.player1 += 1;
-		
-		this.state.ball.x = (this.limit.map.right - this.limit.map.left) / 2;
-		this.state.ball.y = (this.limit.map.bot - this.limit.map.top) / 2;
-
-		const new_angle = Math.random() * 2 * Math.PI;
-		this.intern.ball.vx = Math.cos(new_angle);
-		this.intern.ball.vy = Math.sin(new_angle);
-		this.intern.ball.speed = 10;
 	}
   
-	public handleInput(playerId: string, input: { direction: string, state: boolean, player: string}) {
-		const player = this.state.players.find((p: any) => p.id === playerId); // changer fct pour gerer un 1v1 entre 2 poste distant
-		if (player) {
-			if (input.player == "left")
-			{
-				if (input.direction == "up")
-					this.intern.bar.left.Up = input.state;
-				if (input.direction == "down")
-					this.intern.bar.left.Down = input.state;
-			}
-			if (input.player == "right")
-			{
-				if (input.direction == "up")
-					this.intern.bar.right.Up = input.state;
-				if (input.direction == "down")
-					this.intern.bar.right.Down = input.state;
-			}
-		}
+	public handleUpdate(playerId: string, input: { direction: string, state: boolean, player: string}) {
+		
 	}
   
 	private stop() {

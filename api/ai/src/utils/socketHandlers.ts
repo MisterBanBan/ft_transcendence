@@ -21,7 +21,7 @@ export function registerSocketHandlers(socket: Socket, app: FastifyInstance) {
     const { gameId, playerId, input } = data;
     const instance = aiInstances.get(gameId);
     if (instance) {
-      instance.handleInput(playerId, input);
+      instance.handleUpdate(playerId, input);
     }
   });
 }
