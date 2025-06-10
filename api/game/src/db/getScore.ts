@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/07 17:51:07 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/08 16:07:48 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/08 18:53:11 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,16 @@ export async function getAllGameScores(db: Database, limit: number = 20) : Promi
     );
 }
 
-export async function getPlayerScore(db: Database, winnerId: number, looserId: number, limit: number = 10) :Promise<Score[]> {
+export async function getPlayerScore(db: Database, winnerId: string, limit: number = 10) :Promise<Score[]> {
     return await db.all<Score[]>(
         `SELECT winner_score as winnerScore, loser_score as looserScore, 
                 winner as winnerNickname, loser as looserNickname, created_at as createdAt
          FROM history
-         WHERE winner = (SELECT nickname FROM users WHERE id = ?)
-         OR looser = (SELECT nickname FROM users WHERE id = ?)
+         WHERE winner = ?
+         OR looser = ?
          ORDER BY created_at DESC
          LIMIT ?`,
-         [winnerId, looserId, limit]
+         [winnerId,winnerId, limit]
     );
 }
 /*

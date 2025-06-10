@@ -6,20 +6,20 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/08 16:02:02 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/10 21:04:04 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Component } from "./component.js";
-import { loginForm } from "./loginForm.js";
-import { registerForm } from "./registerForm.js";
-import { profile } from "./profile.js";
-import { score } from "./score.js";
-import { settings } from "./settings.js";
-import { newPseudo } from "./newPseudo.js";
-import { newPass } from "./newPass.js";
-import { newTwoFa } from "./newTwoFa.js";
-
+import { loginForm } from "./menuInsert/loginForm.js";
+import { registerForm } from "./menuInsert/registerForm.js";
+import { profile } from "./menuInsert/profile.js";
+import { score } from "./score/score.js";
+import { settings } from "./menuInsert/settings.js";
+import { newPseudo } from "./menuInsert/newPseudo.js";
+import { newPass } from "./menuInsert/newPass.js";
+import { newTwoFa } from "./menuInsert/newTwoFa.js";
+import { game } from "./menuInsert/game.js";
 
 
 
@@ -73,11 +73,15 @@ export class menu implements Component {
                 this.visibleForm = "profile";
             } else {
                 this.formsContainer.innerHTML = '';
+                this.formsContainer.insertAdjacentHTML('beforeend', game());
+
+                this.loadAcceuil();
                 this.visibleForm = "none";
             }
         } 
         else {
             this.formsContainer.innerHTML = '';
+            this.formsContainer.insertAdjacentHTML('beforeend', game());
             this.visibleForm = "none";
         }
     };
@@ -98,23 +102,31 @@ export class menu implements Component {
     
     private loadSettings() {
         this.formsContainer.innerHTML = '';
-
+        if (this.videoMain.src !== '/img/acceuilParam.mp4') {
+            this.videoMain.poster = "/img/acceuilDraw.png";
+            this.videoMain.src = "/img/acceuilParam.mp4";
+            this.videoMain.load(); 
+        }
         this.formsContainer.insertAdjacentHTML('beforeend', settings());
         this.eventFormListeners();
     }
 
     private logOut() {
         this.formsContainer.innerHTML = '';
+        this.formsContainer.insertAdjacentHTML('beforeend', game());
+
+        this.loadAcceuil();
         this.visibleForm = "none";
         this.eventFormListeners();
     }
+
 
     private newPseudo(){
         this.formsContainer.innerHTML = '';
 
         this.formsContainer.insertAdjacentHTML('beforeend', newPseudo());
         document.getElementById('pseudoReturnBtn')?.addEventListener('click', () => this.returnForm());
-
+        
     }
     private newPassword(){
         this.formsContainer.innerHTML = '';
@@ -142,6 +154,9 @@ export class menu implements Component {
 
     private returnForm() {
         this.formsContainer.innerHTML = '';
+        this.formsContainer.insertAdjacentHTML('beforeend', game());
+
+        this.loadAcceuil();
         this.visibleForm = "none";
         this.eventFormListeners();
     }
@@ -158,6 +173,13 @@ export class menu implements Component {
         document.getElementById('newPass')?.addEventListener('click', () => this.newPassword());
         document.getElementById('new2fa')?.addEventListener('click', () => this.new2fa());
 
+    }
+    
+
+    private loadAcceuil (){
+        this.videoMain.poster = "/img/pong.png";
+        this.videoMain.src = '/img/acceuil.mp4';
+        this.videoMain.load();
     }
     
     private resize = () => {

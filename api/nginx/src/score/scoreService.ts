@@ -6,13 +6,16 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/08 14:19:04 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/08 15:39:25 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/08 18:53:49 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 export async function getGlobalScore() {
     try {
-        const response = await fetch('/api/game');
+        const response = await fetch(`/api/game/getScore`, {
+            method: "GET", 
+          });
+          console.log("Status HTTP:", response.status);
         const data = await response.json();
         if(!data.success) {
             throw new Error('Failed to fetch scores');
@@ -20,14 +23,17 @@ export async function getGlobalScore() {
         return data.data;
     }
     catch (error) {
+        
         console.error('Error fetching global scores:', error);
         return [];
     }
 }
 
-export async function getPlayerScore(userId: number) {
+export async function getPlayerScore(userId: string) {
     try {
-        const response = await fetch(`/api/game/player/${userId}`);
+        const response = await fetch(`/api/game/getScore/player/${userId}`, {
+            method: "GET", 
+          });
         const data = await response.json();
         if(!data.success) {
             throw new Error('Failed to fetch player scores');

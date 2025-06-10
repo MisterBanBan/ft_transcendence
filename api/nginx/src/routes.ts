@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/06 13:00:32 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/09 16:02:06 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ export const routes: Route[] = [
             <section id="sec_video" class="w-screen h-screen relative overflow-hidden flex items-center justify-center">
               <video autoplay loop muted id="video_main"
                 class="block max-w-full max-h-full object-contain">
-                <source src="/img/game.mp4" type="video/mp4">
+                <source src="/img/acceuil.mp4" type="video/mp4">
               </video>
-              <button type="button" id="user" class="absolute top-[10%] right-[30%] w-10 h-10 rounded-full bg-indigo-500 flex text-white shadow-lg hover:bg-indigo-600 focus:outline-none">
+              <button type="button" id="user" class="absolute flex items-center justify-center top-[20%] right-[30%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto">
                   
               </button>
              
