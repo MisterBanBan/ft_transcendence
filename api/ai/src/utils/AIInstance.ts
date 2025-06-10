@@ -1,77 +1,62 @@
 import { Socket } from "socket.io";
 
-export class GameInstance {
+export class AIInstance {
 	private interval!: NodeJS.Timeout;
-	state: any;
+	bar: any;
+	ball: any;
 	private limit: any;
-	private intern: any;
+	private input: any;
 
 	constructor(
 	  public id: string,
-	  private players: string[],
 	  private io: any,
 	  private getMatchmakingSocket: () => Socket | null
 	) {
 		this.limit = {
-			speed: 150,
 			map: {left: 164, top: 123, right: 3146, bot: 1590}
 		};	
-		this.state = {
-			players: players.map((id, idx) => ({ id, x: 100 + idx * 50 })),
-			bar: {left:  (this.limit.map.bot - this.limit.map.top) / 2, right: (this.limit.map.bot - this.limit.map.top) / 2 },
-			ball: { x: (this.limit.map.right - this.limit.map.left) / 2, y: (this.limit.map.bot - this.limit.map.top) / 2 },
-			score: {player1: 0, player2: 0}
+		this.bar = {
+			left: { y: (this.limit.map.bot - this.limit.map.top) / 2, x: (this.limit.map.right - this.limit.map.left) / 10 },
+			right: { y: (this.limit.map.bot - this.limit.map.top) / 2, x: this.limit.map.right - (this.limit.map.right - this.limit.map.left) / 10 },
+			width: 40.96,
+			height: 342.8
 		};
-		this.intern = {
-			ball: { width: 85.7, height: 85.7,  vx: Math.cos(Math.PI / 4), vy: Math.sin(Math.PI / 4), speed: 10 },
-			bar: {	
-				left: { x: (this.limit.map.right - this.limit.map.left) / 10 ,Up: false, Down: false },
-				right: { x: this.limit.map.right - (this.limit.map.right - this.limit.map.left) / 10 ,Up: false, Down: false},
-				width: 40.96,
-				height: 342.8}
+		this.ball = {
+			old: { x: (this.limit.map.right - this.limit.map.left) / 2, y: (this.limit.map.bot - this.limit.map.top) / 2 },
+			new: { x: (this.limit.map.right - this.limit.map.left) / 2, y: (this.limit.map.bot - this.limit.map.top) / 2 },
+			width: 85.7,
+			height: 85.7,
+			vx: Math.cos(Math.PI / 4),
+			vy: Math.sin(Math.PI / 4)
+		};
+		this.input = {
+			up: false,
+			down: false
 		};
 	  
-	  this.startGameLoop();
+		this.startAILoop();
 	}
   
-	private startGameLoop() {
-	  console.log(`[${this.id}] startGameLoop called`);
-	  this.interval = setInterval(() => {
-		this.updateGame();
-	  }, 1000 / 60);
+	private startAILoop() {
+		console.log(`[${this.id}] startAILoop called`);
+		this.interval = setInterval(() => {
+			this.updateAI();
+		}, 1000 / 60);
 	}
   
-	private updateGame() {
+	private updateAI() {
 		
-		
-		this.state.ball.x += this.intern.ball.vx * this.intern.ball.speed;
-		this.state.ball.y += this.intern.ball.vy * this.intern.ball.speed;
-		
-		this.barUpdate();
-
-		if (this.state.ball.x <= this.limit.map.left + (this.intern.ball.width / 2) || this.state.ball.x >= this.limit.map.right - (this.intern.ball.width / 2)) {
-			this.updateScore();
-			if (this.state.ball.x < this.limit.map.left + (this.intern.ball.width / 2))
-				this.state.ball.x = this.limit.map.left + (this.intern.ball.width / 2);
-			if (this.state.ball.x > this.limit.map.right - (this.intern.ball.width / 2))
-				this.state.ball.x = this.limit.map.right - (this.intern.ball.width / 2);
+		if (this.ball.new.x < this.ball.old.x)
+		{
+			this.replaceBar();
+			return ;
 		}
 
-		if (this.state.ball.y <= this.limit.map.top + (this.intern.ball.height / 2) || this.state.ball.y >= this.limit.map.bot - (this.intern.ball.height / 2)) {
-			if (this.intern.ball.speed < this.limit.speed)
-				this.intern.ball.speed += 1;
-			this.intern.ball.vy *= -1;
-			if (this.state.ball.y < this.limit.map.top + (this.intern.ball.height / 2))
-				this.state.ball.y = this.limit.map.top + (this.intern.ball.height / 2);
-			if (this.state.ball.y > this.limit.map.bot - (this.intern.ball.height / 2))
-				this.state.ball.y = this.limit.map.bot - (this.intern.ball.height / 2);
-		}
-  
-	  const matchmakingSocket = this.getMatchmakingSocket();
-	  if (matchmakingSocket) {
-		matchmakingSocket.emit("game-update", {
-		  gameId: this.id,
-		  state: this.state,
+		const matchmakingSocket = this.getMatchmakingSocket();
+		if (matchmakingSocket) {
+		matchmakingSocket.emit("player-input", {
+			gameId: this.id,
+			input: this.input,
 		});
 	  }
 	}

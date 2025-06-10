@@ -9,7 +9,7 @@ export function registerSocketHandlers(socket: Socket, app: FastifyInstance) {
   matchmakingSocket = socket;
 
   socket.on("disconnect", () => {
-    app.log.info(`❌ Client disconnected: ${socket.id}`);
+    app.log.info(`Client disconnected: ${socket.id}`);
   });
 
   socket.on("create-game", (data: { gameId: string; playerIds: string[] }) => {
