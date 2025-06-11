@@ -12,6 +12,9 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - users-data:/app/database
+      - ./uploads:/app/uploads
     restart: unless-stopped
 
   tournament:
@@ -27,7 +30,10 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
-    restart: unless-stopped
+    volumes:
+      - tournament-data:/app/database
+    restart: on-failure
+
   game:
     image: game
     container_name: game
@@ -58,13 +64,15 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - matchmaking-data:/app/database
     restart: on-failure
 
-  authentication:
-    image: authentication
-    container_name: authentication
+  auth:
+    image: auth
+    container_name: auth
     build:
-      context: api/authentication
+      context: api/auth
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
       interval: 10s
@@ -73,6 +81,8 @@ services:
       start_period: 10s
     networks:
       - ft_transcendence
+    volumes:
+      - auth-data:/app/database
     restart: on-failure
 
   nginx:
@@ -80,6 +90,8 @@ services:
     container_name: nginx
     build:
       context: api/nginx
+    volumes:
+      - ./uploads:/usr/share/nginx/front/uploads
     ports:
       - "8443:443"
     depends_on:
@@ -91,7 +103,7 @@ services:
         condition: service_healthy
       game:
         condition: service_healthy
-      authentication:
+      auth:
         condition: service_healthy
     networks:
       - ft_transcendence
@@ -102,12 +114,24 @@ networks:
     driver: bridge
 
 volumes:
-  nginx-data:
+  users-data:
     driver: local
-  authentication-data:
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/users/database
+  auth-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/auth/database
   matchmaking-data:
     driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/matchmaking/database
   game-data:
     driver: local
     driver_opts:
@@ -116,5 +140,7 @@ volumes:
       device: ./api/game/database
   tournament-data:
     driver: local
-  users-data:
-    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/tournament/database

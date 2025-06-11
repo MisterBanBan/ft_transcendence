@@ -20,6 +20,9 @@ WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY package.json .
 
+ENV FRONTEND_URL=${FRONTEND_URL}
+ENV USERS_SERVICE_PORT=${USERS_SERVICE_PORT}
+
 RUN npm install --production
 
-CMD ["node", "dist/index.js"]
+CMD ["node", "dist/server.js"]
