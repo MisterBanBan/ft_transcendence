@@ -14,7 +14,6 @@
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
 
-
 class Router {
     private routes: Route[];
     private appDiv: HTMLElement;
