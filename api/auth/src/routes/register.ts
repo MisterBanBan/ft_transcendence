@@ -10,46 +10,55 @@ import {validatePassword} from "../utils/validate-password.js";
 import {validateUsername} from "../utils/validate-username.js";
 
 export default async function (server: FastifyInstance) {
-	server.post('/api/auth/register', async (request, reply) => {
-
-		let {username, password, cpassword} = request.body as { username: string, password: string, cpassword: string };
-
-		if (request.cookies?.token) {
-			return reply.status(400).send({
-				error: "Already logged.",
-				type: "global"
-			});
+	server.post('/api/auth/register', {
+		schema: {
+			body: {
+				type: "object",
+				required: ["username", "password", "cpassword"],
+				properties: {
+					username: { type: "string", minLength: 3, maxLength: 16 },
+					password: { type: "string", minLength: 8 },
+					cpassword: { type: "string", minLength: 8 }
+				},
+			},
+			response: {
+				200: {
+					type: "object",
+					properties: {},
+					additionalProperties: false,
+				},
+			}
 		}
+	}, async (request, reply) => {
 
-		if (!username || !password || !cpassword) {
-			return reply.status(400).send({
-				error: 'Tous les champs sont requis.',
-				type: 'global'
-			});
-		}
+		let {username, password, cpassword} = request.body as {
+			username: string,
+			password: string,
+			cpassword: string
+		};
 
 		const errUsername = await validateUsername(username);
 		if (!errUsername) {
 			return reply.status(400).send({
-				error: 'Invalid username.',
-				type: "username"
+				error: 'Bad Request',
+				message: 'Invalid username.',
 			});
 		}
 
 		const errPassword = await validatePassword(password, cpassword)
 		if (errPassword) {
 			return reply.status(400).send({
-				error: errPassword,
-				type: "password"
+				error: 'Bad Request',
+				message: errPassword,
 			});
 		}
 
 		try {
 			password = await argon2.hash(password, {secret: Buffer.from(process.env.ARGON_SECRET!)});
 		} catch (err) {
-			return reply.status(400).send({
-				error: `An error occurred while registering a password: ${err}.`,
-				type: "password"
+			return reply.status(500).send({
+				error: 'Internal Server Error',
+				message: `An error occurred while registering a password: ${err}.`
 			});
 		}
 
@@ -57,8 +66,8 @@ export default async function (server: FastifyInstance) {
 			let user = await getUserByUsername(server.db, username);
 			if (user) {
 				return reply.status(400).send({
-					error: "Username already in use.",
-					type: "username"
+					error: 'Bad Request',
+					message: "Username already in use.",
 				});
 			}
 
@@ -73,9 +82,9 @@ export default async function (server: FastifyInstance) {
 
 			const id = await addUser(server.db, userData);
 			if (id == undefined) {
-				return reply.status(400).send({
-					error: "An error occured while registering.",
-					type: "global"
+				return reply.status(500).send({
+					error: 'Internal Server Error',
+					message: 'An error occured while registering.',
 				});
 			}
 
@@ -89,12 +98,12 @@ export default async function (server: FastifyInstance) {
 
 			await setCookie(reply, token);
 
-			return reply.status(200).send({});
+			return reply.status(200).send({ success: true });
 
 		} catch (err) {
-			return reply.status(400).send({
-				error: `An error occurred: ${err}.`,
-				type: "global"
+			return reply.status(500).send({
+				error: 'Internal Server Error',
+				message: `An error occurred: ${err}.`,
 			});
 		}
 	})

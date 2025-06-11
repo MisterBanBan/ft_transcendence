@@ -44,7 +44,7 @@ export class ChangeUsername implements Component{
 						return;
 					}
 
-					error.textContent = data.error;
+					error.textContent = data.message;
 					return;
 				}
 

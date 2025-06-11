@@ -15,17 +15,23 @@ export default async function (server: FastifyInstance) {
 		const user = request.currentUser! as User;
 
 		if (user.tfa) {
-			return reply.status(401).send({ error: "2FA already enabled" });
+			return reply.status(403).send({
+				error: "Forbidden",
+				message: "2FA is already enabled"
+			});
 		}
 
 		if (user.provider == "local" || (user.provider != "local" && create2FASessions.get(user.username)?.relogin === false)) {
 
 			const formattedKey = authenticator.generateKey();
-			create2FASessions.set(user.username, {key: formattedKey, relogin: false, eat: Date.now() + (2 * 60 * 1000), tries: 5});
+			create2FASessions.set(user.username, { key: formattedKey, relogin: false, eat: Date.now() + (2 * 60 * 1000), tries: 5 });
 
 			const url = authenticator.generateTotpUri(formattedKey, user.username, "Transcendence", "SHA1", 6, 30);
 
-			return reply.status(200).send({ url: await qrcode.toDataURL(url), provider: user.provider });
+			return reply.status(200).send({
+				url: await qrcode.toDataURL(url),
+				provider: user.provider
+			});
 		}
 		else {
 
@@ -59,7 +65,10 @@ export default async function (server: FastifyInstance) {
 		const user = request.currentUser! as User;
 
 		if (user.tfa) {
-			return reply.status(401).send({ error: "2FA already enabled" });
+			return reply.status(403).send({
+				error: "Forbidden",
+				message: "2FA is already enabled"
+			});
 		}
 
 		const key = create2FASessions.get(user.username);
@@ -68,17 +77,26 @@ export default async function (server: FastifyInstance) {
 			if (key) {
 				create2FASessions.delete(user.username);
 			}
-			return reply.status(401).send({ error: "Invalid or expired 2FA session" });
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: "Invalid or expired 2FA session"
+			});
 		}
 
 		if (user.provider == "local" && (!password || !await verifyPassword(user, password))) {
 			key.tries--;
-			return reply.status(401).send({ error: `Invalid password (${key.tries} tries left)` });
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: `Invalid password (${key.tries} tries left)`
+			});
 		}
 
 		if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(key.key!, code)) {
 			key.tries--;
-			return reply.status(400).send({ error: `Invalid 2FA code (${key.tries} tries left)` });
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: `Invalid 2FA code (${key.tries} tries left)`
+			});
 		}
 
 		await add2fa(server.db, user.username, key.key!)

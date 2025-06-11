@@ -1,4 +1,3 @@
-import {showError} from "./show_errors.js";
 import { Component } from "../component.js";
 
 interface Payload {
@@ -33,9 +32,8 @@ export class Register implements Component{
 		const usernameInput = document.getElementById("username-register") as HTMLInputElement | null;
 		const passwordInput = document.getElementById("password-register") as HTMLInputElement | null;
 		const cpasswordInput = document.getElementById("cpassword") as HTMLInputElement | null;
-		const errorSpan = document.getElementById("error-global-register") as HTMLTextAreaElement | null;
 
-		if (!usernameInput || !passwordInput || !cpasswordInput || !errorSpan) {
+		if (!usernameInput || !passwordInput || !cpasswordInput) {
 			console.error("One or multiple form's fields are missing.");
 			return;
 		}
@@ -56,21 +54,19 @@ export class Register implements Component{
 			const data = await response.json();
 
 			if (!response.ok) {
-				document.querySelectorAll(`.error-message-register`).forEach(el => el.textContent = "");
 
-				const error = document.createElement(`error-${data.type}-register`);
-				if (!error) {
+				const errorDiv = document.getElementById('form-register-error');
+				if (!errorDiv) {
 					console.error("Can't display error");
 					return;
 				}
-				error.textContent = data.error;
+				errorDiv.textContent = data.message;
 				return;
 			}
 
 			window.location.href = '/';
 		} catch (err) {
-			console.error("Error: ", err);
-			errorSpan.textContent = 'Erreur de connexion au serveur.';
+			console.error(err);
 		}
 	}
 

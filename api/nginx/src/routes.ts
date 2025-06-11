@@ -117,15 +117,13 @@ export interface Route {
 		<form id="form-login" class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
 			<h2 class="text-white text-2xl mb-4">Login</h2>
 		
-			<div id="error-global-login" class="error-message-login text-red-500 text-sm mb-2"></div>
+			<div id="form-login-error" class="error-message-login text-red-500 text-sm mb-2"></div>
 		
 			<label for="username-login" class="text-white">Username:</label>
-			<div id="error-username-login" class="error-message-login text-red-500 text-sm mb-1"></div>
 			<input type="text" id="username-login" aria-describedby="error-username-login" required
 				class="p-2 mb-3 rounded border border-gray-300" />
 		
 			<label for="password-login" class="text-white">Password:</label>
-			<div id="error-password-login" class="error-message-login text-red-500 text-sm mb-1"></div>
 			<input type="password" id="password-login" aria-describedby="error-password-login" required
 				class="p-2 mb-4 rounded border border-gray-300" />
 		
@@ -137,15 +135,13 @@ export interface Route {
 		<!-- Register Form -->
 		<form id="form-register" class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
 			<h2 class="text-white text-2xl mb-4">Register</h2>
-			<div id="error-global-register" class="error-message-register text-red-500 text-sm mb-2"></div>
+			<div id="form-register-error" class="error-message-register text-red-500 text-sm mb-2"></div>
 	
 			<label for="username-register" class="text-white">Username:</label>
-			<div id="error-username-register" class="error-message-register text-red-500 text-sm mb-1"></div>
 			<input type="text" id="username-register" required
 					class="p-2 mb-3 rounded border border-gray-300" />
 	
 			<label for="password-register" class="text-white">Password:</label>
-			<div id="error-password-register" class="error-message-register text-red-500 text-sm mb-1"></div>
 			<input type="password" id="password-register" required
 					class="p-2 mb-3 rounded border border-gray-300" />
 	
@@ -182,7 +178,7 @@ export interface Route {
 		
 		<p class="mb-2 text-sm text-gray-600">Veuillez entrer votre code d'authentification à deux facteurs pour continuer.</p>
 	
-		<div id="error-popup-2fa" class="text-red-600 text-sm mb-2"></div>
+		<div id="popup-2fa-error" class="text-red-600 text-sm mb-2"></div>
 		
 		<input type="text" id="popup-2fa-code" placeholder="Code 2FA" class="border border-gray-300 rounded px-3 py-2 w-full mb-4 focus:outline-none focus:ring focus:ring-blue-300">
 	
@@ -296,7 +292,7 @@ export interface Route {
 		
 		<p class="mb-2 text-sm text-gray-600">Veuillez entrer votre code d'authentification à deux facteurs pour continuer.</p>
 	
-		<div id="error-popup-2fa" class="text-red-600 text-sm mb-2"></div>
+		<div id="popup-2fa-error" class="text-red-600 text-sm mb-2"></div>
 		
 		<input type="text" id="2fa-code" placeholder="Code 2FA" class="border border-gray-300 rounded px-3 py-2 w-full mb-4 focus:outline-none focus:ring focus:ring-blue-300">
 	
@@ -320,7 +316,7 @@ export interface Route {
     <form class="mb-6">
       <div class="mb-4">
         <label for="username" class="block text-gray-700 font-medium mb-2">Nouveau pseudo</label>
-      	<div id="error-username" class="text-red-500 text-sm mb-2"></div>
+        <div id="error-username" class="text-red-500 text-sm mb-2"></div>
         <input type="text" id="username" name="username"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
@@ -331,23 +327,20 @@ export interface Route {
     </form>
 
     <!-- Formulaire pour changer de mot de passe -->
-    <form>
-      <div id="error-global" class="error-message-password text-red-500 text-sm mb-2"></div>
+    <form class="mb-6">
+      <div id="error-password" class="error-message-password text-red-500 text-sm mb-2"></div>
       <div class="mb-4">
         <label for="current_password" class="block text-gray-700 font-medium mb-2">Mot de passe actuel</label>
-      	<div id="error-current_password" class="text-red-500 text-sm mb-2"></div>
         <input type="password" id="current_password" name="current_password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div class="mb-4">
         <label for="new_password" class="block text-gray-700 font-medium mb-2">Nouveau mot de passe</label>
-      	<div id="error-new_password" class="error-message-password text-red-500 text-sm mb-2"></div>
         <input type="password" id="new_password" name="new_password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>
       <div class="mb-4">
         <label for="confirm_new_password" class="block text-gray-700 font-medium mb-2">Confirmer le nouveau mot de passe</label>
-      	<div id="error-confirm_new_password" class="error-message-password text-red-500 text-sm mb-2"></div>
         <input type="password" id="confirm_new_password" name="confirm_new_password"
                class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
       </div>

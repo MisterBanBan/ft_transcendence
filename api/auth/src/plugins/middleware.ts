@@ -1,6 +1,7 @@
 import {FastifyInstance, FastifyRequest} from "fastify";
 import {decodeToken} from "../utils/decode-token.js";
 import {getUserByUsername} from "../db/get-user-by-username.js";
+import * as repl from "node:repl";
 
 export default async function (server: FastifyInstance) {
 	server.addHook('preHandler', async (request, reply) => {
@@ -12,23 +13,33 @@ export default async function (server: FastifyInstance) {
 			"/api/auth/callback/42",
 			"/api/auth/callback/google",
 			"/api/auth/verify",
+			"/api/auth/get-infos",
 			"/health"
 		]
 
+		const forbiddenRoutes = [
+			"/api/auth/register",
+			"/api/auth/login",
+		];
+
 		const path = request.raw.url?.split('?')[0];
+		const token = request.cookies?.token;
+		const decodedToken = token ? await decodeToken(server, token, reply) : undefined;
 
-		if (path && authorizedRoutes.includes(path)) {
-			return;
+		if (path) {
+			if (forbiddenRoutes.includes(path) && decodedToken) {
+				return reply.status(403).send({
+					error: "Forbidden",
+					message: "Already authenticated."
+				});
+			}
+
+			if (authorizedRoutes.includes(path)) {
+				return;
+			}
 		}
 
-		const token = request.cookies?.token
-
-		if (!token) {
-			return reply.status(302).redirect('/auth');
-		}
-
-		const decodedToken = await decodeToken(server, token, reply);
-		if (decodedToken === undefined) {
+		if (!decodedToken) {
 			return reply.status(302).redirect("/auth");
 		}
 

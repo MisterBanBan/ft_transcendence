@@ -37,9 +37,8 @@ export class Login implements Component{
 
 		const usernameInput = document.getElementById("username-login") as HTMLInputElement | null;
 		const passwordInput = document.getElementById("password-login") as HTMLInputElement | null;
-		let errorSpan = document.getElementById("error-global-login") as HTMLTextAreaElement | null;
 
-		if (!usernameInput || !passwordInput || !errorSpan) {
+		if (!usernameInput || !passwordInput) {
 			console.error("One or multiple form's fields are missing.");
 			return;
 		}
@@ -59,7 +58,7 @@ export class Login implements Component{
 			let data = await response.json();
 
 			if (data.status === "2FA-REQUIRED") {
-				await this.handle2FA(data.token, errorSpan);
+				await this.handle2FA(data.token);
 				return;
 			}
 
@@ -69,35 +68,31 @@ export class Login implements Component{
 			}
 
 			if (!response.ok) {
-				document.querySelectorAll(`.error-message-login`).forEach(el => el.textContent = "");
 
-				const error = document.createElement(`error-${data.type}-login`);
-				if (!error) {
+				const errorDiv = document.getElementById('form-login-error');
+				if (!errorDiv) {
 					console.error("Can't display error");
 					return;
 				}
-				error.textContent = data.error;
+				errorDiv.textContent = data.message;
 				return;
 			}
 
 		} catch (err) {
-			console.error("Error: ", err);
-			errorSpan.textContent = "Erreur de connexion au serveur.";
+			console.error(err);
 		}
 	}
 
-	private async handle2FA(token: string, errorSpan: HTMLElement): Promise<void> {
+	private async handle2FA(token: string): Promise<void> {
 		const popup = document.getElementById('popup-2fa');
 
 		if (!popup) {
-			errorSpan.textContent = "Can't access to the 2FA verification";
 			console.error("Missing 2fa popup.");
 			return;
 		}
 
 		this.submit2FAButton = document.getElementById("submit-2fa");
 		if (!this.submit2FAButton) {
-			errorSpan.textContent = "Can't access to the 2FA verification";
 			console.error("Missing submit button for 2FA verification.");
 			return;
 		}
@@ -113,7 +108,7 @@ export class Login implements Component{
 		popup.classList.remove('hidden');
 	}
 
-	private async handleSubmit2FA(event: Event, token: string): Promise<void> {
+	private async handleSubmit2FA(event: Event, token: string) {
 		event.preventDefault()
 
 		const codeInput = document.getElementById('popup-2fa-code') as HTMLInputElement | null;
@@ -137,19 +132,18 @@ export class Login implements Component{
 			const data = await response.json();
 
 			if (!response.ok) {
-				const error = document.getElementById(`error-popup-2fa`)
-				if (!error) {
+				const errorDiv = document.getElementById('popup-2fa-error')
+				if (!errorDiv) {
 					console.error("Can't display error");
 					return;
 				}
 
-				error.textContent = data.error;
+				errorDiv.textContent = data.message;
 				return;
 			}
 
 			if (data.success) {
-				window.location.href = '/'
-				return;
+				return window.location.href = '/';
 			}
 		} catch (e) {
 			console.error("Error during 2FA validation:", e)

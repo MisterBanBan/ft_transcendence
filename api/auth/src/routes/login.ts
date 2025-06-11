@@ -15,32 +15,37 @@ interface Cookie {
 }
 
 export default async function (server: FastifyInstance) {
-	server.post('/api/auth/login', async function (request, reply) {
+	server.post('/api/auth/login', {
+		schema: {
+			body: {
+				type: "object",
+				required: ["username", "password"],
+				properties: {
+					username: { type: "string", minLength: 1 },
+					password: { type: "string", minLength: 1 },
+				},
+				additionalProperties: false,
+			},
+			response: {
+				200: {
+					type: "object",
+					properties: {},
+					additionalProperties: false,
+				},
+			}
+		}
+	}, async (request, reply) => {
 
 		const {username, password} = request.body as { username: string; password: string };
-
-		if (request.cookies?.token) {
-			return reply.status(401).send({
-				error: "Already logged",
-				type: "global"
-			});
-		}
 
 		try {
 
 			const user = await getUserByUsername(server.db, username);
 
-			if (user == undefined) {
+			if (user == undefined || (user && user.provider != 'local')) {
 				return reply.status(400).send({
-					error: "Invalid username.",
-					type: "username"
-				});
-			}
-
-			if (user && user.provider != 'local') {
-				return reply.status(400).send({
-					error: `Invalid username or your username may have changed because of an external provider (try ${user.username}1).`,
-					type: "global"
+					error: 'Bad Request',
+					message: "Invalid username."
 				});
 			}
 
@@ -55,8 +60,8 @@ export default async function (server: FastifyInstance) {
 
 			if (!await verifyPassword(user, password)) {
 				return reply.status(400).send({
-					error: "Invalid password.",
-					type: "password"
+					error: 'Bad Request',
+					message: 'Invalid password.'
 				});
 			}
 
@@ -71,9 +76,9 @@ export default async function (server: FastifyInstance) {
 			return reply.status(200).send({ status: "LOGGED-IN" });
 
 		} catch (err) {
-			return reply.status(400).send({
-				error: err,
-				type: "global"
+			return reply.status(500).send({
+				error: "Internal Server Error",
+				message: err
 			});
 		}
 	});

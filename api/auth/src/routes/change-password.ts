@@ -11,46 +11,64 @@ import {validatePassword} from "../utils/validate-password.js";
 import {verifyPassword} from "../utils/verify-password.js";
 
 export default async function (server: FastifyInstance) {
-	server.post('/api/auth/change-password', async (request, reply) => {
-		const { currentPassword, newPassword, confirmNewPassword } = request.body as { currentPassword: string; newPassword: string, confirmNewPassword: string };
+	server.post('/api/auth/change-password', {
+		schema: {
+			body: {
+				type: "object",
+				required: ["currentPassword", "newPassword", "confirmNewPassword"],
+				properties: {
+					currentPassword: { type: "string", minLength: 1 },
+					newPassword: { type: "string", minLength: 8 },
+					confirmNewPassword: { type: "string", minLength: 8 }
+				},
+				additionalProperties: false,
+			},
+			response: {
+				200: {
+					type: "object",
+					properties: {},
+					additionalProperties: false,
+				},
+			}
+		}
+	}, async (request, reply) => {
+		const { currentPassword, newPassword, confirmNewPassword } = request.body as {
+			currentPassword: string,
+			newPassword: string,
+			confirmNewPassword: string
+		};
+
 		const token = request.cookies.token!;
 
 		const decoded = server.jwt.decode(token) as TokenPayload;
 
 		const user = await getUserByUsername(server.db, decoded.username);
 		if (!user) {
-			return reply.code(401).send({
-				error: "User not found",
-				type: "global"
+			return reply.code(404).send({
+				error: "Not Found",
+				message: "User not found",
 			});
 		}
 
 		if (user.provider != "local") {
-			return reply.code(401).send({
-				error: `Since you are using a different provider (${user.provider}) than transcendence, you can't change your password`,
-				type: "global"
-			});
-		}
-
-		if (!currentPassword || !newPassword || !confirmNewPassword) {
-			return reply.code(400).send({
-				error: "Current password, new password, and confirm new password are required",
-				type: "global"
+			return reply.code(403).send({
+				error: "Forbidden",
+				message: `Since you are using a different provider (${user.provider}) than transcendence, you can't change your password`,
 			});
 		}
 
 		if (!await verifyPassword(user, currentPassword)) {
-			return reply.code(401).send({
-				error: "Invalid password",
-				type: "current_password",
+			return reply.code(400).send({
+				error: "Bad Request",
+				message: "Invalid password",
 			});
 		}
 
 		const isValid = await validatePassword(newPassword, confirmNewPassword);
 		if (isValid)
 			return reply.code(400).send({
-				error: isValid,
-				type: "new_password",
+				error: "Bad Request",
+				message: isValid,
 			});
 
 		const hashedPass = await argon2.hash(newPassword, {secret: Buffer.from(process.env.ARGON_SECRET!)});

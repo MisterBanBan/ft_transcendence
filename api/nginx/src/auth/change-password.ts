@@ -46,14 +46,13 @@ export class ChangePassword implements Component{
 
 				console.log(data);
 				if (!response.ok) {
-					document.querySelectorAll(`.error-message-password`).forEach(el => el.textContent = "");
-					const error = document.getElementById(`error-${data.type}`)
+					const error = document.getElementById('error-password')
 					if (!error) {
 						console.error("Can't display error");
 						return;
 					}
 
-					error.textContent = data.error;
+					error.textContent = data.message;
 					return;
 				}
 

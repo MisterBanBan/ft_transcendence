@@ -49,13 +49,19 @@ export default async function (server: FastifyInstance) {
 			const { code, state } = request.query as { code?: string; state?: string };
 
 			if (!code)
-				return reply.status(400).send({ error: "Missing code" });
+				return reply.status(400).send({
+					error: "Bad Request",
+					message: "Missing code"
+				});
 
 			if (state)
 				return await handleRelog(state, reply);
 
 			if (request.cookies?.token)
-				return reply.status(401).send({ error: "Already logged" });
+				return reply.status(401).send({
+					error: "Unauthorized",
+					message: "Already logged"
+				});
 
 			try {
 				const token = await exchangeToken(config, code);

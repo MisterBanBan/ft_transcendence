@@ -1,5 +1,4 @@
 import {Component} from "../component";
-import {showError} from "./show_errors";
 
 export class TFAValidate implements Component {
 
@@ -39,22 +38,19 @@ export class TFAValidate implements Component {
 				const data = await response.json();
 
 				if (!response.ok) {
-					const error = document.getElementById(`error-popup-2fa`)
+					const error = document.getElementById(`popup-2fa-error`)
 					if (!error) {
 						console.error("Can't display error");
 						return;
 					}
 
-					error.textContent = data.error;
+					error.textContent = data.message;
 					return;
 				}
 
-				if (data.success)
-				{
-					console.log("Redirecting to /.");
+				if (data.success) {
 					return window.location.href = '/';
 				}
-
 
 			} catch (error) {
 				console.error(error);

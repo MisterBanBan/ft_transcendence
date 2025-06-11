@@ -11,7 +11,25 @@ import {validateUsername} from "../utils/validate-username.js";
 const tempKeys = new Map<number, Date>();
 
 export default async function (server: FastifyInstance) {
-	server.post('/api/auth/change-username', async (request, reply) => {
+	server.post('/api/auth/change-username', {
+		schema: {
+			body: {
+				type: "object",
+				required: ["newUsername"],
+				properties: {
+					newUsername: { type: "string", minLength: 3, maxLength: 16 },
+				},
+				additionalProperties: false,
+			},
+			response: {
+				200: {
+					type: "object",
+					properties: {},
+					additionalProperties: false,
+				},
+			}
+		}
+	}, async (request, reply) => {
 
 		const { newUsername } = request.body as { newUsername: string; }
 		const token = request.cookies.token!;
@@ -20,30 +38,34 @@ export default async function (server: FastifyInstance) {
 
 		const user = await getUserByUsername(server.db, decoded.username);
 		if (!user) {
-			return reply.code(401).send({ error: "User not found." });
-		}
-
-		if (user.provider == "42") {
-			return reply.code(401).send({ error: `Since you are using 42 as a provider (${user.provider}), you can't change your username.` });
+			return reply.code(404).send({
+				error: "Not Found",
+				message: "User not found."
+			});
 		}
 
 		const key = tempKeys.get(decoded.id);
 		const date = await createDate(new Date());
 
 		if (key && key >= date) {
-			return reply.code(401).send({ error: "You already changed your username today."});
-		}
-
-		if (!newUsername) {
-			return reply.code(400).send({ error: "New username is required." });
+			return reply.code(403).send({
+				error: "Forbidden",
+				message: "You already changed your username today."
+			});
 		}
 
 		if (await getUserByUsername(server.db, newUsername)) {
-			return reply.code(401).send({ error: "Username already in use." });
+			return reply.code(409).send({
+				error: "Conflict",
+				message: "Username already in use."
+			});
 		}
 
-		if (await validateUsername(newUsername)) {
-			return reply.code(400).send({error: "Invalid new username (Must be between 3 and 16 characters, letters and - only)."});
+		if (!await validateUsername(newUsername)) {
+			return reply.code(400).send({
+				error: "Bad Request",
+				message: "Invalid new username (Must be between 3 and 16 characters, letters and - only)."
+			});
 		}
 
 		tempKeys.set(decoded.id, await createDate(new Date()));

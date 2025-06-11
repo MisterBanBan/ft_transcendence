@@ -14,14 +14,17 @@ export default async function (server: FastifyInstance) {
 		const user = request.currentUser! as User;
 
 		if (!user.tfa) {
-			return reply.status(401).send({ error: "2FA already disabled" });
+			return reply.status(403).send({
+				error: "Forbidden",
+				message: "2FA is already disabled"
+			});
 		}
 
 		if (user.provider == "local" || (user.provider != "local" && remove2FASessions.get(user.username)?.relogin === false)) {
 
 			remove2FASessions.set(user.username, {relogin: false, eat: Date.now() + (2 * 60 * 1000), tries: 5});
 
-			return reply.status(200).send({ message: "Session created" });
+			return reply.status(200).send({ success: true, message: "Session created" });
 		}
 		else {
 
@@ -55,7 +58,10 @@ export default async function (server: FastifyInstance) {
 		const user = request.currentUser! as User;
 
 		if (!user.tfa) {
-			return reply.status(401).send({ error: "2FA already disabled" });
+			return reply.status(403).send({
+				error: "Forbidden",
+				message: "2FA is already disabled"
+			});
 		}
 
 		const key = remove2FASessions.get(user.username);
@@ -64,17 +70,26 @@ export default async function (server: FastifyInstance) {
 			if (key) {
 				remove2FASessions.delete(user.username);
 			}
-			return reply.status(401).send({ error: "Invalid or expired 2FA session" });
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: "Invalid or expired 2FA session"
+			});
 		}
 
 		if (user.provider == "local" && (!password || !await verifyPassword(user, password))) {
 			key.tries--;
-			return reply.status(401).send({ error: `Invalid password (${key.tries} tries left)` });
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: `Invalid 2FA code (${key.tries} tries left)`
+			});
 		}
 
 		if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(user.tfa!, code)) {
 			key.tries--;
-			return reply.status(400).send({ error: `Invalid 2FA code (${key.tries} tries left)` });
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: `Invalid 2FA code (${key.tries} tries left)`
+			});
 		}
 
 		await remove2fa(server.db, user.username)
