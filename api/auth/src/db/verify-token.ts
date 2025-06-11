@@ -16,7 +16,7 @@ export async function verifyToken(
 	// console.log(user);
 	// if (user)
 	// {
-	// 	console.log(await getIdByUsername(db, user.username) == decodedToken.id);
+	// 	console.log(user.id == decodedToken.id);
 	// 	console.log(user.username == decodedToken.username, user.username, decodedToken.username);
 	// 	console.log(user.updatedAt == decodedToken.updatedAt, user.updatedAt, decodedToken.updatedAt);
 	// 	console.log(user.provider == decodedToken.provider, user.provider, decodedToken.provider);

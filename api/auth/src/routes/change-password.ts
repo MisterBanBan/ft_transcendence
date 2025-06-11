@@ -75,9 +75,10 @@ export default async function (server: FastifyInstance) {
 		const timestamp = await changePassword(server.db, user.id!, hashedPass)
 
 		const tokenData: TokenPayload = {
-			provider: "local",
 			id: user.id!,
 			username: user.username,
+			provider: user.provider,
+			provider_id: user.provider_id,
 			updatedAt: timestamp
 		};
 

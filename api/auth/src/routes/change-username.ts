@@ -73,15 +73,19 @@ export default async function (server: FastifyInstance) {
 		const timestamp = await changeUsername(server.db, user.id!, newUsername)
 
 		const tokenData: TokenPayload = {
-			provider: "local",
 			id: user.id!,
 			username: newUsername,
+			provider: user.provider,
+			provider_id: user.provider_id,
 			updatedAt: timestamp
 		};
 
 		const newToken = await signToken(server, tokenData);
 
 		await setCookie(reply, newToken);
+
+		console.log(await getUserByUsername(server.db, newUsername));
+		console.log(tokenData);
 
 		return reply.status(200).send({ success: true });
 	});
