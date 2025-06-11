@@ -12,16 +12,18 @@ export function registerSocketHandlers(socket: Socket, app: FastifyInstance) {
     app.log.info(`Client disconnected: ${socket.id}`);
   });
 
-  socket.on("join-game", (gameId: string) => {
-    const instance = new AIInstance(gameId, app.io, () => matchmakingSocket);
-    aiInstances.set(gameId, instance);
+  socket.on("game-started", (data: { gameId: string, playerId: any }) => {
+    console.log("IA join game: ", data.gameId);
+    const instance = new AIInstance(data.gameId, app.io, () => matchmakingSocket);
+    aiInstances.set(data.gameId, instance);
   });
 
   socket.on("game-update", (data) => {
-    const { gameId, playerId, input } = data;
+    const { gameId, input } = data;
+    console.log("yop: ", data);
     const instance = aiInstances.get(gameId);
     if (instance) {
-      instance.handleUpdate(playerId, input);
+      instance.handleUpdate(input);
     }
   });
 }

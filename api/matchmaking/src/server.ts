@@ -30,6 +30,12 @@ async function start() {
   
   app.decorate("gameSocket", gameSocket);
 
+  const aiSocket = ClientIO("http://ai:8085", {
+    transports: ["websocket"],
+  });
+
+  app.decorate("aiSocket", aiSocket);
+
   const playerToGame = new Map<string, { playerName: string, gameId: string, side: string }>();
   app.decorate("playerToGame", playerToGame);
 

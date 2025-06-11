@@ -2,7 +2,7 @@ import { Socket } from "socket.io";
 
 export class GameInstance {
 	private interval!: NodeJS.Timeout;
-	state: any;
+	private state: any;
 	private limit: any;
 	private intern: any;
 
@@ -66,14 +66,14 @@ export class GameInstance {
 			if (this.state.ball.y > this.limit.map.bot - (this.intern.ball.height / 2))
 				this.state.ball.y = this.limit.map.bot - (this.intern.ball.height / 2);
 		}
-  
-	  const matchmakingSocket = this.getMatchmakingSocket();
-	  if (matchmakingSocket) {
-		matchmakingSocket.emit("game-update", {
-		  gameId: this.id,
-		  state: this.state,
+
+		const matchmakingSocket = this.getMatchmakingSocket();
+		if (matchmakingSocket) {
+			matchmakingSocket.emit("game-update", {
+				gameId: this.id,
+				state: this.state,
 		});
-	  }
+	}
 	}
 
 	private barUpdate()
