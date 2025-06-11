@@ -10,9 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+//import { introduction } from './intro.js'
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
-//import { introduction } from './intro.js'
 
 class Router {
     private routes: Route[];
@@ -85,11 +85,14 @@ class Router {
     }
 }
 
-
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     try {
+        await fetch("/api/auth/verify", {
+            method: "GET",
+        });
+
         const router = new Router(routes);
-        router.updatePage();
+        await router.updatePage();
     } catch (error) {
         console.error("Wrong init :", error);
         document.body.innerHTML = "<h1>Appli dumped</h1>";
