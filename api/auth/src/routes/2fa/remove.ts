@@ -4,6 +4,9 @@ import {User} from "../../interface/user.js";
 import {verifyPassword} from "../../utils/verify-password.js";
 import {remove2fa} from "../../db/remove-2fa.js";
 import {createOAuthEntry} from "../../utils/handle-relog.js";
+import {TokenPayload} from "../../interface/token-payload.js";
+import {setCookie} from "../../utils/set-cookie.js";
+import {signToken} from "../../utils/sign-token.js";
 
 export const remove2FASessions = new Map<string, {token?:string, relogin: boolean, eat?: number, tries?: number}>();
 
@@ -92,7 +95,17 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		await remove2fa(server.db, user.username)
+		const timestamp = await remove2fa(server.db, user.username);
+
+		const token = {
+			id: user.id,
+			username: user.username,
+			provider: user.provider,
+			provider_id: user.provider_id,
+			updatedAt: timestamp
+		} as TokenPayload;
+
+		await setCookie(reply, await signToken(server, token));
 		return reply.status(201).send({ success: true });
 	})
 };

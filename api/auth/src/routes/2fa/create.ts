@@ -5,6 +5,9 @@ import {add2fa} from "../../db/add-2fa.js";
 import {User} from "../../interface/user.js";
 import {verifyPassword} from "../../utils/verify-password.js";
 import {createOAuthEntry} from "../../utils/handle-relog.js";
+import {signToken} from "../../utils/sign-token.js";
+import {TokenPayload} from "../../interface/token-payload.js";
+import {setCookie} from "../../utils/set-cookie.js";
 
 export const create2FASessions = new Map<string, {token?:string, key?: string, relogin: boolean, eat?: number, tries?: number}>();
 
@@ -99,7 +102,18 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		await add2fa(server.db, user.username, key.key!)
+		const timestamp = await add2fa(server.db, user.username, key.key!)
+
+		const token = {
+			id: user.id,
+			username: user.username,
+			provider: user.provider,
+			provider_id: user.provider_id,
+			updatedAt: timestamp
+		} as TokenPayload;
+
+		await setCookie(reply, await signToken(server, token));
+
 		return reply.status(201).send({ success: true });
 	})
 };
