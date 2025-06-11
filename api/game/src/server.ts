@@ -20,6 +20,9 @@ async function startServer() {
 		await server.register(autoLoad, {
 			dir: join(dir, "routes/")
 		});
+	} catch (err) {
+		console.error(err);
+	}
 
     try {
         await server.listen({ port: 8082, host: '0.0.0.0' });
