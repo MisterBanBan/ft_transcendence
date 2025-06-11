@@ -40,7 +40,10 @@ export default async function (server: FastifyInstance) {
 		}
 
 		if (!decodedToken) {
-			return reply.status(302).redirect("/auth");
+			return reply.status(401).send({
+				error: "Unauthorized",
+				message: "You are not connected"
+			});
 		}
 
 		(request as any).currentUser = await getUserByUsername(server.db, decodedToken.username);
