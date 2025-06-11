@@ -69,13 +69,17 @@ const routeComponents: Record<string, Component> = {
     },
     "/Pong": {
         init: () => {
+            const params = new URLSearchParams(window.location.search);
+            const mode = params.get("mode");
+
             activeComponent?.destroy?.();
             const pongGame = new pong(
                 'left-bar',      // ID de la barre gauche
                 'right-bar',	// ID de la barre droite
                 'ball',			// ID de la balle
                 'pong-bg', // ID du conteneur de jeu
-                'pong'
+                'pong',
+                mode
               );
             pongGame.init();
             activeComponent = {

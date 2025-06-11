@@ -30,7 +30,7 @@ async function start() {
   
   app.decorate("gameSocket", gameSocket);
 
-  const playerToGame: Map<string, string> = new Map();
+  const playerToGame = new Map<string, { playerName: string, gameId: string, side: string }>();
   app.decorate("playerToGame", playerToGame);
 
   gameSocket.on("connect", () => {
@@ -40,7 +40,8 @@ async function start() {
   gameSocket.on("game-update", (data) => {
     const { gameId } = data;
 
-    for (const [playerId, pGameId] of app.playerToGame.entries()) {
+    for (const [playerId, value] of app.playerToGame.entries()) {
+      const pGameId = value.gameId;
       if (pGameId === gameId) {
         const clientSocket = app.io.sockets.sockets.get(playerId);
         if (clientSocket) {

@@ -44,6 +44,7 @@ class Bar {
 export class pong implements Component {
     private boundKeyDownHandler!: (e: KeyboardEvent) => void;
     private boundKeyUpHandler!: (e: KeyboardEvent) => void;
+    private mode: string | null;
     private leftBar!: Bar;
     private rightBar!: Bar;
     private ball!: Ball;
@@ -59,7 +60,7 @@ export class pong implements Component {
 		withCredentials: true,
 	});
     
-    constructor(leftBarId: string, rightBarId: string, ballId: string, imgPongId: string,containerId: string) {
+    constructor(leftBarId: string, rightBarId: string, ballId: string, imgPongId: string,containerId: string, mode: string | null) {
         const leftBarElement = document.getElementById(leftBarId);
         if(!leftBarElement) {
             throw new Error('Left bar not found');
@@ -79,6 +80,8 @@ export class pong implements Component {
         this.rightBEle = rightBarElement;
         this.ballEle = ballElement;
         this.imgPong = document.getElementById(imgPongId) as HTMLImageElement;
+
+        this.mode = mode;
 
     }
     
@@ -120,7 +123,10 @@ export class pong implements Component {
     }
     
     public init(): void{
-		this.socket.emit("local");
+        if (this.mode)
+		    this.socket.emit(this.mode);
+        else
+            this.socket.emit("error");
         this.imgPong.onload = () => {
             this.leftBar = new Bar(this.leftBEle);
             this.rightBar = new Bar(this.rightBEle);

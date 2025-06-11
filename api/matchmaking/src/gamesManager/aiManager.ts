@@ -9,7 +9,7 @@ const aiSocket = ClientIO("http://ai:8085", {
 export function aiManager(socket: Socket, app: FastifyInstance) {
 	const gameSocket = app.gameSocket;
 	const gameId = `game-${socket.id}`;
-	app.playerToGame.set(socket.id, gameId);
+	app.playerToGame.set(socket.id, { playerName: "Michel", gameId: gameId, side: "left" });
 
 	gameSocket.emit("create-game", {
 		gameId,
@@ -26,9 +26,10 @@ export function aiManager(socket: Socket, app: FastifyInstance) {
 		playerId: socket.id,
 	});
 
-	socket.on("player-input", (data) => {
-		const gameId = app.playerToGame.get(socket.id);
-		if (!gameId) return;
+	socket.on("player-input", (data: { direction: string, state: boolean, player: string}) => {
+		const value = app.playerToGame.get(socket.id);
+		data.player = value!.side;
+		if (!value?.gameId) return;
 
 	gameSocket.emit("player-input", {
 		gameId,

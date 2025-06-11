@@ -5,6 +5,6 @@ declare module 'fastify' {
         db: Database
         io: Server
         gameSocket: Socket;
-        playerToGame: Map<string, string>;
+        playerToGame: Map<string, { playerName: string, gameId: string, side: string }>;
     }
 }

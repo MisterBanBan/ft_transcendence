@@ -5,7 +5,7 @@ export function localManager(socket: Socket, app: FastifyInstance) {
 	const gameSocket = app.gameSocket;
 	const gameId = `game-${socket.id}`;
 
-	app.playerToGame.set(socket.id, gameId);
+	app.playerToGame.set(socket.id, { playerName: "local", gameId: gameId, side: "undefined" });
 
     gameSocket.emit("create-game", {
       gameId,

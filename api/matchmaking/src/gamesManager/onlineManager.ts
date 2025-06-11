@@ -11,8 +11,8 @@ export function onlineManager(socket: Socket, app: FastifyInstance) {
 	} else {
 		const gameId = `game-${waitingPlayer.id}${socket.id}`;
 
-		app.playerToGame.set(socket.id, gameId);
-		app.playerToGame.set(waitingPlayer.id, gameId);
+		app.playerToGame.set(socket.id, { playerName: "Michel", gameId: gameId, side: "left" });
+		app.playerToGame.set(waitingPlayer.id, { playerName: "Michel", gameId: gameId, side: "right" });
 
 		gameSocket.emit("create-game", {
 			gameId,
@@ -32,12 +32,13 @@ export function onlineManager(socket: Socket, app: FastifyInstance) {
 		waitingPlayer = null;
 	}
 
-	socket.on("player-input", (data) => {
-	const gameId = app.playerToGame.get(socket.id);
-	if (!gameId) return;
+	socket.on("player-input", (data: { direction: string, state: boolean, player: string}) => {
+	const value = app.playerToGame.get(socket.id);
+	data.player = value!.side;
+	if (!value?.gameId) return;
 
 	gameSocket.emit("player-input", {
-		gameId,
+		gameId: value.gameId,
 		playerId: socket.id,
 		input: data,
 	});
