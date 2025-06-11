@@ -1,8 +1,6 @@
 import {FastifyInstance} from "fastify";
-import {decodeToken} from "../utils/decode-token.js";
 import {getUserByUsername} from "../db/get-user-by-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
-import argon2 from "argon2";
 import {changeUsername} from "../db/change-username.js";
 import {signToken} from "../utils/sign-token.js";
 import {setCookie} from "../utils/set-cookie.js";
@@ -83,9 +81,6 @@ export default async function (server: FastifyInstance) {
 		const newToken = await signToken(server, tokenData);
 
 		await setCookie(reply, newToken);
-
-		console.log(await getUserByUsername(server.db, newUsername));
-		console.log(tokenData);
 
 		return reply.status(200).send({ success: true });
 	});

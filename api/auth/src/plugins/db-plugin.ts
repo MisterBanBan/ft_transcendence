@@ -29,8 +29,6 @@ export default async function (server: FastifyInstance, opts: any) {
 		context: db,
 		storage: new JSONStorage({ path: "./database/migrations.json" })
 	});
-	console.log("Umzug is getting up");
 	await umzug.up();
-	console.log("Umzug up");
 	server.decorate('db', db);
 };
