@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 15:28:28 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/06 19:13:10 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/12 11:11:37 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,6 @@ export const twoFApopUp = () =>
                     placeholder="Enter 2FA code"
                     class="responsive-placeholder responsive-case-2fa responsive-case"
                   />
-                  <button type="submit" class="responsive-case-2fa responsive-text responsive-case text-white">Valider</button>
+                  <button type="submit" class="responsive-text responsive-case-submit text-black">Valider</button>
                   <button type="button" id="2faReturnBtn" class="text-white responsive-text ">Return</button>
                   </div>`
