@@ -19,11 +19,10 @@ export function registerSocketHandlers(socket: Socket, app: FastifyInstance) {
   });
 
   socket.on("game-update", (data) => {
-    const { gameId, input } = data;
-    console.log("yop: ", data);
+    const { gameId, state } = data;
     const instance = aiInstances.get(gameId);
     if (instance) {
-      instance.handleUpdate(input);
+      instance.handleUpdate(state);
     }
   });
 }

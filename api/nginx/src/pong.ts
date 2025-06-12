@@ -55,7 +55,7 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
-	private socket = io("https://10.13.5.6:8083", {
+	private socket = io("https://10.13.6.6:8083", {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
 	});

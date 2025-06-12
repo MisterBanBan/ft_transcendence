@@ -53,6 +53,10 @@ async function start() {
         if (clientSocket) {
           clientSocket.emit("game-update", data);
         }
+        if (playerId === app.aiSocket.id)
+        {
+          app.aiSocket.emit("game-update", data);
+        }
       }
     }
   });

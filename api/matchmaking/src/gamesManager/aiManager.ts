@@ -37,9 +37,9 @@ export function aiManager(socket: Socket, app: FastifyInstance) {
 
 	app.aiSocket.on("player-input", (data : any) => {
 		gameSocket.emit("player-input", {
-			gameId,
+			gameId: data.gameId,
 			playerId: app.aiSocket.id,
-			input: data,
+			input: data.input,
 		});
 	});
 	

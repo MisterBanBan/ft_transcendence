@@ -59,23 +59,26 @@ export class AIInstance {
 		
 		if (this.ball.new.x < this.ball.old.x)
 		{
-			// console.log("test");
 			this.replaceBar();
 		}
 		else
 		{
 			this.barMovement();
 		}
+
+		if (this.input.up)
+			this.bar.right.y -= 15;
+		if (this.input.down)
+			this.bar.right.y += 15;
 	}
 
 	private replaceBar() {
-		const dist = this.bar.right.y - (this.limit.bot - this.limit.top) / 2;
+		const dist = this.bar.right.y - (this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2);
 		if ( dist >= 15 )
 		{
-			this.input = { up: true, down: false };
 			this.sendUpdate(true, false);
 		}
-		else if ( dist <= 15 )
+		else if ( dist <= -15 )
 		{
 			this.sendUpdate(false, true);
 		}
@@ -86,19 +89,20 @@ export class AIInstance {
 	}
 
 	private barMovement() {
-		// if ( this.ball.old === this.ball.new )
-		// 	return ;
+		if ( this.ball.old === this.ball.new )
+			return ;
 
 		const intersectionY = this.findIntersection();
 
 		// add strategy
 
 		const dist = this.bar.right.y - intersectionY;
+		
 		if ( dist >= 15 )
 		{
 			this.sendUpdate(true, false);
 		}
-		else if ( dist <= 15 )
+		else if ( dist <= -15 )
 		{
 			this.sendUpdate(false, true);
 		}
@@ -109,16 +113,25 @@ export class AIInstance {
 	}
 
 	private findIntersection() {
-		let x = this.ball.new.x;
-		let y = this.ball.new.y;
+		const limit_x = this.bar.right.x - this.ball.width / 2;
+		const dx = limit_x - this.ball.new.x;
+		const steps = dx / this.ball.vx;
 
-		while (x < this.bar.right - this.ball.width / 2)
-		{
-			x += this.ball.vx * 10;
-			y += this.ball.vy * 10;
+		let y = this.ball.new.y + this.ball.vy * steps;
+
+		const height = this.limit.map.bot - this.limit.map.top;
+		const range = 2 * height;
+	  
+		y = y - this.limit.map.top;
+	  
+		y = y % range;
+		if (y < 0) y += range;
+	  
+		if (y > height) {
+		  y = range - y;
 		}
-
-		return (y);
+		
+		return (y + this.limit.map.top);
 	}
   
 	private sendUpdate(up: boolean, down: boolean) {
@@ -131,7 +144,6 @@ export class AIInstance {
 					gameId: this.id,
 					input: { direction: "up", state: up, player: "right"},
 				});
-				console.log("test: ", this.id, { direction: "up", state: up, player: "right"});
 	  		}
 		}
 
@@ -143,7 +155,6 @@ export class AIInstance {
 					gameId: this.id,
 					input: { direction: "down", state: down, player: "right"},
 				});
-				console.log("test: ", this.id, { direction: "down", state: down, player: "right"});
 			}
 		}
 
@@ -152,21 +163,18 @@ export class AIInstance {
 		
 	}
 
-	public handleUpdate(
-		data: { gameId: string, 
+	public handleUpdate( 
 			state: { 
 				players: any,
 				bar: {left:  number, right: number },
 				ball: { x: number, y: number },
-				score: {player1: number, player2: number} } }) {
-		console.log("JAMBON");
+				score: {player1: number, player2: number} } ) {
 		if (this.cooldown == true)
 		{
 			this.ball.old = this.ball.new;
-
-			this.ball.new = data.state.ball;
-			this.bar.left.y = data.state.bar.left;
-			this.bar.right.y = data.state.bar.right;
+			this.ball.new = state.ball;
+			this.bar.left.y = state.bar.left;
+			this.bar.right.y = state.bar.right;
 			
 			const dx = this.ball.new.x - this.ball.old.x;
 			const dy = this.ball.new.y - this.ball.old.y;
