@@ -17,8 +17,7 @@ import {TFAValidate} from "./auth/2fa-validate.js";
 import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
 import {Toggle2FA} from "./auth/toggle-2fa.js";
-// import { Login } from "./auth/login.js";
-// import { Register } from "./auth/register.js";
+import {Logout} from "./auth/logout.js";
 // import { introduction } from './intro.js';
 // import { menu } from './menu.js';
 // import { Zoom } from './zoom.js';
@@ -36,13 +35,15 @@ const routeComponents: Record<string, Component> = {
 			const changeUsername = new ChangeUsername();
 			const changePassword = new ChangePassword();
 			const toggle2FA = new Toggle2FA();
+			const logout = new Logout();
 			changeUsername.init();
 			changePassword.init();
 			toggle2FA.init();
+			logout.init();
 
 			activeComponent = {
 				init: () => {},
-				destroy: () => { changeUsername.destroy(); changePassword.destroy(); toggle2FA.destroy(); },
+				destroy: () => { changeUsername.destroy(); changePassword.destroy(); toggle2FA.destroy(); logout.destroy(); },
 			};
 		},
 		destroy: () => {}
@@ -81,22 +82,6 @@ const routeComponents: Record<string, Component> = {
 
 			const toggle2FA = new Toggle2FA();
 			toggle2FA.init();
-	// "/auth": {
-	// 	init: () => {
-	// 		activeComponent?.destroy?.();
-	//
-	// 		const login = new Login();
-	// 		const register = new Register();
-	// 		login.init();
-	// 		register.init();
-	// 		activeComponent = {
-	// 			init: () => {},
-	// 			destroy: () => { login.destroy(); register.destroy(); },
-	// 		};
-	// 	},
-	// 	destroy: () => {}
-	// },
-
 			activeComponent = {
 				init: () => {},
 				destroy: () => { toggle2FA.destroy(); },
