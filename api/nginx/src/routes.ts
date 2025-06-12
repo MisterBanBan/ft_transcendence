@@ -355,7 +355,17 @@ export interface Route {
 		<label for="toggle-2fa" class="text-gray-700 font-medium">Activer l'A2F</label>
 		<input type="checkbox" id="toggle-2fa">
 	</div>	
+	
+	 <button
+		id="logout"
+		type="button"
+		class="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+		>
+				Logout
+	</button>
   </div>
+ 
+
   
 	<!-- 2FA Toggle -->
 	<div id="toggle-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
