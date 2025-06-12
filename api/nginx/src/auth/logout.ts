@@ -1,9 +1,6 @@
 import { Component } from "../component.js";
 
-interface Payload {
-	username: string;
-	password: string;
-}
+// Removed unused Payload interface
 
 export class Logout implements Component{
 
