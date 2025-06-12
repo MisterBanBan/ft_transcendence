@@ -1,7 +1,6 @@
 import {FastifyInstance, FastifyRequest} from "fastify";
 import {decodeToken} from "../utils/decode-token.js";
 import {getUserByUsername} from "../db/get-user-by-username.js";
-import * as repl from "node:repl";
 
 export default async function (server: FastifyInstance) {
 	server.addHook('preHandler', async (request, reply) => {
