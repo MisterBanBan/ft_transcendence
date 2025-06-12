@@ -1,34 +1,58 @@
 import { Socket } from "socket.io";
+import { limit, state, intern } from "../utils/interface"
 
 export class GameInstance {
 	private interval!: NodeJS.Timeout;
-	private state: any;
-	private limit: any;
-	private intern: any;
+	private state: state;
+	private limit: limit;
+	private intern: intern;
 
 	constructor(
 	  public id: string,
-	  private players: string[],
 	  private io: any,
 	  private getMatchmakingSocket: () => Socket | null
 	) {
 		this.limit = {
-			speed: 150,
-			map: {left: 164, top: 123, right: 3146, bot: 1590}
+			map: {left: 164, top: 123, right: 3146, bot: 1590},
+			speed: (3146 - 164) / 15,
 		};	
 		this.state = {
-			players: players.map((id, idx) => ({ id, x: 100 + idx * 50 })),
-			bar: {left:  (this.limit.map.bot - this.limit.map.top) / 2, right: (this.limit.map.bot - this.limit.map.top) / 2 },
-			ball: { x: (this.limit.map.right - this.limit.map.left) / 2, y: (this.limit.map.bot - this.limit.map.top) / 2 },
-			score: {player1: 0, player2: 0}
+			bar: {
+				left:  (this.limit.map.bot - this.limit.map.top) / 2,
+				right: (this.limit.map.bot - this.limit.map.top) / 2
+			},
+			ball: {
+				x: (this.limit.map.right - this.limit.map.left) / 2,
+				y: (this.limit.map.bot - this.limit.map.top) / 2
+			},
+			score: {
+				player1: 0,
+				player2: 0
+			}
 		};
 		this.intern = {
-			ball: { width: 85.7, height: 85.7,  vx: Math.cos(Math.PI / 4), vy: Math.sin(Math.PI / 4), speed: 10 },
-			bar: {	
-				left: { x: (this.limit.map.right - this.limit.map.left) / 10 ,Up: false, Down: false },
-				right: { x: this.limit.map.right - (this.limit.map.right - this.limit.map.left) / 10 ,Up: false, Down: false},
+			ball: {
+				width: 85.7,
+				height: 85.7,
+				vx: Math.cos(Math.PI / 4),
+				vy: Math.sin(Math.PI / 4),
+				speed: (this.limit.map.right - this.limit.map.left) / 300
+			},
+			bar: {
+				left: {
+					x: (this.limit.map.right - this.limit.map.left) / 10,
+					Up: false,
+					Down: false
+				},
+				right: {
+					x: this.limit.map.right - (this.limit.map.right - this.limit.map.left) / 10,
+					Up: false,
+					Down: false
+				},
 				width: 40.96,
-				height: 342.8}
+				height: 342.8,
+				speed: (this.limit.map.bot - this.limit.map.top) / 100
+			}
 		};
 	  
 	  this.startGameLoop();
@@ -41,30 +65,39 @@ export class GameInstance {
 	  }, 1000 / 60);
 	}
   
+	
 	private updateGame() {
-		
-		
+
 		this.state.ball.x += this.intern.ball.vx * this.intern.ball.speed;
 		this.state.ball.y += this.intern.ball.vy * this.intern.ball.speed;
-		
+
 		this.barUpdate();
 
-		if (this.state.ball.x <= this.limit.map.left + (this.intern.ball.width / 2) || this.state.ball.x >= this.limit.map.right - (this.intern.ball.width / 2)) {
+		const left = this.limit.map.left + (this.intern.ball.width / 2);
+		const right = this.limit.map.right - (this.intern.ball.width / 2);
+
+		if (this.state.ball.x <= left || this.state.ball.x >= right) {
 			this.updateScore();
-			if (this.state.ball.x < this.limit.map.left + (this.intern.ball.width / 2))
-				this.state.ball.x = this.limit.map.left + (this.intern.ball.width / 2);
-			if (this.state.ball.x > this.limit.map.right - (this.intern.ball.width / 2))
-				this.state.ball.x = this.limit.map.right - (this.intern.ball.width / 2);
+
+			if (this.state.ball.x < left)
+				this.state.ball.x = left;
+			if (this.state.ball.x > right)
+				this.state.ball.x = right;
 		}
 
-		if (this.state.ball.y <= this.limit.map.top + (this.intern.ball.height / 2) || this.state.ball.y >= this.limit.map.bot - (this.intern.ball.height / 2)) {
+		const top = this.limit.map.top + (this.intern.ball.height / 2);
+		const bot = this.limit.map.bot - (this.intern.ball.height / 2);
+
+		if (this.state.ball.y <= top || this.state.ball.y >= bot) {
 			if (this.intern.ball.speed < this.limit.speed)
-				this.intern.ball.speed += 1;
+				this.intern.ball.speed += this.intern.ball.speed / 10;
+
 			this.intern.ball.vy *= -1;
-			if (this.state.ball.y < this.limit.map.top + (this.intern.ball.height / 2))
-				this.state.ball.y = this.limit.map.top + (this.intern.ball.height / 2);
-			if (this.state.ball.y > this.limit.map.bot - (this.intern.ball.height / 2))
-				this.state.ball.y = this.limit.map.bot - (this.intern.ball.height / 2);
+
+			if (this.state.ball.y < top)
+				this.state.ball.y = top;
+			if (this.state.ball.y > bot)
+				this.state.ball.y = bot;
 		}
 
 		const matchmakingSocket = this.getMatchmakingSocket();
@@ -79,13 +112,13 @@ export class GameInstance {
 	private barUpdate()
 	{
 		if (this.intern.bar.left.Up && this.state.bar.left > this.limit.map.top + this.intern.bar.height / 2)
-			this.state.bar.left -= 15;
+			this.state.bar.left -= this.intern.bar.speed;
 		if (this.intern.bar.left.Down && this.state.bar.left < this.limit.map.bot - this.intern.bar.height / 2)
-			this.state.bar.left += 15;
+			this.state.bar.left += this.intern.bar.speed;
 		if (this.intern.bar.right.Up && this.state.bar.right > this.limit.map.top + this.intern.bar.height / 2)
-			this.state.bar.right -= 15;
+			this.state.bar.right -= this.intern.bar.speed;
 		if (this.intern.bar.right.Down && this.state.bar.right < this.limit.map.bot - this.intern.bar.height / 2)
-			this.state.bar.right += 15;
+			this.state.bar.right += this.intern.bar.speed;
 
 		const defenseArea = (this.limit.map.right - this.limit.map.left) * 0.1;
 		if (this.state.ball.x - this.intern.ball.width / 2 <= this.limit.map.left + defenseArea)
@@ -111,7 +144,7 @@ export class GameInstance {
 				this.intern.ball.vx = Math.cos(new_angle);
 				this.intern.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
-					this.intern.ball.speed += 1;
+					this.intern.ball.speed += this.intern.ball.speed / 10;
 			}
 		}
 		if (this.state.ball.x + this.intern.ball.width / 2 >= this.limit.map.right - defenseArea)
@@ -137,7 +170,7 @@ export class GameInstance {
 				this.intern.ball.vx = Math.cos(new_angle);
 				this.intern.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
-					this.intern.ball.speed += 1;
+					this.intern.ball.speed +=  this.intern.ball.speed / 10;
 			}
 		}
 	}
@@ -155,26 +188,23 @@ export class GameInstance {
 		const new_angle = Math.random() * 2 * Math.PI;
 		this.intern.ball.vx = Math.cos(new_angle);
 		this.intern.ball.vy = Math.sin(new_angle);
-		this.intern.ball.speed = 10;
+		this.intern.ball.speed = (this.limit.map.right - this.limit.map.left) / 300;
 	}
   
-	public handleInput(playerId: string, input: { direction: string, state: boolean, player: string}) {
-		const player = this.state.players.find((p: any) => p.id === playerId); // changer fct pour gerer un 1v1 entre 2 poste distant
-		if (player) {
-			if (input.player == "left")
-			{
-				if (input.direction == "up")
-					this.intern.bar.left.Up = input.state;
-				if (input.direction == "down")
-					this.intern.bar.left.Down = input.state;
-			}
-			if (input.player == "right")
-			{
-				if (input.direction == "up")
-					this.intern.bar.right.Up = input.state;
-				if (input.direction == "down")
-					this.intern.bar.right.Down = input.state;
-			}
+	public handleInput(input: { direction: string, state: boolean, player: string}) {
+		if (input.player == "left")
+		{
+			if (input.direction == "up")
+				this.intern.bar.left.Up = input.state;
+			if (input.direction == "down")
+				this.intern.bar.left.Down = input.state;
+		}
+		if (input.player == "right")
+		{
+			if (input.direction == "up")
+				this.intern.bar.right.Up = input.state;
+			if (input.direction == "down")
+				this.intern.bar.right.Down = input.state;
 		}
 	}
   

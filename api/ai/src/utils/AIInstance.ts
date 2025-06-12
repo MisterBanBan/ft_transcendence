@@ -67,18 +67,18 @@ export class AIInstance {
 		}
 
 		if (this.input.up)
-			this.bar.right.y -= 15;
+			this.bar.right.y -= (this.limit.map.bot - this.limit.map.top) / 100;
 		if (this.input.down)
-			this.bar.right.y += 15;
+			this.bar.right.y += (this.limit.map.bot - this.limit.map.top) / 100;
 	}
 
 	private replaceBar() {
 		const dist = this.bar.right.y - (this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2);
-		if ( dist >= 15 )
+		if ( dist >= (this.limit.map.bot - this.limit.map.top) / 100 )
 		{
 			this.sendUpdate(true, false);
 		}
-		else if ( dist <= -15 )
+		else if ( dist <= -(this.limit.map.bot - this.limit.map.top) / 100 )
 		{
 			this.sendUpdate(false, true);
 		}
@@ -98,11 +98,11 @@ export class AIInstance {
 
 		const dist = this.bar.right.y - intersectionY;
 		
-		if ( dist >= 15 )
+		if ( dist >= (this.limit.map.bot - this.limit.map.top) / 100 )
 		{
 			this.sendUpdate(true, false);
 		}
-		else if ( dist <= -15 )
+		else if ( dist <= -(this.limit.map.bot - this.limit.map.top) / 100 )
 		{
 			this.sendUpdate(false, true);
 		}

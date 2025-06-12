@@ -1,4 +1,4 @@
-import fastify from "fastify";
+import fastify, { FastifyInstance } from "fastify";
 import fastifyIO from "fastify-socket.io";
 import autoLoad from "@fastify/autoload";
 import { join } from "path";
@@ -9,7 +9,7 @@ import fs from "fs";
 async function start() {
   const dir = __dirname;
 
-  const app = fastify({
+  const app: FastifyInstance = fastify({
     logger: true,
     https: {
       key: fs.readFileSync("/app/certs/key.pem"),
@@ -17,8 +17,8 @@ async function start() {
     },
   });
 
-  await app.register(cors, { origin: "*", credentials: true });
-  await app.register(fastifyIO, { cors: { origin: "*", credentials: true } });
+  await app.register(cors, { origin: "https://z3r6p6", credentials: true });
+  await app.register(fastifyIO, { cors: { origin: "https://z3r6p6", credentials: true } });
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
   app.register(autoLoad, { dir: join(dir, "routes/") });

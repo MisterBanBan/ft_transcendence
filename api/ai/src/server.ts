@@ -9,8 +9,8 @@ async function start() {
 
   const app = fastify({ logger: true });
 
-  await app.register(cors, { origin: "*", credentials: true });
-  await app.register(fastifyIO, { cors: { origin: "*", credentials: true } });
+  await app.register(cors, { origin: "http://matchmaking", credentials: true });
+  await app.register(fastifyIO, { cors: { origin: "http://matchmaking", credentials: true } });
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
   app.register(autoLoad, { dir: join(dir, "routes/") });
