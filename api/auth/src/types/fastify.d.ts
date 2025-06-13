@@ -1,11 +1,17 @@
 import { Database } from "sqlite";
-import {User} from "../interface/user.js";
 
 declare module 'fastify' {
 	interface FastifyInstance {
 		db: Database
 	}
 	interface FastifyRequest {
-		currentUser?: User;
+		currentUser?: {
+			id: number;
+			username: string;
+			provider: string;
+			provider_id?: string;
+			tfa: boolean;
+			updatedAt: number;
+		};
 	}
 }

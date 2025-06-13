@@ -90,7 +90,9 @@ export default async function (server: FastifyInstance) {
 
 			const tokenData: TokenPayload = {
 				provider: "local",
-				id: id, username,
+				id: id,
+				username: username,
+				tfa: false,
 				updatedAt: timestamp
 			};
 

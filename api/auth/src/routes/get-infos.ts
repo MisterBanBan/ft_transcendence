@@ -1,4 +1,4 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 import {TokenPayload} from "../interface/token-payload.js";
 import * as repl from "node:repl";
 import {decodeToken} from "../utils/decode-token.js";
@@ -22,7 +22,7 @@ export default async function (server: FastifyInstance) {
 				},
 			}
 		}
-	}, async (request, reply) => {
+	}, async (request: FastifyRequest, reply) => {
 		const authHeader = request.headers.authorization;
 		if (!authHeader) {
 			return reply.status(403).send({
@@ -50,13 +50,7 @@ export default async function (server: FastifyInstance) {
 		}
 
 		if (decodedToken)
-			return reply.send({
-				id: decodedToken.id,
-				username: decodedToken.username,
-				provider: decodedToken.provider,
-				provider_id: decodedToken.provider_id,
-				updated_at: decodedToken.updatedAt
-			});
+			return reply.send(decodedToken);
 		else
 			return reply.status(400).send(undefined);
 	});

@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 import { getUserByUsername } from "../db/get-user-by-username.js";
 import { addUser } from "../db/add-user.js";
 import { getUserByProviderId } from "../db/get-user-by-provider-id.js";
@@ -45,7 +45,7 @@ const providers: ProviderConfig[] = [
 
 export default async function (server: FastifyInstance) {
 	for (const config of providers) {
-		server.get(config.callbackPath, async (request, reply) => {
+		server.get(config.callbackPath, async (request: FastifyRequest, reply) => {
 			const { code, state } = request.query as { code?: string; state?: string };
 
 			if (!code)
@@ -79,6 +79,7 @@ export default async function (server: FastifyInstance) {
 						username: user.username,
 						provider: user.provider,
 						provider_id: user.provider_id,
+						tfa: Boolean(user.tfa),
 						updatedAt: user.updatedAt,
 					};
 				} else {
@@ -98,6 +99,7 @@ export default async function (server: FastifyInstance) {
 						username,
 						provider_id: providerId,
 						provider: config.provider,
+						tfa: Boolean(user.tfa),
 						updatedAt: timestamp,
 					};
 				}

@@ -3,5 +3,6 @@ export interface TokenPayload {
 	username: string;
 	provider: string;
 	provider_id?: string;
+	tfa: boolean;
 	updatedAt: number;
 }

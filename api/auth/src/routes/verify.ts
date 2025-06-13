@@ -1,8 +1,8 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyReply, FastifyRequest} from "fastify";
 import {decodeToken} from "../utils/decode-token.js";
 
 export default async function (server: FastifyInstance) {
-	server.get('/api/auth/verify', async function (request, reply) {
+	server.get('/api/auth/verify', async (request: FastifyRequest, reply: FastifyReply) => {
 
 		const token = request.cookies?.token;
 
