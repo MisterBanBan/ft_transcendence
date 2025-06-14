@@ -189,7 +189,7 @@ export class GameInstance {
 		if (new_angle > 0.25 * Math.PI)
 			new_angle += Math.PI * 0.5;
 		if (new_angle > 1.25 * Math.PI)
-			new_angle += Math.PI * 0.25;
+			new_angle += Math.PI * 0.5;
 		this.state.ball.vx = Math.cos(new_angle);
 		this.state.ball.vy = Math.sin(new_angle);
 		this.intern.ball.speed = (this.limit.map.right - this.limit.map.left) / 300;
