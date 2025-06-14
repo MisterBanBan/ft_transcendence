@@ -108,10 +108,9 @@ export class AIInstance {
 	private barMovement() {
 
 		const intersectionY = this.findIntersection();
+		const pos = this.aimOpposite(intersectionY);
 
-		// add strategy
-
-		const dist = this.bar.right.y - intersectionY;
+		const dist = this.bar.right.y - pos;
 		
 		if ( dist >= this.bar.speed )
 		{
@@ -141,7 +140,7 @@ export class AIInstance {
 		y = y - this.limit.map.top;
 	  
 		y = y % range;
-		if (y < 0) y += range; // peut etre enleve ?
+		if (y < 0) y += range;
 	  
 		if (y > height) {
 		  y = range - y;
@@ -149,7 +148,17 @@ export class AIInstance {
 		
 		return (y + this.limit.map.top);
 	}
-  
+
+	private aimOpposite(destY: number): number {
+		const distTop = this.bar.left.y - this.limit.map.top;
+		const distBot = this.limit.map.bot - this.bar.left.y;
+		const aimPoint = (distTop > distBot ? distTop : distBot);
+
+		
+
+		return (destY);
+	}
+
 	private sendUpdate(up: boolean, down: boolean) {
 
 		if (up != this.input.up)

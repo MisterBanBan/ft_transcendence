@@ -139,8 +139,9 @@ export class GameInstance {
 			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
 			{
 				const center_dist = this.state.bar.left - closest_y;
-				const bar_ratio = -center_dist / this.intern.bar.height / 2;
-				let new_angle = bar_ratio * Math.PI;
+				const bar_ratio = -center_dist / (this.intern.bar.height / 2);
+				console.log("center_dist: ", center_dist, ", bar_ratio: ", bar_ratio);
+				let new_angle = bar_ratio * 0.5 * Math.PI * 0.5;
 				this.state.ball.vx = Math.cos(new_angle);
 				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
@@ -165,8 +166,8 @@ export class GameInstance {
 			if (distance_squared <= (this.intern.ball.width / 2) * (this.intern.ball.width / 2))
 			{
 				const center_dist = this.state.bar.right - closest_y;
-				const bar_ratio = center_dist / this.intern.bar.height / 2;
-				let new_angle = Math.PI + bar_ratio * Math.PI;
+				const bar_ratio = center_dist / (this.intern.bar.height / 2);
+				let new_angle = Math.PI + bar_ratio * 0.5 * Math.PI * 0.5;;
 				this.state.ball.vx = Math.cos(new_angle);
 				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
