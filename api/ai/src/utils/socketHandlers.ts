@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { FastifyInstance } from "fastify";
-import { AIInstance } from "./AIInstance"
+import { AIInstance } from "../AIInstance/AIInstance"
 
 let matchmakingSocket: Socket | null = null;
 const aiInstances: Map<string, AIInstance> = new Map();

@@ -1,11 +1,12 @@
 import { Socket } from "socket.io";
+import { bar, ball, limit, input } from "../utils/interface";
 
 export class AIInstance {
 	private interval!: NodeJS.Timeout;
-	private bar: any;
-	private ball: any;
-	private limit: any;
-	private input: any;
+	private bar: bar;
+	private ball: ball;
+	private limit: limit;
+	private input: input; 
 	private cooldown: boolean;
 
 	constructor(
@@ -14,17 +15,33 @@ export class AIInstance {
 	  private getMatchmakingSocket: () => Socket | null
 	) {
 		this.limit = {
-			map: {left: 164, top: 123, right: 3146, bot: 1590}
+			map: {
+				left: 164,
+				top: 123,
+				right: 3146,
+				bot: 1590
+			}
 		};	
 		this.bar = {
-			left: { y: (this.limit.map.bot - this.limit.map.top) / 2, x: (this.limit.map.right - this.limit.map.left) / 10 },
-			right: { y: (this.limit.map.bot - this.limit.map.top) / 2, x: this.limit.map.right - (this.limit.map.right - this.limit.map.left) / 10 },
+			left: {
+				y: (this.limit.map.bot - this.limit.map.top) / 2,
+				x: (this.limit.map.right - this.limit.map.left) / 10
+			},
+			right: {
+				y: (this.limit.map.bot - this.limit.map.top) / 2,
+				x: this.limit.map.right - (this.limit.map.right - this.limit.map.left) / 10
+			},
 			width: 40.96,
-			height: 342.8
+			height: 342.8,
+			speed: (this.limit.map.bot - this.limit.map.top) / 100
 		};
 		this.ball = {
-			old: { x: (this.limit.map.right - this.limit.map.left) / 2, y: (this.limit.map.bot - this.limit.map.top) / 2 },
-			new: { x: (this.limit.map.right - this.limit.map.left) / 2, y: (this.limit.map.bot - this.limit.map.top) / 2 },
+			old: {
+				x: (this.limit.map.right - this.limit.map.left) / 2,
+				y: (this.limit.map.bot - this.limit.map.top) / 2 },
+			new: {
+				x: (this.limit.map.right - this.limit.map.left) / 2,
+				y: (this.limit.map.bot - this.limit.map.top) / 2 },
 			width: 85.7,
 			height: 85.7,
 			vx: Math.cos(Math.PI / 4),
@@ -57,7 +74,7 @@ export class AIInstance {
 
 	private updateAI() {
 		
-		if (this.ball.new.x < this.ball.old.x)
+		if (this.ball.new.x <= this.ball.old.x)
 		{
 			this.replaceBar();
 		}
@@ -67,18 +84,20 @@ export class AIInstance {
 		}
 
 		if (this.input.up)
-			this.bar.right.y -= (this.limit.map.bot - this.limit.map.top) / 100;
+			this.bar.right.y -= this.bar.speed;
 		if (this.input.down)
-			this.bar.right.y += (this.limit.map.bot - this.limit.map.top) / 100;
+			this.bar.right.y += this.bar.speed;
 	}
 
 	private replaceBar() {
+
 		const dist = this.bar.right.y - (this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2);
-		if ( dist >= (this.limit.map.bot - this.limit.map.top) / 100 )
+		
+		if ( dist >= this.bar.speed )
 		{
 			this.sendUpdate(true, false);
 		}
-		else if ( dist <= -(this.limit.map.bot - this.limit.map.top) / 100 )
+		else if ( dist <= -this.bar.speed )
 		{
 			this.sendUpdate(false, true);
 		}
@@ -89,8 +108,6 @@ export class AIInstance {
 	}
 
 	private barMovement() {
-		if ( this.ball.old === this.ball.new )
-			return ;
 
 		const intersectionY = this.findIntersection();
 
@@ -98,11 +115,11 @@ export class AIInstance {
 
 		const dist = this.bar.right.y - intersectionY;
 		
-		if ( dist >= (this.limit.map.bot - this.limit.map.top) / 100 )
+		if ( dist >= this.bar.speed )
 		{
 			this.sendUpdate(true, false);
 		}
-		else if ( dist <= -(this.limit.map.bot - this.limit.map.top) / 100 )
+		else if ( dist <= -this.bar.speed )
 		{
 			this.sendUpdate(false, true);
 		}
@@ -113,6 +130,7 @@ export class AIInstance {
 	}
 
 	private findIntersection() {
+
 		const limit_x = this.bar.right.x - this.ball.width / 2;
 		const dx = limit_x - this.ball.new.x;
 		const steps = dx / this.ball.vx;
@@ -125,7 +143,7 @@ export class AIInstance {
 		y = y - this.limit.map.top;
 	  
 		y = y % range;
-		if (y < 0) y += range;
+		if (y < 0) y += range; // peut etre enleve ?
 	  
 		if (y > height) {
 		  y = range - y;
@@ -142,7 +160,11 @@ export class AIInstance {
 			if (matchmakingSocket) {
 				matchmakingSocket.emit("player-input", {
 					gameId: this.id,
-					input: { direction: "up", state: up, player: "right"},
+					input: {
+						direction: "up",
+						state: up,
+						player: "right"
+					},
 				});
 	  		}
 		}
@@ -153,22 +175,35 @@ export class AIInstance {
 			if (matchmakingSocket) {
 				matchmakingSocket.emit("player-input", {
 					gameId: this.id,
-					input: { direction: "down", state: down, player: "right"},
+					input: {
+						direction: "down",
+						state: down,
+						player: "right"
+					},
 				});
 			}
 		}
 
 		this.input.up = up;
-		this.input.down = down;
-		
+		this.input.down = down;	
 	}
 
 	public handleUpdate( 
 			state: { 
-				players: any,
-				bar: {left:  number, right: number },
-				ball: { x: number, y: number },
-				score: {player1: number, player2: number} } ) {
+				players: any, // voir pour degager ca
+				bar: {
+					left: number,
+					right: number
+				},
+				ball: {
+					x: number,
+					y: number
+				},
+				score: {
+					player1: number,
+					player2: number
+				} 
+			} ) {
 		if (this.cooldown == true)
 		{
 			this.ball.old = this.ball.new;

@@ -13,6 +13,6 @@
       "./node_modules/@types"
     ]
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/AIInstance/AIInstance.ts"],
   "exclude": ["dist", "node_modules"]
 }
