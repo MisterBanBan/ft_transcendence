@@ -12,10 +12,8 @@ export interface bar {
 }
 
 export interface ball {
-	old: pos,
-	new: pos,
-	width: number,
-	height: number,
+	x: number,
+	y: number,
 	vx: number,
 	vy: number
 }
@@ -26,6 +24,10 @@ export interface limit {
 		top: number,
 		right: number,
 		bot: number
+	}
+	ball: {
+		width: number,
+		height: number
 	}
 }
 

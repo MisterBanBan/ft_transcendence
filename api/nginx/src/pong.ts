@@ -49,7 +49,6 @@ export class pong implements Component {
     private rightBar!: Bar;
     private ball!: Ball;
     private rafId = 0;
-    private lastTime = 0;
     private imgPong: HTMLImageElement;
     private leftBEle: HTMLElement;
     private rightBEle: HTMLElement;
@@ -136,7 +135,7 @@ export class pong implements Component {
             const backRectHeight = this.backRect.height;
             const margin = backRectHeight * 0.1;
             const centerY = margin +(backRectHeight - margin * 2 - this.leftBar.height) / 2;
-            this.leftBar.position.y = centerY;
+            this.leftBar.position.y = centerY; // changer pour des valeurs exacts plus tard
             this.rightBar.position.y = centerY;
             this.ball.position.y = centerY;
     
@@ -144,7 +143,7 @@ export class pong implements Component {
             window.addEventListener('keydown', this.onKeyDown);
             window.addEventListener('keyup', this.onKeyUp);
             this.barResize();
-			this.socketfct();
+			this.updateHandler();
             };
             
             if (this.imgPong.complete && this.imgPong.onload) {
@@ -193,7 +192,7 @@ export class pong implements Component {
 		}
     };
     
-    private gameLoop = (timestamp: number) => {
+    private gameLoop = () => {
     
         // Mesure la position réelle de l'image
         this.backRect = this.imgPong.getBoundingClientRect();
@@ -212,9 +211,9 @@ export class pong implements Component {
         });
     };
     
-    private socketfct() {
-        let gameId: string | null = null;
-        let playerId: string | null = null;
+    private updateHandler() {
+        let gameId: string;
+        let playerId: string[];
 
         let ball = { x: 0, y: 0 };
 
@@ -240,20 +239,19 @@ export class pong implements Component {
           console.log("Connected with id:", this.socket.id);
         });
 
-        this.socket.on("game-started", (data: any) => {
+        this.socket.on("game-started", (data: { gameId: string, playerId: string[]}) => {
           gameId = data.gameId;
           playerId = data.playerId;
           console.log("Game started! Game ID:", gameId, "Player ID:", playerId);
         });
 
         this.socket.on("game-update", (data: { gameId: string, state: {
-        	players: { id: string, x: number }[],
 			bar: { left: number, right: number},
         	ball: { x: number, y: number},
         	score: {player1: number, player2: number}}}) => {
         	if (data && data.state && data.state.ball) {
             	ball = data.state.ball;
-                
+
 				// img ball pos = ball pos * ratio current_size and base_size - ball size / 2 
                 this.ball.position.x =  data.state.ball.x * this.backRect.width / 4096 - (this.ball.height * 0.5);
                 this.ball.position.y = data.state.ball.y * this.backRect.height / 1714 - (this.ball.height * 0.5);

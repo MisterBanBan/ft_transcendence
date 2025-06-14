@@ -15,7 +15,9 @@ export interface state {
 	},
 	ball: {
 		x: number,
-		y: number
+		y: number,
+		vx: number,
+		vy: number
 	},
 	score: {
 		player1: number,
@@ -27,8 +29,6 @@ export interface intern {
 	ball: {
 		width: number,
 		height: number,
-		vx: number,
-		vy: number,
 		speed: number
 	},
 	bar: {

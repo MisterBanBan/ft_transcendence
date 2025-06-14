@@ -23,7 +23,9 @@ export class GameInstance {
 			},
 			ball: {
 				x: (this.limit.map.right - this.limit.map.left) / 2,
-				y: (this.limit.map.bot - this.limit.map.top) / 2
+				y: (this.limit.map.bot - this.limit.map.top) / 2,
+				vx: Math.cos(Math.PI / 4),
+				vy: Math.sin(Math.PI / 4)
 			},
 			score: {
 				player1: 0,
@@ -34,8 +36,6 @@ export class GameInstance {
 			ball: {
 				width: 85.7,
 				height: 85.7,
-				vx: Math.cos(Math.PI / 4),
-				vy: Math.sin(Math.PI / 4),
 				speed: (this.limit.map.right - this.limit.map.left) / 300
 			},
 			bar: {
@@ -68,8 +68,8 @@ export class GameInstance {
 	
 	private updateGame() {
 
-		this.state.ball.x += this.intern.ball.vx * this.intern.ball.speed;
-		this.state.ball.y += this.intern.ball.vy * this.intern.ball.speed;
+		this.state.ball.x += this.state.ball.vx * this.intern.ball.speed;
+		this.state.ball.y += this.state.ball.vy * this.intern.ball.speed;
 
 		this.barUpdate();
 
@@ -92,7 +92,7 @@ export class GameInstance {
 			if (this.intern.ball.speed < this.limit.speed)
 				this.intern.ball.speed += this.intern.ball.speed / 10;
 
-			this.intern.ball.vy *= -1;
+			this.state.ball.vy *= -1;
 
 			if (this.state.ball.y < top)
 				this.state.ball.y = top;
@@ -141,8 +141,8 @@ export class GameInstance {
 				const center_dist = this.state.bar.left - closest_y;
 				const bar_ratio = -center_dist / this.intern.bar.height / 2;
 				let new_angle = bar_ratio * Math.PI;
-				this.intern.ball.vx = Math.cos(new_angle);
-				this.intern.ball.vy = Math.sin(new_angle);
+				this.state.ball.vx = Math.cos(new_angle);
+				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
 					this.intern.ball.speed += this.intern.ball.speed / 10;
 			}
@@ -167,8 +167,8 @@ export class GameInstance {
 				const center_dist = this.state.bar.right - closest_y;
 				const bar_ratio = center_dist / this.intern.bar.height / 2;
 				let new_angle = Math.PI + bar_ratio * Math.PI;
-				this.intern.ball.vx = Math.cos(new_angle);
-				this.intern.ball.vy = Math.sin(new_angle);
+				this.state.ball.vx = Math.cos(new_angle);
+				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
 					this.intern.ball.speed +=  this.intern.ball.speed / 10;
 			}
@@ -186,8 +186,8 @@ export class GameInstance {
 		this.state.ball.y = (this.limit.map.bot - this.limit.map.top) / 2;
 
 		const new_angle = Math.random() * 2 * Math.PI;
-		this.intern.ball.vx = Math.cos(new_angle);
-		this.intern.ball.vy = Math.sin(new_angle);
+		this.state.ball.vx = Math.cos(new_angle);
+		this.state.ball.vy = Math.sin(new_angle);
 		this.intern.ball.speed = (this.limit.map.right - this.limit.map.left) / 300;
 	}
   

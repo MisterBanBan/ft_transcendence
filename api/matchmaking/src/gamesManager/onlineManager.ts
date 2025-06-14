@@ -11,7 +11,7 @@ export function onlineManager(socket: Socket, app: FastifyInstance) {
 	} else {
 		const gameId = `game-${waitingPlayer.id}${socket.id}`;
 
-		app.playerToGame.set(socket.id, { playerName: "Michel", gameId: gameId, side: "left" });
+		app.playerToGame.set(socket.id, { playerName: "Michel", gameId: gameId, side: "left" }); // remplacer par les noms des users
 		app.playerToGame.set(waitingPlayer.id, { playerName: "Michel", gameId: gameId, side: "right" });
 
 		gameSocket.emit("create-game", {

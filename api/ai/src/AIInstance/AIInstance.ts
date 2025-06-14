@@ -20,6 +20,10 @@ export class AIInstance {
 				top: 123,
 				right: 3146,
 				bot: 1590
+			},
+			ball: {
+				width: 85.7,
+				height: 85.7
 			}
 		};	
 		this.bar = {
@@ -36,14 +40,8 @@ export class AIInstance {
 			speed: (this.limit.map.bot - this.limit.map.top) / 100
 		};
 		this.ball = {
-			old: {
-				x: (this.limit.map.right - this.limit.map.left) / 2,
-				y: (this.limit.map.bot - this.limit.map.top) / 2 },
-			new: {
-				x: (this.limit.map.right - this.limit.map.left) / 2,
-				y: (this.limit.map.bot - this.limit.map.top) / 2 },
-			width: 85.7,
-			height: 85.7,
+			x: (this.limit.map.right - this.limit.map.left) / 2,
+			y: (this.limit.map.bot - this.limit.map.top) / 2,
 			vx: Math.cos(Math.PI / 4),
 			vy: Math.sin(Math.PI / 4)
 		};
@@ -74,7 +72,7 @@ export class AIInstance {
 
 	private updateAI() {
 		
-		if (this.ball.new.x <= this.ball.old.x)
+		if (this.ball.vx < 0)
 		{
 			this.replaceBar();
 		}
@@ -131,11 +129,11 @@ export class AIInstance {
 
 	private findIntersection() {
 
-		const limit_x = this.bar.right.x - this.ball.width / 2;
-		const dx = limit_x - this.ball.new.x;
+		const limit_x = this.bar.right.x - this.limit.ball.width / 2;
+		const dx = limit_x - this.ball.x;
 		const steps = dx / this.ball.vx;
 
-		let y = this.ball.new.y + this.ball.vy * steps;
+		let y = this.ball.y + this.ball.vy * steps;
 
 		const height = this.limit.map.bot - this.limit.map.top;
 		const range = 2 * height;
@@ -190,14 +188,15 @@ export class AIInstance {
 
 	public handleUpdate( 
 			state: { 
-				players: any, // voir pour degager ca
 				bar: {
 					left: number,
 					right: number
 				},
 				ball: {
 					x: number,
-					y: number
+					y: number,
+					vx: number,
+					vy: number
 				},
 				score: {
 					player1: number,
@@ -206,17 +205,11 @@ export class AIInstance {
 			} ) {
 		if (this.cooldown == true)
 		{
-			this.ball.old = this.ball.new;
-			this.ball.new = state.ball;
+			this.ball = state.ball;
 			this.bar.left.y = state.bar.left;
 			this.bar.right.y = state.bar.right;
-			
-			const dx = this.ball.new.x - this.ball.old.x;
-			const dy = this.ball.new.y - this.ball.old.y;
-
-			const norme = Math.sqrt(dx * dx + dy * dy);
-			this.ball.vx = dx / norme;
-			this.ball.vy = dy / norme;
+			this.ball.vx = state.ball.vx;
+			this.ball.vy = state.ball.vy;
 
 			this.cooldown = false;
 		}
