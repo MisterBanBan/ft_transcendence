@@ -140,7 +140,6 @@ export class GameInstance {
 			{
 				const center_dist = this.state.bar.left - closest_y;
 				const bar_ratio = -center_dist / (this.intern.bar.height / 2);
-				console.log("center_dist: ", center_dist, ", bar_ratio: ", bar_ratio);
 				let new_angle = bar_ratio * 0.5 * Math.PI * 0.5;
 				this.state.ball.vx = Math.cos(new_angle);
 				this.state.ball.vy = Math.sin(new_angle);
@@ -167,7 +166,7 @@ export class GameInstance {
 			{
 				const center_dist = this.state.bar.right - closest_y;
 				const bar_ratio = center_dist / (this.intern.bar.height / 2);
-				let new_angle = Math.PI + bar_ratio * 0.5 * Math.PI * 0.5;;
+				const new_angle = Math.PI + bar_ratio * 0.5 * Math.PI * 0.5;
 				this.state.ball.vx = Math.cos(new_angle);
 				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
@@ -186,7 +185,11 @@ export class GameInstance {
 		this.state.ball.x = (this.limit.map.right - this.limit.map.left) / 2;
 		this.state.ball.y = (this.limit.map.bot - this.limit.map.top) / 2;
 
-		const new_angle = Math.random() * 2 * Math.PI;
+		let new_angle = Math.random() * Math.PI;
+		if (new_angle > 0.25 * Math.PI)
+			new_angle += Math.PI * 0.5;
+		if (new_angle > 1.25 * Math.PI)
+			new_angle += Math.PI * 0.25;
 		this.state.ball.vx = Math.cos(new_angle);
 		this.state.ball.vy = Math.sin(new_angle);
 		this.intern.ball.speed = (this.limit.map.right - this.limit.map.left) / 300;
