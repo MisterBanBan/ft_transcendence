@@ -1,7 +1,7 @@
-import {FastifyInstance, FastifyRequest} from "fastify";
+import {FastifyInstance} from "fastify";
 import {decodeToken} from "../utils/decode-token.js";
 import {getUserByUsername} from "../db/get-user-by-username.js";
-import * as repl from "node:repl";
+import {TokenPayload} from "../interface/token-payload.js";
 
 export default async function (server: FastifyInstance) {
 	server.addHook('preHandler', async (request, reply) => {
@@ -46,6 +46,22 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		(request as any).currentUser = await getUserByUsername(server.db, decodedToken.username);
+		const user = await getUserByUsername(server.db, decodedToken.username)
+
+		if (!user) {
+			return reply.status(500).send({
+				error: "Internal Server Error",
+				message: "An error occurred while getting the current user"
+			})
+		}
+
+		request.headers['x-current-user'] = Buffer.from(JSON.stringify({
+			id: user.id!,
+			username: user.username,
+			provider: user.provider,
+			provider_id: user.provider_id,
+			tfa: Boolean(user.tfa),
+			updatedAt: user.updatedAt
+		})).toString('base64');
 	});
 }

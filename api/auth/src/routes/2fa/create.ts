@@ -1,4 +1,4 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 import authenticator from "authenticator";
 import qrcode from "qrcode";
 import {add2fa} from "../../db/add-2fa.js";
@@ -8,14 +8,21 @@ import {createOAuthEntry} from "../../utils/handle-relog.js";
 import {signToken} from "../../utils/sign-token.js";
 import {TokenPayload} from "../../interface/token-payload.js";
 import {setCookie} from "../../utils/set-cookie.js";
+import {getUserByUsername} from "../../db/get-user-by-username.js";
 
 export const create2FASessions = new Map<string, {token?:string, key?: string, relogin: boolean, eat?: number, tries?: number}>();
 
 export default async function (server: FastifyInstance) {
 
-	server.get('/api/auth/2fa/create', async function (request, reply) {
+	server.get('/api/auth/2fa/create', async function (request: FastifyRequest, reply) {
 
-		const user = request.currentUser! as User;
+		const user = request.currentUser;
+		if (!user) {
+			return reply.code(404).send({
+				error: "Not Found",
+				message: "User not found"
+			});
+		}
 
 		if (user.tfa) {
 			return reply.status(403).send({
@@ -63,9 +70,16 @@ export default async function (server: FastifyInstance) {
 		}
 	});
 
-	server.post('/api/auth/2fa/create', async function (request, reply) {
+	server.post('/api/auth/2fa/create', async function (request: FastifyRequest, reply) {
 		const { code, password } = request.body as { code: string; password?: string };
-		const user = request.currentUser! as User;
+
+		const user = request.currentUser;
+		if (!user) {
+			return reply.code(404).send({
+				error: "Not Found",
+				message: "User not found"
+			});
+		}
 
 		if (user.tfa) {
 			return reply.status(403).send({
@@ -86,7 +100,15 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		if (user.provider == "local" && (!password || !await verifyPassword(user, password))) {
+		const dbUser = await getUserByUsername(server.db, user.username);
+		if (!dbUser) {
+			return reply.code(500).send({
+				error: "Internal Server Error",
+				message: `An error occurred while getting user`,
+			})
+		}
+
+		if (user.provider == "local" && (!password || !await verifyPassword(dbUser, password))) {
 			key.tries--;
 			return reply.status(400).send({
 				error: "Bad Request",
@@ -104,16 +126,16 @@ export default async function (server: FastifyInstance) {
 
 		const timestamp = await add2fa(server.db, user.username, key.key!)
 
-		const token = {
+		const token: TokenPayload = {
 			id: user.id,
 			username: user.username,
 			provider: user.provider,
 			provider_id: user.provider_id,
+			tfa: true,
 			updatedAt: timestamp
-		} as TokenPayload;
+		};
 
 		await setCookie(reply, await signToken(server, token));
-
 		return reply.status(201).send({ success: true });
 	})
 };

@@ -44,7 +44,6 @@ export class ChangePassword implements Component{
 				});
 				const data = await response.json();
 
-				console.log(data);
 				if (!response.ok) {
 					const error = document.getElementById('error-password')
 					if (!error) {

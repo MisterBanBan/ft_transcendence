@@ -49,21 +49,22 @@ export default async function (server: FastifyInstance) {
 				});
 			}
 
-			const tokenData: TokenPayload = {
-				provider: "local",
-				id: user.id!,
-				username: user.username,
-				updatedAt: user.updatedAt
-			};
-
-			const token = await signToken(server, tokenData);
-
 			if (!await verifyPassword(user, password)) {
 				return reply.status(400).send({
 					error: 'Bad Request',
 					message: 'Invalid password.'
 				});
 			}
+
+			const tokenData: TokenPayload = {
+				provider: "local",
+				id: user.id!,
+				username: user.username,
+				tfa: Boolean(user.tfa),
+				updatedAt: user.updatedAt
+			};
+
+			const token = await signToken(server, tokenData);
 
 			if (user.tfa) {
 				return reply.status(401).send({

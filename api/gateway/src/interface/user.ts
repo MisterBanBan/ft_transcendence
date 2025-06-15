@@ -1,8 +1,9 @@
-export interface TokenPayload {
-	id: number;
+export interface User {
+	id?: number;
 	username: string;
+	password?: string;
+	tfa?: string;
 	provider: string;
 	provider_id?: string;
-	tfa: boolean;
 	updatedAt: number;
 }
