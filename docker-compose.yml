@@ -1,4 +1,31 @@
 services:
+  gateway:
+    image: gateway
+    container_name: gateway
+    build:
+      context: api/gateway
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:3000/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+        - ft_transcendence
+    depends_on:
+      users:
+        condition: service_healthy
+      tournament:
+        condition: service_healthy
+      matchmaking:
+        condition: service_healthy
+      game:
+        condition: service_healthy
+      auth:
+        condition: service_healthy
+    volumes:
+        - ./api/auth/database:/app/database
+    restart: unless-stopped
   users:
     image: users
     container_name: users
@@ -95,15 +122,7 @@ services:
     ports:
       - "8443:443"
     depends_on:
-      users:
-        condition: service_healthy
-      tournament:
-        condition: service_healthy
-      matchmaking:
-        condition: service_healthy
-      game:
-        condition: service_healthy
-      auth:
+      gateway:
         condition: service_healthy
     networks:
       - ft_transcendence

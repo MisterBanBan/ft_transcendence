@@ -1,4 +1,4 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 import {getUserByUsername} from "../db/get-user-by-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
 import {changeUsername} from "../db/change-username.js";
@@ -27,7 +27,7 @@ export default async function (server: FastifyInstance) {
 				},
 			}
 		}
-	}, async (request, reply) => {
+	}, async (request: FastifyRequest, reply) => {
 
 		const { newUsername } = request.body as { newUsername: string; }
 		const token = request.cookies.token!;
@@ -75,6 +75,7 @@ export default async function (server: FastifyInstance) {
 			username: newUsername,
 			provider: user.provider,
 			provider_id: user.provider_id,
+			tfa: Boolean(user.tfa),
 			updatedAt: timestamp
 		};
 

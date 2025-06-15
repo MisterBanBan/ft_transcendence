@@ -1,4 +1,4 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 import {TokenPayload} from "../interface/token-payload.js";
 import {getUserByUsername} from "../db/get-user-by-username.js";
 import argon2 from "argon2";
@@ -31,22 +31,18 @@ export default async function (server: FastifyInstance) {
 				},
 			}
 		}
-	}, async (request, reply) => {
+	}, async (request: FastifyRequest, reply) => {
 		const { currentPassword, newPassword, confirmNewPassword } = request.body as {
 			currentPassword: string,
 			newPassword: string,
 			confirmNewPassword: string
 		};
 
-		const token = request.cookies.token!;
-
-		const decoded = server.jwt.decode(token) as TokenPayload;
-
-		const user = await getUserByUsername(server.db, decoded.username);
+		const user = request.currentUser;
 		if (!user) {
 			return reply.code(404).send({
 				error: "Not Found",
-				message: "User not found",
+				message: "User not found"
 			});
 		}
 
@@ -57,7 +53,15 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		if (!await verifyPassword(user, currentPassword)) {
+		const dbUser = await getUserByUsername(server.db, user.username)
+		if (!dbUser) {
+			return reply.code(500).send({
+				error: "Internal Server Error",
+				message: `An error occurred while getting user`,
+			})
+		}
+
+		if (!await verifyPassword(dbUser, currentPassword)) {
 			return reply.code(400).send({
 				error: "Bad Request",
 				message: "Invalid password",
@@ -79,6 +83,7 @@ export default async function (server: FastifyInstance) {
 			username: user.username,
 			provider: user.provider,
 			provider_id: user.provider_id,
+			tfa: Boolean(user.tfa),
 			updatedAt: timestamp
 		};
 
