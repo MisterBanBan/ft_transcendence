@@ -64,7 +64,7 @@ export class Register implements Component{
 				return;
 			}
 
-			window.location.href = '/';
+			window.location.href = '/game';
 		} catch (err) {
 			console.error(err);
 		}

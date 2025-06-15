@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/12 13:36:07 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/13 18:40:19 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,14 @@ import { newPseudo } from "./menuInsert/newPseudo.js";
 import { newPass } from "./menuInsert/newPass.js";
 import { newTwoFa } from "./menuInsert/newTwoFa.js";
 import { game } from "./menuInsert/game.js";
+import { Login } from "./auth/login.js";
 import { Register } from "./auth/register.js";
-
+import {TFAValidate} from "./auth/2fa-validate.js";
+import {ChangeUsername} from "./auth/change-username.js";
+import {ChangePassword} from "./auth/change-password.js";
+import {Toggle2FA} from "./auth/toggle-2fa.js";
+import {Logout} from "./auth/logout.js";
+import { removeTwoFa } from "./menuInsert/removeTwoFa.js";
 
 
 export class menu implements Component {
@@ -52,15 +58,7 @@ export class menu implements Component {
         const formsContainer = document.getElementById('container_form');
         if (!formsContainer) throw new Error('Form wrapper not found');
         this.formsContainer= formsContainer;
-        
-        /*// Sélectionne toutes les options de menu
-        this.options = Array.from(document.querySelectorAll('.menu-option')) as HTMLElement[];
-        // Sélectionne la vidéo du curseur
-        const cursor = document.getElementById('cursor-video') as HTMLVideoElement;
-        if (!cursor) throw new Error('Cursor video not found');
-        this.cursor = cursor;*/
 
-        // Handler clavier lié à l'instance
         this.keydownHandler = this.handleKeydown.bind(this);
     }
 
@@ -86,15 +84,16 @@ export class menu implements Component {
         this.cursor.style.top = offset + "px";
         
 
-        // Optionnel : focus visuel
         this.options.forEach((opt, i) => {
             opt.classList.toggle('selected', i === this.selectedIdx);
         });
     }
+    
     private selectOption() {
         if (!this.options.length) return;
         const selected = this.options[this.selectedIdx];
     }
+    
     private handleKeydown(e: KeyboardEvent) {
         if (!this.options.length) return;
         if (e.key === "ArrowDown") {
@@ -131,7 +130,6 @@ export class menu implements Component {
                 this.loadAcceuil();
                 this.formsContainer.insertAdjacentHTML('beforeend', game());
                 this.setupGameMenu();
-                
                 this.visibleForm = "none";
             }
         } 
@@ -165,15 +163,18 @@ export class menu implements Component {
             this.videoMain.load(); 
         }
         this.formsContainer.insertAdjacentHTML('beforeend', settings());
+        const logout = new Logout();
+        logout.init();
         this.eventFormListeners();
     }
 
 
     
     private logOut() {
+
         this.formsContainer.innerHTML = '';
         this.formsContainer.insertAdjacentHTML('beforeend', game());
-
+        
         this.loadAcceuil();
         this.visibleForm = "none";
         this.eventFormListeners();
@@ -184,6 +185,8 @@ export class menu implements Component {
         this.formsContainer.innerHTML = '';
 
         this.formsContainer.insertAdjacentHTML('beforeend', newPseudo());
+        const changeUsername = new ChangeUsername();
+        changeUsername.init();
         document.getElementById('pseudoReturnBtn')?.addEventListener('click', () => this.returnForm());
         
     }
@@ -191,6 +194,8 @@ export class menu implements Component {
         this.formsContainer.innerHTML = '';
 
         this.formsContainer.insertAdjacentHTML('beforeend', newPass());
+        const changePassword = new ChangePassword();
+        changePassword.init();
         document.getElementById('passReturnBtn')?.addEventListener('click', () => this.returnForm());
 
     }
@@ -198,6 +203,17 @@ export class menu implements Component {
         this.formsContainer.innerHTML = '';
 
         this.formsContainer.insertAdjacentHTML('beforeend', newTwoFa());
+        const toggle2FA = new Toggle2FA();
+        toggle2FA.init();
+        document.getElementById('2faReturnBtn')?.addEventListener('click', () => this.returnForm());
+
+    }
+
+    private remove2fa() {
+        this.formsContainer.innerHTML = '';
+        this.formsContainer.insertAdjacentHTML('beforeend', removeTwoFa());
+        const toggle2FA = new Toggle2FA();
+			toggle2FA.init();
         document.getElementById('2faReturnBtn')?.addEventListener('click', () => this.returnForm());
 
     }
@@ -211,6 +227,10 @@ export class menu implements Component {
         if (formType === 'register') {
             const register = new Register();
             register.init();
+        }
+        else if (formType === 'login') {
+            const login = new Login();
+            login.init();
         }
         this.eventFormListeners();
     }
@@ -235,6 +255,7 @@ export class menu implements Component {
         document.getElementById('newPseudo')?.addEventListener('click', () => this.newPseudo());
         document.getElementById('newPass')?.addEventListener('click', () => this.newPassword());
         document.getElementById('new2fa')?.addEventListener('click', () => this.new2fa());
+        document.getElementById('remove2fa')?.addEventListener('click', () => this.remove2fa());
 
     }
     
