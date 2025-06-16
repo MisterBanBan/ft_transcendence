@@ -150,24 +150,22 @@ export class AIInstance {
 	}
 
 	private aimOpposite(destY: number): number {
+
 		const distTop = this.bar.left.y - this.limit.map.top;
 		const distBot = this.limit.map.bot - this.bar.left.y;
-
+	
 		const aimPoint = (distTop > distBot) 
 			? this.limit.map.top + this.limit.ball.height / 2
 			: this.limit.map.bot - this.limit.ball.height / 2;
 	
-		const deltaY = (aimPoint - destY) > 0 
-			? aimPoint - destY
-			: destY - aimPoint;
+		const deltaY = aimPoint - destY;
 		const deltaX = this.bar.left.x - this.bar.right.x;
+
+		let angle = Math.atan2(deltaY, deltaX);
+		angle = (angle < 0) ? angle + 2 * Math.PI : angle;
 	
-		const angle = Math.atan2(deltaY, deltaX);
-	
-		const maxAngle = Math.PI / 4;
-		const barRatio = (angle - Math.PI) / maxAngle;
-	
-		const centerDist = barRatio * (this.bar.height / 2);
+		const barRatio = 4 * (angle - Math.PI) / Math.PI;
+    	const centerDist = barRatio * (this.bar.height / 2);
 	
 		return destY + centerDist;
 	}
