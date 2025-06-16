@@ -20,8 +20,8 @@ export interface state {
 		vy: number
 	},
 	score: {
-		player1: number,
-		player2: number
+		playerLeft: number,
+		playerRight: number
 	}
 }
 
@@ -38,6 +38,11 @@ export interface intern {
 		height: number,
 		speed: number
 	}
+}
+
+export interface pause {
+	cooldown: number,
+	bool: boolean
 }
 
 interface bar {

@@ -25,4 +25,11 @@ export function registerSocketHandlers(socket: Socket, app: FastifyInstance) {
       instance.handleUpdate(state);
     }
   });
+
+  socket.on("game-end", (gameId: string) => {
+    const instance = aiInstances.get(gameId);
+    if (instance) {
+      instance.stop();
+    }
+  });
 }

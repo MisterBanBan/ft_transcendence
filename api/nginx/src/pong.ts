@@ -54,7 +54,7 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
-	private socket = io("https://10.13.6.6:8083", {
+	private socket = io("https://10.13.5.6:8083", {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
 	});
@@ -93,7 +93,6 @@ export class pong implements Component {
 
         const barWidth = imgWidth * 0.01;
         const barHeight = imgHeight * 0.2;
-        console.log(": %d : %d", barHeight, barWidth);
         //definir la taille des barres en fonction de la taille de la fenetre
         this.leftBar.element.style.width = `${barWidth}px`;
         this.leftBar.element.style.height = `${barHeight}px`;
@@ -267,6 +266,10 @@ export class pong implements Component {
         this.socket.on("connect_error", (err: any) => {
             console.error("Connection error:", err);
         });
+
+        this.socket.on("game-end", (score: {playerLeft: number, playerRight: number}) => {
+            console.log("Game end with a score of ", score.playerLeft, ":", score.playerRight);
+        })
     }
     
     public destroy(): void {

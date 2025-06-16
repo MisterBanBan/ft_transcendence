@@ -1,11 +1,12 @@
 import { Socket } from "socket.io";
-import { limit, state, intern } from "../utils/interface"
+import { limit, state, intern, pause } from "../utils/interface"
 
 export class GameInstance {
 	private interval!: NodeJS.Timeout;
 	private state: state;
 	private limit: limit;
 	private intern: intern;
+	private pause: pause;
 
 	constructor(
 	  public id: string,
@@ -18,18 +19,18 @@ export class GameInstance {
 		};	
 		this.state = {
 			bar: {
-				left:  (this.limit.map.bot - this.limit.map.top) / 2,
-				right: (this.limit.map.bot - this.limit.map.top) / 2
+				left: this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2,
+				right: this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2
 			},
 			ball: {
-				x: (this.limit.map.right - this.limit.map.left) / 2,
-				y: (this.limit.map.bot - this.limit.map.top) / 2,
+				x: this.limit.map.left + (this.limit.map.right - this.limit.map.left) / 2,
+				y: this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2,
 				vx: Math.cos(Math.PI / 4),
 				vy: Math.sin(Math.PI / 4)
 			},
 			score: {
-				player1: 0,
-				player2: 0
+				playerLeft: 0,
+				playerRight: 0
 			}
 		};
 		this.intern = {
@@ -40,7 +41,7 @@ export class GameInstance {
 			},
 			bar: {
 				left: {
-					x: (this.limit.map.right - this.limit.map.left) / 10,
+					x: this.limit.map.left + (this.limit.map.right - this.limit.map.left) / 10,
 					Up: false,
 					Down: false
 				},
@@ -54,17 +55,39 @@ export class GameInstance {
 				speed: (this.limit.map.bot - this.limit.map.top) / 100
 			}
 		};
+		this.pause = {
+			bool: true,
+			cooldown: 0
+		};
 	  
-	  this.startGameLoop();
+		this.startGameLoop();
 	}
   
 	private startGameLoop() {
 	  console.log(`[${this.id}] startGameLoop called`);
 	  this.interval = setInterval(() => {
-		this.updateGame();
-	  }, 1000 / 60);
+		this.sendUpdate();
+		if (this.pause.bool)
+			this.pause.cooldown++;
+		else
+			this.updateGame();
+		if (this.pause.cooldown == 60)
+		{
+			this.pause.cooldown = 0;
+			this.pause.bool = false;
+		}
+		}, 1000 / 60);
 	}
-  
+
+	private sendUpdate() {
+		const matchmakingSocket = this.getMatchmakingSocket();
+		if (matchmakingSocket) {
+			matchmakingSocket.emit("game-update", {
+				gameId: this.id,
+				state: this.state
+			});
+		}
+	}
 	
 	private updateGame() {
 
@@ -99,14 +122,6 @@ export class GameInstance {
 			if (this.state.ball.y > bot)
 				this.state.ball.y = bot;
 		}
-
-		const matchmakingSocket = this.getMatchmakingSocket();
-		if (matchmakingSocket) {
-			matchmakingSocket.emit("game-update", {
-				gameId: this.id,
-				state: this.state,
-		});
-	}
 	}
 
 	private barUpdate()
@@ -140,7 +155,7 @@ export class GameInstance {
 			{
 				const center_dist = this.state.bar.left - closest_y;
 				const bar_ratio = -center_dist / (this.intern.bar.height / 2);
-				let new_angle = bar_ratio * 0.5 * Math.PI * 0.5;
+				let new_angle = bar_ratio * Math.PI / 4;
 				this.state.ball.vx = Math.cos(new_angle);
 				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
@@ -166,7 +181,7 @@ export class GameInstance {
 			{
 				const center_dist = this.state.bar.right - closest_y;
 				const bar_ratio = center_dist / (this.intern.bar.height / 2);
-				const new_angle = Math.PI + bar_ratio * 0.5 * Math.PI * 0.5;
+				const new_angle = Math.PI + bar_ratio * Math.PI / 4;
 				this.state.ball.vx = Math.cos(new_angle);
 				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
@@ -177,13 +192,28 @@ export class GameInstance {
 
 	private updateScore()
 	{
+		this.pause.bool = true;
+
 		if (this.state.ball.x <= this.limit.map.left + (this.intern.ball.width / 2))
-			this.state.score.player2 += 1;
+			this.state.score.playerRight += 1;
 		else
-			this.state.score.player1 += 1;
+			this.state.score.playerLeft += 1;
 		
-		this.state.ball.x = (this.limit.map.right - this.limit.map.left) / 2;
-		this.state.ball.y = (this.limit.map.bot - this.limit.map.top) / 2;
+		if (this.state.score.playerRight == 10 || this.state.score.playerLeft == 10)
+		{
+			this.stop();
+			const matchmakingSocket = this.getMatchmakingSocket();
+			if (matchmakingSocket) {
+				matchmakingSocket.emit("game-end", {
+					gameId: this.id,
+					score: this.state.score
+				});
+			console.log("Game ", this.id, " end with a score of ", this.state.score.playerLeft, ":", this.state.score.playerRight);
+		}
+
+		}
+		this.state.ball.x = this.limit.map.left + (this.limit.map.right - this.limit.map.left) / 2;
+		this.state.ball.y = this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2;
 
 		let new_angle = Math.random() * Math.PI;
 		if (new_angle > 0.25 * Math.PI)

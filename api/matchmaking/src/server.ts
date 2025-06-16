@@ -17,8 +17,8 @@ async function start() {
     },
   });
 
-  await app.register(cors, { origin: "https://z3r6p6", credentials: true });
-  await app.register(fastifyIO, { cors: { origin: "https://z3r6p6", credentials: true } });
+  await app.register(cors, { origin: "https://z3r5p6:8443", credentials: true });         // tester depuis un autre poste
+  await app.register(fastifyIO, { cors: { origin: "https://z3r5p6:8443", credentials: true } });
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
   app.register(autoLoad, { dir: join(dir, "routes/") });
@@ -60,6 +60,23 @@ async function start() {
       }
     }
   });
+
+  gameSocket.on("game-end", (data: {gameId: string, score: { playerLeft: number, playerRight: number }}) => {
+    console.log("game ", data.gameId, " end with a score of ", data.score.playerLeft, ":", data.score.playerRight);
+    for (const [playerId, value] of app.playerToGame.entries()) {
+      const pGameId = value.gameId;
+      if (pGameId === data.gameId) {
+        const clientSocket = app.io.sockets.sockets.get(playerId);
+        if (clientSocket) {
+          clientSocket.emit("game-end", data.score);
+        }
+        if (playerId === app.aiSocket.id)
+        {
+          app.aiSocket.emit("game-end", data.gameId);
+        }
+      }
+    }
+  })
 
   app.listen({ port: 8083, host: "0.0.0.0" }, (err) => {
     if (err) {
