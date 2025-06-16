@@ -182,7 +182,7 @@ export class AIInstance {
 						direction: "up",
 						state: up,
 						player: "right"
-					},
+					}
 				});
 	  		}
 		}

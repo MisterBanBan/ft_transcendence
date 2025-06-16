@@ -71,6 +71,7 @@ export class GameInstance {
 			this.pause.cooldown++;
 		else
 			this.updateGame();
+		this.barUpdate();
 		if (this.pause.cooldown == 60)
 		{
 			this.pause.cooldown = 0;
@@ -93,8 +94,6 @@ export class GameInstance {
 
 		this.state.ball.x += this.state.ball.vx * this.intern.ball.speed;
 		this.state.ball.y += this.state.ball.vy * this.intern.ball.speed;
-
-		this.barUpdate();
 
 		const left = this.limit.map.left + (this.intern.ball.width / 2);
 		const right = this.limit.map.right - (this.intern.ball.width / 2);

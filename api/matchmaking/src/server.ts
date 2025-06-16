@@ -14,10 +14,10 @@ async function start() {
     https: {
       key: fs.readFileSync("/app/certs/key.pem"),
       cert: fs.readFileSync("/app/certs/cert.pem"),
-    },
+    }
   });
 
-  await app.register(cors, { origin: "https://z3r5p6:8443", credentials: true });         // tester depuis un autre poste
+  await app.register(cors, { origin: "https://z3r5p6:8443", credentials: true });
   await app.register(fastifyIO, { cors: { origin: "https://z3r5p6:8443", credentials: true } });
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
