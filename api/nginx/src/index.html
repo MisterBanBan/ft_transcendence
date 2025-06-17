@@ -74,6 +74,22 @@
             font-size: 14px;
         }
 
+        .block-user-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
+
+        .block-user-btn:hover {
+            background-color: #c82333;
+        }
+
+
         input, select {
             width: 200px;
         }
@@ -184,7 +200,7 @@
     <h2>⚙️ Configuration</h2>
     <div class="form-group">
         <label for="apiUrl">URL de l'API:</label>
-        <input type="text" id="apiUrl" value="http://localhost:8443">
+        <input type="text" id="apiUrl" value="https://localhost:8443">
     </div>
     <div class="form-group">
         <label for="currentUserId">ID Utilisateur Actuel:</label>
@@ -624,10 +640,10 @@
             });
 
             const data = await response.json();
-            displayResponse('blockedResponse', data, !response.ok);
+            displayResponse('blockUserResponse', data, !response.ok); // Utiliser un ID existant
 
-            // Display blocked users in a nice format
-            const blockedList = document.getElementById('blockedList');
+            // Correction de l'ID du conteneur
+            const blockedList = document.getElementById('BlockedList'); // Avec B majuscule
             if (data.blocked && data.blocked.length > 0) {
                 blockedList.innerHTML = data.blocked.map(blockedUser => `
                 <div class="blocked-item">
@@ -644,7 +660,7 @@
                 blockedList.innerHTML = '<p>Aucun utilisateur bloqué</p>';
             }
         } catch (error) {
-            displayResponse('blockedResponse', { error: error.message }, true);
+            displayResponse('blockUserResponse', { error: error.message }, true);
         }
     }
 
@@ -728,19 +744,26 @@
     function clearResponses() {
         const responseContainers = [
             'createUserResponse', 'inviteResponse', 'invitationsResponse',
-            'manageResponse', 'friendsResponse', 'testResponse'
+            'manageResponse', 'friendsResponse', 'testResponse',
+            'blockUserResponse', 'unblockResponse' // Ajouter ces IDs
         ];
 
         responseContainers.forEach(id => {
             const container = document.getElementById(id);
-            container.textContent = '';
-            container.className = 'response';
+            if (container) { // Vérifier que l'élément existe
+                container.textContent = '';
+                container.className = 'response';
+            }
         });
 
-        // Clear lists
-        document.getElementById('invitationsList').innerHTML = '';
-        document.getElementById('friendsList').innerHTML = '';
-        document.getElementById('usersList').innerHTML = '';
+        // Clear lists avec vérification
+        const lists = ['invitationsList', 'friendsList', 'usersList', 'BlockedList'];
+        lists.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.innerHTML = '';
+            }
+        });
     }
 
     // Load initial data on page load
