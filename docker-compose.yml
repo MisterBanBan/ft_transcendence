@@ -25,6 +25,7 @@ services:
         condition: service_healthy
     volumes:
         - ./api/auth/database:/app/database
+        - ./api/users/database:/app/database
     restart: unless-stopped
   users:
     image: users

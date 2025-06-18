@@ -14,7 +14,7 @@ export async function decodeToken(server: FastifyInstance, token: string, reply:
 	let decodedToken: TokenPayload;
 	try {
 		decodedToken = server.jwt.verify(token);
-		await verifyToken(server.db, decodedToken);
+		await verifyToken(server.authDb, decodedToken);
 	} catch {
 		reply.clearCookie("token", cookieOpts);
 		return undefined;
