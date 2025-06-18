@@ -15,7 +15,15 @@ export default async function (server: FastifyInstance, opts: any) {
 
 	let db: Database;
 	try {
-		db = await open({ filename: "./database/auth_db.sqlite", driver: sqlite3.Database });
+		db = await open({ filename: "./database/auth/auth_db.sqlite", driver: sqlite3.Database });
+
+		const usersDb: Database = await open({
+			filename: "/app/database/users/users_db.sqlite",
+			driver: sqlite3.Database,
+		});
+
+		server.decorate("usersDb", usersDb);
+
 		console.log("database connected.");
 	} catch (err) {
 		console.error("Database error :", err);
@@ -27,7 +35,7 @@ export default async function (server: FastifyInstance, opts: any) {
 		create: {},
 		migrations: { glob: 'dist/migrations/*.js' },
 		context: db,
-		storage: new JSONStorage({ path: "./database/migrations.json" })
+		storage: new JSONStorage({ path: "./database/auth/migrations.json" })
 	});
 	await umzug.up();
 	server.decorate('db', db);

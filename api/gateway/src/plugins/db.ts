@@ -4,12 +4,12 @@ import { open, Database } from 'sqlite';
 
 export default async function(server: FastifyInstance) {
 	const authDb: Database = await open({
-		filename: "/app/database/auth_db.sqlite",
+		filename: "/app/database/auth/auth_db.sqlite",
 		driver: sqlite3.Database,
 	});
 
 	const usersDb: Database = await open({
-		filename: "/app/database/users_db.sqlite",
+		filename: "/app/database/users/users_db.sqlite",
 		driver: sqlite3.Database,
 	});
 
