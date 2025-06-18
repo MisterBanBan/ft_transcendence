@@ -1,7 +1,7 @@
 import {FastifyInstance} from "fastify";
 import {decodeToken} from "../utils/decode-token.js";
 import {getUserByUsername} from "../db/get-user-by-username.js";
-import {TokenPayload} from "../interface/token-payload.js";
+import {getAvatar} from "../db/get-avatar.js";
 
 export default async function (server: FastifyInstance) {
 	server.addHook('preHandler', async (request, reply) => {
@@ -46,7 +46,7 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		const user = await getUserByUsername(server.db, decodedToken.username)
+		const user = await getUserByUsername(server.authDb, decodedToken.username)
 
 		if (!user) {
 			return reply.status(500).send({
@@ -55,9 +55,12 @@ export default async function (server: FastifyInstance) {
 			})
 		}
 
+		const avatar_url = await getAvatar(server.usersDb, decodedToken.username);
+
 		request.headers['x-current-user'] = Buffer.from(JSON.stringify({
 			id: user.id!,
 			username: user.username,
+			avatar_url: avatar_url,
 			provider: user.provider,
 			provider_id: user.provider_id,
 			tfa: Boolean(user.tfa),

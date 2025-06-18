@@ -27,6 +27,7 @@ export default async function (server: FastifyInstance) {
 				(request as any).currentUser = {
 					id: decoded.id,
 					username: decoded.username,
+					avatar_url: decoded.avatar_url,
 					provider: decoded.provider,
 					provider_id: decoded.provider_id,
 					tfa: decoded.tfa,

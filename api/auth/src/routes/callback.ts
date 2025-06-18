@@ -92,7 +92,7 @@ export default async function (server: FastifyInstance) {
 						updatedAt: timestamp,
 					};
 
-					const id = await addUser(server.db, user);
+					const id = await addUser(server.db, server.usersDb, user);
 
 					payload = {
 						id: id!,

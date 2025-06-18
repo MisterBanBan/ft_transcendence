@@ -68,7 +68,7 @@ export default async function (server: FastifyInstance) {
 
 		tempKeys.set(decoded.id, await createDate(new Date()));
 
-		const timestamp = await changeUsername(server.db, user.id!, newUsername)
+		const timestamp = await changeUsername(server.db, server.usersDb, user.id!, newUsername)
 
 		const tokenData: TokenPayload = {
 			id: user.id!,
