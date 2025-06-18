@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/13 18:40:19 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/18 13:19:12 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ import {ChangePassword} from "./auth/change-password.js";
 import {Toggle2FA} from "./auth/toggle-2fa.js";
 import {Logout} from "./auth/logout.js";
 import { removeTwoFa } from "./menuInsert/removeTwoFa.js";
+import { AuthUser } from './type.js';
+
 
 
 export class menu implements Component {
@@ -35,14 +37,14 @@ export class menu implements Component {
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
     private visibleForm: "none" | "login" | "profile" = "none";
-    private connected: boolean = false;
     private formsContainer: HTMLElement;
     private options!: HTMLElement[];
     private cursor!: HTMLVideoElement;
     private selectedIdx: number = 0;
     private keydownHandler: (e: KeyboardEvent) => void;
+    user: AuthUser | undefined;
     
-    constructor(videoId: string, containerFormId: string, authBtnId: string) { 
+    constructor(videoId: string, containerFormId: string, authBtnId: string, currentUser: AuthUser | undefined) { 
         const video = document.getElementById(videoId) as HTMLVideoElement;
         if (!video) throw new Error('Video element not found');
         this.videoMain = video;
@@ -59,69 +61,33 @@ export class menu implements Component {
         if (!formsContainer) throw new Error('Form wrapper not found');
         this.formsContainer= formsContainer;
 
+        this.user = currentUser;
+
         this.keydownHandler = this.handleKeydown.bind(this);
     }
 
     public init(): void {
 
         window.addEventListener("resize", this.resize);
-        
         this.videoMain.addEventListener("loadedmetadata", () => {
             console.log("Loadedmetadata ready");
             this.resize();
         });
-        
+        if (this.user) {
+            this.formsContainer.insertAdjacentHTML('beforeend', game());
+            this.setupGameMenu();
+        }
         this.authBtn.addEventListener('click', this.authBtnHandler);
     }
 
-    
-
-    private updateCursor() {
-        if (!this.options.length) return;
-        const firstOption = this.options[0];
-        const selected = this.options[this.selectedIdx];
-        const offset = selected.offsetTop - firstOption.offsetTop;
-        this.cursor.style.top = offset + "px";
-        
-
-        this.options.forEach((opt, i) => {
-            opt.classList.toggle('selected', i === this.selectedIdx);
-        });
-    }
-    
-    private selectOption() {
-        if (!this.options.length) return;
-        const selected = this.options[this.selectedIdx];
-    }
-    
-    private handleKeydown(e: KeyboardEvent) {
-        if (!this.options.length) return;
-        if (e.key === "ArrowDown") {
-            this.selectedIdx = (this.selectedIdx + 1) % this.options.length;
-            this.updateCursor();
-        } else if (e.key === "ArrowUp") {
-            this.selectedIdx = (this.selectedIdx - 1 + this.options.length) % this.options.length;
-            this.updateCursor();
-        } else if (e.key === "Enter") {
-            this.selectOption();
-        }
-    }
-
-    private setupGameMenu() {
-        this.options = Array.from(document.querySelectorAll('.menu-option')) as HTMLElement[];
-        const cursor = document.getElementById('cursor-video') as HTMLVideoElement;
-        if (!cursor) throw new Error('Cursor video not found');
-        this.cursor = cursor;
-        this.updateCursor();
-        document.addEventListener('keydown', this.keydownHandler);
-    }
+ 
 
     private authBtnHandler = () => {
-        if (this.visibleForm !== "login" && this.connected === false) {
+        console.log(this.user);
+        if (!this.user && this.visibleForm !== "login") {
             this.loadForm('login');
             this.visibleForm = "login";
-            this.connected = true;
-        } else if (this.connected === true && this.visibleForm !== "login" ){
+        } else if (this.user){
             if (this.visibleForm !== "profile") {
                 this.loadProfile();
                 this.visibleForm = "profile";
@@ -136,7 +102,7 @@ export class menu implements Component {
         else {
             this.formsContainer.innerHTML = '';
             this.formsContainer.insertAdjacentHTML('beforeend', game());
-            this.setupGameMenu();
+            //this.setupGameMenu();
             this.visibleForm = "none";
         }
     };
@@ -251,7 +217,7 @@ export class menu implements Component {
 
         document.getElementById('score')?.addEventListener('click', () => this.loadScore());
         document.getElementById('settings')?.addEventListener('click', () => this.loadSettings());
-        document.getElementById('log out')?.addEventListener('click', () => this.logout());
+        document.getElementById('logout')?.addEventListener('click', () => this.logout());
         document.getElementById('newPseudo')?.addEventListener('click', () => this.newPseudo());
         document.getElementById('newPass')?.addEventListener('click', () => this.newPassword());
         document.getElementById('new2fa')?.addEventListener('click', () => this.new2fa());
@@ -265,6 +231,48 @@ export class menu implements Component {
         this.videoMain.src = '/img/acceuil.mp4';
         this.videoMain.load();
     }
+  
+       
+
+    private updateCursor() {
+        if (!this.options.length) return;
+        const firstOption = this.options[0];
+        const selected = this.options[this.selectedIdx];
+        const offset = selected.offsetTop - firstOption.offsetTop;
+        this.cursor.style.top = offset + "px";
+        
+
+        this.options.forEach((opt, i) => {
+            opt.classList.toggle('selected', i === this.selectedIdx);
+        });
+    }
+    
+    private selectOption() {
+        if (!this.options.length) return;
+        const selected = this.options[this.selectedIdx];
+    }
+    
+    private handleKeydown(e: KeyboardEvent) {
+        if (!this.options.length) return;
+        if (e.key === "ArrowDown") {
+            this.selectedIdx = (this.selectedIdx + 1) % this.options.length;
+            this.updateCursor();
+        } else if (e.key === "ArrowUp") {
+            this.selectedIdx = (this.selectedIdx - 1 + this.options.length) % this.options.length;
+            this.updateCursor();
+        } else if (e.key === "Enter") {
+            this.selectOption();
+        }
+    }
+
+    private setupGameMenu() {
+        this.options = Array.from(document.querySelectorAll('.menu-option')) as HTMLElement[];
+        const cursor = document.getElementById('cursor-video') as HTMLVideoElement;
+        if (!cursor) throw new Error('Cursor video not found');
+        this.cursor = cursor;
+        this.updateCursor();
+        document.addEventListener('keydown', this.keydownHandler);
+    }
     
     private resize = () => {
         const rect = this.videoMain.getBoundingClientRect();
@@ -274,7 +282,6 @@ export class menu implements Component {
         this.containerForm.style.width = `${rect.width * 0.8}px`;
         this.containerForm.style.height = `${rect.height}px`;
         this.containerForm.style.position = "absolute";
-        
     }
     public async logout() {
         await fetch('/api/auth/logout', {

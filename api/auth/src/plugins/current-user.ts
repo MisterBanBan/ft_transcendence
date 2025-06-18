@@ -16,7 +16,7 @@ export default async function (server: FastifyInstance) {
 				if (!decoded || typeof decoded.id !== 'number'
 					|| typeof decoded.username !== 'string'
 					|| typeof decoded.provider !== 'string'
-					|| (typeof decoded.provider_id !== 'string' && typeof decoded.provider_id !== 'undefined')
+					|| ((typeof decoded.provider_id === 'object' && decoded.provider_id !== null) && typeof decoded.provider_id !== 'string')
 					|| typeof decoded.tfa !== 'boolean'
 					|| typeof decoded.updatedAt !== 'number')
 					return reply.status(400).send({

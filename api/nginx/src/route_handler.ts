@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/11 13:50:22 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/18 10:21:05 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,13 @@ import { menu } from './menu.js';
 import { Zoom } from './zoom.js';
 import { proceduralBackground } from './proceduralBackground.js';
 import { pong } from './pong.js';
+import { AuthUser } from './type.js';
 
 //permet de gerer la destruction des new
 let activeComponent: Component | null = null;
+let currentUser: AuthUser | undefined = undefined;
 
 const routeComponents: Record<string, Component> = {
-
 
     "/": {
         init: () => {
@@ -57,11 +58,9 @@ const routeComponents: Record<string, Component> = {
     "/game": {
         init: () => {
             activeComponent?.destroy?.();
-			const me = new menu('video_main','container_form', 'user');
+			const me = new menu('video_main','container_form', 'user', currentUser);
             me.init();
 			const login = new Login();
-			
-
 
 			login.init();
 	
@@ -179,9 +178,10 @@ const routeComponents: Record<string, Component> = {
 	},
 };
 
-export function handleRouteComponents(path: string) {
+export function handleRouteComponents(path: string, user?: AuthUser) {
 	const component = routeComponents[path];
 	if(component) {
+		currentUser = user;
 		component.init();
 	}
 }
