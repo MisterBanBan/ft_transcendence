@@ -24,7 +24,8 @@ services:
       auth:
         condition: service_healthy
     volumes:
-        - ./api/auth/database:/app/database
+        - ./api/auth/database:/app/database/auth
+        - ./api/users/database:/app/database/users
     restart: unless-stopped
   users:
     image: users
@@ -40,7 +41,7 @@ services:
     networks:
       - ft_transcendence
     volumes:
-      - users-data:/app/database
+      - users-data:/app/database/users
       - ./uploads:/app/uploads
     restart: unless-stopped
 
@@ -58,7 +59,7 @@ services:
     networks:
       - ft_transcendence
     volumes:
-      - tournament-data:/app/database
+      - tournament-data:/app/database/tournament
     restart: on-failure
 
   game:
@@ -75,7 +76,7 @@ services:
     networks:
       - ft_transcendence
     volumes:
-      - game-data:/app/database
+      - game-data:/app/database/game
     restart: on-failure
 
   matchmaking:
@@ -92,7 +93,7 @@ services:
     networks:
       - ft_transcendence
     volumes:
-      - matchmaking-data:/app/database
+      - matchmaking-data:/app/database/matchmaking
     restart: on-failure
 
   auth:
@@ -106,10 +107,13 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    depends_on:
+      - users
     networks:
       - ft_transcendence
     volumes:
-      - auth-data:/app/database
+      - auth-data:/app/database/auth
+      - ./api/users/database:/app/database/users
     restart: on-failure
 
   nginx:

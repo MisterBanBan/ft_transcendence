@@ -8,6 +8,7 @@ declare module 'fastify' {
         currentUser?: {
             id: number;
             username: string;
+            avatar_url: string;
             provider: string;
             provider_id?: string;
             tfa: boolean;

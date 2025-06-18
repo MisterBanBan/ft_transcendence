@@ -80,7 +80,7 @@ export default async function (server: FastifyInstance) {
 				updatedAt: timestamp
 			};
 
-			const id = await addUser(server.db, userData);
+			const id = await addUser(server.db, server.usersDb, userData);
 			if (id == undefined) {
 				return reply.status(500).send({
 					error: 'Internal Server Error',
