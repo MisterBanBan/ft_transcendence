@@ -1,4 +1,6 @@
 import { Component } from "../component.js";
+import { AuthUser } from "../type.js";
+import { setUser } from "../user-handler.js";
 
 interface Payload {
 	username: string;
@@ -64,7 +66,17 @@ export class Register implements Component{
 				return;
 			}
 
-			window.location.href = '/game';
+			const user: AuthUser = {
+				id: data.user.id,
+				username: data.user.username,
+				avatar_url: data.user.avatar_url,
+				provider: data.user.provider,
+				provider_id: data.user.provider_id,
+				tfa: Boolean(data.user.tfa),
+				updatedAt: data.user.updatedAt
+			}
+			setUser(user);
+			
 		} catch (err) {
 			console.error(err);
 		}

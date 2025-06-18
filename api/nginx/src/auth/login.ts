@@ -1,4 +1,5 @@
 import { Component } from "../component.js";
+import { AuthUser } from "../type.js";
 import { setUser } from "../user-handler.js";
 
 interface Payload {
@@ -58,13 +59,25 @@ export class Login implements Component{
 
 			let data = await response.json();
 
+			console.log("Request login:", data.status);
+
 			if (data.status === "2FA-REQUIRED") {
 				await this.handle2FA(data.token);
 				return;
 			}
 
 			if (data.status === "LOGGED-IN") {
-				setUser()
+				console.log("User logged in successfully.");
+				const user: AuthUser = {
+					id: data.user.id,
+					username: data.user.username,
+					avatar_url: data.user.avatar_url,
+					provider: data.user.provider,
+					provider_id: data.user.provider_id,
+					tfa: Boolean(data.user.tfa),
+					updatedAt: data.user.updatedAt
+				}
+				setUser(user);
 				return;
 			}
 
