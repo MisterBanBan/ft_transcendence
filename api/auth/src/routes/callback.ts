@@ -10,7 +10,7 @@ import { validateUsername } from "../utils/validate-username.js";
 import { TokenPayload } from "../interface/token-payload.js";
 
 interface ProviderConfig {
-	provider: "google" | "42";
+	provider: "google" | "42"; 
 	callbackPath: string;
 	tokenUrl: string;
 	profileUrl: string;
