@@ -1,4 +1,5 @@
 import { Component } from "../component.js";
+import { setUser } from "../user-handler.js";
 
 interface Payload {
 	username: string;
@@ -63,7 +64,7 @@ export class Login implements Component{
 			}
 
 			if (data.status === "LOGGED-IN") {
-				window.location.href = '/'
+				setUser()
 				return;
 			}
 

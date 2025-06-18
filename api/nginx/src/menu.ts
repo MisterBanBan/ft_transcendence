@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/18 13:19:12 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/18 18:19:53 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ import {Toggle2FA} from "./auth/toggle-2fa.js";
 import {Logout} from "./auth/logout.js";
 import { removeTwoFa } from "./menuInsert/removeTwoFa.js";
 import { AuthUser } from './type.js';
+import { getUser, setUser } from "./user-handler.js";
 
 
 
@@ -42,7 +43,6 @@ export class menu implements Component {
     private cursor!: HTMLVideoElement;
     private selectedIdx: number = 0;
     private keydownHandler: (e: KeyboardEvent) => void;
-    user: AuthUser | undefined;
     
     constructor(videoId: string, containerFormId: string, authBtnId: string, currentUser: AuthUser | undefined) { 
         const video = document.getElementById(videoId) as HTMLVideoElement;
@@ -61,7 +61,7 @@ export class menu implements Component {
         if (!formsContainer) throw new Error('Form wrapper not found');
         this.formsContainer= formsContainer;
 
-        this.user = currentUser;
+        setUser(currentUser);
 
         this.keydownHandler = this.handleKeydown.bind(this);
     }
@@ -73,7 +73,7 @@ export class menu implements Component {
             console.log("Loadedmetadata ready");
             this.resize();
         });
-        if (this.user) {
+        if (getUser()) {
             this.formsContainer.insertAdjacentHTML('beforeend', game());
             this.setupGameMenu();
         }
@@ -83,11 +83,11 @@ export class menu implements Component {
  
 
     private authBtnHandler = () => {
-        console.log(this.user);
-        if (!this.user && this.visibleForm !== "login") {
+        console.log(getUser());
+        if (!getUser() && this.visibleForm !== "login") {
             this.loadForm('login');
             this.visibleForm = "login";
-        } else if (this.user){
+        } else if (getUser() !== undefined){
             if (this.visibleForm !== "profile") {
                 this.loadProfile();
                 this.visibleForm = "profile";
@@ -101,7 +101,8 @@ export class menu implements Component {
         } 
         else {
             this.formsContainer.innerHTML = '';
-            this.formsContainer.insertAdjacentHTML('beforeend', game());
+            this.loadAcceuil();
+            //this.formsContainer.insertAdjacentHTML('beforeend', game());
             //this.setupGameMenu();
             this.visibleForm = "none";
         }
@@ -111,6 +112,11 @@ export class menu implements Component {
         this.formsContainer.innerHTML = '';
 
         this.formsContainer.insertAdjacentHTML('beforeend', profile());
+
+        console.log("Loading settings...");
+        
+        const logout = new Logout();
+        logout.init();
         this.eventFormListeners();
     }
 
@@ -129,9 +135,10 @@ export class menu implements Component {
             this.videoMain.load(); 
         }
         this.formsContainer.insertAdjacentHTML('beforeend', settings());
-        const logout = new Logout();
-        logout.init();
+
         this.eventFormListeners();
+
+
     }
 
 
@@ -139,7 +146,7 @@ export class menu implements Component {
     private logOut() {
 
         this.formsContainer.innerHTML = '';
-        this.formsContainer.insertAdjacentHTML('beforeend', game());
+        //this.formsContainer.insertAdjacentHTML('beforeend', game());
         
         this.loadAcceuil();
         this.visibleForm = "none";
@@ -217,7 +224,7 @@ export class menu implements Component {
 
         document.getElementById('score')?.addEventListener('click', () => this.loadScore());
         document.getElementById('settings')?.addEventListener('click', () => this.loadSettings());
-        document.getElementById('logout')?.addEventListener('click', () => this.logout());
+        document.getElementById('logout')?.addEventListener('click', () => this.logOut());
         document.getElementById('newPseudo')?.addEventListener('click', () => this.newPseudo());
         document.getElementById('newPass')?.addEventListener('click', () => this.newPassword());
         document.getElementById('new2fa')?.addEventListener('click', () => this.new2fa());
@@ -283,14 +290,7 @@ export class menu implements Component {
         this.containerForm.style.height = `${rect.height}px`;
         this.containerForm.style.position = "absolute";
     }
-    public async logout() {
-        await fetch('/api/auth/logout', {
-            method: 'POST',
-            credentials: 'include' // important pour envoyer le cookie
-        });
-        // Redirige ou rafraîchis la page
-        this.logOut();
-    }
+
     public destroy(): void {
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
