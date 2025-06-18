@@ -25,6 +25,9 @@ jobs:
         echo "CLIENT_SECRET_GOOGLE=${{ secrets.CLIENT_SECRET_GOOGLE }}" >> api/auth/.env
         echo "CLIENT_ID_GOOGLE=${{ secrets.CLIENT_ID_GOOGLE }}" >> api/auth/.env
 
+        echo "COOKIE_SECRET=${{ secrets.COOKIE_SECRET }}" > api/gateway/.env
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> api/gateway/.env
+
 
     - name: Install dependencies
       run: make
