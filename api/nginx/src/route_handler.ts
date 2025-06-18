@@ -18,6 +18,7 @@ import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
 import {Toggle2FA} from "./auth/toggle-2fa.js";
 import {Logout} from "./auth/logout.js";
+import {CreateTournament} from "./tournament/create-tournament.js";
 // import { introduction } from './intro.js';
 // import { menu } from './menu.js';
 // import { Zoom } from './zoom.js';
@@ -28,6 +29,21 @@ let activeComponent: Component | null = null;
 
 const routeComponents: Record<string, Component> = {
 
+	"/tournament": {
+		init: () => {
+			activeComponent?.destroy?.();
+
+			const createTournament = new CreateTournament();
+
+			createTournament.init();
+
+			activeComponent = {
+				init: () => {},
+				destroy: () => { createTournament.destroy(); },
+			};
+		},
+		destroy: () => {}
+	},
 	"/settings": {
 		init: () => {
 			activeComponent?.destroy?.();
