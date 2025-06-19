@@ -5,7 +5,9 @@ export async function up({ context }: { context: Database }) {
         CREATE TABLE IF NOT EXISTS users (
              id TEXT PRIMARY KEY,
              username TEXT UNIQUE NOT NULL,
-             avatar_url TEXT DEFAULT 'fleur.jpeg'
+             avatar_url TEXT DEFAULT 'fleur.jpeg',
+             status TEXT DEFAULT 'offline' CHECK(status IN ('offline', 'online', 'in_game')),
+             last_activity DATETIME DEFAULT CURRENT_TIMESTAMP
         );
     `);
     await context.run(`
@@ -19,6 +21,14 @@ export async function up({ context }: { context: Database }) {
             PRIMARY KEY (requester_id, addressee_id)
         );
     `)
+
+    await context.run(`
+        CREATE INDEX IF NOT EXISTS idx_users_status ON users(status);
+    `);
+
+    await context.run(`
+        CREATE INDEX IF NOT EXISTS idx_users_last_activity ON users(last_activity);
+    `);
 }
 
 export async function down({ context }: { context: Database }) {
