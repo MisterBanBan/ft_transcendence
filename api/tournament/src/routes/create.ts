@@ -1,5 +1,6 @@
 import {FastifyInstance, FastifyRequest} from "fastify";
 import {Match, Tournament} from "../class/Tournament.js";
+import {joinTournament} from "../utils/joinTournament.js";
 
 export const tournaments = new Map<string, Tournament>();
 
@@ -31,13 +32,6 @@ export default async function (server: FastifyInstance) {
 				},
 				additionalProperties: false,
 			},
-			response: {
-				200: {
-					type: "object",
-					properties: {},
-					additionalProperties: false,
-				},
-			}
 		}
 	}, async (request: FastifyRequest, reply) => {
 
@@ -69,15 +63,12 @@ export default async function (server: FastifyInstance) {
 		}
 
 		const tournament = new Tournament(name, currentUser.id, size);
-		tournament.addPlayer(currentUser.id, "DISPLAY");
+		joinTournament(currentUser.id, "DISPLAY", tournament);
 
 		for (let matchesNb = size / 2; matchesNb > 1; matchesNb /= 2) {
 			tournament.getStructure().rounds[matchesNb.toString()] = await createMatchs(matchesNb);
 		}
 		tournament.getStructure().rounds["1"] = await createMatchs(1);
-
-		console.log(tournament.getStructure());
-		console.log(tournament.getStructure().rounds);
 
 		tournaments.set(name, tournament);
 

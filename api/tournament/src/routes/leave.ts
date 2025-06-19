@@ -6,20 +6,12 @@ export default async function (server: FastifyInstance) {
 		schema: {
 			body: {
 				type: "object",
-				required: ["name", "displayName"],
+				required: ["name"],
 				properties: {
 					name: { type: "string", minLength: 1, maxLength: 16 },
-					size: { type: "displayName", minLength: 3, maxLength: 16 },
 				},
 				additionalProperties: false,
 			},
-			response: {
-				200: {
-					type: "object",
-					properties: {},
-					additionalProperties: false,
-				},
-			}
 		}
 	}, async (request: FastifyRequest, reply) => {
 

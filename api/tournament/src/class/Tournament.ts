@@ -15,7 +15,7 @@ export class Tournament {
 
 	private	name: string;
 	private owner: number;
-	private size: number;
+	private readonly size: number;
 	private players: Map<number, string> = new Map();
 	private structure: TournamentStructure = { rounds: {}, winner: undefined};
 
@@ -27,6 +27,14 @@ export class Tournament {
 
 	public getStructure(): TournamentStructure {
 		return this.structure;
+	}
+
+	public getSize(): number {
+		return this.size;
+	}
+
+	public getPlayers(): Map<number, string> {
+		return this.players;
 	}
 
 	public addPlayer(userId: number, displayName: string) {

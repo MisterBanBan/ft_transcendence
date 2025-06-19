@@ -450,9 +450,10 @@ export interface Route {
 			title: "Tournament",
 			template: async () => {
 				await new Promise(resolve => setTimeout(resolve, 300));
-				return `<div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
-    <h2 class="text-2xl font-semibold mb-6 text-center">Formulaire</h2>
-    <form class="space-y-4">
+				return `
+	<div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+    	<h2 class="text-2xl font-semibold mb-6 text-center">Formulaire</h2>
+    	<form class="space-y-4">
       <div>
         <label for="tournament-name" class="block text-sm font-medium text-gray-700">Enter tournament name:</label>
         <input type="text" id="tournament-name" name="tournament-name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -469,7 +470,11 @@ export interface Route {
         <button type="submit" id="tournament-submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Create</button>
       </div>
     </form>
-  </div>`;
+  	</div>
+	<div id="tournaments" class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+	<label for="display-name" class="block text-sm font-medium text-gray-700">Enter display name:</label>
+    <input type="text" id="display-name" name="display-name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+	</div>`;
 
 			}
 		},
