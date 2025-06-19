@@ -18,11 +18,11 @@ export function localManager(socket: Socket, app: FastifyInstance) {
     });
 
 	socket.on("player-input", (data) => {
-	const gameId = app.playerToGame.get(socket.id);
-		if (!gameId) return;
+	const value = app.playerToGame.get(socket.id);
+		if (!value?.gameId) return;
 
 	gameSocket.emit("player-input", {
-		gameId,
+		gameId: value.gameId,
 		playerId: socket.id,
 		input: data,
 	});

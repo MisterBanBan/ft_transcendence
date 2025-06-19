@@ -9,16 +9,15 @@ import fs from "fs";
 async function start() {
   const dir = __dirname;
 
-  const app: FastifyInstance = fastify({
-    logger: true,
+  const app = fastify({
     https: {
       key: fs.readFileSync("/app/certs/key.pem"),
       cert: fs.readFileSync("/app/certs/cert.pem"),
     }
   });
 
-  await app.register(cors, { origin: [ "https://z3r5p6:8443", "https://localhost:8443"] , credentials: true });
-  await app.register(fastifyIO, { cors: { origin: [ "https://z3r5p6:8443", "https://localhost:8443" ], credentials: true } });
+  await app.register(cors, { origin: [ "https://z3r3p5:8443", "https://localhost:8443"] , credentials: true });
+  await app.register(fastifyIO, { cors: { origin: [ "https://z3r3p5:8443", "https://localhost:8443" ], credentials: true } });
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
   app.register(autoLoad, { dir: join(dir, "routes/") });
@@ -27,7 +26,7 @@ async function start() {
   const gameSocket = ClientIO("http://game:8082", {
     transports: ["websocket"],
   });
-  
+
   app.decorate("gameSocket", gameSocket);
 
   const aiSocket = ClientIO("http://ai:8085", {

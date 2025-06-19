@@ -7,7 +7,7 @@ import { join } from "path";
 async function start() {
   const dir = __dirname;
 
-  const app = fastify({ logger: true });
+  const app = fastify();
 
   await app.register(cors, { origin: "http://matchmaking", credentials: true });
   await app.register(fastifyIO, { cors: { origin: "http://matchmaking", credentials: true } });

@@ -16,7 +16,7 @@ export class GameInstance {
 		this.limit = {
 			map: {left: 164, top: 123, right: 3146, bot: 1590},
 			speed: (3146 - 164) / 15,
-		};	
+		};	// Effectivement nous sommes sur du code tres developpe et tres important afin de realiser le magnifique projet de merde qu'est transcendence
 		this.state = {
 			bar: {
 				left: this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2,
@@ -52,7 +52,7 @@ export class GameInstance {
 				},
 				width: 40.96,
 				height: 342.8,
-				speed: (this.limit.map.bot - this.limit.map.top) / 100
+				speed: (this.limit.map.bot - this.limit.map.top) / 80
 			}
 		};
 		this.pause = {
