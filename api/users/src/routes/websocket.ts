@@ -7,28 +7,56 @@ interface StatusMessage {
 }
 
 export default async function (server: FastifyInstance) {
-    const activeConnections = new Map<string, WebSocket>();
+    const activeConnections = new Map<string, any>();
 
-    server.get('/ws/status', {
+    server.get('/api/users/ws/status/', {
         websocket: true
-    }, (connection, request: FastifyRequest) => {
+    }, (socket, request: FastifyRequest) => {
         let userId: string | undefined;
 
-        connection.socket.on('message', async (message: Buffer) => {
+        // Utilise directement socket.send()
+        socket.send(JSON.stringify({
+            type: 'welcome',
+            message: 'WebSocket connexion established',
+            timestamp: new Date().toISOString()
+        }));
+
+        socket.on('message', async (message: Buffer) => {
             try {
                 const data: StatusMessage = JSON.parse(message.toString());
+                console.log('Data parsed:', data);
 
                 if (data.type === 'status_change' && data.userId && data.status) {
                     userId = data.userId;
-                    activeConnections.set(userId, connection.socket);
+                    activeConnections.set(userId, socket);
 
-                    await server.db.run(
-                        `UPDATE users SET 
-                         status = ?, 
-                         last_activity = datetime('now')
+                    const userExists = await server.db.get(
+                        'SELECT id FROM users WHERE id = ?',
+                        [userId]
+                    );
+
+                    if (!userExists) {
+                        socket.send(JSON.stringify({
+                            type: 'error',
+                            message: `User ${userId} does not exist. Please create the user first.`
+                        }));
+                        return;
+                    }
+
+                    const result = await server.db.run(
+                        `UPDATE users SET
+                                          status = ?,
+                                          last_activity = datetime('now')
                          WHERE id = ?`,
                         [data.status, userId]
                     );
+
+                    socket.send(JSON.stringify({
+                        type: 'status_confirmed',
+                        userId: data.userId,
+                        status: data.status,
+                        timestamp: new Date().toISOString()
+                    }));
 
                     const statusUpdate = {
                         type: 'status_update',
@@ -37,43 +65,59 @@ export default async function (server: FastifyInstance) {
                         timestamp: new Date().toISOString()
                     };
 
-                    activeConnections.forEach((socket, connectedUserId) => {
-                        if (connectedUserId !== userId && socket.readyState === 1) {
-                            socket.send(JSON.stringify(statusUpdate));
+                    activeConnections.forEach((connSocket, connectedUserId) => {
+                        if (connectedUserId !== userId && connSocket.readyState === 1) {
+                            connSocket.send(JSON.stringify(statusUpdate));
                         }
                     });
-
-                    console.log(`User ${userId} status updated to: ${data.status}`);
                 }
 
                 if (data.type === 'heartbeat' && data.userId) {
                     userId = data.userId;
-                    // update last_activity for the heartbeat
                     await server.db.run(
                         `UPDATE users SET last_activity = datetime('now') WHERE id = ?`,
                         [userId]
                     );
+
+                    socket.send(JSON.stringify({
+                        type: 'pong',
+                        timestamp: new Date().toISOString()
+                    }));
                 }
 
             } catch (error) {
-                server.log.error('Error handling WebSocket message:', error);
+                if (error instanceof Error) {
+                    server.log.error('Error handling WebSocket message:', error);
+
+                    socket.send(JSON.stringify({
+                        type: 'error',
+                        message: error.message,
+                        timestamp: new Date().toISOString()
+                    }));
+                } else {
+                    server.log.error('Unknown error handling WebSocket message:', error);
+
+                    socket.send(JSON.stringify({
+                        type: 'error',
+                        message: 'unknown error',
+                        timestamp: new Date().toISOString()
+                    }));
+                }
             }
         });
 
-        connection.socket.on('close', async () => {
+        socket.on('close', async (code: any, reason: any) => {
             if (userId) {
-                console.log(`User ${userId} disconnected`);
                 activeConnections.delete(userId);
 
                 await server.db.run(
-                    `UPDATE users SET 
-                     status = 'offline', 
-                     last_activity = datetime('now')
+                    `UPDATE users SET
+                                      status = 'offline',
+                                      last_activity = datetime('now')
                      WHERE id = ?`,
                     [userId]
                 );
 
-                // Notif other users
                 const statusUpdate = {
                     type: 'status_update',
                     userId: userId,
@@ -81,29 +125,35 @@ export default async function (server: FastifyInstance) {
                     timestamp: new Date().toISOString()
                 };
 
-                activeConnections.forEach((socket) => {
-                    if (socket.readyState === 1) {
-                        socket.send(JSON.stringify(statusUpdate));
+                activeConnections.forEach((connSocket) => {
+                    if (connSocket.readyState === 1) {
+                        connSocket.send(JSON.stringify(statusUpdate));
                     }
                 });
             }
         });
 
-        connection.socket.on('error', (error: Error) => {
+        socket.on('error', (error: Error) => {
             server.log.error(`WebSocket error for user ${userId}:`, error);
             if (userId) {
                 activeConnections.delete(userId);
             }
         });
+
     });
 
-    // Route for current status
+    server.get('/api/users/ws/debug', async (request, reply) => {
+        return reply.send({
+            activeConnections: activeConnections.size,
+            connections: Array.from(activeConnections.keys())
+        });
+    });
+
     server.get('/api/users/status', async (request, reply) => {
         try {
             const users = await server.db.all(
-                `SELECT id, username, status, last_activity 
-                 FROM users 
-                 WHERE status != 'offline' 
+                `SELECT id, username, status, last_activity
+                 FROM users
                  ORDER BY last_activity DESC`
             );
 
