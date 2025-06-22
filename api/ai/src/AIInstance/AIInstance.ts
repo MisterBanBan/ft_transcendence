@@ -3,6 +3,7 @@ import { bar, ball, limit, input } from "../utils/interface";
 
 export class AIInstance {
 	private interval!: NodeJS.Timeout;
+	private updateInterval!: NodeJS.Timeout;
 	private bar: bar;
 	private ball: ball;
 	private limit: limit;
@@ -65,7 +66,7 @@ export class AIInstance {
   
 	private startUpdateLoop() {
 		console.log(`[${this.id}] startUpdateLoop called`);
-		this.interval = setInterval(() => {
+		this.updateInterval = setInterval(() => {
 			this.cooldown = true;
 		}, 1000);
 	}
@@ -236,6 +237,8 @@ export class AIInstance {
 	}
   
 	public stop() {
-	  clearInterval(this.interval);
+		console.log(`[${this.id}] AILoop end`);
+		clearInterval(this.interval);
+		clearInterval(this.updateInterval);
 	}
   }

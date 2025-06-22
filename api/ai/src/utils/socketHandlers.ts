@@ -9,11 +9,11 @@ export function registerSocketHandlers(socket: Socket, app: FastifyInstance) {
   matchmakingSocket = socket;
 
   socket.on("disconnect", () => {
-    app.log.info(`Client disconnected: ${socket.id}`);
+    console.log("Client disconnected:", socket.id);
   });
 
   socket.on("game-started", (data: { gameId: string, playerId: any }) => {
-    console.log("IA join game: ", data.gameId);
+    console.log("IA join game:", data.gameId);
     const instance = new AIInstance(data.gameId, app.io, () => matchmakingSocket);
     aiInstances.set(data.gameId, instance);
   });
@@ -27,6 +27,7 @@ export function registerSocketHandlers(socket: Socket, app: FastifyInstance) {
   });
 
   socket.on("game-end", (gameId: string) => {
+    console.log("Game", gameId, "end");
     const instance = aiInstances.get(gameId);
     if (instance) {
       instance.stop();

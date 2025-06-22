@@ -17,6 +17,8 @@ export function localManager(socket: Socket, app: FastifyInstance) {
       playerId: socket.id,
     });
 
+	console.log(gameId, "started");
+
 	socket.on("player-input", (data) => {
 	const value = app.playerToGame.get(socket.id);
 		if (!value?.gameId) return;
@@ -29,7 +31,7 @@ export function localManager(socket: Socket, app: FastifyInstance) {
 	});
 
 	socket.on("disconnect", () => {
-	app.log.info(`Client disconnected: ${socket.id}`);
+	console.log("Client disconnected:", socket.id);
 
 	app.playerToGame.delete(socket.id);
 	});

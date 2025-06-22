@@ -4,7 +4,7 @@ import { FastifyInstance } from "fastify";
 let waitingPlayer: Socket | null = null;
 
 export function onlineManager(socket: Socket, app: FastifyInstance) {
-  const gameSocket = app.gameSocket;
+	const gameSocket = app.gameSocket;
 
 	if (!waitingPlayer) {
 		waitingPlayer = socket;
@@ -29,6 +29,8 @@ export function onlineManager(socket: Socket, app: FastifyInstance) {
 			playerId: socket.id,
 		});
 
+		console.log(gameId, "started");
+
 		waitingPlayer = null;
 	}
 
@@ -45,12 +47,12 @@ export function onlineManager(socket: Socket, app: FastifyInstance) {
 	});
 
 	socket.on("disconnect", () => {
-	app.log.info(`Client disconnected: ${socket.id}`);
+		console.log("Client disconnected:", socket.id);
 
-	if (waitingPlayer?.id === socket.id) {
-		waitingPlayer = null;
-	}
+		if (waitingPlayer?.id === socket.id) {
+			waitingPlayer = null;
+		}
 
-	app.playerToGame.delete(socket.id); // remove for reconnect on a game
-  });
+		app.playerToGame.delete(socket.id); // remove for reconnect on a game
+  	});
 }

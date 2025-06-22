@@ -38,12 +38,12 @@ async function start() {
   const playerToGame = new Map<string, { playerName: string, gameId: string, side: string }>();
   app.decorate("playerToGame", playerToGame);
 
-  gameSocket.on("connect", () => {
+  app.gameSocket.on("connect", () => {
     console.log("Connected to game service");
   });
 
-  gameSocket.on("game-update", (data) => {
-    const { gameId } = data;
+  app.gameSocket.on("game-update", (data:  { gameId: string, state: any}) => {
+    const gameId = data.gameId;
 
     for (const [playerId, value] of app.playerToGame.entries()) {
       const pGameId = value.gameId;
@@ -60,8 +60,8 @@ async function start() {
     }
   });
 
-  gameSocket.on("game-end", (data: {gameId: string, score: { playerLeft: number, playerRight: number }}) => {
-    console.log("game ", data.gameId, " end with a score of ", data.score.playerLeft, ":", data.score.playerRight);
+  app.gameSocket.on("game-end", (data: {gameId: string, score: { playerLeft: number, playerRight: number }}) => {
+    console.log("game", data.gameId, "end with a score of ", data.score.playerLeft, ":", data.score.playerRight);
     for (const [playerId, value] of app.playerToGame.entries()) {
       const pGameId = value.gameId;
       if (pGameId === data.gameId) {

@@ -64,19 +64,19 @@ export class GameInstance {
 	}
   
 	private startGameLoop() {
-	  console.log(`[${this.id}] startGameLoop called`);
-	  this.interval = setInterval(() => {
-		this.sendUpdate();
-		if (this.pause.bool)
-			this.pause.cooldown++;
-		else
-			this.updateGame();
-		this.barUpdate();
-		if (this.pause.cooldown == 60)
-		{
-			this.pause.cooldown = 0;
-			this.pause.bool = false;
-		}
+		console.log(`[${this.id}] startGameLoop called`);
+		this.interval = setInterval(() => {
+			this.sendUpdate();
+			if (this.pause.bool)
+				this.pause.cooldown++;
+			else
+				this.updateGame();
+			this.barUpdate();
+			if (this.pause.cooldown == 60)
+			{
+				this.pause.cooldown = 0;
+				this.pause.bool = false;
+			}
 		}, 1000 / 60);
 	}
 
@@ -207,7 +207,7 @@ export class GameInstance {
 					gameId: this.id,
 					score: this.state.score
 				});
-			console.log("Game ", this.id, " end with a score of ", this.state.score.playerLeft, ":", this.state.score.playerRight);
+			console.log("Game", this.id, "end with a score of", this.state.score.playerLeft, ":", this.state.score.playerRight);
 		}
 
 		}
@@ -242,6 +242,7 @@ export class GameInstance {
 	}
   
 	private stop() {
-	  clearInterval(this.interval);
+		clearInterval(this.interval);
+		console.log(`[${this.id}] GameLoop end`);
 	}
   }

@@ -22,6 +22,8 @@ export function aiManager(socket: Socket, app: FastifyInstance) {
 		playerId: socket.id,
 	});
 
+	console.log(gameId, "started");
+
 	socket.on("player-input", (data: { direction: string, state: boolean, player: string}) => {
 		const value = app.playerToGame.get(socket.id);
 		data.player = value!.side;
@@ -44,7 +46,7 @@ export function aiManager(socket: Socket, app: FastifyInstance) {
 	});
 	
 	socket.on("disconnect", () => {
-	app.log.info(`Client disconnected: ${socket.id}`);
+	console.log("Client disconnected:", socket.id);
 
     app.playerToGame.delete(socket.id);
   });
