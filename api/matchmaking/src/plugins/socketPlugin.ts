@@ -2,6 +2,7 @@ import { FastifyPluginAsync } from "fastify";
 import { localManager } from "../gamesManager/localManager";
 import { onlineManager } from "../gamesManager/onlineManager";
 import { aiManager } from "../gamesManager/aiManager";
+import { privateManager } from "../gamesManager/privateManager";
 import { Socket } from "socket.io";
 
 const socketPlugin: FastifyPluginAsync = async (app) => {
@@ -21,6 +22,11 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 	socket.on("ai", () => {
 		if (!(app.playerToGame.has(socket.id)))
 			aiManager(socket, app);
+	})
+
+	socket.on("private", () => {
+		if (!(app.playerToGame.has(socket.id)))
+			privateManager(socket, app);
 	})
 	});
 };

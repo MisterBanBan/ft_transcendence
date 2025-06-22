@@ -5,6 +5,7 @@ import { join } from "path";
 import cors from "@fastify/cors";
 import { io as ClientIO } from "socket.io-client";
 import fs from "fs";
+import { gameUpdate } from "./gamesManager/gameUpdate";
 
 async function start() {
   const dir = __dirname;
@@ -16,7 +17,7 @@ async function start() {
     }
   });
 
-  await app.register(cors, { origin: "https://z3r5p6:8443" , credentials: true });
+  await app.register(cors, { origin: "https://z3r5p6:8443" , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
   await app.register(fastifyIO, { cors: { origin: "https://z3r5p6:8443", credentials: true } });
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
@@ -38,45 +39,10 @@ async function start() {
   const playerToGame = new Map<string, { playerName: string, gameId: string, side: string }>();
   app.decorate("playerToGame", playerToGame);
 
-  app.gameSocket.on("connect", () => {
-    console.log("Connected to game service");
-  });
+  const privateQueue = new Map<string, string>();
+  app.decorate("privateQueue", privateQueue);
 
-  app.gameSocket.on("game-update", (data:  { gameId: string, state: any}) => {
-    const gameId = data.gameId;
-
-    for (const [playerId, value] of app.playerToGame.entries()) {
-      const pGameId = value.gameId;
-      if (pGameId === gameId) {
-        const clientSocket = app.io.sockets.sockets.get(playerId);
-        if (clientSocket) {
-          clientSocket.emit("game-update", data);
-        }
-        if (playerId === app.aiSocket.id)
-        {
-          app.aiSocket.emit("game-update", data);
-        }
-      }
-    }
-  });
-
-  app.gameSocket.on("game-end", (data: {gameId: string, score: { playerLeft: number, playerRight: number }}) => {
-    console.log("game", data.gameId, "end with a score of ", data.score.playerLeft, ":", data.score.playerRight);
-    for (const [playerId, value] of app.playerToGame.entries()) {
-      const pGameId = value.gameId;
-      if (pGameId === data.gameId) {
-        const clientSocket = app.io.sockets.sockets.get(playerId);
-        if (clientSocket) {
-          clientSocket.emit("game-end", data.score);
-          app.playerToGame.delete(playerId);
-        }
-        if (playerId === app.aiSocket.id)
-        {
-          app.aiSocket.emit("game-end", data.gameId);
-        }
-      }
-    }
-  })
+  gameUpdate(app);
 
   app.listen({ port: 8083, host: "0.0.0.0" }, (err) => {
     if (err) {

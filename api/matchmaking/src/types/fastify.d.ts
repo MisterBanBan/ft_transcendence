@@ -7,5 +7,6 @@ declare module 'fastify' {
         gameSocket: Socket;
         aiSocket: Socket;
         playerToGame: Map<string, { playerName: string, gameId: string, side: string }>;
+        privateQueue: Map<string, string>;
     }
 }
