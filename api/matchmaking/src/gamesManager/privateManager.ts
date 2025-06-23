@@ -1,7 +1,7 @@
 import { Socket } from "socket.io";
 import { FastifyInstance } from "fastify";
 
-let waitingPlayer: Socket | null = null;
+let privateWaiting = new Map<string, string>();
 
 export function privateManager(socket: Socket, app: FastifyInstance) {
 	const gameSocket = app.gameSocket;
