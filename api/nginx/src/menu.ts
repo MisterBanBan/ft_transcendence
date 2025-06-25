@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/18 18:19:53 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/25 19:17:36 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,11 +25,13 @@ import { Register } from "./auth/register.js";
 import {TFAValidate} from "./auth/2fa-validate.js";
 import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
-import {Toggle2FA} from "./auth/toggle-2fa.js";
+import {Add2FA, Remove2FA} from "./auth/toggle-2fa.js";
 import {Logout} from "./auth/logout.js";
 import { removeTwoFa } from "./menuInsert/removeTwoFa.js";
 import { AuthUser } from './type.js';
 import { getUser, setUser } from "./user-handler.js";
+import { wait } from "./wait.js";
+import { twoFApopUp } from "./menuInsert/twoFApopUp.js";
 
 
 
@@ -112,8 +114,7 @@ export class menu implements Component {
         this.formsContainer.innerHTML = '';
 
         this.formsContainer.insertAdjacentHTML('beforeend', profile());
-
-        console.log("Loading settings...");
+        this.loadAcceuil();
         
         const logout = new Logout();
         logout.init();
@@ -130,6 +131,7 @@ export class menu implements Component {
     private loadSettings() {
         this.formsContainer.innerHTML = '';
         if (this.videoMain.src !== '/img/acceuilParam.mp4') {
+            //a changer le png 
             this.videoMain.poster = "/img/acceuilDraw.png";
             this.videoMain.src = "/img/acceuilParam.mp4";
             this.videoMain.load(); 
@@ -160,7 +162,7 @@ export class menu implements Component {
         this.formsContainer.insertAdjacentHTML('beforeend', newPseudo());
         const changeUsername = new ChangeUsername();
         changeUsername.init();
-        document.getElementById('pseudoReturnBtn')?.addEventListener('click', () => this.returnForm());
+        document.getElementById('pseudoReturnBtn')?.addEventListener('click', () => this.loadSettings());
         
     }
     private newPassword(){
@@ -169,25 +171,36 @@ export class menu implements Component {
         this.formsContainer.insertAdjacentHTML('beforeend', newPass());
         const changePassword = new ChangePassword();
         changePassword.init();
-        document.getElementById('passReturnBtn')?.addEventListener('click', () => this.returnForm());
+        document.getElementById('passReturnBtn')?.addEventListener('click', () => this.loadSettings());
 
     }
+
+    private toggle2FA() {
+        if (getUser()?.tfa) {
+            this.remove2fa();
+            return;
+        }
+        else if (getUser()?.tfa === false) {
+            this.new2fa();
+            return;
+        }
+    }
+
     private new2fa(){
         this.formsContainer.innerHTML = '';
-
         this.formsContainer.insertAdjacentHTML('beforeend', newTwoFa());
-        const toggle2FA = new Toggle2FA();
-        toggle2FA.init();
-        document.getElementById('2faReturnBtn')?.addEventListener('click', () => this.returnForm());
+        const add2FA = new Add2FA();
+        add2FA.init();
+        document.getElementById('2faReturnBtn')?.addEventListener('click', () => this.loadSettings());
 
     }
 
     private remove2fa() {
         this.formsContainer.innerHTML = '';
         this.formsContainer.insertAdjacentHTML('beforeend', removeTwoFa());
-        const toggle2FA = new Toggle2FA();
-			toggle2FA.init();
-        document.getElementById('2faReturnBtn')?.addEventListener('click', () => this.returnForm());
+        const remove2FA = new Remove2FA();
+        remove2FA.init();
+        document.getElementById('2faReturnBtn')?.addEventListener('click', () => this.loadSettings());
 
     }
     
@@ -216,19 +229,95 @@ export class menu implements Component {
         this.visibleForm = "none";
         this.eventFormListeners();
     }
+
+    private async handle2FA() {
+        const limit = 10;
+        let attempts = 0;
+        while (!document.cookie.includes("2FA-REQUIRED=false") && attempts < limit) {
+            await wait(1000);
+            console.log("Waiting for 2FA validation...", attempts);
+            attempts++;
+        }
+
+        if (document.cookie.includes("2FA-REQUIRED=false")) {
+            this.formsContainer.innerHTML = '';
+            this.loadAcceuil();
+            this.formsContainer.insertAdjacentHTML('beforeend', game());
+            this.setupGameMenu();
+            this.visibleForm = "none";
+        } else if (attempts >= limit) {
+            console.error("2FA validation timed out.");
+        }
+
+        this.eventFormListeners(); 
+    }
+
+    public async submit_loginForm() {
+
+        const limit = 10;
+        let attempts = 0;
+        while (!getUser() && attempts < limit) {
+            await wait(1000);
+            attempts++;
+        }
+
+        const user = getUser();
+        if (user) {
+            if (user.tfa) {
+                this.formsContainer.insertAdjacentHTML('beforeend', twoFApopUp());
+                this.visibleForm = "none";
+                const tfaValidate = new TFAValidate(user.username);
+                tfaValidate.init();
+            }
+            else {
+                this.formsContainer.innerHTML = '';
+                this.loadAcceuil();
+                this.formsContainer.insertAdjacentHTML('beforeend', game());
+                this.setupGameMenu();
+                this.visibleForm = "none";
+            }
+        } else if (attempts >= limit) {
+            console.error("Login request timed out.");
+        }
+        
+        this.eventFormListeners(); 
+    }
+
+    public async submit_registerForm() {
+
+        const limit = 10;
+        let attempts = 0;
+        while (!getUser() && attempts < limit) {
+            await wait(1000);
+            attempts++;
+        }
+        if (getUser()) {
+            this.formsContainer.innerHTML = '';
+            this.loadAcceuil();
+            this.formsContainer.insertAdjacentHTML('beforeend', game());
+            this.setupGameMenu();
+            this.visibleForm = "none";
+        }
+        this.eventFormListeners(); 
+    }
     
     private eventFormListeners() {
         document.getElementById('registerBtn')?.addEventListener('click', () => this.loadForm('register'));
         document.getElementById('loginBtn')?.addEventListener('click', () => this.loadForm('login'));
         document.getElementById('profileReturnBtn')?.addEventListener('click', () => this.returnForm());
+        document.getElementById('submit-login')?.addEventListener('click', () => this.submit_loginForm());
+        document.getElementById('submit-register')?.addEventListener('click', () => this.submit_registerForm());
+        document.getElementById('settingsReturnBtn')?.addEventListener('click', () => this.loadProfile());
+        document.getElementById('scoreReturnBtn')?.addEventListener('click', () => this.loadProfile());
+        document.getElementById('submit-2fa')?.addEventListener('click', () => this.handle2FA());
 
+        
         document.getElementById('score')?.addEventListener('click', () => this.loadScore());
         document.getElementById('settings')?.addEventListener('click', () => this.loadSettings());
         document.getElementById('logout')?.addEventListener('click', () => this.logOut());
         document.getElementById('newPseudo')?.addEventListener('click', () => this.newPseudo());
         document.getElementById('newPass')?.addEventListener('click', () => this.newPassword());
-        document.getElementById('new2fa')?.addEventListener('click', () => this.new2fa());
-        document.getElementById('remove2fa')?.addEventListener('click', () => this.remove2fa());
+        document.getElementById('toggle-2fa')?.addEventListener('change', () => this.toggle2FA());
 
     }
     

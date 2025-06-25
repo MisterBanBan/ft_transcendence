@@ -14,3 +14,15 @@ export function setUser(newUser: AuthUser | undefined): void {
 export function getUser(): AuthUser | undefined {
     return user;
 }
+
+export function set2faPlaceholder(token: string): void {
+    user = {
+        username: token,
+        id: -1,
+        avatar_url: "",
+        provider: "placeholder",
+        provider_id: undefined,
+        tfa: true,
+        updatedAt: Date.now(),
+    }
+}

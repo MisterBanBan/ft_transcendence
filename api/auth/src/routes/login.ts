@@ -11,7 +11,7 @@ import { getAvatar } from '../db/get-avatar.js';
 interface Cookie {
 	path: string,
 	httpOnly: boolean,
-	secure: boolean,
+	secure: boolean, 
 	maxAge: number
 }
 

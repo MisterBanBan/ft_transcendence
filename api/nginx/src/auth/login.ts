@@ -1,23 +1,16 @@
 import { Component } from "../component.js";
 import { AuthUser } from "../type.js";
-import { setUser } from "../user-handler.js";
+import { set2faPlaceholder, setUser } from "../user-handler.js";
 
 interface Payload {
 	username: string;
 	password: string;
 }
 
-interface TfaPayload {
-	token: string;
-	code: string;
-}
-
 export class Login implements Component{
 
 	private submitButton: HTMLElement | null = null;
-	private submit2FAButton: HTMLElement | null = null;
 	private readonly handleSubmitBound: (event: Event) => void;
-	private handleSubmit2FABoundWrapper?: (event: Event) => void;
 
 	constructor() {
 		this.handleSubmitBound = this.handleSubmit.bind(this);
@@ -62,7 +55,8 @@ export class Login implements Component{
 			console.log("Request login:", data.status);
 
 			if (data.status === "2FA-REQUIRED") {
-				await this.handle2FA(data.token);
+
+				set2faPlaceholder(data.token);
 				return;
 			}
 
@@ -97,78 +91,8 @@ export class Login implements Component{
 		}
 	}
 
-	private async handle2FA(token: string): Promise<void> {
-		const popup = document.getElementById('popup-2fa');
-
-		if (!popup) {
-			console.error("Missing 2fa popup.");
-			return;
-		}
-
-		this.submit2FAButton = document.getElementById("submit-2fa");
-		if (!this.submit2FAButton) {
-			console.error("Missing submit button for 2FA verification.");
-			return;
-		}
-
-		if (this.handleSubmit2FABoundWrapper) {
-			this.submit2FAButton.removeEventListener('click', this.handleSubmit2FABoundWrapper);
-		}
-
-		this.handleSubmit2FABoundWrapper = (event: Event) => this.handleSubmit2FA(event, token);
-
-		this.submit2FAButton.addEventListener("click", this.handleSubmit2FABoundWrapper);
-
-		popup.classList.remove('hidden');
-	}
-
-	private async handleSubmit2FA(event: Event, token: string) {
-		event.preventDefault()
-
-		const codeInput = document.getElementById('popup-2fa-code') as HTMLInputElement | null;
-		if (!codeInput) {
-			console.error("Code field is missing.");
-			return;
-		}
-
-		const tfaPayload: TfaPayload = {
-			token: token,
-			code: codeInput.value
-		};
-
-		try {
-			const response = await fetch("/api/auth/2fa/validate", {
-				method: "POST",
-				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify(tfaPayload),
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				const errorDiv = document.getElementById('popup-2fa-error')
-				if (!errorDiv) {
-					console.error("Can't display error");
-					return;
-				}
-
-				errorDiv.textContent = data.message;
-				return;
-			}
-
-			if (data.success) {
-				return window.location.href = '/';
-			}
-		} catch (e) {
-			console.error("Error during 2FA validation:", e)
-		}
-	}
-
 	public destroy(): void {
 		if (this.submitButton)
 			this.submitButton.removeEventListener("click", this.handleSubmitBound)
-
-		if (this.submit2FAButton && this.handleSubmit2FABoundWrapper)
-			this.submit2FAButton.removeEventListener("click", this.handleSubmit2FABoundWrapper);
 	}
 }

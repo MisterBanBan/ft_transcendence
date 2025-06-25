@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 18:31:06 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/10 20:26:30 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/19 19:43:07 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ export const score = async (): Promise<string> => {
             `).join('') : `<div class="text-white">No games played</div>`}
         </div>
         </div>
-        <button type="button" id="profileReturnBtn" class="text-white bottom-[30%] responsive-text ">Return</button>
+        <button type="button" id="scoreReturnBtn" class="text-white bottom-[30%] responsive-text ">Return</button>
 
     
     </div>

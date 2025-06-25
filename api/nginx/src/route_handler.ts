@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/18 10:21:05 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/25 15:36:48 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ import { Register } from "./auth/register.js";
 import {TFAValidate} from "./auth/2fa-validate.js";
 import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
-import {Toggle2FA} from "./auth/toggle-2fa.js";
 import {Logout} from "./auth/logout.js";
 // import { introduction } from './intro.js';
 // import { menu } from './menu.js';
@@ -106,16 +105,16 @@ const routeComponents: Record<string, Component> = {
 
 			const changeUsername = new ChangeUsername();
 			const changePassword = new ChangePassword();
-			const toggle2FA = new Toggle2FA();
+			// const toggle2FA = new Toggle2FA();
 			const logout = new Logout();
 			changeUsername.init();
 			changePassword.init();
-			toggle2FA.init();
+			// toggle2FA.init();
 			logout.init();
 
 			activeComponent = {
 				init: () => {},
-				destroy: () => { changeUsername.destroy(); changePassword.destroy(); toggle2FA.destroy(); logout.destroy(); },
+				destroy: () => { changeUsername.destroy(); changePassword.destroy(); logout.destroy(); },
 			};
 		},
 		destroy: () => {}
@@ -134,33 +133,33 @@ const routeComponents: Record<string, Component> = {
 		},
 		destroy: () => {}
 	},
-	"/2fa/create": {
-		init: () => {
-			activeComponent?.destroy?.();
+	// "/2fa/create": {
+	// 	init: () => {
+	// 		activeComponent?.destroy?.();
 
-			const toggle2FA = new Toggle2FA();
-			toggle2FA.init();
+	// 		const toggle2FA = new Toggle2FA();
+	// 		toggle2FA.init();
 
-			activeComponent = {
-				init: () => {},
-				destroy: () => { toggle2FA.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
-	"/2fa/remove": {
-		init: () => {
-			activeComponent?.destroy?.();
+	// 		activeComponent = {
+	// 			init: () => {},
+	// 			destroy: () => { toggle2FA.destroy(); },
+	// 		};
+	// 	},
+	// 	destroy: () => {}
+	// },
+	// "/2fa/remove": {
+	// 	init: () => {
+	// 		activeComponent?.destroy?.();
 
-			const toggle2FA = new Toggle2FA();
-			toggle2FA.init();
-			activeComponent = {
-				init: () => {},
-				destroy: () => { toggle2FA.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
+	// 		const toggle2FA = new Toggle2FA();
+	// 		toggle2FA.init();
+	// 		activeComponent = {
+	// 			init: () => {},
+	// 			destroy: () => { toggle2FA.destroy(); },
+	// 		};
+	// 	},
+	// 	destroy: () => {}
+	// },
 	"/auth": {
 		init: () => {
 			activeComponent?.destroy?.();
