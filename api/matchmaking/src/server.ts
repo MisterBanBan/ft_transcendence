@@ -17,8 +17,8 @@ async function start() {
     }
   });
 
-  await app.register(cors, { origin: "https://z3r5p6:8443" , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
-  await app.register(fastifyIO, { cors: { origin: "https://z3r5p6:8443", credentials: true } });
+  await app.register(cors, { origin: "https://z1r3p4:8443" , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
+  await app.register(fastifyIO, { cors: { origin: "https://z1r3p4:8443", credentials: true } });
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
   app.register(autoLoad, { dir: join(dir, "routes/") });
