@@ -38,15 +38,15 @@ export default async function (server: FastifyInstance) {
 		}
 
 		if (!tournament.hasOwnership(currentUser.id)) {
-			return reply.status(401).send({
-				error: "Not Authorized",
+			return reply.status(403).send({
+				error: "Forbidden",
 				message: `You are not the owner of this tournament`
 			});
 		}
 
 		if (currentUser.id === Number(userId)) {
-			return reply.status(401).send({
-				error: "Not Authorized",
+			return reply.status(403).send({
+				error: "Forbidden",
 				message: `You can't kick yourself`
 			});
 		}

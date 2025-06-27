@@ -33,16 +33,16 @@ export default async function (server: FastifyInstance) {
 		const tournament = tournaments.get(name);
 
 		if (!tournament) {
-			return reply.status(400).send({
-				error: "Bad Request",
+			return reply.status(404).send({
+				error: "Not Found",
 				message: `Tournament ${name} does not exist`
 			});
 		}
 
 
 		if (tournament.isFull()) {
-			return reply.status(400).send({
-				error: "Bad Request",
+			return reply.status(409).send({
+				error: "Conflict",
 				message: `Tournament ${name} is full`
 			});
 		}

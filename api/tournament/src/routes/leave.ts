@@ -39,8 +39,8 @@ export default async function (server: FastifyInstance) {
 
 
 		if (!tournament.hasPlayer(currentUser.id)) {
-			return reply.status(400).send({
-				error: "Bad Request",
+			return reply.status(403).send({
+				error: "Forbidden",
 				message: `You are not in the tournament`
 			});
 		}
