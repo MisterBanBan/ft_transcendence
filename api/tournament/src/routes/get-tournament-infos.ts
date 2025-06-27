@@ -33,11 +33,13 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
+		const playersObject = Object.fromEntries(tournament.getPlayers());
+
 		return reply.code(200).send({
 			name: name,
 			owner: tournament.getOwner(),
 			size: tournament.getSize(),
-			players: tournament.getPlayers(),
+			players: playersObject,
 		});
 	});
 }

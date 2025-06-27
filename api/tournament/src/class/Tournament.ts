@@ -14,7 +14,7 @@ interface TournamentStructure {
 export class Tournament {
 
 	private readonly name: string;
-	private owner: number;
+	private readonly owner: number;
 	private readonly size: number;
 	private players: Map<number, string> = new Map();
 	private structure: TournamentStructure = { rounds: {}, winner: undefined};
