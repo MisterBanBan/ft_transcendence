@@ -7,14 +7,13 @@ interface StatusMessage {
 }
 
 export default async function (server: FastifyInstance) {
-    const activeConnections = new Map<string, any>();
+    const activeConnections = server.activeConnections;
 
     server.get('/api/users/ws/status/', {
         websocket: true
     }, (socket, request: FastifyRequest) => {
         let userId: string | undefined;
 
-        // Utilise directement socket.send()
         socket.send(JSON.stringify({
             type: 'welcome',
             message: 'WebSocket connexion established',
@@ -28,7 +27,7 @@ export default async function (server: FastifyInstance) {
 
                 if (data.type === 'status_change' && data.userId && data.status) {
                     userId = data.userId;
-                    activeConnections.set(userId, socket);
+                    activeConnections.set(userId, { socket, userId });
 
                     const userExists = await server.db.get(
                         'SELECT id FROM users WHERE id = ?',
@@ -43,10 +42,10 @@ export default async function (server: FastifyInstance) {
                         return;
                     }
 
-                    const result = await server.db.run(
+                    await server.db.run(
                         `UPDATE users SET
-                                          status = ?,
-                                          last_activity = datetime('now')
+                            status = ?,
+                            last_activity = datetime('now')
                          WHERE id = ?`,
                         [data.status, userId]
                     );
@@ -58,18 +57,12 @@ export default async function (server: FastifyInstance) {
                         timestamp: new Date().toISOString()
                     }));
 
-                    const statusUpdate = {
+                    server.broadcastToAll({
                         type: 'status_update',
                         userId: data.userId,
                         status: data.status,
                         timestamp: new Date().toISOString()
-                    };
-
-                    activeConnections.forEach((connSocket, connectedUserId) => {
-                        if (connectedUserId !== userId && connSocket.readyState === 1) {
-                            connSocket.send(JSON.stringify(statusUpdate));
-                        }
-                    });
+                    }, userId);
                 }
 
                 if (data.type === 'heartbeat' && data.userId) {
@@ -88,7 +81,6 @@ export default async function (server: FastifyInstance) {
             } catch (error) {
                 if (error instanceof Error) {
                     server.log.error('Error handling WebSocket message:', error);
-
                     socket.send(JSON.stringify({
                         type: 'error',
                         message: error.message,
@@ -96,7 +88,6 @@ export default async function (server: FastifyInstance) {
                     }));
                 } else {
                     server.log.error('Unknown error handling WebSocket message:', error);
-
                     socket.send(JSON.stringify({
                         type: 'error',
                         message: 'unknown error',
@@ -118,17 +109,11 @@ export default async function (server: FastifyInstance) {
                     [userId]
                 );
 
-                const statusUpdate = {
+                server.broadcastToAll({
                     type: 'status_update',
                     userId: userId,
                     status: 'offline',
                     timestamp: new Date().toISOString()
-                };
-
-                activeConnections.forEach((connSocket) => {
-                    if (connSocket.readyState === 1) {
-                        connSocket.send(JSON.stringify(statusUpdate));
-                    }
                 });
             }
         });
@@ -139,7 +124,6 @@ export default async function (server: FastifyInstance) {
                 activeConnections.delete(userId);
             }
         });
-
     });
 
     server.get('/api/users/ws/debug', async (request, reply) => {

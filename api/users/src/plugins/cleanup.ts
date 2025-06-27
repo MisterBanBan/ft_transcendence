@@ -16,6 +16,7 @@ const cleanupPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
             }
         } catch (error) {
             fastify.log.error('Error cleaning inactive users:', error);
+            console.log(error);
         }
     };
 

@@ -1,54 +1,22 @@
-FROM node:20-alpine AS builder
-
-RUN apk add --no-cache curl
+FROM node:18-alpine as build-stage
 
 WORKDIR /app
 
-COPY package.json .
-COPY tsconfig.json .
-COPY tailwind.config.js .
-COPY postcss.config.js .
-COPY src/ ./src
+# Copier les fichiers de configuration
+COPY package*.json ./
+COPY vite.config.js ./
+COPY tsconfig*.json ./
 
-# Installer les dépendances, y compris Tailwind CSS
-RUN npm uninstall tailwindcss --if-present
-RUN npm install tailwindcss@3.3.3 postcss autoprefixer --save-dev
-RUN npm install
+# Installer les dépendances
+RUN npm ci
 
-# Créer le fichier CSS Tailwind avant la construction principale
-RUN npx tailwindcss -i ./src/css/input.css -o ./src/css/output.css
+# Copier TOUS les fichiers du projet
+COPY . .
 
 # Construire l'application
 RUN npm run build
 
-FROM node:20-alpine
-
-RUN apk add --no-cache curl
-
-WORKDIR /app
-
-RUN mkdir -p /etc/nginx/ssl
-
-RUN mkdir -p /var/run/nginx
-
-RUN apk add --no-cache nginx openssl bash
-
-RUN mkdir -p /etc/nginx/ssl && \
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-    -keyout /etc/nginx/ssl/key.key \
-    -out /etc/nginx/ssl/certificate.crt \
-    -subj "/C=FR/ST=RA/L=Lyon/O=42/CN=localhost"
-
-COPY nginx.conf /etc/nginx/
-COPY src/css/ /usr/share/nginx/front/css/
-COPY src/img/ /usr/share/nginx/front/img/
-COPY src/error_page /usr/share/nginx/front/error_page/
-COPY src/index.html /usr/share/nginx/front/
-
-COPY --from=builder /app/src/css/ /usr/share/nginx/front/css/
-COPY --from=builder /app/dist /usr/share/nginx/front/public/
-COPY package.json .
-
-RUN npm install --production
-
-CMD [ "nginx" ]
+FROM nginx:alpine
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]

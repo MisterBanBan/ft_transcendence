@@ -1,0 +1,291 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+header h1 {
+    color: #2c3e50;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+section {
+    background: white;
+    margin-bottom: 20px;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+section h2 {
+    color: #34495e;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 5px;
+}
+
+/* Connection Status */
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #e74c3c;
+}
+
+.status-indicator.online .status-dot {
+    background-color: #27ae60;
+}
+
+/* Form Controls */
+.user-controls, .profile-controls, .upload-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+}
+
+input[type="text"], input[type="file"], select {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+button {
+    padding: 8px 16px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+button:disabled {
+    background-color: #bdc3c7;
+    cursor: not-allowed;
+}
+
+/* Profile Display */
+.profile-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.user-status {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.user-status.online {
+    background-color: #d5f4e6;
+    color: #27ae60;
+}
+
+.user-status.offline {
+    background-color: #fadbd8;
+    color: #e74c3c;
+}
+
+.user-status.in_game {
+    background-color: #fef9e7;
+    color: #f39c12;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.stat-label {
+    font-weight: bold;
+}
+
+/* Matches */
+.matches-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.match-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.match-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.result.won {
+    color: #27ae60;
+    font-weight: bold;
+}
+
+.result.lost {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+/* Users List */
+.user-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.user-activity {
+    font-size: 12px;
+    color: #7f8c8d;
+}
+
+/* Messages */
+.message {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 12px;
+}
+
+.message-type {
+    font-weight: bold;
+    color: #3498db;
+}
+
+.message-time {
+    color: #7f8c8d;
+}
+
+.message-content pre {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: 12px;
+}
+
+#messages-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+/* Upload Results */
+.avatar-preview {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 50%;
+    margin-top: 10px;
+}
+
+.success {
+    color: #27ae60;
+    background-color: #d5f4e6;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.error {
+    color: #e74c3c;
+    background-color: #fadbd8;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+.loading {
+    color: #f39c12;
+    background-color: #fef9e7;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .user-controls, .profile-controls, .upload-controls {
+        flex-direction: column;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .match-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}

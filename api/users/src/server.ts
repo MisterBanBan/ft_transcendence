@@ -8,6 +8,15 @@ import fileValidationConfig from "./config/file-validation.js";
 import websocket from "@fastify/websocket";
 import cleanupPlugin from "./plugins/cleanup.js";
 
+declare module 'fastify' {
+    interface FastifyInstance {
+        activeConnections: Map<string, { socket: any; userId: string }>;
+        userStatus: Map<string, string>;
+        broadcastToAll: (message: any, excludeUserId?: string) => void;
+        broadcastToUser: (userId: string, message: any) => void;
+    }
+}
+
 const activeConnections = new Map();
 const userStatus = new Map();
 
@@ -57,7 +66,6 @@ async function startServer() {
     }
 }
 
-// Functions for websocket
 function broadcastToUser(userId: string, message: any) {
     const connection = activeConnections.get(userId);
     if (connection && connection.socket.readyState === WebSocket.OPEN) {
