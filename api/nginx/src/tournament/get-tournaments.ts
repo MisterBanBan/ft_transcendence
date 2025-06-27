@@ -52,13 +52,36 @@ export class GetTournaments implements Component {
 						}
 					}
 					else {
-						div.innerHTML += `<div id=tournament-${name} class="bg-white shadow-md w-full max-w-sm">
-										<h2 class="text-2xl font-semibold mb-6 text-center">${name}</h2>
-										<h3 id=tournament-${name}-size class="text-2xl text-gray-700 mb-4 text-center">${details.players}/${details.size}</h3>
-										<input>
-										 <button type="submit" id="join-tournament-${name}"
-										 class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Join</button>
-									</div>`
+						const tournamentDiv = document.createElement("div");
+						tournamentDiv.id = `tournament-${name}`;
+						tournamentDiv.className = "bg-white shadow-md w-full max-w-sm";
+
+						const h2 = document.createElement("h2");
+						h2.className = "text-2xl font-semibold mb-6 text-center";
+						h2.innerText = name;
+
+						const h3 = document.createElement("h3");
+						h3.id = `tournament-${name}-size`;
+						h3.className = "text-2xl text-gray-700 mb-4 text-center";
+						h3.innerText = `${details.players}/${details.size}`;
+
+						const input = document.createElement("input");
+						input.id = "display-name";
+						input.className = "block mx-auto mb-4 p-2 border";
+						input.placeholder = "Votre pseudo";
+
+						const button = document.createElement("button");
+						button.type = "submit";
+						button.id = `join-tournament-${name}`;
+						button.className = "w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200";
+						button.innerText = "Join";
+
+						tournamentDiv.appendChild(h2);
+						tournamentDiv.appendChild(h3);
+						tournamentDiv.appendChild(input);
+						tournamentDiv.appendChild(button);
+
+						div.appendChild(tournamentDiv);
 
 						console.log("Creating eventListener for", name);
 						document.getElementById(`join-tournament-${name}`)!.addEventListener("click", async (e) => {

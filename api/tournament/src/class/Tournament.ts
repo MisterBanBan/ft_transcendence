@@ -29,6 +29,10 @@ export class Tournament {
 		return this.name;
 	}
 
+	public getOwner(): number {
+		return this.owner;
+	}
+
 	public getStructure(): TournamentStructure {
 		return this.structure;
 	}

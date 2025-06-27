@@ -12,8 +12,6 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		console.log();
-
 		const tournamentsList: { [key: string]: { size: number; players: number } }[]  = [];
 		tournaments.forEach((tournament, name) => {
 			tournamentsList.push({
