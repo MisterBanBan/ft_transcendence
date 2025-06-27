@@ -57,6 +57,10 @@ export class Tournament {
 		return this.players.has(userId);
 	}
 
+	public hasOwnership(userId: number) {
+		return this.owner === userId;
+	}
+
 	public isFull(): boolean {
 		return this.players.size >= this.size;
 	}
