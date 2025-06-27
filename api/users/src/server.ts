@@ -5,13 +5,19 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import corsConfig from './config/cors.js';
 import fileValidationConfig from "./config/file-validation.js";
+import fs from "fs";
 // import validationErrorHandler from "./error/validation-errors.js";
 // import websocket from "@fastify/websocket";
 
 
 async function startServer() {
 
-    const server = fastify();
+    const server = fastify({
+        https: {
+            cert: fs.readFileSync("/app/certs/cert.crt"),
+            key: fs.readFileSync("/app/certs/key.key"),
+        }
+    });
 
     console.log("server started");
 
