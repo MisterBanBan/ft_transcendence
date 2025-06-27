@@ -13,7 +13,7 @@ interface TournamentStructure {
 
 export class Tournament {
 
-	private	name: string;
+	private readonly name: string;
 	private owner: number;
 	private readonly size: number;
 	private players: Map<number, string> = new Map();
@@ -23,6 +23,10 @@ export class Tournament {
 		this.name = name;
 		this.owner = owner;
 		this.size = size;
+	}
+
+	public getName(): string {
+		return this.name;
 	}
 
 	public getStructure(): TournamentStructure {

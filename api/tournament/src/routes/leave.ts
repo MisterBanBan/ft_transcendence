@@ -1,5 +1,6 @@
 import {FastifyInstance, FastifyRequest} from "fastify";
 import {tournaments} from "./create.js";
+import {leaveTournament} from "../utils/leaveTournament.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/tournament/leave', {
@@ -44,8 +45,8 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
-		tournament.removePlayer(currentUser.id);
+		leaveTournament(currentUser.id, tournament);
 
-		return reply.code(200).send({ tournament });
+		return reply.code(200).send({ message: "Tournament left successfully" });
 	});
 }

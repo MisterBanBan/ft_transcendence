@@ -56,6 +56,6 @@ export default async function (server: FastifyInstance) {
 
 		joinTournament(currentUser.id, displayName, tournament);
 
-		return reply.code(200).send({ tournament });
+		return reply.code(200).send({ message: "Tournament joined successfully" });
 	});
 }
