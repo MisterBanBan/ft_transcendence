@@ -3,13 +3,19 @@ import autoLoad from "@fastify/autoload";
 // import cors from "@fastify/cors";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import fs from "fs";
 // import websocket from "@fastify/websocket";
 // import multipart from "@fastify/multipart";
 // import { existsSync } from "node:fs";
 
 async function startServer() {
 
-    const server = fastify();
+    const server = fastify({
+        https: {
+            cert: fs.readFileSync("/app/certs/cert.crt"),
+            key: fs.readFileSync("/app/certs/key.key"),
+        }
+    });
 
     console.log("server started");
 

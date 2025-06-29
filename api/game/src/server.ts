@@ -2,10 +2,16 @@ import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
+import fs from "fs";
 
 async function startServer() {
 
-    const server = fastify();
+    const server = fastify({
+        https: {
+            cert: fs.readFileSync("/app/certs/cert.crt"),
+            key: fs.readFileSync("/app/certs/key.key"),
+        }
+    });
 
     console.log("server started");
 

@@ -5,7 +5,7 @@ services:
     build:
       context: api/gateway
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:3000/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -kf https://localhost:3000/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -26,6 +26,7 @@ services:
     volumes:
         - ./api/auth/database:/app/database/auth
         - ./api/users/database:/app/database/users
+        - ./certs:/app/certs
     restart: unless-stopped
   users:
     image: users
@@ -33,7 +34,7 @@ services:
     build:
       context: api/users/
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -kf https://localhost:8080/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -43,6 +44,7 @@ services:
     volumes:
       - users-data:/app/database/users
       - ./uploads:/app/uploads
+      - ./certs:/app/certs
     restart: unless-stopped
 
   tournament:
@@ -51,7 +53,7 @@ services:
     build:
       context: api/tournament
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -kf https://localhost:8081/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -60,6 +62,7 @@ services:
       - ft_transcendence
     volumes:
       - tournament-data:/app/database/tournament
+      - ./certs:/app/certs
     restart: on-failure
 
   game:
@@ -68,7 +71,7 @@ services:
     build:
       context: api/game
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8082/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -kf https://localhost:8082/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -77,6 +80,7 @@ services:
       - ft_transcendence
     volumes:
       - game-data:/app/database/game
+      - ./certs:/app/certs
     restart: on-failure
 
   matchmaking:
@@ -85,7 +89,7 @@ services:
     build:
       context: api/matchmaking
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8083/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -kf https://localhost:8083/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -94,6 +98,7 @@ services:
       - ft_transcendence
     volumes:
       - matchmaking-data:/app/database/matchmaking
+      - ./certs:/app/certs
     restart: on-failure
 
   auth:
@@ -102,7 +107,7 @@ services:
     build:
       context: api/auth
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -kf https://localhost:8084/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -114,6 +119,7 @@ services:
     volumes:
       - auth-data:/app/database/auth
       - ./api/users/database:/app/database/users
+      - ./certs:/app/certs
     restart: on-failure
 
   nginx:
@@ -123,6 +129,7 @@ services:
       context: api/nginx
     volumes:
       - ./uploads:/usr/share/nginx/front/uploads
+      - ./certs:/etc/nginx/ssl
     ports:
       - "8443:443"
     depends_on:
