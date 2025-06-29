@@ -1,12 +1,35 @@
 import {Component} from "../component";
 
+declare const io: any;
+
 export class CreateTournament implements Component {
 
 	private submitButton: HTMLElement | null = null;
 	private readonly handleSubmitBound: (event: Event) => void;
+	// private socket = io('https://10.13.6.4:8081', {
+	// 	transports: ["websocket", "polling"],
+	// 	withCredentials: true,
+	// });
+
+	private ws = new WebSocket('wss://10.13.6.4:8081/wss/tournament')
 
 	constructor() {
 		this.handleSubmitBound = this.handleSubmit.bind(this);
+
+		this.ws.onopen = () => {
+			console.log('WebSocket ouvert');
+			this.ws.send('Hello from client');
+		};
+		this.ws.onmessage = (event) => {
+			console.log('Message from server:', event.data);
+		};
+		this.ws.onerror = (e) => {
+			console.error('WebSocket error:', e);
+		};
+		this.ws.onclose = (event) => {
+			console.log(event);
+			console.log('WebSocket fermé', event.code, event.reason);
+		};
 	}
 
 	public init(): void {
@@ -40,29 +63,38 @@ export class CreateTournament implements Component {
 		} as { name: string, size: number };
 
 		try {
-			const response = await fetch("/api/tournament/createTournament", {
-				method: "POST",
-				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify(payload),
-			});
 
-			const data = await response.json();
+			console.log("Clicked");
 
-			if (!response.ok) {
-				// const error = document.getElementById(`popup-2fa-error`)
-				// if (!error) {
-				// 	console.error("Can't display error");
-				// 	return;
-				// }
+			// this.socket.emit('createTournament');
+			//
+			// this.socket.on('createdTournament', () => {
+			// 	console.log("createdTournament");
+			// });
 
-				// error.textContent = data.message;
-				console.error(data.message);
-				return;
-			}
-
-			if (data.success) {
-				return window.location.href = '/';
-			}
+			// const response = await fetch("/api/tournament/createTournament", {
+			// 	method: "POST",
+			// 	headers: {"Content-Type": "application/json"},
+			// 	body: JSON.stringify(payload),
+			// });
+			//
+			// const data = await response.json();
+			//
+			// if (!response.ok) {
+			// 	// const error = document.getElementById(`popup-2fa-error`)
+			// 	// if (!error) {
+			// 	// 	console.error("Can't display error");
+			// 	// 	return;
+			// 	// }
+			//
+			// 	// error.textContent = data.message;
+			// 	console.error(data.message);
+			// 	return;
+			// }
+			//
+			// if (data.success) {
+			// 	return window.location.href = '/';
+			// }
 
 		} catch (error) {
 			console.error(error);

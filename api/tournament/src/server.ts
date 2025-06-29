@@ -1,27 +1,29 @@
 import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { join } from "node:path";
 import fs from "fs";
-// import websocket from "@fastify/websocket";
-// import multipart from "@fastify/multipart";
-// import { existsSync } from "node:fs";
+import fastifyWebsocket from "@fastify/websocket";
+import wssGet from "./wss.js";
 
 async function startServer() {
 
     try {
-		const server = fastify({
+		const server = fastify(
+			{
 			https: {
 				cert: fs.readFileSync("/app/certs/cert.crt"),
 				key: fs.readFileSync("/app/certs/key.key"),
 			}
-		});
+		}
+		);
 
-        console.log("server started");
+		await server.register(fastifyWebsocket);
+		await server.register(wssGet);
+		// await server.register(fastifyIO, { cors: { origin: "https://z3r6p4:8443", credentials: true } });
 
-        const filename = fileURLToPath(import.meta.url);
-        const dir = dirname(filename);
 
+
+        const dir = __dirname;
         server.register(autoLoad, {
             dir: join(dir, "plugins/"),
             encapsulate: false
