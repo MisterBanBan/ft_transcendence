@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   generateCloud.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 05:58:52 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/20 10:33:35 by afavier          ###   ########.fr       */
+/*   Updated: 2025/06/30 22:42:26 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-export function generateCloud(containerId: string, count: number = 5): HTMLElement[] {
+export function generateCloud(containerId: string, count: number = 15): HTMLElement[] {
     const container = document.getElementById(containerId);
     if (!container) {
         throw new Error(`Container #${containerId} not found`);
@@ -28,7 +28,7 @@ export function generateCloud(containerId: string, count: number = 5): HTMLEleme
         cloud.style.width = `${size}vw`;
         cloud.style.height = 'auto';
         cloud.classList.add('animate-float');
-        cloud.style.top = `${20 + Math.random() * 20}%`;
+        cloud.style.top = `${20 + Math.random() * 10}%`;
         cloud.style.left = `${Math.random() * 100}%`;
         container.appendChild(cloud);
         clouds.push(cloud);

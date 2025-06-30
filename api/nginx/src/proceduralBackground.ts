@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:07 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/09 16:15:25 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/30 22:41:06 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ export class proceduralBackground implements Component{
     private clouds: HTMLElement[] = [];
     private rafId!: number;
 
-    constructor(private containerId: string, private containerCloudId: string, private count = 10) {}
+    constructor(private containerId: string, private containerCloudId: string, private count = 20) {}
     
     public init(): void{
       this.birds = generateBirds(this.containerId, this.count);

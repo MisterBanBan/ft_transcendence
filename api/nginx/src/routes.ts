@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/09 16:02:06 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/30 22:38:43 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,28 +38,36 @@ export const routes: Route[] = [
             await new Promise(resolve => setTimeout(resolve, 300));
             return `
             <div class="fixed inset-0 h-full w-full relative overflow-hidden">
-                <div
-                  id="procedural-bg"
-                  class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-                ></div>
+
+				
                 <canvas id="forest" class="absolute inset-0 -z-20"></canvas>
-                <div class="absolute left-0 bottom-0 w-full h-full z-10">
-  <img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[30%] object-cover pointer-events-none translate-y-2" />
-  <img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[17%] object-cover pointer-events-none translate-y-2" />
-</div>
+				
+				<div class="absolute left-0 bottom-0 w-full h-full z-10">
+					<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[30%] object-cover pointer-events-none translate-y-2" />
+					<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[17%] object-cover pointer-events-none translate-y-2" />
+				</div>
 
 
 
 
                 <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
-                  <div class="w-screen h-screen relative">
-                    <div class="absolute inset-0 w-full h-full"></div>
-                  </div>
+                  <div
+                  id="procedural-bg"
+                  class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
+                >
+				</div>
+					<div class="w-screen h-screen relative">
+					                
+					</div>
+					<div class="w-screen h-screen relative">
+					                
+					</div>
+					
 
                   <div id="videoDoor" class="w-screen h-screen relative">
-                    <video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-                      <source src="/img/door.mp4" type="video/mp4">
-                    </video>
+                    <img src="/img/chalet_noir.png" class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+                     
+                    </img>
                     <div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
                       <video autoplay loop muted class="w-12 h-12">
                         <source src="/img/pressE.mp4" type="video/mp4">
@@ -91,15 +99,26 @@ export const routes: Route[] = [
                 class="block max-w-full max-h-full object-contain">
                 <source src="/img/acceuil.mp4" type="video/mp4">
               </video>
-              <button type="button" id="user" class="absolute flex items-center justify-center top-[20%] right-[30%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto">
-                  
-              </button>
+
              
-              <div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
-                
-                 
-              </div>
-            
+              	<div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
+					<div class="flex flex-col items-center justify-center h-full w-[80%] relative">	    
+						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto">
+								</button>
+						<div id="dynamic-content" class="h-full w-full flex items-center justify-center absolute"></div>
+					</div>
+					<div id="picture" class="h-full w-[20%] flex items-center justify-center relative">
+							
+						<button
+							type="button"
+							id="picture"
+							class="absolute top-[8%] right-[22%]  w-[60%] h-[32%] bg-[url('/img/last_airbender.jpg')] bg-[length:100%_100%] bg-white/60 bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full"
+						>
+						</button>
+					</div>
+													
+					
+            	</div>
             </section>
             `;
         }

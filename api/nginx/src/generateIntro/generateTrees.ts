@@ -6,11 +6,12 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/08 13:47:42 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/05/10 13:38:56 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/30 22:19:11 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*export function generateTrees(containerId:string, count: number = 5): HTMLElement[] {
+/*
+export function generateTrees(containerId:string, count: number = 5): HTMLElement[] {
     const container = document.getElementById(containerId);
     if(!container) {
         throw new Error(`Container #${containerId} not found`);
@@ -21,4 +22,5 @@
     {
         const tree = document.createElement('img');
     }
-}*/
+}
+*/

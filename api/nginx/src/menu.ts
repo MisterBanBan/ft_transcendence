@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/25 19:17:36 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/30 14:28:37 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ export class menu implements Component {
         if (!authBtn) throw new Error('Auth button not found');
         this.authBtn = authBtn;
 
-        const formsContainer = document.getElementById('container_form');
+        const formsContainer = document.getElementById('dynamic-content');
         if (!formsContainer) throw new Error('Form wrapper not found');
         this.formsContainer= formsContainer;
 
@@ -375,7 +375,7 @@ export class menu implements Component {
             
         this.containerForm.style.left = `${(rect.left )}px`;
         this.containerForm.style.top = `${(rect.top )}px`;
-        this.containerForm.style.width = `${rect.width * 0.8}px`;
+        this.containerForm.style.width = `${rect.width }px`;
         this.containerForm.style.height = `${rect.height}px`;
         this.containerForm.style.position = "absolute";
     }

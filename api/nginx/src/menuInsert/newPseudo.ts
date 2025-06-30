@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 16:14:07 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/12 11:09:59 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/27 00:13:52 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ export const newPseudo = () => `
                     id="username"
                     type="text"
                     placeholder="Enter New Pseudo"
-                    class="responsive-placeholder responsive-case-login responsive-case"
+                    class="responsive-placeholder responsive-case-login responsive-case responsive-text"
                   />
                   <button type="submit" id="submit-username" class="responsive-text responsive-case-submit text-black">Valider</button>
                   <button type="button" id="pseudoReturnBtn" class="text-white responsive-text ">Return</button>

@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/25 15:36:48 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/30 22:40:45 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,15 @@ const routeComponents: Record<string, Component> = {
     "/": {
         init: () => {
             activeComponent?.destroy?.();
-            const bg = new proceduralBackground('procedural-bg', 'procedural-bg', 8);
+            const bg = new proceduralBackground('procedural-bg', 'procedural-bg', 16);
+			//const b = new proceduralBackground('procedural-bgg', 'procedural-bgg', 8);
             const playerIntro = new introduction('player');
             //const brushUrl = '/img/tree.png'; // votre png de coup de pinceau
             //const forest = new Forest('forest', brushUrl);
             //forest.generate(10);
 
             bg.init();
+			//b.init();
             playerIntro.init();
             activeComponent = {
                 init: () => {},

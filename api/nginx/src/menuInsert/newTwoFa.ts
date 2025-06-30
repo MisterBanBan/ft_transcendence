@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 18:52:33 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/25 09:53:07 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/30 19:05:57 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,15 @@ export const newTwoFa = () => `
                     id="2fa-code"
                     type="text"
                     placeholder="Enter 2FA code"
-                    class="responsive-placeholder responsive-case-login responsive-case"
+                    class="responsive-placeholder responsive-case-login responsive-case responsive-text"
                   />
                   <input
                     id="2fa-password"
                     type="text"
                     placeholder="Enter Password"
-                    class="responsive-placeholder responsive-case-login responsive-case"
+                    class="responsive-placeholder responsive-case-login responsive-case responsive-text"
                   />
                   <button type="submit" id="2fa-submit" class="responsive-text responsive-case-submit text-black">Valider</button>
-                  <button type="button" id="2faReturnBtn" class="text-white responsive-text ">Return</button>
+                  <button type="button" id="2faReturnBtn" class="responsive-text-profile">Return</button>
                   </div>
 `

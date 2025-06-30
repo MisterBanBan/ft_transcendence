@@ -20,6 +20,11 @@
     lg:text-4xl;
   }
 
+  .responsive-text-profile {
+    @apply font-omori text-sm sm:text-base md:text-2xl
+    lg:text-4xl text-white hover:text-5xl transition-all duration-200;
+  }
+
   .responsive-text-score {
     @apply font-omori text-sm sm:text-xl md:text-4xl
     lg:text-5xl text-white;

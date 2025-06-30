@@ -6,11 +6,11 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 18:07:38 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/14 17:11:49 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/06/30 22:42:31 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-export function generateBirds(containerId: string, count:number = 10): HTMLElement[] {
+export function generateBirds(containerId: string, count:number = 15): HTMLElement[] {
     const container = document.getElementById(containerId);
     if (!container) {
         throw new Error(`Container #${containerId} not found`);
@@ -29,7 +29,7 @@ export function generateBirds(containerId: string, count:number = 10): HTMLEleme
 
     // 3) Styles Tailwind + positionnement absolu
     bird.className = 'absolute w-16 h-16 object-contain animate-float';
-    bird.style.top  = `${20 + Math.random() * 20}%`;
+    bird.style.top  = `${20 + Math.random() * 10}%`;
     bird.style.left = `${Math.random() * 100}%`;
 
     // 4) Ajout au DOM et au tableau
@@ -42,7 +42,7 @@ export function generateBirds(containerId: string, count:number = 10): HTMLEleme
 }
 
 export function animateBirds(birds: HTMLElement[]) {
-    const speed = 0.2;
+    const speed = 0.1;
     let rafId: number;
     
     const loop = () => {
