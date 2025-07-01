@@ -9,7 +9,7 @@ export default async function (server: FastifyInstance) {
 		try {
 			if (!socket)
 				console.error("Socket not found");
-			console.log('Nouveau client connecté');
+			console.log('Client connected');
 
 			socket.send(JSON.stringify({
 				type: 'welcome',
@@ -18,7 +18,7 @@ export default async function (server: FastifyInstance) {
 			}));
 
 			socket.on("message", (message: string | Buffer) => {
-				console.log("Message reçu:", message.toString());
+				console.log("Received message:", message.toString());
 				socket.send("Hello from server!");
 			});
 

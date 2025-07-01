@@ -17,7 +17,7 @@ export class CreateTournament implements Component {
 		this.handleSubmitBound = this.handleSubmit.bind(this);
 
 		this.ws.onopen = () => {
-			console.log('WebSocket ouvert');
+			console.log('WebSocket opened');
 			this.ws.send('Hello from client');
 		};
 		this.ws.onmessage = (event) => {
@@ -28,7 +28,7 @@ export class CreateTournament implements Component {
 		};
 		this.ws.onclose = (event) => {
 			console.log(event);
-			console.log('WebSocket fermé', event.code, event.reason);
+			console.log('WebSocket closed', event.code, event.reason);
 		};
 	}
 
@@ -65,6 +65,8 @@ export class CreateTournament implements Component {
 		try {
 
 			console.log("Clicked");
+
+			this.ws.send("createTournament");
 
 			// this.socket.emit('createTournament');
 			//
