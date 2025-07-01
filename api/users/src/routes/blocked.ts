@@ -99,8 +99,6 @@ export default async function (server: FastifyInstance) {
             );
 
             if (existingRelation) {
-                // If the existing relation has the blocker as addressee, we need to delete it first
-                // and create a new one with the blocker as requester
                 if (existingRelation.requester_id === blocked_user_id) {
                     await server.db.run(
                         'DELETE FROM relationships WHERE requester_id = ? AND addressee_id = ?',
@@ -112,7 +110,6 @@ export default async function (server: FastifyInstance) {
                         blocker_id, blocked_user_id, 'blocked'
                     );
                 } else {
-                    // Update existing relationship to blocked
                     await server.db.run(
                         'UPDATE relationships SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE requester_id = ? AND addressee_id = ?',
                         'blocked', blocker_id, blocked_user_id

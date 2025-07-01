@@ -33,7 +33,7 @@ export default async function (fastify: FastifyInstance) {
         }
     });
 
-    // Get detailed match history with pagination
+    // Get detailed match history
     fastify.get<{
         Params: ProfileParams;
         Querystring: { page?: number; limit?: number }

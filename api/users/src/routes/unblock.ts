@@ -57,7 +57,6 @@ export default async function (server: FastifyInstance) {
         console.log('Unblocking user:', blocked_user_id, 'by user:', unblocker_id);
 
         try {
-            // Check if both users exist
             const unblockerExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
                 unblocker_id
@@ -71,12 +70,10 @@ export default async function (server: FastifyInstance) {
                 return reply.status(404).send({ error: 'User not found' });
             }
 
-            // Prevent self-unblocking
             if (unblocker_id === blocked_user_id) {
                 return reply.status(400).send({ error: 'Cannot unblock yourself' });
             }
 
-            // Check if blocked relationship exists
             const existingBlockedRelation = await server.db.get(
                 'SELECT * FROM relationships WHERE requester_id = ? AND addressee_id = ? AND status = ?',
                 unblocker_id, blocked_user_id, 'blocked'
@@ -86,7 +83,6 @@ export default async function (server: FastifyInstance) {
                 return reply.status(404).send({ error: 'No blocked relationship found' });
             }
 
-            // Remove the blocked relationship
             await server.db.run(
                 'DELETE FROM relationships WHERE requester_id = ? AND addressee_id = ? AND status = ?',
                 unblocker_id, blocked_user_id, 'blocked'

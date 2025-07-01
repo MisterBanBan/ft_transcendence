@@ -30,7 +30,6 @@ export default async function (server: FastifyInstance) {
         }
     }, async (request, reply) => {
         const { requesterId: requester_id } = request.params;
-        // In a real app, get from authentication middleware
         const addressee_id = request.headers['user-id'] as string;
 
         try {

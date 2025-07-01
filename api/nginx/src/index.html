@@ -3,78 +3,456 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test WebSocket & API</title>
-    <link rel="stylesheet" href="src/styles/main.css">
+    <title>WebSocket Status Tester</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .connection-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connected { background-color: #4CAF50; }
+        .status-disconnected { background-color: #f44336; }
+        .status-connecting { background-color: #ff9800; }
+
+        input, select, button {
+            padding: 8px 12px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover { background-color: #0056b3; }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .log-container {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            background-color: #f8f9fa;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .log-message {
+            margin: 2px 0;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+
+        .log-sent { background-color: #e3f2fd; }
+        .log-received { background-color: #e8f5e8; }
+        .log-error { background-color: #ffebee; color: #c62828; }
+        .log-info { background-color: #fff3e0; }
+
+        .users-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .user-card {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+
+        .user-status {
+            font-weight: bold;
+            text-transform: capitalize;
+        }
+
+        .user-status.online { color: #28a745; }
+        .user-status.offline { color: #6c757d; }
+        .user-status.in_game { color: #ffc107; }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .control-group {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .control-group h4 {
+            margin-top: 0;
+            color: #495057;
+        }
+    </style>
 </head>
 <body>
+<h1>🔌 WebSocket Status Tester</h1>
+
 <div class="container">
-    <header>
-        <h1>Test WebSocket & User API</h1>
-    </header>
-
-    <main>
-        <!-- Connection Status -->
-        <section class="connection-status">
-            <h2>WebSocket Connection</h2>
-            <div id="connection-indicator" class="status-indicator offline">
-                <span class="status-dot"></span>
-                <span id="connection-text">Disconnected</span>
+    <div class="connection-panel">
+        <div>
+            <h3>Connection Settings</h3>
+            <div>
+                <label>WebSocket URL:</label><br>
+                <input type="text" id="wsUrl" value="wss://localhost:8443/api/users/ws/status/" style="width: 100%;">
             </div>
-            <button id="connect-btn">Connect</button>
-            <button id="disconnect-btn" disabled>Disconnect</button>
-        </section>
-
-        <!-- User Management -->
-        <section class="user-management">
-            <h2>User Management</h2>
-            <div class="user-controls">
-                <input type="text" id="user-id" placeholder="Enter User ID" value="1">
-                <select id="status-select">
-                    <option value="online">Online</option>
-                    <option value="offline">Offline</option>
-                    <option value="in_game">In Game</option>
-                </select>
-                <button id="update-status-btn">Update Status</button>
+            <div>
+                <span class="status-indicator" id="statusIndicator"></span>
+                <span id="connectionStatus">Disconnected</span>
             </div>
-        </section>
-
-        <!-- User Profile -->
-        <section class="user-profile">
-            <h2>User Profile</h2>
-            <div class="profile-controls">
-                <input type="text" id="profile-user-id" placeholder="User ID" value="1">
-                <button id="load-profile-btn">Load Profile</button>
+            <div>
+                <button id="connectBtn" onclick="connectWebSocket()">Connect</button>
+                <button id="disconnectBtn" onclick="disconnectWebSocket()" disabled>Disconnect</button>
             </div>
-            <div id="profile-display"></div>
-        </section>
+        </div>
 
-        <!-- Avatar Upload -->
-        <section class="avatar-upload">
-            <h2>Avatar Upload</h2>
-            <div class="upload-controls">
-                <input type="text" id="avatar-user-id" placeholder="User ID" value="1">
-                <input type="file" id="avatar-file" accept="image/*">
-                <button id="upload-avatar-btn">Upload Avatar</button>
-            </div>
-            <div id="upload-result"></div>
-        </section>
-
-        <!-- Active Users -->
-        <section class="active-users">
-            <h2>Active Users</h2>
-            <button id="refresh-users-btn">Refresh Users</button>
-            <div id="users-list"></div>
-        </section>
-
-        <!-- WebSocket Messages -->
-        <section class="websocket-messages">
-            <h2>WebSocket Messages</h2>
-            <div id="messages-container"></div>
-            <button id="clear-messages-btn">Clear Messages</button>
-        </section>
-    </main>
+        <div>
+            <h3>Quick Actions</h3>
+            <button onclick="fetchUsers()">🔄 Refresh Users</button>
+            <button onclick="fetchDebugInfo()">🐛 Debug Info</button>
+            <button onclick="clearLogs()">🗑️ Clear Logs</button>
+            <button onclick="startHeartbeat()">💓 Start Heartbeat</button>
+            <button onclick="stopHeartbeat()">⏹️ Stop Heartbeat</button>
+        </div>
+    </div>
 </div>
 
-<script type="module" src="src/main.ts"></script>
+<div class="container">
+    <div class="controls-grid">
+        <div class="control-group">
+            <h4>👤 Create User</h4>
+            <input type="text" id="newUserId" placeholder="User ID">
+            <input type="text" id="newUsername" placeholder="Username">
+            <button onclick="createUser()">Create User</button>
+        </div>
+
+        <div class="control-group">
+            <h4>📊 Change Status</h4>
+            <input type="text" id="userId" placeholder="User ID">
+            <select id="statusSelect">
+                <option value="online">Online</option>
+                <option value="offline">Offline</option>
+                <option value="in_game">In Game</option>
+            </select>
+            <button onclick="changeStatus()">Change Status</button>
+        </div>
+
+        <div class="control-group">
+            <h4>💬 Send Custom Message</h4>
+            <textarea id="customMessage" placeholder='{"type": "heartbeat", "userId": "user123"}' rows="3" style="width: 100%;"></textarea>
+            <button onclick="sendCustomMessage()">Send Message</button>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h3>📝 Message Logs</h3>
+    <div class="log-container" id="logContainer"></div>
+</div>
+
+<div class="container">
+    <h3>👥 Users Status</h3>
+    <div id="usersList" class="users-list"></div>
+</div>
+
+<script>
+    let ws = null;
+    let heartbeatInterval = null;
+
+    // WebSocket connection management
+    function connectWebSocket() {
+        const url = document.getElementById('wsUrl').value;
+
+        try {
+            ws = new WebSocket(url);
+            updateConnectionStatus('connecting', 'Connecting...');
+
+            ws.onopen = function(event) {
+                updateConnectionStatus('connected', 'Connected');
+                logMessage('🟢 WebSocket connection opened', 'info');
+                document.getElementById('connectBtn').disabled = true;
+                document.getElementById('disconnectBtn').disabled = false;
+            };
+
+            ws.onmessage = function(event) {
+                handleWebSocketMessage(JSON.parse(event.data));
+            };
+
+            ws.onclose = function(event) {
+                updateConnectionStatus('disconnected', 'Disconnected');
+                logMessage(`🔴 WebSocket connection closed (Code: ${event.code})`, 'error');
+                document.getElementById('connectBtn').disabled = false;
+                document.getElementById('disconnectBtn').disabled = true;
+                stopHeartbeat();
+            };
+
+            ws.onerror = function(error) {
+                logMessage('❌ WebSocket error: ' + error, 'error');
+            };
+
+        } catch (error) {
+            logMessage('❌ Connection error: ' + error.message, 'error');
+            updateConnectionStatus('disconnected', 'Connection Failed');
+        }
+    }
+
+    function disconnectWebSocket() {
+        if (ws) {
+            ws.close();
+            ws = null;
+        }
+    }
+
+    function updateConnectionStatus(status, text) {
+        const indicator = document.getElementById('statusIndicator');
+        const statusText = document.getElementById('connectionStatus');
+
+        indicator.className = `status-indicator status-${status}`;
+        statusText.textContent = text;
+    }
+
+    // Message handling
+    function handleWebSocketMessage(data) {
+        logMessage('📥 Received: ' + JSON.stringify(data, null, 2), 'received');
+
+        switch(data.type) {
+            case 'welcome':
+                logMessage('🎉 Welcome message received', 'info');
+                break;
+            case 'status_update':
+                logMessage(`👤 Status update: ${data.userId} is now ${data.status}`, 'info');
+                fetchUsers(); // Refresh user list
+                break;
+            case 'status_confirmed':
+                logMessage(`✅ Status confirmed for ${data.userId}: ${data.status}`, 'info');
+                fetchUsers(); // Refresh user list
+                break;
+            case 'error':
+                logMessage(`❌ Server error: ${data.message}`, 'error');
+                break;
+            case 'pong':
+                logMessage('💓 Heartbeat pong received', 'info');
+                break;
+            default:
+                logMessage(`⚠️ Unknown message type: ${data.type}`, 'info');
+        }
+    }
+
+    function sendMessage(message) {
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify(message));
+            logMessage('📤 Sent: ' + JSON.stringify(message, null, 2), 'sent');
+            return true;
+        } else {
+            logMessage('❌ WebSocket not connected', 'error');
+            return false;
+        }
+    }
+
+    // User actions
+    function createUser() {
+        const userId = document.getElementById('newUserId').value;
+        const username = document.getElementById('newUsername').value;
+
+        if (!userId || !username) {
+            alert('Please fill in both User ID and Username');
+            return;
+        }
+
+        fetch('https://localhost:8443/api/users/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId, username })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    logMessage(`✅ User created: ${userId} (${username})`, 'info');
+                    document.getElementById('newUserId').value = '';
+                    document.getElementById('newUsername').value = '';
+                    fetchUsers();
+                } else {
+                    logMessage(`❌ Failed to create user: ${data.error}`, 'error');
+                }
+            })
+            .catch(error => {
+                logMessage(`❌ Error creating user: ${error.message}`, 'error');
+            });
+    }
+
+    function changeStatus() {
+        const userId = document.getElementById('userId').value;
+        const status = document.getElementById('statusSelect').value;
+
+        if (!userId) {
+            alert('Please enter a User ID');
+            return;
+        }
+
+        const message = {
+            type: 'status_change',
+            userId: userId,
+            status: status
+        };
+
+        sendMessage(message);
+    }
+
+    function sendCustomMessage() {
+        const messageText = document.getElementById('customMessage').value;
+
+        try {
+            const message = JSON.parse(messageText);
+            sendMessage(message);
+        } catch (error) {
+            logMessage('❌ Invalid JSON format', 'error');
+        }
+    }
+
+    // Heartbeat functionality
+    function startHeartbeat() {
+        const userId = document.getElementById('userId').value;
+
+        if (!userId) {
+            alert('Please enter a User ID for heartbeat');
+            return;
+        }
+
+        if (heartbeatInterval) {
+            clearInterval(heartbeatInterval);
+        }
+
+        heartbeatInterval = setInterval(() => {
+            const message = {
+                type: 'heartbeat',
+                userId: userId
+            };
+            sendMessage(message);
+        }, 30000); // Every 30 seconds
+
+        logMessage('💓 Heartbeat started (every 30s)', 'info');
+    }
+
+    function stopHeartbeat() {
+        if (heartbeatInterval) {
+            clearInterval(heartbeatInterval);
+            heartbeatInterval = null;
+            logMessage('⏹️ Heartbeat stopped', 'info');
+        }
+    }
+
+    // Utility functions
+    function fetchUsers() {
+        fetch('https://localhost:8443/api/users/status')
+            .then(response => response.json())
+            .then(data => {
+                displayUsers(data.users);
+                logMessage(`📊 Fetched ${data.users.length} users`, 'info');
+            })
+            .catch(error => {
+                logMessage(`❌ Error fetching users: ${error.message}`, 'error');
+            });
+    }
+
+    function fetchDebugInfo() {
+        fetch('https://localhost:8443/api/users/ws/debug')
+            .then(response => response.json())
+            .then(data => {
+                logMessage(`🐛 Debug Info: ${data.activeConnections} active connections`, 'info');
+                logMessage(`🐛 Connected users: ${data.connections.join(', ')}`, 'info');
+            })
+            .catch(error => {
+                logMessage(`❌ Error fetching debug info: ${error.message}`, 'error');
+            });
+    }
+
+    function displayUsers(users) {
+        const usersList = document.getElementById('usersList');
+
+        if (!users || users.length === 0) {
+            usersList.innerHTML = '<p>No users found</p>';
+            return;
+        }
+
+        usersList.innerHTML = users.map(user => `
+                <div class="user-card">
+                    <div><strong>${user.username}</strong></div>
+                    <div>ID: ${user.id}</div>
+                    <div class="user-status ${user.status}">${user.status}</div>
+                    <div><small>Last activity: ${new Date(user.last_activity).toLocaleString()}</small></div>
+                </div>
+            `).join('');
+    }
+
+    function logMessage(message, type = 'info') {
+        const logContainer = document.getElementById('logContainer');
+        const timestamp = new Date().toLocaleTimeString();
+
+        const logElement = document.createElement('div');
+        logElement.className = `log-message log-${type}`;
+        logElement.innerHTML = `<span style="color: #666;">[${timestamp}]</span> ${message}`;
+
+        logContainer.appendChild(logElement);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    function clearLogs() {
+        document.getElementById('logContainer').innerHTML = '';
+    }
+
+    // Initialize on page load
+    window.onload = function() {
+        logMessage('🚀 WebSocket Tester initialized', 'info');
+        fetchUsers();
+    };
+
+    // Cleanup on page unload
+    window.onbeforeunload = function() {
+        if (ws) {
+            ws.close();
+        }
+        stopHeartbeat();
+    };
+</script>
 </body>
 </html>

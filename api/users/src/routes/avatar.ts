@@ -24,7 +24,6 @@ export default async function (server: FastifyInstance) {
             const userId = (request.params as { id: string }).id;
             console.log(`Upload attempt for user ${userId}`);
 
-            // Use environment variable or fallback to relative path
             const uploadDir = '/app/uploads/';
 
             if (!fs.existsSync(uploadDir)) {
@@ -52,25 +51,14 @@ export default async function (server: FastifyInstance) {
                 return reply.code(415).send({ error: 'Unsupported file type' });
             }
 
-            // Generate filename
             const newFilename = `${randomUUID()}${extension}`;
             const uploadPath = path.join(uploadDir, newFilename);
 
-            // 1. Write the uploaded file to disk
             await pipeline(
                 data.file,
                 fs.createWriteStream(uploadPath)
             );
 
-            // // 2. Use sharp to re-encode the image and remove all metadata
-            // const tempPath = uploadPath + '.tmp';
-            // await sharp(uploadPath)
-            //     .toFile(tempPath); // sharp removes all metadata by default
-            //
-            // // 3. Replace the original file with the cleaned version
-            // fs.renameSync(tempPath, uploadPath);
-
-            // Update database
             const result = await server.db.run(
                 'UPDATE users SET avatar_url = ? WHERE id = ?',
                 [newFilename, userId]

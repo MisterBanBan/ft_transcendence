@@ -57,7 +57,6 @@ export default async function (server: FastifyInstance) {
         console.log('Removing friend:', friend_id, 'for user:', requester_id);
 
         try {
-            // Check if both users exist
             const requesterExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
                 requester_id
@@ -71,12 +70,10 @@ export default async function (server: FastifyInstance) {
                 return reply.status(404).send({ error: 'User not found' });
             }
 
-            // Prevent self-removal
             if (requester_id === friend_id) {
                 return reply.status(400).send({ error: 'Cannot remove yourself' });
             }
 
-            // Check if friendship exists (bidirectional check)
             const existingRelation = await server.db.get(
                 `SELECT * FROM relationships 
                  WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))
@@ -88,7 +85,6 @@ export default async function (server: FastifyInstance) {
                 return reply.status(404).send({ error: 'Friendship not found' });
             }
 
-            // Remove the friendship (delete the relationship)
             await server.db.run(
                 `DELETE FROM relationships 
                  WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))

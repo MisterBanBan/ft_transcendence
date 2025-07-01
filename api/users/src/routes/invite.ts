@@ -57,7 +57,6 @@ export default async function (server: FastifyInstance) {
         console.log('test');
 
         try {
-            // Check if both users exist
             const requesterExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
                 requester_id
