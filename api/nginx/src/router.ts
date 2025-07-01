@@ -14,10 +14,6 @@
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
 
-<<<<<<< HEAD
-
-=======
->>>>>>> main
 class Router {
     private routes: Route[];
     private appDiv: HTMLElement;
@@ -89,13 +85,6 @@ class Router {
     }
 }
 
-<<<<<<< HEAD
-
-document.addEventListener("DOMContentLoaded", () => {
-    try {
-        const router = new Router(routes);
-        router.updatePage();
-=======
 document.addEventListener("DOMContentLoaded", async () => {
     try {
         await fetch("/api/auth/verify", {
@@ -104,7 +93,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const router = new Router(routes);
         await router.updatePage();
->>>>>>> main
     } catch (error) {
         console.error("Wrong init :", error);
         document.body.innerHTML = "<h1>Appli dumped</h1>";

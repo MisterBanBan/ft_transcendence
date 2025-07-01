@@ -3,11 +3,17 @@ import fastifyIO from "fastify-socket.io";
 import cors from "@fastify/cors";
 import autoLoad from "@fastify/autoload";
 import { join } from "path";
+import fs from "fs";
 
 async function start() {
   const dir = __dirname;
 
-  const app = fastify();
+  const app = fastify({
+    https: {
+      key: fs.readFileSync("/app/certs/key.key"),
+      cert: fs.readFileSync("/app/certs/cert.crt"),
+    }
+	});
 
   await app.register(cors, { origin: "http://matchmaking", credentials: true });
   await app.register(fastifyIO, { cors: { origin: "http://matchmaking", credentials: true } });
@@ -17,9 +23,10 @@ async function start() {
 
   app.listen({ port: 8085, host: "0.0.0.0" }, (err) => {
     if (err) {
-      app.log.error(err);
+      console.error(err);
       process.exit(1);
     }
+    console.log("server listening on 0.0.0.0:8085");
   });
 }
 

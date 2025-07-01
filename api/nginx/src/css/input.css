@@ -7,7 +7,6 @@
   .key-prompt {
     @apply absolute bg-contain bg-no-repeat bg-center z-20;
   }
-<<<<<<< HEAD
   .responsive-placeholder {
     @apply placeholder:font-omori placeholder:text-sm 
     sm:placeholder:text-base md:placeholder:text-2xl
@@ -82,6 +81,3 @@ input {
 
 
 
-=======
-}
->>>>>>> main

@@ -12,27 +12,26 @@ async function start() {
 
   const app = fastify({
     https: {
-      key: fs.readFileSync("/app/certs/key.pem"),
-      cert: fs.readFileSync("/app/certs/cert.pem"),
+      key: fs.readFileSync("/app/certs/key.key"),
+      cert: fs.readFileSync("/app/certs/cert.crt"),
     }
   });
 
-  await app.register(cors, { origin: "https://z1r3p4:8443" , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
-  await app.register(fastifyIO, { cors: { origin: "https://z1r3p4:8443", credentials: true } });
+  await app.register(cors, { origin: `https://${process.env.HOSTNAME}:8443` , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
+  await app.register(fastifyIO, { cors: { origin: `https://${process.env.HOSTNAME}:8443`, credentials: true } });
 
   app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
   app.register(autoLoad, { dir: join(dir, "routes/") });
 
 
-  const gameSocket = ClientIO("http://game:8082", {
+  const gameSocket = ClientIO("https://game:8082", {
     transports: ["websocket"],
+    rejectUnauthorized: false,
   });
 
   app.decorate("gameSocket", gameSocket);
 
-  const aiSocket = ClientIO("http://ai:8085", {
-    transports: ["websocket"],
-  });
+  w
 
   app.decorate("aiSocket", aiSocket);
 
