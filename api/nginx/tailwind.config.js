@@ -6,6 +6,7 @@ module.exports = {
       "./src/**/*.{js,ts,jsx,tsx}",
     ],
     theme: {
+<<<<<<< HEAD
       screens: {
         'xxs': '280px',
         'xs': '320px',
@@ -22,6 +23,8 @@ module.exports = {
         'h-xl': {'raw': '(min-height: 1280px)'},
         'h-2xl': {'raw': '(min-height: 1536px)'},
       },
+=======
+>>>>>>> main
       extend: {
         scale: {
           200: '2',
@@ -33,9 +36,12 @@ module.exports = {
           'wiggle': 'wiggle 1s ease-in-out infinite',
           'pulse-grow': 'pulseGrow 1.5s infinite',
         },
+<<<<<<< HEAD
         fontFamily: {
           omori: ['OMORI_GAME2', 'sans-serif'],
         },
+=======
+>>>>>>> main
         keyframes: {
           wiggle: {
             '0%, 100%': { transform: 'rotate(-3deg)' },

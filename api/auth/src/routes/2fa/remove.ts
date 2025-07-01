@@ -1,0 +1,131 @@
+import {FastifyInstance, FastifyRequest} from "fastify";
+import authenticator from "authenticator";
+import {verifyPassword} from "../../utils/verify-password.js";
+import {remove2fa} from "../../db/remove-2fa.js";
+import {createOAuthEntry} from "../../utils/handle-relog.js";
+import {TokenPayload} from "../../interface/token-payload.js";
+import {setCookie} from "../../utils/set-cookie.js";
+import {signToken} from "../../utils/sign-token.js";
+import {getUserByUsername} from "../../db/get-user-by-username.js";
+
+export const remove2FASessions = new Map<string, {token?:string, relogin: boolean, eat?: number, tries?: number}>();
+
+export default async function (server: FastifyInstance) {
+
+	server.get('/api/auth/2fa/remove', async function (request: FastifyRequest, reply) {
+
+		const user = request.currentUser;
+		if (!user)
+			return reply.code(404).send({
+				error: "Not Found",
+				message: "User not found"
+			})
+
+		if (!user.tfa) {
+			return reply.status(403).send({
+				error: "Forbidden",
+				message: "2FA is already disabled"
+			});
+		}
+
+		if (user.provider == "local" || (user.provider != "local" && remove2FASessions.get(user.username)?.relogin === false)) {
+
+			remove2FASessions.set(user.username, {relogin: false, eat: Date.now() + (2 * 60 * 1000), tries: 5});
+
+			return reply.status(200).send({ success: true, message: "Session created" });
+		}
+		else {
+
+			const token = crypto.randomUUID();
+
+			remove2FASessions.set(user.username,	 {token: token, relogin: false});
+			await createOAuthEntry(token, user.username, "remove2FA");
+
+			if (user.provider == "google") {
+				return reply.status(202).header('Location', "https://accounts.google.com/o/oauth2/v2/auth?" +
+					"client_id=570055045570-c95opdokftohj6c4l7u9t7b46bpmnrkl.apps.googleusercontent.com&" +
+					"redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2Fgoogle&" +
+					"response_type=code&scope=profile%20email&" +
+					"access_type=offline&" +
+					"include_granted_scopes=true&" +
+					"prompt=login&" +
+					"max_age=0&" +
+					`state=relogin_${token}`).send({});
+			} else if (user.provider == "42") {
+				return reply.status(202).header('Location', "https://api.intra.42.fr/oauth/authorize?" +
+					"client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&" +
+					"redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2F42&" +
+					"response_type=code&" +
+					`state=relogin_${token}`).send({});
+			}
+		}
+	});
+
+	server.post('/api/auth/2fa/remove', async function (request: FastifyRequest, reply) {
+		const { code, password } = request.body as { code: string; password?: string };
+		const user = request.currentUser;
+		if (!user) {
+			return reply.code(404).send({
+				error: "Not Found",
+				message: "User not found"
+			});
+		}
+
+		if (!user.tfa) {
+			return reply.status(403).send({
+				error: "Forbidden",
+				message: "2FA is already disabled"
+			});
+		}
+
+		const key = remove2FASessions.get(user.username);
+
+		if (!key || !key.eat || !key.tries || key.eat < Date.now()) {
+			if (key) {
+				remove2FASessions.delete(user.username);
+			}
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: "Invalid or expired 2FA session"
+			});
+		}
+
+		const dbUser = await getUserByUsername(server.db, user.username);
+		if (!dbUser) {
+			return reply.code(500).send({
+				error: "Internal Server Error",
+				message: `An error occurred while getting user`,
+			})
+		}
+
+		if (user.provider == "local" && (!password || !await verifyPassword(dbUser, password))) {
+			key.tries--;
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: `Invalid 2FA code (${key.tries} tries left)`
+			});
+		}
+
+		if (!/^\d{6}$/.test(code) || !authenticator.verifyToken(dbUser.tfa!, code)) {
+			key.tries--;
+			return reply.status(400).send({
+				error: "Bad Request",
+				message: `Invalid 2FA code (${key.tries} tries left)`
+			});
+		}
+
+		const timestamp = await remove2fa(server.db, user.username);
+
+		const token: TokenPayload = {
+			id: user.id,
+			username: user.username,
+			provider: user.provider,
+			provider_id: user.provider_id,
+			tfa: false,
+			updatedAt: timestamp
+		};
+
+		await setCookie(reply, await signToken(server, token));
+		return reply.status(201).send({ success: true });
+	})
+};

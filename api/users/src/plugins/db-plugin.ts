@@ -15,7 +15,7 @@ export default async function (server: FastifyInstance, opts: any) {
 
     let db: Database;
     try {
-        db = await open({ filename: "./database/users_db.sqlite", driver: sqlite3.Database });
+        db = await open({ filename: "./database/users/users_db.sqlite", driver: sqlite3.Database });
         console.log("database connected.");
     } catch (err) {
         console.error("Database error :", err);
@@ -27,8 +27,27 @@ export default async function (server: FastifyInstance, opts: any) {
         create: {},
         migrations: { glob: 'dist/migrations/*.js' },
         context: db,
-        storage: new JSONStorage({ path: "./database/migrations.json" })
+        storage: new JSONStorage({ path: "./database/users/migrations.json" })
     });
-    await umzug.up();
+    try {
+        await umzug.up();
+    } catch (error) {
+        console.log(error);
+    }
+
+    const usersTableExists = await db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='users'");
+    const relationshipsTableExists = await db.get("SELECT name FROM sqlite_master WHERE type='table' AND name='relationships'");
+
+// Verify if both tables exist and provide appropriate feedback
+    if (usersTableExists && relationshipsTableExists) {
+        console.log("Both 'users' and 'relationships' tables were successfully created");
+    } else if (usersTableExists) {
+        console.error("The 'users' table exists, but the 'relationships' table was not created properly");
+    } else if (relationshipsTableExists) {
+        console.error("The 'relationships' table exists, but the 'users' table was not created properly");
+    } else {
+        console.error("None of the tables were created properly");
+    }
+
     server.decorate('db', db);
 };
