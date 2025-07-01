@@ -11,7 +11,7 @@ export class CreateTournament implements Component {
 	// 	withCredentials: true,
 	// });
 
-	private ws = new WebSocket('wss://10.13.6.4:8081/wss/tournament')
+	private ws = new WebSocket('wss://10.13.12.4:8443/wss/tournament')
 
 	constructor() {
 		this.handleSubmitBound = this.handleSubmit.bind(this);
