@@ -31,7 +31,10 @@ async function start() {
 
   app.decorate("gameSocket", gameSocket);
 
-  w
+  const aiSocket = ClientIO("https://ai:8085", {
+    transports: ["websocket"],
+    rejectUnauthorized: false,
+  });
 
   app.decorate("aiSocket", aiSocket);
 
