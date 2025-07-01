@@ -1,55 +1,33 @@
 import fastify from "fastify";
+import fastifyIO from "fastify-socket.io";
+import cors from "@fastify/cors";
 import autoLoad from "@fastify/autoload";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
+import { join } from "path";
 import fs from "fs";
 
-async function startServer() {
+async function start() {
+  const dir = __dirname;
 
-    const server = fastify({
-        https: {
-            cert: fs.readFileSync("/app/certs/cert.crt"),
-            key: fs.readFileSync("/app/certs/key.key"),
-        }
-    });
-
-    console.log("server started");
-
-    const filename = fileURLToPath(import.meta.url);
-    const dir = dirname(filename);
-
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "routes/")
-        });
-    } catch (err) {
-        console.error(err);
+  const app = fastify({
+    https: {
+      key: fs.readFileSync("/app/certs/key.key"),
+      cert: fs.readFileSync("/app/certs/cert.crt"),
     }
+});
 
-/*    server.register(cors, {
-        origin: "*",
-        methods: ["GET", "POST"]
-    });*/
+  await app.register(cors, { origin: "http://matchmaking", credentials: true });
+  await app.register(fastifyIO, { cors: { origin: "http://matchmaking", credentials: true } });
 
-    /*    server.register(websocket);*/
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "plugins/"),
-            encapsulate: false
-        });
-    } catch (err) {
-        console.error(err);
+  app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
+  app.register(autoLoad, { dir: join(dir, "routes/") });
+
+  app.listen({ port: 8082, host: "0.0.0.0" }, (err) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
     }
-
-    /*    server.register(multipart);*/
-
-    try {
-        await server.listen({ port: 8082, host: '0.0.0.0' });
-        console.log(`Users service is running on 0.0.0.0:8082`);
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1);
-    }
+    console.log("server listening on 0.0.0.0:8082");
+  });
 }
 
-startServer();
+start();

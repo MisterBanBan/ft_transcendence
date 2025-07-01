@@ -21,6 +21,8 @@ services:
         condition: service_healthy
       game:
         condition: service_healthy
+      ai:
+        condition: service_healthy
       auth:
         condition: service_healthy
     volumes:
@@ -83,8 +85,30 @@ services:
       - ./certs:/app/certs
     restart: on-failure
 
+  ai:
+    image: ai
+    container_name: ai
+    build:
+      context: api/ai
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -kf https://localhost:8085/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    volumes:
+      - ai-data:/app/database/ai
+      - ./certs:/app/certs
+    restart: on-failure
+
   matchmaking:
     image: matchmaking
+    env_file:
+      - .env
+    ports:
+      - 8083:8083
     container_name: matchmaking
     build:
       context: api/matchmaking
@@ -168,6 +192,12 @@ volumes:
       type: none
       o: bind
       device: ./api/game/database
+  ai-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/ai/database
   tournament-data:
     driver: local
     driver_opts:

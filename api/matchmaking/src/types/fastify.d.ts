@@ -3,16 +3,10 @@ import { Database } from "sqlite";
 declare module 'fastify' {
     interface FastifyInstance {
         db: Database
-    }
-    interface FastifyRequest {
-        currentUser?: {
-            id: number;
-            username: string;
-            avatar_url: string;
-            provider: string;
-            provider_id?: string;
-            tfa: boolean;
-            updatedAt: number;
-        };
+        io: Server
+        gameSocket: Socket;
+        aiSocket: Socket;
+        playerToGame: Map<string, { playerName: string, gameId: string, side: string }>;
+        privateQueue: Map<string, string>;
     }
 }
