@@ -3,7 +3,7 @@
 
 declare const io: any;
 
-const socket = io("https://10.13.6.6:8083", {
+const socket = io("https://10.14.8.1:8443/", {
   transports: ["websocket", "polling"],
   withCredentials: true,
 });

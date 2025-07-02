@@ -8,12 +8,7 @@ import fs from "fs";
 async function start() {
   const dir = __dirname;
 
-  const app = fastify({
-    https: {
-      key: fs.readFileSync("/app/certs/key.key"),
-      cert: fs.readFileSync("/app/certs/cert.crt"),
-    }
-});
+  const app = fastify();
 
   await app.register(cors, { origin: "http://matchmaking", credentials: true });
   await app.register(fastifyIO, { cors: { origin: "http://matchmaking", credentials: true } });

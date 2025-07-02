@@ -54,9 +54,10 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
-	private socket = io(`https://10.11.3.4:8083`, {
+	private socket = io(`https://10.14.8.1:8443`, {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
+        path: "/wss/matchmaking"
 	});
     
     constructor(leftBarId: string, rightBarId: string, ballId: string, imgPongId: string,containerId: string, mode: string | null) {

@@ -5,7 +5,7 @@ services:
     build:
       context: api/gateway
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:3000/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:3000/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -36,7 +36,7 @@ services:
     build:
       context: api/users/
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8080/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -55,7 +55,7 @@ services:
     build:
       context: api/tournament
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8081/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -73,7 +73,7 @@ services:
     build:
       context: api/game
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8082/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8082/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -91,7 +91,7 @@ services:
     build:
       context: api/ai
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8085/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8085/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -107,13 +107,11 @@ services:
     image: matchmaking
     env_file:
       - .env
-    ports:
-      - 8083:8083
     container_name: matchmaking
     build:
       context: api/matchmaking
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8083/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8083/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -131,7 +129,7 @@ services:
     build:
       context: api/auth
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8084/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
