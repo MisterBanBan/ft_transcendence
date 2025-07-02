@@ -1,7 +1,14 @@
-import {Component} from "../component";
+import {Component} from "../component.js";
 import {wait} from "../wait.js";
+import EnhancedSocket from "./enhanced-ws.js";
 
 export class GetTournaments implements Component {
+
+	private ws: EnhancedSocket;
+
+	constructor(ws: EnhancedSocket) {
+		this.ws = ws;
+	}
 
 	public init(): void {
 		this.getTournaments().then(r => {});

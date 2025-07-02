@@ -20,6 +20,8 @@ import {Toggle2FA} from "./auth/toggle-2fa.js";
 import {Logout} from "./auth/logout.js";
 import {CreateTournament} from "./tournament/create-tournament.js";
 import {GetTournaments} from "./tournament/get-tournaments.js";
+import EnhancedSocket from './tournament/enhanced-ws.js';
+
 // import { introduction } from './intro.js';
 // import { menu } from './menu.js';
 // import { Zoom } from './zoom.js';
@@ -34,15 +36,32 @@ const routeComponents: Record<string, Component> = {
 		init: () => {
 			activeComponent?.destroy?.();
 
-			const createTournament = new CreateTournament();
-			const getTournaments = new GetTournaments();
+			const ws = new EnhancedSocket('wss://10.14.8.1:8443/wss/tournament');
+
+			ws.onopen = () => {
+				console.log('WebSocket opened');
+				ws.send('Hello from client');
+			};
+			ws.onmessage = (event) => {
+				console.log('Message from server:', event.data);
+			};
+			ws.onerror = (e) => {
+				console.error('WebSocket error:', e);
+			};
+			ws.onclose = (event) => {
+				console.log(event);
+				console.log('WebSocket closed', event.code, event.reason);
+			};
+
+			const createTournament = new CreateTournament(ws);
+			//const getTournaments = new GetTournaments(ws);
 
 			createTournament.init();
-			getTournaments.init();
+			//getTournaments.init();
 
 			activeComponent = {
 				init: () => {},
-				destroy: () => { createTournament.destroy(); getTournaments.destroy(); },
+				destroy: () => { createTournament.destroy(); },
 			};
 		},
 		destroy: () => {}

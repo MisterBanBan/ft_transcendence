@@ -27,4 +27,21 @@ export default async function (server: FastifyInstance, opts: any) {
 		upstream: 'https://auth:8084/api/auth/',
 		prefix: '/api/auth',
 	})
+
+	// server.register(fastifyHttpProxy, {
+	// 	upstream: 'wss://tournament:8081/',
+	// 	prefix: '/wss/tournament',
+	// 	websocket: true,
+	// 	undici: {
+	// 	  connect: {
+	// 		rejectUnauthorized: false
+	// 	  }
+	// 	},
+	// 	replyOptions: {
+	// 	  rewriteRequestHeaders: (req, headers) => {
+	// 		console.log('[Proxying]', req.url);
+	// 		return headers;
+	// 	  }
+	// 	}
+	//   });
 }

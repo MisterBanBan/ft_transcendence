@@ -1,4 +1,6 @@
-import {Component} from "../component";
+import {Component} from "../component.js";
+import EnhancedSocket from "./enhanced-ws.js";
+import { sendMessage } from "./ws-utils.js";
 
 declare const io: any;
 
@@ -11,25 +13,12 @@ export class CreateTournament implements Component {
 	// 	withCredentials: true,
 	// });
 
-	private ws = new WebSocket('wss://10.13.12.4:8443/wss/tournament')
+	private ws: EnhancedSocket;
 
-	constructor() {
+	constructor(ws: EnhancedSocket) {
+		this.ws = ws;
+
 		this.handleSubmitBound = this.handleSubmit.bind(this);
-
-		this.ws.onopen = () => {
-			console.log('WebSocket opened');
-			this.ws.send('Hello from client');
-		};
-		this.ws.onmessage = (event) => {
-			console.log('Message from server:', event.data);
-		};
-		this.ws.onerror = (e) => {
-			console.error('WebSocket error:', e);
-		};
-		this.ws.onclose = (event) => {
-			console.log(event);
-			console.log('WebSocket closed', event.code, event.reason);
-		};
 	}
 
 	public init(): void {
@@ -51,8 +40,13 @@ export class CreateTournament implements Component {
 	private async handleSubmit(event: Event) {
 		event.preventDefault();
 
-		const nameInput = document.getElementById("tournament-name") as HTMLInputElement;
-		const sizeInput = document.getElementById("tournament-size") as HTMLInputElement;
+		const nameInput = document.getElementById("tournament-name") as HTMLInputElement | null;
+		const sizeInput = document.getElementById("tournament-size") as HTMLInputElement | null;
+
+		if (!nameInput || !sizeInput) {
+			console.error("Error: one or multiple fields is missing");
+			return;
+		}
 
 		const name = nameInput.value;
 		const size = sizeInput.value;
@@ -66,7 +60,8 @@ export class CreateTournament implements Component {
 
 			console.log("Clicked");
 
-			this.ws.send("createTournament");
+			this.ws.sendAction("createTournament", payload);
+			this.ws.sendAction("message", {});
 
 			// this.socket.emit('createTournament');
 			//
@@ -102,5 +97,4 @@ export class CreateTournament implements Component {
 			console.error(error);
 		}
 	}
-
 }
