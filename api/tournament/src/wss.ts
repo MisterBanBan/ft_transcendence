@@ -1,18 +1,26 @@
 import {FastifyInstance, FastifyRequest} from "fastify";
 import {WebSocket} from "@fastify/websocket";
 import { createTournament } from "./socket/createTournament";
+import currentUser from "./plugins/current-user";
 
 export default async function (server: FastifyInstance) {
-	console.log("Register route")
 	server.get('/wss/tournament', {
 		websocket: true
 	}, (socket: WebSocket, request: FastifyRequest) => {
 
-		console.log("Test");
 		try {
 			if (!socket)
 				console.error("Socket not found");
 			console.log('Client connected');
+
+			const { user } = request.query as { user?: string };
+			if (!user) {
+				socket.send("You are not logged in");
+				socket.close();
+				return;
+			}
+
+			request.currentUser = JSON.parse(Buffer.from(user, 'base64').toString());
 
 			socket.send(JSON.stringify({
 				type: 'welcome',
@@ -30,7 +38,10 @@ export default async function (server: FastifyInstance) {
 				}
 
 				if (!data.action)
+				{
+					socket.send("Websocket object must be { action: string, infos: {} }")
 					return;
+				}
 
 				switch (data.action) {
 					case "createTournament": {
