@@ -8,14 +8,7 @@ import wssGet from "./wss.js";
 async function startServer() {
 
 	try {
-		const server = fastify(
-			{
-			https: {
-				cert: fs.readFileSync("/app/certs/cert.crt"),
-				key: fs.readFileSync("/app/certs/key.key"),
-			}
-		}
-		);
+		const server = fastify();
 
 		await server.register(fastifyWebsocket);
 		await server.register(wssGet);

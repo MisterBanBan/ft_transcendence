@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/07 06:31:26 by afavier          ###   ########.fr       */
+/*   Updated: 2025/06/04 15:32:43 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,89 +24,176 @@ const google_url = "https://accounts.google.com/o/oauth2/v2/auth?" +
 	"prompt=login"
 
 export interface Route {
-	path: string;
-	title: string;
-	/*Gestion du chargement asynchrone du contenu des templates grace a Promise*/
-	template: (() => Promise<string>) | string;
+    path: string;
+    title: string;
+    /*Gestion du chargement asynchrone du contenu des templates grace a Promise*/
+    template: (() => Promise<string>) | string;
 }
 
-	export const routes: Route[] = [
-		{
-			path: "/",
-			title: "Accueil",
-			template: async () => {
-				await new Promise(resolve => setTimeout(resolve, 300));//bg-[url('/img/fond_outside.jpg')] bg-cover bg-center bg-no-repeat
-				return `
-				<div class="fixed inset-0 overflow-hidden">
-			<!-- 1. Calque procédural plein-écran, derrière tout (z-index -10) -->
-			<div
-		id="procedural-bg"
-		class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-			></div>
-			<div
-		id="cloud"
-		class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-			></div>
-	
-			<!-- 2. Contenu principal -->
-			<div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
-		<div class="w-screen h-screen relative">
-				<div class="absolute inset-0 w-full h-full"></div>
-		</div>
-		<div class="w-screen h-screen relative">
-				<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black">
-			<source src="/img/quit.mp4" type="video/mp4">
-				</video>
-		</div>
-		<div id="videoDoor" class="w-screen h-screen relative">
-				<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-			<source src="/img/door.mp4" type="video/mp4">
-				</video>
-				<div id="pressE" class="hidden absolute inset-0 z-20 flex items-center justify-center bg-black bg-opacity-50">
-			<video autoplay loop muted class="w-12 h-12">
-					<source src="/img/pressE.mp4" type="video/mp4">
-			</video>
-				</div>
-		</div>
-			</div>
-	
-			<!-- 3. Joueur par-dessus tout -->
-			<div id="player" class="absolute bottom-0 left-0 w-64 h-64 bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10"></div>
-		</div>
-	`;
+export const routes: Route[] = [
+    {
+        path: "/",
+        title: "Accueil",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `
+            <div class="fixed inset-0 h-full w-full relative overflow-hidden">
+                <div
+                  id="procedural-bg"
+                  class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
+                ></div>
+                <canvas id="forest" class="absolute inset-0 -z-20"></canvas>
+                <div class="absolute left-0 bottom-0 w-full h-full z-10">
+  <img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[30%] object-cover pointer-events-none translate-y-2" />
+  <img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[17%] object-cover pointer-events-none translate-y-2" />
+</div>
 
 
 
-			}
 
-		},
-		{
-			path: "/game",
-			title: "Game",
-			template: async () => {
-				await new Promise(resolve => setTimeout(resolve, 300));
-				return `<div class="w-screen h-screen relative">
-							<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-				<source id="menu" src="/img/new_game.mp4" type="video/mp4">
-					</video>
-					</div>
-				`;
-			}
-		},
-		{
-			path: "/Tv",
-			title: "Tv",
-			template: async () => {
-				await new Promise(resolve => setTimeout(resolve, 300));
-				return `<div id="zoom" class="w-screen h-screen relative">
-							<video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-				<source src="/img/Tv.mp4" type="video/mp4">
-					</video>
-					</div>
-				`;
-			}
-		},
-		{
+                <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
+                  <div class="w-screen h-screen relative">
+                    <div class="absolute inset-0 w-full h-full"></div>
+                  </div>
+
+                  <div id="videoDoor" class="w-screen h-screen relative">
+                    <video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+                      <source src="/img/door.mp4" type="video/mp4">
+                    </video>
+                    <div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
+                      <video autoplay loop muted class="w-12 h-12">
+                        <source src="/img/pressE.mp4" type="video/mp4">
+                      </video>
+                    </div>
+                  </div>
+                </div>
+</div>
+                <!-- 3. Joueur par-dessus tout -->
+<div id="player"
+     class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
+</div>
+              
+`;
+
+
+
+        }
+
+    },
+    {
+        path: "/game",
+        title: "Game",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `
+            <section id="sec_video" class="w-screen h-screen relative overflow-hidden flex items-center justify-center">
+              <video autoplay loop muted id="video_main"
+                class="block max-w-full max-h-full object-contain">
+                <source src="/img/game.mp4" type="video/mp4">
+              </video>
+              <div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
+                <button type="button" id="user" class="absolute top-6 right-8 w-10 h-10 rounded-full bg-indigo-500 flex text-white shadow-lg hover:bg-indigo-600 focus:outline-none">
+                  +
+                </button>
+                <form id="login"  class="flex hidden responsive-form-login flex-col items-center justify-center">
+                
+                
+                <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
+                <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
+                
+                
+                <input
+                    type="text"
+                    placeholder="Username"
+                    class="responsive-case-login responsive-placeholder responsive-case"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    class="responsive-case-login responsive-placeholder responsive-case"
+                  />
+                    <button type="submit" class="responsive-case-login responsive-text responsive-case text-white">Login</button>
+                    <button type="button" id="registerBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">2fa</button>
+                    <button type="button" id="2faBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">register</button>
+                </form>
+                
+                <form id="register"  class="flex hidden responsive-form-register flex-col items-center justify-center">
+                  
+                
+                <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
+                <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
+                
+                
+                <input
+                    type="text"
+                    placeholder="Username"
+                    class="responsive-case-register responsive-placeholder responsive-case"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    class="responsive-case-register responsive-placeholder responsive-case"
+                  />
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    class="responsive-case-register responsive-placeholder responsive-case"
+                  />
+                    <button type="submit" class="responsive-case-register responsive-text responsive-case text-white">Login</button>
+                    <button type="button" id="loginBtn" class="text-white responsive-text ">LOGIN</button>
+                </form>
+                <div id="popup2fa" class="fixed inset-0 flex justify-center items-center bg-black/60 z-20">
+                  <input 
+                    type="text"
+                    placeholder="Enter 2FA code"
+                    class="responsive-placeholder responsive-case"
+                  />
+                  <button type="submit" class="responsive-case-register responsive-text responsive-case text-white">Valider</button>
+                  <button type="button" id="loginBtn" class="text-white responsive-text ">Return</button>
+                  </div>
+              </div>
+            
+            </section>
+            `;
+        }
+    },
+    {
+        path: "/Tv",
+        title: "Tv",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `<div id="zoom" class="w-screen h-screen relative">
+                        <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
+            <source src="/img/Tv.mp4" type="video/mp4">
+                </video>
+                </div>
+            `;
+        }
+    },
+    {
+
+      path: "/Pong",
+      title: "Pong",
+      template: async () => {
+        await new Promise(r => setTimeout(r, 300));
+        return `
+            <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
+            <img
+                id="pong-bg"
+                src="/img/pong.png"
+                alt="Pong background"
+                class="block max-w-full max-h-full object-contain"
+              />
+              <img id="ball"  src="/img/ball.png"  class="absolute" />
+              <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
+              <img id="right-bar" src="/img/bar_left.png" class="absolute" />
+            </div>
+
+
+        `;
+      }
+    },
+	{
 			path: "/auth",
 			title: "Authentication",
 			template: async () => {
@@ -478,11 +565,11 @@ export interface Route {
 
 			}
 		},
-		{
-			path: "*",
-			title: "404 - Page not found",
-			template: `
-				`
-		}
-	];
 
+    {
+        path: "*",
+        title: "404 - Page not found",
+        template: `
+            `
+    }
+];

@@ -5,7 +5,7 @@ services:
     build:
       context: api/gateway
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:3000/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:3000/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -21,6 +21,8 @@ services:
         condition: service_healthy
       game:
         condition: service_healthy
+      ai:
+        condition: service_healthy
       auth:
         condition: service_healthy
     volumes:
@@ -34,7 +36,7 @@ services:
     build:
       context: api/users/
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8080/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8080/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -53,7 +55,7 @@ services:
     build:
       context: api/tournament
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8081/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -71,7 +73,7 @@ services:
     build:
       context: api/game
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8082/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8082/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -83,13 +85,33 @@ services:
       - ./certs:/app/certs
     restart: on-failure
 
+  ai:
+    image: ai
+    container_name: ai
+    build:
+      context: api/ai
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8085/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    volumes:
+      - ai-data:/app/database/ai
+      - ./certs:/app/certs
+    restart: on-failure
+
   matchmaking:
     image: matchmaking
+    env_file:
+      - .env
     container_name: matchmaking
     build:
       context: api/matchmaking
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8083/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8083/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -107,7 +129,7 @@ services:
     build:
       context: api/auth
     healthcheck:
-      test: [ "CMD-SHELL", "curl -kf https://localhost:8084/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost:8084/health || exit 1" ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -168,6 +190,12 @@ volumes:
       type: none
       o: bind
       device: ./api/game/database
+  ai-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/ai/database
   tournament-data:
     driver: local
     driver_opts:

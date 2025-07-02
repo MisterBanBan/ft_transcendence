@@ -3,6 +3,7 @@ import {WebSocket} from "@fastify/websocket";
 import { createTournament } from "./socket/createTournament";
 
 export default async function (server: FastifyInstance) {
+	console.log("Register route")
 	server.get('/wss/tournament', {
 		websocket: true
 	}, (socket: WebSocket, request: FastifyRequest) => {
