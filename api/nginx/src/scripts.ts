@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   scripts.ts                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/06 18:58:54 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/02 14:35:17 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ export class PlayerController implements IPlayerController{
     private lastTimestamp: number = 0;
     private playerWidth: number;
     private playerHeight: number;
+    private playerElement: HTMLElement;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
@@ -94,11 +95,11 @@ export class PlayerController implements IPlayerController{
     private isDoorOpen: boolean = false;
 
     constructor(playerId: string, door: string) {
-        
+        window.addEventListener('resize', this.handleResize.bind(this));
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
 
-
+        this.playerElement = playerElement; 
         console.log("PlayerController initialisé !");
         
         this.player = new PlayerAnimation(playerId);
@@ -113,9 +114,6 @@ export class PlayerController implements IPlayerController{
                     this.isDoorOpen = true;
                     const doorContainer = document.getElementById("videoDoor");
                     if (doorContainer) {
-                        doorContainer.innerHTML = `<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-                        <source src="/img/doorOpen.mp4" type="video/mp4">
-                      </video>`;
                         window.history.pushState(null, "", "/Tv");
                         window.dispatchEvent(new PopStateEvent("popstate"));
                     }
@@ -130,7 +128,16 @@ export class PlayerController implements IPlayerController{
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
 
     }
-
+    private handleResize() {
+        // Recalcule la position Y lors du redimensionnement
+        const viewportHeight = window.innerHeight;
+        const playerBottom = this.pos.y + this.playerHeight;
+        
+        if (playerBottom > viewportHeight) {
+            this.pos.y = viewportHeight - this.playerHeight;
+            this.updatePosition();
+        }
+    }
     public destroy(): void {
         // Arrêter l'animation du joueur
         this.player.stopAnimation();
@@ -163,17 +170,24 @@ export class PlayerController implements IPlayerController{
         this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
 
         //gravity
+        const rect = this.playerElement.getBoundingClientRect();
+        this.playerHeight = rect.height;
+        this.playerWidth = rect.width;
+    
+        // ... (mouvement horizontal inchangé)
+    
+        // Gravité
         this.stats.velocity.y += gravity * dt;
         this.pos.y += this.stats.velocity.y * dt;
-        this.pos.y = Math.max(0, Math.min(viewportHeight - this.playerHeight, this.pos.y));
-
-        //max gravity
-        const floor = viewportHeight - this.playerHeight;
-        if (this.pos.y >= floor) {
+    
+        // Collision avec le SOL (bas de l'écran)
+        const playerBottom = this.pos.y + this.playerHeight;
+        if (playerBottom >= viewportHeight) {
             this.stats.velocity.y = 0;
-            this.pos.y = floor;
+            this.pos.y = viewportHeight - this.playerHeight; // Alignement parfait
             this.stats.isJumping = false;
         }
+        console.log(this.pos.y, viewportHeight, this.playerHeight);
         this.pos.x = this.worldPosX - this.cameraX;
     }
 
@@ -209,7 +223,7 @@ export class PlayerController implements IPlayerController{
         const doorLeft = this.cameraX + rect.left + this.playerWidth;
         // faudrait mettre une box pour la door 
         const doorRight = doorLeft + rect.width / 3;
-        console.log('door: %d, %d, %d',this.worldPosX, doorLeft, doorRight);
+        //console.log('door: %d, %d, %d',this.worldPosX, doorLeft, doorRight);
         const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
 
         if (inZone !== this.isInTriggerZone) {
@@ -225,6 +239,7 @@ export class PlayerController implements IPlayerController{
 
     
         const viewportWidth = window.innerWidth;
+        //console.log('viewportWidth: %d', viewportWidth);
         const viewportHeight = window.innerHeight;
         const worldWidth = viewportWidth * 3;
 

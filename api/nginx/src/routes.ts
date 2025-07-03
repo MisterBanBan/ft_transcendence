@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/30 22:38:43 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/02 14:46:45 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,7 @@ export const routes: Route[] = [
 				
                 <canvas id="forest" class="absolute inset-0 -z-20"></canvas>
 				
-				<div class="absolute left-0 bottom-0 w-full h-full z-10">
-					<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[30%] object-cover pointer-events-none translate-y-2" />
-					<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[17%] object-cover pointer-events-none translate-y-2" />
-				</div>
+				
 
 
 
@@ -55,17 +52,28 @@ export const routes: Route[] = [
                   id="procedural-bg"
                   class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
                 >
+				  
 				</div>
+				
 					<div class="w-screen h-screen relative">
-					                
-					</div>
-					<div class="w-screen h-screen relative">
-					                
-					</div>
-					
+					        <div class="absolute left-0 bottom-0 w-full h-full z-10">
+					<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+	
+					<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
 
-                  <div id="videoDoor" class="w-screen h-screen relative">
-                    <img src="/img/chalet_noir.png" class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
+					</div>        
+					</div>
+					<div class="w-screen h-screen relative">
+					          <div class="absolute left-0 bottom-0 w-full h-full z-10">
+					<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+	
+					<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+
+				</div>      
+				</div>
+
+                  <div id="videoDoor" class="w-screen h-screen relative z-50">
+                    <img src="/img/chalet_blanc.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50">
                      
                     </img>
                     <div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
@@ -73,13 +81,20 @@ export const routes: Route[] = [
                         <source src="/img/pressE.mp4" type="video/mp4">
                       </video>
                     </div>
+					<div class="absolute left-0 bottom-0 w-full h-full z-10">
+					<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+	
+					<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+
+				</div>  
                   </div>
+				      
                 </div>
-</div>
-                <!-- 3. Joueur par-dessus tout -->
-<div id="player"
-     class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
-</div>
+			</div>
+							<!-- 3. Joueur par-dessus tout -->
+			<div id="player"
+				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
+			</div>
               
 `;
             
@@ -108,13 +123,6 @@ export const routes: Route[] = [
 						<div id="dynamic-content" class="h-full w-full flex items-center justify-center absolute"></div>
 					</div>
 					<div id="picture" class="h-full w-[20%] flex items-center justify-center relative">
-							
-						<button
-							type="button"
-							id="picture"
-							class="absolute top-[8%] right-[22%]  w-[60%] h-[32%] bg-[url('/img/last_airbender.jpg')] bg-[length:100%_100%] bg-white/60 bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full"
-						>
-						</button>
 					</div>
 													
 					

@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 05:58:52 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/30 22:42:26 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/02 14:18:53 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,15 @@ export function generateCloud(containerId: string, count: number = 15): HTMLElem
     }
 
     const clouds: HTMLElement[] = [];
+    const step = 100 / count;
     for (let i = 0; i < count; i++) {
         const cloud = document.createElement('img');
-        cloud.src = '/img/clouds.png';
+        if(i < 5)
+            cloud.src = '/img/clouds.png';
+        else if(i < 10)
+            cloud.src = '/img/cloudd.png';
+        else
+            cloud.src = '/img/cloudss.png';
         cloud.alt = 'cloud';
         cloud.style.position = 'absolute';
         const minVw = 5;
@@ -28,8 +34,8 @@ export function generateCloud(containerId: string, count: number = 15): HTMLElem
         cloud.style.width = `${size}vw`;
         cloud.style.height = 'auto';
         cloud.classList.add('animate-float');
-        cloud.style.top = `${20 + Math.random() * 10}%`;
-        cloud.style.left = `${Math.random() * 100}%`;
+        cloud.style.top = `${20 + Math.random() * 5}%`;
+        cloud.style.left = `${i * step + Math.random() * (step * 0.5)}%`;
         container.appendChild(cloud);
         clouds.push(cloud);
     }

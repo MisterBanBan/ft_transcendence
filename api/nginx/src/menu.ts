@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/30 14:28:37 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/02 15:32:17 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ import { AuthUser } from './type.js';
 import { getUser, setUser } from "./user-handler.js";
 import { wait } from "./wait.js";
 import { twoFApopUp } from "./menuInsert/twoFApopUp.js";
+import { picture } from "./menuInsert/picture.js";
 
 
 
@@ -41,6 +42,7 @@ export class menu implements Component {
     private authBtn: HTMLElement;
     private visibleForm: "none" | "login" | "profile" = "none";
     private formsContainer: HTMLElement;
+    private formspicture: HTMLElement;
     private options!: HTMLElement[];
     private cursor!: HTMLVideoElement;
     private selectedIdx: number = 0;
@@ -62,6 +64,10 @@ export class menu implements Component {
         const formsContainer = document.getElementById('dynamic-content');
         if (!formsContainer) throw new Error('Form wrapper not found');
         this.formsContainer= formsContainer;
+
+        const formspicture = document.getElementById('picture');
+        if (!formspicture) throw new Error('Form wrapper not found');
+        this.formspicture = formspicture;
 
         setUser(currentUser);
 
@@ -148,6 +154,7 @@ export class menu implements Component {
     private logOut() {
 
         this.formsContainer.innerHTML = '';
+        this.formspicture.innerHTML = '';
         //this.formsContainer.insertAdjacentHTML('beforeend', game());
         
         this.loadAcceuil();
@@ -273,6 +280,7 @@ export class menu implements Component {
                 this.formsContainer.innerHTML = '';
                 this.loadAcceuil();
                 this.formsContainer.insertAdjacentHTML('beforeend', game());
+                this.formspicture.insertAdjacentHTML('beforeend', picture());
                 this.setupGameMenu();
                 this.visibleForm = "none";
             }
@@ -295,6 +303,7 @@ export class menu implements Component {
             this.formsContainer.innerHTML = '';
             this.loadAcceuil();
             this.formsContainer.insertAdjacentHTML('beforeend', game());
+            this.formspicture.insertAdjacentHTML('beforeend', picture());
             this.setupGameMenu();
             this.visibleForm = "none";
         }
