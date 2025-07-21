@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   zoom.ts                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:47 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/07 04:59:36 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/21 15:40:59 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,6 @@ export class Zoom implements Component{
         if (event.propertyName === 'transform') {
             this.video.removeEventListener('transitionend', this.handleTransitionEnd);
             window.history.pushState(null, "", "/game");
-            //permet de faire reagir les ecoute sur popstate depuis router pour init updatepage popstate = historique qui change sans actualiser
             window.dispatchEvent(new PopStateEvent("popstate"));
         }
     }

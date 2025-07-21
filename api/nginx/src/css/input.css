@@ -17,10 +17,16 @@
   }
   .responsive-text {
     @apply font-omori text-sm sm:text-base md:text-2xl
-    lg:text-4xl;
+    lg:text-4xl text-white;
   }
 
-  .responsive-text-profile {
+  .responsive-text-historique {
+    @apply font-omori text-sm sm:text-base md:text-xl
+    lg:text-2xl text-white;
+  }
+
+
+  .responsive-text-parametre {
     @apply font-omori text-sm sm:text-base md:text-2xl
     lg:text-4xl text-white hover:text-5xl transition-all duration-200;
   }

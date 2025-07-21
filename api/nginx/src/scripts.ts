@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/02 14:35:17 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/16 17:14:03 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,6 @@ export class PlayerController implements IPlayerController{
 
     }
     private handleResize() {
-        // Recalcule la position Y lors du redimensionnement
         const viewportHeight = window.innerHeight;
         const playerBottom = this.pos.y + this.playerHeight;
         
@@ -139,18 +138,15 @@ export class PlayerController implements IPlayerController{
         }
     }
     public destroy(): void {
-        // Arrêter l'animation du joueur
         this.player.stopAnimation();
         
-        // Supprimer les écouteurs d'événements
         window.removeEventListener('keydown', this.boundKeyDownHandler);
         window.removeEventListener('keyup', this.boundKeyUpHandler);
         
-        // Annuler la boucle de jeu
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);
         }
-        console.log("PlayerController détruit");
+        console.log("PlayerController destroy");
     }
 
     private worldPosX:number = 0;
@@ -163,28 +159,23 @@ export class PlayerController implements IPlayerController{
     }
 
     private updatePhysics(dt: number, worldWidth: number, viewportHeight: number) {
-        //position par rapport au monde
+        
         const gravity = 1500; 
         this.worldPosX = this.worldPosX || this.pos.x;
         this.worldPosX += this.stats.velocity.x * dt;
         this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
 
-        //gravity
         const rect = this.playerElement.getBoundingClientRect();
         this.playerHeight = rect.height;
         this.playerWidth = rect.width;
-    
-        // ... (mouvement horizontal inchangé)
-    
-        // Gravité
+
         this.stats.velocity.y += gravity * dt;
         this.pos.y += this.stats.velocity.y * dt;
     
-        // Collision avec le SOL (bas de l'écran)
         const playerBottom = this.pos.y + this.playerHeight;
         if (playerBottom >= viewportHeight) {
             this.stats.velocity.y = 0;
-            this.pos.y = viewportHeight - this.playerHeight; // Alignement parfait
+            this.pos.y = viewportHeight - this.playerHeight;
             this.stats.isJumping = false;
         }
         console.log(this.pos.y, viewportHeight, this.playerHeight);
@@ -239,7 +230,6 @@ export class PlayerController implements IPlayerController{
 
     
         const viewportWidth = window.innerWidth;
-        //console.log('viewportWidth: %d', viewportWidth);
         const viewportHeight = window.innerHeight;
         const worldWidth = viewportWidth * 3;
 
@@ -258,6 +248,5 @@ export class PlayerController implements IPlayerController{
     }
 }
 
-// Exporter correctement la classe PlayerController
 export default PlayerController;
 

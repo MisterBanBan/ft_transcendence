@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:44 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/01 18:58:09 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/16 17:12:25 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,6 @@ export class PlayerAnimation{
     startAnimation(frameRate: number = 100) {
         if (this.animationInterval) return;
         this.animationInterval = window.setInterval(() => {
-            //console.log(this.images[this.currentFrame]);
             this.currentFrame = (this.currentFrame + 1) % this.images.length;
             this.element.style.backgroundImage = `url(${this.images[this.currentFrame]})`;
         }, frameRate); 

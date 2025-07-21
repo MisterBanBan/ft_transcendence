@@ -6,33 +6,19 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/02 15:32:17 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/20 15:08:19 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Component } from "./component.js";
 import { loginForm } from "./menuInsert/loginForm.js";
 import { registerForm } from "./menuInsert/registerForm.js";
-import { profile } from "./menuInsert/profile.js";
-import { score } from "./score/score.js";
-import { settings } from "./menuInsert/settings.js";
-import { newPseudo } from "./menuInsert/newPseudo.js";
-import { newPass } from "./menuInsert/newPass.js";
-import { newTwoFa } from "./menuInsert/newTwoFa.js";
 import { game } from "./menuInsert/game.js";
 import { Login } from "./auth/login.js";
 import { Register } from "./auth/register.js";
-import {TFAValidate} from "./auth/2fa-validate.js";
-import {ChangeUsername} from "./auth/change-username.js";
-import {ChangePassword} from "./auth/change-password.js";
-import {Add2FA, Remove2FA} from "./auth/toggle-2fa.js";
-import {Logout} from "./auth/logout.js";
-import { removeTwoFa } from "./menuInsert/removeTwoFa.js";
 import { AuthUser } from './type.js';
 import { getUser, setUser } from "./user-handler.js";
-import { wait } from "./wait.js";
-import { twoFApopUp } from "./menuInsert/twoFApopUp.js";
-import { picture } from "./menuInsert/picture.js";
+import { viewManager } from "./views/viewManager.js";
 
 
 
@@ -40,12 +26,13 @@ export class menu implements Component {
     private videoMain: HTMLVideoElement;
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
-    private visibleForm: "none" | "login" | "profile" = "none";
+    //private visibleForm: "none" | "login" | "parametre" = "none";
     private formsContainer: HTMLElement;
     private formspicture: HTMLElement;
     private options!: HTMLElement[];
     private cursor!: HTMLVideoElement;
     private selectedIdx: number = 0;
+    private viewManager: viewManager;
     private keydownHandler: (e: KeyboardEvent) => void;
     
     constructor(videoId: string, containerFormId: string, authBtnId: string, currentUser: AuthUser | undefined) { 
@@ -69,6 +56,8 @@ export class menu implements Component {
         if (!formspicture) throw new Error('Form wrapper not found');
         this.formspicture = formspicture;
 
+        this.viewManager = new viewManager(formsContainer,  this.formspicture, this.videoMain, () => this.setupGameMenu());
+
         setUser(currentUser);
 
         this.keydownHandler = this.handleKeydown.bind(this);
@@ -83,135 +72,21 @@ export class menu implements Component {
         });
         if (getUser()) {
             this.formsContainer.insertAdjacentHTML('beforeend', game());
-            this.setupGameMenu();
+
         }
         this.authBtn.addEventListener('click', this.authBtnHandler);
     }
 
  
-
     private authBtnHandler = () => {
-        console.log(getUser());
-        if (!getUser() && this.visibleForm !== "login") {
-            this.loadForm('login');
-            this.visibleForm = "login";
-        } else if (getUser() !== undefined){
-            if (this.visibleForm !== "profile") {
-                this.loadProfile();
-                this.visibleForm = "profile";
-            } else {
-                this.formsContainer.innerHTML = '';
-                this.loadAcceuil();
-                this.formsContainer.insertAdjacentHTML('beforeend', game());
-                this.setupGameMenu();
-                this.visibleForm = "none";
-            }
-        } 
-        else {
-            this.formsContainer.innerHTML = '';
-            this.loadAcceuil();
-            //this.formsContainer.insertAdjacentHTML('beforeend', game());
-            //this.setupGameMenu();
-            this.visibleForm = "none";
+        if (!getUser()) {
+            this.viewManager.show('login');
+        } else {
+            this.viewManager.show('parametre');
         }
     };
-    
-    private loadProfile() {
-        this.formsContainer.innerHTML = '';
 
-        this.formsContainer.insertAdjacentHTML('beforeend', profile());
-        this.loadAcceuil();
-        
-        const logout = new Logout();
-        logout.init();
-        this.eventFormListeners();
-    }
-
-    private async loadScore() {
-        this.formsContainer.innerHTML = '';
-        const scoreHtml = await score();
-        this.formsContainer.insertAdjacentHTML('beforeend', scoreHtml);
-        this.eventFormListeners();
-    }
-    
-    private loadSettings() {
-        this.formsContainer.innerHTML = '';
-        if (this.videoMain.src !== '/img/acceuilParam.mp4') {
-            //a changer le png 
-            this.videoMain.poster = "/img/acceuilDraw.png";
-            this.videoMain.src = "/img/acceuilParam.mp4";
-            this.videoMain.load(); 
-        }
-        this.formsContainer.insertAdjacentHTML('beforeend', settings());
-
-        this.eventFormListeners();
-
-
-    }
-
-
-    
-    private logOut() {
-
-        this.formsContainer.innerHTML = '';
-        this.formspicture.innerHTML = '';
-        //this.formsContainer.insertAdjacentHTML('beforeend', game());
-        
-        this.loadAcceuil();
-        this.visibleForm = "none";
-        this.eventFormListeners();
-    }
-
-
-    private newPseudo(){
-        this.formsContainer.innerHTML = '';
-
-        this.formsContainer.insertAdjacentHTML('beforeend', newPseudo());
-        const changeUsername = new ChangeUsername();
-        changeUsername.init();
-        document.getElementById('pseudoReturnBtn')?.addEventListener('click', () => this.loadSettings());
-        
-    }
-    private newPassword(){
-        this.formsContainer.innerHTML = '';
-
-        this.formsContainer.insertAdjacentHTML('beforeend', newPass());
-        const changePassword = new ChangePassword();
-        changePassword.init();
-        document.getElementById('passReturnBtn')?.addEventListener('click', () => this.loadSettings());
-
-    }
-
-    private toggle2FA() {
-        if (getUser()?.tfa) {
-            this.remove2fa();
-            return;
-        }
-        else if (getUser()?.tfa === false) {
-            this.new2fa();
-            return;
-        }
-    }
-
-    private new2fa(){
-        this.formsContainer.innerHTML = '';
-        this.formsContainer.insertAdjacentHTML('beforeend', newTwoFa());
-        const add2FA = new Add2FA();
-        add2FA.init();
-        document.getElementById('2faReturnBtn')?.addEventListener('click', () => this.loadSettings());
-
-    }
-
-    private remove2fa() {
-        this.formsContainer.innerHTML = '';
-        this.formsContainer.insertAdjacentHTML('beforeend', removeTwoFa());
-        const remove2FA = new Remove2FA();
-        remove2FA.init();
-        document.getElementById('2faReturnBtn')?.addEventListener('click', () => this.loadSettings());
-
-    }
-    
-    private  async loadForm(formType: 'login' | 'register'){
+    /*private  async loadForm(formType: 'login' | 'register'){
         this.formsContainer.innerHTML = '';
 
         const formHtml = formType === 'login' ? loginForm() : registerForm();
@@ -226,109 +101,24 @@ export class menu implements Component {
             login.init();
         }
         this.eventFormListeners();
-    }
+    }*/
 
-    private returnForm() {
+    /*private returnForm() {
         this.formsContainer.innerHTML = '';
         this.formsContainer.insertAdjacentHTML('beforeend', game());
 
         this.loadAcceuil();
-        this.visibleForm = "none";
+        //this.visibleForm = "none";
         this.eventFormListeners();
     }
 
-    private async handle2FA() {
-        const limit = 10;
-        let attempts = 0;
-        while (!document.cookie.includes("2FA-REQUIRED=false") && attempts < limit) {
-            await wait(1000);
-            console.log("Waiting for 2FA validation...", attempts);
-            attempts++;
-        }
-
-        if (document.cookie.includes("2FA-REQUIRED=false")) {
-            this.formsContainer.innerHTML = '';
-            this.loadAcceuil();
-            this.formsContainer.insertAdjacentHTML('beforeend', game());
-            this.setupGameMenu();
-            this.visibleForm = "none";
-        } else if (attempts >= limit) {
-            console.error("2FA validation timed out.");
-        }
-
-        this.eventFormListeners(); 
-    }
-
-    public async submit_loginForm() {
-
-        const limit = 10;
-        let attempts = 0;
-        while (!getUser() && attempts < limit) {
-            await wait(1000);
-            attempts++;
-        }
-
-        const user = getUser();
-        if (user) {
-            if (user.tfa) {
-                this.formsContainer.insertAdjacentHTML('beforeend', twoFApopUp());
-                this.visibleForm = "none";
-                const tfaValidate = new TFAValidate(user.username);
-                tfaValidate.init();
-            }
-            else {
-                this.formsContainer.innerHTML = '';
-                this.loadAcceuil();
-                this.formsContainer.insertAdjacentHTML('beforeend', game());
-                this.formspicture.insertAdjacentHTML('beforeend', picture());
-                this.setupGameMenu();
-                this.visibleForm = "none";
-            }
-        } else if (attempts >= limit) {
-            console.error("Login request timed out.");
-        }
-        
-        this.eventFormListeners(); 
-    }
-
-    public async submit_registerForm() {
-
-        const limit = 10;
-        let attempts = 0;
-        while (!getUser() && attempts < limit) {
-            await wait(1000);
-            attempts++;
-        }
-        if (getUser()) {
-            this.formsContainer.innerHTML = '';
-            this.loadAcceuil();
-            this.formsContainer.insertAdjacentHTML('beforeend', game());
-            this.formspicture.insertAdjacentHTML('beforeend', picture());
-            this.setupGameMenu();
-            this.visibleForm = "none";
-        }
-        this.eventFormListeners(); 
-    }
     
     private eventFormListeners() {
-        document.getElementById('registerBtn')?.addEventListener('click', () => this.loadForm('register'));
-        document.getElementById('loginBtn')?.addEventListener('click', () => this.loadForm('login'));
-        document.getElementById('profileReturnBtn')?.addEventListener('click', () => this.returnForm());
-        document.getElementById('submit-login')?.addEventListener('click', () => this.submit_loginForm());
-        document.getElementById('submit-register')?.addEventListener('click', () => this.submit_registerForm());
-        document.getElementById('settingsReturnBtn')?.addEventListener('click', () => this.loadProfile());
-        document.getElementById('scoreReturnBtn')?.addEventListener('click', () => this.loadProfile());
-        document.getElementById('submit-2fa')?.addEventListener('click', () => this.handle2FA());
+        //document.getElementById('registerBtn')?.addEventListener('click', () => this.loadForm('register'));
+        //document.getElementById('loginBtn')?.addEventListener('click', () => this.loadForm('login'));
+        document.getElementById('parametreReturnBtn')?.addEventListener('click', () => this.returnForm());
 
-        
-        document.getElementById('score')?.addEventListener('click', () => this.loadScore());
-        document.getElementById('settings')?.addEventListener('click', () => this.loadSettings());
-        document.getElementById('logout')?.addEventListener('click', () => this.logOut());
-        document.getElementById('newPseudo')?.addEventListener('click', () => this.newPseudo());
-        document.getElementById('newPass')?.addEventListener('click', () => this.newPassword());
-        document.getElementById('toggle-2fa')?.addEventListener('change', () => this.toggle2FA());
-
-    }
+    }*/
     
 
     private loadAcceuil (){

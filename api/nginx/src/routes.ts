@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/02 14:46:45 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/21 15:41:09 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ export const routes: Route[] = [
 				</div>
 
                   <div id="videoDoor" class="w-screen h-screen relative z-50">
-                    <img src="/img/chalet_blanc.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50">
+                    <img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50">
                      
                     </img>
                     <div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
