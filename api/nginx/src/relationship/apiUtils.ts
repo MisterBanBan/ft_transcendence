@@ -9,22 +9,6 @@ export class ApiUtils {
         return userIdElement?.value || 'user1';
     }
 
-    static displayResponse(containerId: string, response: any, isError: boolean = false): void {
-        const container = document.getElementById(containerId);
-        if (!container) return;
-
-        container.textContent = JSON.stringify(response, null, 2);
-        container.className = `response ${isError ? 'error' : 'success'}`;
-    }
-
-    static clearResponse(containerId: string): void {
-        const container = document.getElementById(containerId);
-        if (container) {
-            container.textContent = '';
-            container.className = 'response';
-        }
-    }
-
     static showAlert(message: string): void {
         alert(message);
     }

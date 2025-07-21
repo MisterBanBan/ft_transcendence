@@ -321,6 +321,11 @@
     }
 
     function changeStatus() {
+
+        if (!confirm('Are you sure you want to block this user?')) {
+        return;
+        }
+
         const userId = document.getElementById('userId').value;
         const status = document.getElementById('statusSelect').value;
 

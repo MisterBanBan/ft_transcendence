@@ -13,7 +13,6 @@ async function loadFriends() {
         const data = await response.json();
         displayResponse('friendsResponse', data, !response.ok);
 
-        // Display friends in a nice format
         const friendsList = document.getElementById('friendsList');
         if (data.friends && data.friends.length > 0) {
             friendsList.innerHTML = data.friends.map(friend => `

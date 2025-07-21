@@ -22,7 +22,6 @@ async function removeFriend(friendId) {
         displayResponse('removeFriendResponse', data, !response.ok);
 
         if (response.ok) {
-            // Reload the friends list after successful removal
             await loadFriends();
         }
     } catch (error) {

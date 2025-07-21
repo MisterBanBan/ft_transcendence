@@ -69,10 +69,9 @@ export class InvitationService {
             });
 
             const data = await response.json();
-            ApiUtils.displayResponse('manageResponse', data, !response.ok);
         } catch (error) {
-            ApiUtils.displayResponse('manageResponse', { error: (error as Error).message }, true);
-        }
+        console.error(error);
+    }
     }
 
     static async declineInvitation(): Promise<void> {
@@ -93,9 +92,8 @@ export class InvitationService {
             });
 
             const data = await response.json();
-            ApiUtils.displayResponse('manageResponse', data, !response.ok);
         } catch (error) {
-            ApiUtils.displayResponse('manageResponse', { error: (error as Error).message }, true);
+            console.error(error);
         }
     }
 

@@ -22,7 +22,6 @@ async function unblockUser(blockedUserId) {
         displayResponse('unblockResponse', data, !response.ok);
 
         if (response.ok) {
-            // Reload the blocked users list after successful unblocking
             await loadBlockedUsers();
         }
     } catch (error) {

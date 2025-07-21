@@ -45,8 +45,6 @@ export async function up({ context }: { context: Database }) {
             total_games INTEGER DEFAULT 0,
             wins INTEGER DEFAULT 0,
             losses INTEGER DEFAULT 0,
-            total_points_scored INTEGER DEFAULT 0,
-            total_points_conceded INTEGER DEFAULT 0,
             created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (user_id) REFERENCES users(id)

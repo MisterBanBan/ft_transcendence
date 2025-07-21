@@ -24,7 +24,6 @@ async function createUser() {
         const data = await response.json();
         displayResponse('createUserResponse', data, !response.ok);
 
-        // Clear form
         document.getElementById('newUserId').value = '';
         document.getElementById('newUsername').value = '';
 
