@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 13:56:40 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/20 22:52:48 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/21 16:19:32 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,8 @@ export class loginView implements Component {
     }
 
     private attachEventListeners() {
-        document.getElementById('submit-login')?.addEventListener('click', () => this.handleSubmit);
-        document.getElementById('registerBtn')?.addEventListener('click', () => this.handleRegister);
+        document.getElementById('submit-login')?.addEventListener('click', this.handleSubmit);
+        document.getElementById('registerBtn')?.addEventListener('click', this.handleRegister);
 
     }
     //bloquer lenvoie de pleins de submit
