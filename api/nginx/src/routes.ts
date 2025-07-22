@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/21 19:37:59 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/22 14:42:58 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,46 +48,42 @@ export const routes: Route[] = [
 
 
                 <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
-                  <div
-                  id="procedural-bg"
-                  class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-                >
+					<div
+					id="procedural-bg"
+					class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
+					>
 				  
-				</div>
+					</div>
 				
 					<div class="w-screen h-screen relative">
-					        <div class="absolute left-0 bottom-0 w-full h-full z-10">
-					<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
-	
-					<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+						<div class="absolute left-0 bottom-0 w-full h-full z-10">
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+			
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
 
-					</div>        
+						</div>        
 					</div>
 					<div class="w-screen h-screen relative">
-					          <div class="absolute left-0 bottom-0 w-full h-full z-10">
-					<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+						<div class="absolute left-0 bottom-0 w-full h-full z-10">
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+		
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+						</div>      
+					</div>
+
+                  	<div id="videoDoor" class="w-screen h-screen relative z-50">
+                    	<img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50"/>
+						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
+							<video autoplay loop muted class="w-12 h-12">
+							<source src="/img/pressE.mp4" type="video/mp4">
+							</video>
+						</div>
+						<div class="absolute left-0 bottom-0 w-full h-full z-10">
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
 	
-					<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
-
-				</div>      
-				</div>
-
-                  <div id="videoDoor" class="w-screen h-screen relative z-50">
-                    <img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50">
-                     
-                    </img>
-                    <div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
-                      <video autoplay loop muted class="w-12 h-12">
-                        <source src="/img/pressE.mp4" type="video/mp4">
-                      </video>
-                    </div>
-					<div class="absolute left-0 bottom-0 w-full h-full z-10">
-					<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
-	
-					<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
-
-				</div>  
-                  </div>
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+						</div>  
+                  	</div>
 				      
                 </div>
 			</div>
@@ -137,7 +133,19 @@ export const routes: Route[] = [
 		template: async () => {
 			await new Promise(resolve => setTimeout(resolve, 300));
 			return `
-
+				<div id="chalet" class="fixed inset-0 h-full w-full relative overflow-hidden">
+					<div id="pageContainer" class="flex w-[200vw] h-full overflow-x-auto items-center justify-center relative">
+						<img src="/img/chalet_inside.png" class="inset-0 w-full h-[85%] object-fill z-50">
+						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
+							<video autoplay loop muted class="w-12 h-12">
+							<source src="/img/pressE.mp4" type="video/mp4">
+							</video>
+						</div>
+						</div>
+				</div>
+				<div id="player"
+				class="fixed left-0 w-[30vw] h-[70vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-50">
+			</div>
 			`;
 		}	
 	},

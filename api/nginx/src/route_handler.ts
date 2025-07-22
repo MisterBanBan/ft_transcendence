@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   route_handler.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/16 17:11:29 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/22 11:22:56 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,20 @@ const routeComponents: Record<string, Component> = {
         },
         destroy: () => {}
     },
+
+	"/chalet": {
+		init: () => {
+			activeComponent?.destroy?.();
+			const playerIntro = new introduction('player');
+
+			playerIntro.init();
+			activeComponent = {
+				init: () => {},
+				destroy: () => { playerIntro.destroy(); }
+			};
+		},
+		destroy: () => {}
+	},
 
     "/game": {
         init: () => {

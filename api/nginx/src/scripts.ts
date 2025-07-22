@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   scripts.ts                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/16 17:14:03 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/22 14:39:18 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,6 +130,7 @@ export class PlayerController implements IPlayerController{
     }
     private handleResize() {
         const viewportHeight = window.innerHeight;
+        console.log("Viewport height:", viewportHeight);
         const playerBottom = this.pos.y + this.playerHeight;
         
         if (playerBottom > viewportHeight) {
@@ -231,7 +232,16 @@ export class PlayerController implements IPlayerController{
     
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        const worldWidth = viewportWidth * 3;
+
+        const path = window.location.pathname;
+        let worldWidth: number;
+        if (path === "/chalet")
+        {
+            worldWidth = viewportWidth * 2;
+        } else {
+            worldWidth = viewportWidth * 3;
+        }
+        
 
 
         this.updatePhysics(deltaTime, worldWidth, viewportHeight);
@@ -250,3 +260,4 @@ export class PlayerController implements IPlayerController{
 
 export default PlayerController;
 
+8
