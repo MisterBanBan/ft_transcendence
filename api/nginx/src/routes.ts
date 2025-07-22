@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/21 15:41:09 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/21 19:37:59 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,16 @@ export const routes: Route[] = [
             `;
         }
     },
+	{
+		path: "/chalet",
+		title: "Chalet",
+		template: async () => {
+			await new Promise(resolve => setTimeout(resolve, 300));
+			return `
+
+			`;
+		}	
+	},
     {
         path: "/Tv",
         title: "Tv",
