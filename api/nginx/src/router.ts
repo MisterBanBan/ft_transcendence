@@ -14,8 +14,7 @@
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
 import { AuthUser } from './type.js';
-
-export let currentUser: AuthUser | undefined = undefined;
+import {setUser} from "./user-handler";
 
 class Router {
     private routes: Route[];
@@ -98,7 +97,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         const data: AuthUser = await response.json();
         if (data) {
-            currentUser = data;
+            setUser(data);
         }
 
         const router = new Router(routes, currentUser);
