@@ -25,8 +25,8 @@ import {ChangePassword} from "./auth/change-password.js";
 import {Toggle2FA} from "./auth/toggle-2fa.js";
 import {Logout} from "./auth/logout.js";
 import {CreateTournament} from "./tournament/create-tournament.js";
-import {GetTournaments} from "./tournament/get-tournaments.js";
 import EnhancedSocket from './tournament/enhanced-ws.js';
+import {showTourmaments} from "./tournament/show-tourmaments.js";
 
 // import { introduction } from './intro.js';
 // import { menu } from './menu.js';
@@ -108,14 +108,19 @@ const routeComponents: Record<string, Component> = {
 		init: () => {
 			activeComponent?.destroy?.();
 
-			const ws = new EnhancedSocket('wss://10.14.8.1:8443/wss/tournament');
+			const ws = new EnhancedSocket('wss://10.13.3.5:8443/wss/tournament');
 
 			ws.onopen = () => {
 				console.log('WebSocket opened');
 				ws.send('Hello from client');
 			};
 			ws.onmessage = (event) => {
-				console.log('Message from server:', event.data);
+				const data = JSON.parse(event.data);
+				if (data.type === "tournamentsList") {
+					console.log(typeof data);
+					showTourmaments(ws, data.tournaments);
+				}
+				//console.log('Message from server:', event.data);
 			};
 			ws.onerror = (e) => {
 				console.error('WebSocket error:', e);

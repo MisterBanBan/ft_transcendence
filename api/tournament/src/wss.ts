@@ -1,7 +1,12 @@
 import {FastifyInstance, FastifyRequest} from "fastify";
 import {WebSocket} from "@fastify/websocket";
 import { createTournament } from "./socket/createTournament";
-import currentUser from "./plugins/current-user";
+import {updateTournamentList} from "./socket/updateTournamentList.js";
+import {tournaments} from "./routes/create.js";
+import {leaveTournament} from "./utils/leaveTournament.js";
+import {joinTournament} from "./utils/joinTournament.js";
+
+export const activeSockets = new Map<number, WebSocket>
 
 export default async function (server: FastifyInstance) {
 	server.get('/wss/tournament', {
@@ -21,12 +26,21 @@ export default async function (server: FastifyInstance) {
 			}
 
 			request.currentUser = JSON.parse(Buffer.from(user, 'base64').toString());
+			if (!request.currentUser) {
+				socket.send("Error while getting the user");
+				socket.close();
+				return;
+			}
+
+			activeSockets.set(request.currentUser.id, socket);
 
 			socket.send(JSON.stringify({
 				type: 'welcome',
 				message: 'WebSocket connexion established',
 				timestamp: new Date().toISOString()
 			}));
+
+			updateTournamentList();
 
 			socket.on("message", (message: string | Buffer) => {
 				let data;
@@ -36,6 +50,8 @@ export default async function (server: FastifyInstance) {
 					console.error(data, "is not a JSON object");
 					return;
 				}
+
+				console.log(data);
 
 				if (!data.action)
 				{
@@ -47,16 +63,29 @@ export default async function (server: FastifyInstance) {
 					case "createTournament": {
 						if (!data.infos?.name || !data.infos?.size)
 							return;
-						createTournament(data.infos.name, data.infos.size, 20); break;
+						if (createTournament(data.infos.name, data.infos.size, request.currentUser!.id) === null)
+							console.error("An error occurred while creating a tournament");
+						break;
 					}
 					case "joinTournament": {
-						console.log("joinTournament", data.infos); break;
-						// TODO join tournament logic
+						if (!data.infos?.name || !data.infos?.displayName)
+							return;
+						const tournament = tournaments.get(data.infos.name);
+						if (!tournament)
+							return;
+						joinTournament(request.currentUser!.id, data.infos.displayName, tournament)
+						break;
 					}
 				}
 			});
 
 			socket.on("close", () => {
+				for (const [ _, tournament ] of tournaments) {
+					if (tournament.hasPlayer(request.currentUser!.id)) {
+						leaveTournament(request.currentUser!.id, tournament);
+						break;
+					}
+				}
 				console.log("Client disconnected");
 			});
 		} catch (e) {

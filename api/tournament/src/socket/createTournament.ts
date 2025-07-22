@@ -1,6 +1,7 @@
 import {Match, Tournament} from "../class/Tournament.js";
 import {tournaments} from "../routes/create.js";
 import {joinTournament} from "../utils/joinTournament.js";
+import {updateTournamentList} from "./updateTournamentList.js";
 
 async function createMatchs(matchesNb: number): Promise<Match[]> {
 	const matchs: Match[] = [];
@@ -19,6 +20,7 @@ async function createMatchs(matchesNb: number): Promise<Match[]> {
 }
 
 export async function createTournament(name: string, size: number, currentUserId: number): Promise<Tournament | null> {
+
 	if (tournaments.has(name)) return null;
 
 	if (![4, 8, 16].includes(size)) return null;
@@ -32,5 +34,6 @@ export async function createTournament(name: string, size: number, currentUserId
 	tournament.getStructure().rounds["1"] = await createMatchs(1);
 
 	tournaments.set(name, tournament);
+	updateTournamentList();
 	return tournament;
 }

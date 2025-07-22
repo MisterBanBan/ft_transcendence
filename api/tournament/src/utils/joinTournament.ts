@@ -1,6 +1,7 @@
 import {Tournament} from "../class/Tournament.js";
 import {tournaments} from "../routes/create.js";
 import {leaveTournament} from "./leaveTournament.js";
+import {updateTournamentList} from "../socket/updateTournamentList.js";
 
 export function joinTournament(playerId: number, displayName: string, tournament: Tournament) {
 
@@ -12,4 +13,6 @@ export function joinTournament(playerId: number, displayName: string, tournament
 	}
 
 	tournament.addPlayer(playerId, displayName);
+
+	updateTournamentList();
 }
