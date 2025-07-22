@@ -5,45 +5,32 @@ import { dirname, join } from "node:path";
 
 async function startServer() {
 
-    const server = fastify();
+	const server = fastify();
 
-    console.log("server started");
+	const filename = fileURLToPath(import.meta.url);
+	const dir = dirname(filename);
 
-    const filename = fileURLToPath(import.meta.url);
-    const dir = dirname(filename);
+	try {
 
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "routes/")
-        });
-    } catch (err) {
-        console.error(err);
-    }
+		await server.register(autoLoad, {
+			dir: join(dir, "plugins/"),
+			encapsulate: false
+		});
 
-/*    server.register(cors, {
-        origin: "*",
-        methods: ["GET", "POST"]
-    });*/
+		await server.register(autoLoad, {
+			dir: join(dir, "routes/")
+		});
 
-    /*    server.register(websocket);*/
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "plugins/"),
-            encapsulate: false
-        });
-    } catch (err) {
-        console.error(err);
-    }
+		await server.register(autoLoad, {
+			dir: join(dir, "routes/2fa/")
+		});
 
-    /*    server.register(multipart);*/
-
-    try {
-        await server.listen({ port: 8084, host: '0.0.0.0' });
-        console.log(`Users service is running on 0.0.0.0:8084`);
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1);
-    }
+		await server.listen({ port: 8084, host: '0.0.0.0' });
+		console.log(`Auth service is running on 0.0.0.0:8084`);
+	} catch (err) {
+		server.log.error(err);
+		process.exit(1);
+	}
 }
 
 startServer();

@@ -3,22 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   router.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:24 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/06 11:10:25 by afavier          ###   ########.fr       */
+/*   Updated: 2025/06/18 10:56:45 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+//import { introduction } from './intro.js'
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
-//import { introduction } from './intro.js'
+import { AuthUser } from './type.js';
+
+export let currentUser: AuthUser | undefined = undefined;
 
 class Router {
     private routes: Route[];
     private appDiv: HTMLElement;
     
-    constructor(routes: Route[]) {
+    constructor(routes: Route[], private user?: AuthUser) {
         this.routes = routes;
         /*recupere l'element app dans index.html*/
         const app = document.getElementById("app");
@@ -72,7 +75,7 @@ class Router {
                     }
                 }
                 this.appDiv.innerHTML = content;
-                handleRouteComponents(path);
+                handleRouteComponents(path, this.user);
             } else {
                 this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
                 return
@@ -86,10 +89,20 @@ class Router {
 }
 
 
-document.addEventListener("DOMContentLoaded", () => {
+
+document.addEventListener("DOMContentLoaded", async () => {
     try {
-        const router = new Router(routes);
-        router.updatePage();
+        const response = await fetch("/api/auth/verify", {
+            method: "GET",
+        });
+
+        const data: AuthUser = await response.json();
+        if (data) {
+            currentUser = data;
+        }
+
+        const router = new Router(routes, currentUser);
+        await router.updatePage();
     } catch (error) {
         console.error("Wrong init :", error);
         document.body.innerHTML = "<h1>Appli dumped</h1>";

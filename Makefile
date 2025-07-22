@@ -2,11 +2,11 @@ DOCKER_COMPOSE= docker compose
 
 make: all
 
-build:
+build: update-env
 	$(DOCKER_COMPOSE) build
 
-up:
-	$(DOCKER_COMPOSE) up -d --build
+up: build
+	$(DOCKER_COMPOSE) up -d
 
 down:
 	$(DOCKER_COMPOSE) down
@@ -24,8 +24,11 @@ clean:
 fclean: clean
 	docker system prune --all --volumes --force
 
+update-env:
+	echo "HOSTNAME=$(shell hostname -s)" > .env
+
 all: build up
 
-re: down all
+re: fclean all
 
-.PHONY: build up down logs clean fclean
+.PHONY: build up down logs clean fclean update-env
