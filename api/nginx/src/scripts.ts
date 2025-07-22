@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 14:39:18 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/22 18:39:05 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,17 +106,26 @@ export class PlayerController implements IPlayerController{
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
+        
+        let worldPath: string;
+        
         this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.player, this.isDoorOpen, this.isInTriggerZone, e);
         this.boundKeyUpHandler = (e) => {
             handleKeyReleasePlayer(this.stats, this.player, e);
             if (e.key.toLowerCase() === 'e') {
                 if (this.isInTriggerZone && !this.isDoorOpen) {
                     this.isDoorOpen = true;
-                    const doorContainer = document.getElementById("videoDoor");
-                    if (doorContainer) {
-                        window.history.pushState(null, "", "/Tv");
+                    const path = window.location.pathname;
+                        if (path === "/")
+                        {
+                            worldPath = "/chalet";
+                        }
+                        else
+                        {
+                            worldPath = "/game";
+                        }
+                        window.history.pushState(null, "", worldPath);
                         window.dispatchEvent(new PopStateEvent("popstate"));
-                    }
                 }
             }
         };
@@ -204,11 +213,23 @@ export class PlayerController implements IPlayerController{
     }
 
     private checkTriggers() {
-
-        const door = document.getElementById("videoDoor");
+        const path = window.location.pathname;
         const pressE = document.getElementById("pressE");
+        if (!pressE) return;
+        if (path === "/chalet")
+        {
+            const triggerX = 0.8 * window.innerWidth * 2;
+            
+            const shouldShowPressE = this.worldPosX >= triggerX;
+            this.isInTriggerZone = shouldShowPressE;
+            pressE.classList.toggle("hidden", !shouldShowPressE);
+        }
+        const door = document.getElementById("trigger");
+
 
         if (!door || !pressE) return;
+
+        
 
         const rect = door.getBoundingClientRect();
         

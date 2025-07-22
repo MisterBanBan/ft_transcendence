@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parameterView.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 22:32:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/20 17:48:47 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/22 23:27:10 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,14 @@ export class parameterView implements Component {
         document.getElementById('friendsList')?.addEventListener('click', this.handleFriendsList);
         document.getElementById('settings')?.addEventListener('click', this.handleSettings);
         document.getElementById('logout')?.addEventListener('click', this.handleLogout);
-        document.getElementById('parametreReturnBtn')?.addEventListener('click', this.handleReturn);
+const userBtn = document.getElementById("user");
+if (userBtn) {
+    userBtn.replaceWith(userBtn.cloneNode(true)); // Reset DOM events
+    const freshUserBtn = document.getElementById("user");
+    console.log("Re-attaching listener to #user", freshUserBtn);
+    freshUserBtn?.addEventListener("click", this.handleReturn);
+}
+       document.getElementById('parametreReturnBtn')?.addEventListener('click', this.handleReturn);
     }
 
     private async loadScore() {
@@ -72,6 +79,7 @@ export class parameterView implements Component {
         document.getElementById('logout')?.removeEventListener('click', this.handleLogout);
         document.getElementById('parametreReturnBtn')?.removeEventListener('click', this.handleReturn);
         document.getElementById('scoreReturnBtn')?.removeEventListener('click', this.handleSettings);
+        document.getElementById('user')?.removeEventListener('click', this.handleReturn);
         document.getElementById('profileReturnBtn')?.removeEventListener('click', this.handleSettings);
         
     }

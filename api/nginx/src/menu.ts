@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   menu.ts                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/20 15:08:19 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/22 22:25:30 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,6 @@ export class menu implements Component {
             console.log("Loadedmetadata ready");
             this.resize();
         });
-        if (getUser()) {
-            this.formsContainer.insertAdjacentHTML('beforeend', game());
-
-        }
         this.authBtn.addEventListener('click', this.authBtnHandler);
     }
 

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ViewManager.ts                                     :+:      :+:    :+:   */
+/*   viewManager.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/20 22:50:20 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/22 21:55:04 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ import { friendsView } from './friendsView.js';
 import { loginView } from './loginView.js';
 import { registerView } from './registerView.js';
 import { Component } from '../component.js';
-
 import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/picture.js';
 
@@ -35,9 +34,16 @@ export class viewManager{
         this.videoMain = videoMain;
         this.pictureContainer = picture;
         this.setupGameMenuCallback = setupGameMenuCallback;
-        
+        this.userLog();
     }
 
+    private userLog()
+    {
+        if (!getUser())
+            this.show("login");
+        else
+            this.show("game");
+    }
 
     public show(viewName: string) {
         
