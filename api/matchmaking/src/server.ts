@@ -1,53 +1,53 @@
-import fastify from "fastify";
+import fastify, { FastifyInstance } from "fastify";
+import fastifyIO from "fastify-socket.io";
 import autoLoad from "@fastify/autoload";
-// import cors from "@fastify/cors";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
-// import websocket from "@fastify/websocket";
-// import multipart from "@fastify/multipart";
-// import { existsSync } from "node:fs";
+import { join } from "path";
+import cors from "@fastify/cors";
+import { io as ClientIO } from "socket.io-client";
+import fs from "fs";
+import { gameUpdate } from "./gamesManager/gameUpdate";
 
-async function startServer() {
+async function start() {
+	const dir = __dirname;
 
-    const server = fastify();
+	const app = fastify();
 
-    console.log("server started");
+	await app.register(cors, { origin: `http://10.14.8.1:8443` , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
+	await app.register(fastifyIO, {
+		path: "/wss/matchmaking",
+		cors: { origin: `http://10.14.8.1:8443`, credentials: true }
+	});
 
-    const filename = fileURLToPath(import.meta.url);
-    const dir = dirname(filename);
+	app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
+	app.register(autoLoad, { dir: join(dir, "routes/") });
 
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "routes/")
-        });
-    } catch (err) {
-        console.error(err);
-    }
 
-/*    server.register(cors, {
-        origin: "*",
-        methods: ["GET", "POST"]
-    });*/
+	const gameSocket = ClientIO("http://game:8082", {
+		transports: ["websocket"],
+	});
 
-    /*    server.register(websocket);*/
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "plugins/"),
-            encapsulate: false
-        });
-    } catch (err) {
-        console.error(err);
-    }
+	app.decorate("gameSocket", gameSocket);
 
-    /*    server.register(multipart);*/
+	const aiSocket = ClientIO("http://ai:8085", {
+		transports: ["websocket"],
+	});
 
-    try {
-        await server.listen({ port: 8083, host: '0.0.0.0' });
-        console.log(`Users service is running on 0.0.0.0:8083`);
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1);
-    }
+	app.decorate("aiSocket", aiSocket);
+
+	const playerToGame = new Map<string, { playerName: string, gameId: string, side: string }>();
+	app.decorate("playerToGame", playerToGame);
+
+	const privateQueue = new Map<string, string>();
+	app.decorate("privateQueue", privateQueue);
+
+	gameUpdate(app);
+
+	app.listen({ port: 8083, host: "0.0.0.0" }, (err) => {
+		if (err) {
+			app.log.error(err);
+			process.exit(1);
+		}
+	});
 }
 
-startServer();
+start();

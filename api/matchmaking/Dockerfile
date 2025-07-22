@@ -20,6 +20,8 @@ WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY package.json .
 
+RUN apk add --no-cache openssl
+
 RUN npm install --production
 
 CMD ["node", "dist/server.js"]

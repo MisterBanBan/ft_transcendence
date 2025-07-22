@@ -21,11 +21,14 @@ services:
         condition: service_healthy
       game:
         condition: service_healthy
+      ai:
+        condition: service_healthy
       auth:
         condition: service_healthy
     volumes:
         - ./api/auth/database:/app/database/auth
         - ./api/users/database:/app/database/users
+        - ./certs:/app/certs
     restart: unless-stopped
   users:
     image: users
@@ -43,13 +46,14 @@ services:
     volumes:
       - users-data:/app/database/users
       - ./uploads:/app/uploads
+      - ./certs:/app/certs
     restart: unless-stopped
 
   tournament:
     image: tournament
     container_name: tournament
     build:
-      context: api/tournament/
+      context: api/tournament
     healthcheck:
       test: [ "CMD-SHELL", "curl -f http://localhost:8081/health || exit 1" ]
       interval: 10s
@@ -60,6 +64,7 @@ services:
       - ft_transcendence
     volumes:
       - tournament-data:/app/database/tournament
+      - ./certs:/app/certs
     restart: on-failure
 
   game:
@@ -77,10 +82,31 @@ services:
       - ft_transcendence
     volumes:
       - game-data:/app/database/game
+      - ./certs:/app/certs
+    restart: on-failure
+
+  ai:
+    image: ai
+    container_name: ai
+    build:
+      context: api/ai
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8085/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    volumes:
+      - ai-data:/app/database/ai
+      - ./certs:/app/certs
     restart: on-failure
 
   matchmaking:
     image: matchmaking
+    env_file:
+      - .env
     container_name: matchmaking
     build:
       context: api/matchmaking
@@ -94,6 +120,7 @@ services:
       - ft_transcendence
     volumes:
       - matchmaking-data:/app/database/matchmaking
+      - ./certs:/app/certs
     restart: on-failure
 
   auth:
@@ -114,6 +141,7 @@ services:
     volumes:
       - auth-data:/app/database/auth
       - ./api/users/database:/app/database/users
+      - ./certs:/app/certs
     restart: on-failure
 
   nginx:
@@ -123,6 +151,7 @@ services:
       context: api/nginx
     volumes:
       - ./uploads:/usr/share/nginx/front/uploads
+      - ./certs:/etc/nginx/ssl
     ports:
       - "8443:443"
     depends_on:
@@ -161,6 +190,12 @@ volumes:
       type: none
       o: bind
       device: ./api/game/database
+  ai-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./api/ai/database
   tournament-data:
     driver: local
     driver_opts:

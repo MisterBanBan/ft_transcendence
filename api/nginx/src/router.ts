@@ -100,15 +100,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (data) {
             currentUser = data;
         }
-        else {
-            // TODO
-            //  {  id: number;
-            //     username: string;
-            //     provider: string;
-            //     provider_id?: string;
-            //     tfa: boolean;
-            //     updatedAt: number; }
-        }
+
         const router = new Router(routes, currentUser);
         await router.updatePage();
     } catch (error) {

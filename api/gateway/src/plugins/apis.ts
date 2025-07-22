@@ -19,6 +19,11 @@ export default async function (server: FastifyInstance, opts: any) {
 	})
 
 	server.register(fastifyHttpProxy, {
+		upstream: 'http://ai:8085/api/ai/',
+		prefix: '/api/ai',
+	})
+
+	server.register(fastifyHttpProxy, {
 		upstream: 'http://matchmaking:8083/api/matchmaking/',
 		prefix: '/api/matchmaking',
 	})

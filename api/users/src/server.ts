@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import corsConfig from './config/cors.js';
 import fileValidationConfig from "./config/file-validation.js";
+import fs from "fs";
 // import validationErrorHandler from "./error/validation-errors.js";
 // import websocket from "@fastify/websocket";
 

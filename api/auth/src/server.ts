@@ -2,8 +2,7 @@ import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import {decodeToken} from "./utils/decode-token.js";
-import logoutRoute from './routes/logout.js';
+
 async function startServer() {
 
 	const server = fastify();
