@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 11:22:56 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/22 15:06:27 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,17 @@ const routeComponents: Record<string, Component> = {
     },
     "/Pong": {
         init: () => {
+            const params = new URLSearchParams(window.location.search);
+            const mode = params.get("mode");
+
             activeComponent?.destroy?.();
             const pongGame = new pong(
                 'left-bar',      // ID de la barre gauche
-                'right-bar',     // ID de la barre droite
+                'right-bar',	// ID de la barre droite
+                'ball',			// ID de la balle
                 'pong-bg', // ID du conteneur de jeu
-                'pong'
+                'pong',
+                mode
               );
             pongGame.init();
             activeComponent = {
