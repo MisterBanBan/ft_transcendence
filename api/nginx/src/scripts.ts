@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/06 18:58:54 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/22 14:39:18 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ export class PlayerController implements IPlayerController{
     private lastTimestamp: number = 0;
     private playerWidth: number;
     private playerHeight: number;
+    private playerElement: HTMLElement;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
@@ -94,11 +95,11 @@ export class PlayerController implements IPlayerController{
     private isDoorOpen: boolean = false;
 
     constructor(playerId: string, door: string) {
-        
+        window.addEventListener('resize', this.handleResize.bind(this));
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
 
-
+        this.playerElement = playerElement; 
         console.log("PlayerController initialisé !");
         
         this.player = new PlayerAnimation(playerId);
@@ -113,9 +114,6 @@ export class PlayerController implements IPlayerController{
                     this.isDoorOpen = true;
                     const doorContainer = document.getElementById("videoDoor");
                     if (doorContainer) {
-                        doorContainer.innerHTML = `<video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-                        <source src="/img/doorOpen.mp4" type="video/mp4">
-                      </video>`;
                         window.history.pushState(null, "", "/Tv");
                         window.dispatchEvent(new PopStateEvent("popstate"));
                     }
@@ -130,20 +128,26 @@ export class PlayerController implements IPlayerController{
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
 
     }
-
+    private handleResize() {
+        const viewportHeight = window.innerHeight;
+        console.log("Viewport height:", viewportHeight);
+        const playerBottom = this.pos.y + this.playerHeight;
+        
+        if (playerBottom > viewportHeight) {
+            this.pos.y = viewportHeight - this.playerHeight;
+            this.updatePosition();
+        }
+    }
     public destroy(): void {
-        // Arrêter l'animation du joueur
         this.player.stopAnimation();
         
-        // Supprimer les écouteurs d'événements
         window.removeEventListener('keydown', this.boundKeyDownHandler);
         window.removeEventListener('keyup', this.boundKeyUpHandler);
         
-        // Annuler la boucle de jeu
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);
         }
-        console.log("PlayerController détruit");
+        console.log("PlayerController destroy");
     }
 
     private worldPosX:number = 0;
@@ -156,24 +160,26 @@ export class PlayerController implements IPlayerController{
     }
 
     private updatePhysics(dt: number, worldWidth: number, viewportHeight: number) {
-        //position par rapport au monde
+        
         const gravity = 1500; 
         this.worldPosX = this.worldPosX || this.pos.x;
         this.worldPosX += this.stats.velocity.x * dt;
         this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
 
-        //gravity
+        const rect = this.playerElement.getBoundingClientRect();
+        this.playerHeight = rect.height;
+        this.playerWidth = rect.width;
+
         this.stats.velocity.y += gravity * dt;
         this.pos.y += this.stats.velocity.y * dt;
-        this.pos.y = Math.max(0, Math.min(viewportHeight - this.playerHeight, this.pos.y));
-
-        //max gravity
-        const floor = viewportHeight - this.playerHeight;
-        if (this.pos.y >= floor) {
+    
+        const playerBottom = this.pos.y + this.playerHeight;
+        if (playerBottom >= viewportHeight) {
             this.stats.velocity.y = 0;
-            this.pos.y = floor;
+            this.pos.y = viewportHeight - this.playerHeight;
             this.stats.isJumping = false;
         }
+        console.log(this.pos.y, viewportHeight, this.playerHeight);
         this.pos.x = this.worldPosX - this.cameraX;
     }
 
@@ -209,7 +215,7 @@ export class PlayerController implements IPlayerController{
         const doorLeft = this.cameraX + rect.left + this.playerWidth;
         // faudrait mettre une box pour la door 
         const doorRight = doorLeft + rect.width / 3;
-        console.log('door: %d, %d, %d',this.worldPosX, doorLeft, doorRight);
+        //console.log('door: %d, %d, %d',this.worldPosX, doorLeft, doorRight);
         const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
 
         if (inZone !== this.isInTriggerZone) {
@@ -226,7 +232,16 @@ export class PlayerController implements IPlayerController{
     
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        const worldWidth = viewportWidth * 3;
+
+        const path = window.location.pathname;
+        let worldWidth: number;
+        if (path === "/chalet")
+        {
+            worldWidth = viewportWidth * 2;
+        } else {
+            worldWidth = viewportWidth * 3;
+        }
+        
 
 
         this.updatePhysics(deltaTime, worldWidth, viewportHeight);
@@ -243,6 +258,6 @@ export class PlayerController implements IPlayerController{
     }
 }
 
-// Exporter correctement la classe PlayerController
 export default PlayerController;
 
+8

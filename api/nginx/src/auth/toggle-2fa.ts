@@ -5,125 +5,73 @@ interface Payload {
 	password: string | undefined;
 }
 
-export class Toggle2FA implements Component{
+async function handleSubmit(event: Event, toggle: boolean): Promise<void> {
+	event.preventDefault();
 
-	private toggleSwitch: HTMLInputElement | null = null;
-	private submitButton: HTMLInputElement | null = null;
-	private readonly onToggleSwitchBound: (event: Event) => void;
-	private onSubmitBoundWrapper?: (event: Event) => void;
-	private provider: string | null = null;
-
-	constructor() {
-		this.onToggleSwitchBound = this.handleToggle.bind(this);
-	}
-
-	public init(): void {
-
-		if (window.location.pathname === "/settings")
-		{
-			this.toggleSwitch = document.getElementById("toggle-2fa") as HTMLInputElement | null;
-
-			if (!this.toggleSwitch) {
-				console.error("Missing toggle switch.");
-				return;
-			}
-
-			(async () => {
-				try {
-					if (await this.has2FA()) {
-						this.toggleSwitch!.checked = true;
-					}
-				} catch (e) {
-					console.error("Error checking 2FAs status", e);
-				}
-			})();
-
-			this.toggleSwitch.addEventListener("change", this.onToggleSwitchBound);
+	let codeInput;
+	let passwordInput;
+	let requestUrl;
+	switch (toggle) {
+		case true: {
+			codeInput = document.getElementById("2fa-code") as HTMLInputElement | null;
+			passwordInput = document.getElementById("2fa-password") as HTMLInputElement | null;
+			requestUrl = "/api/auth/2fa/create";
+			break;
 		}
-		else {
-			(async () => { await this.handleToggle(); })();
+		case false: {
+			codeInput = document.getElementById("2fa-code-remove") as HTMLInputElement | null;
+			passwordInput = document.getElementById("2fa-password-remove") as HTMLInputElement | null;
+			requestUrl = "/api/auth/2fa/remove";
+			break;
 		}
 	}
 
-	private async has2FA(): Promise<boolean> {
-		const response = await fetch("/api/auth/has-2fa", {
-			method: "GET",
+	if (!codeInput) {
+		console.error("Code field is missing.");
+		return;
+	}
+
+	let password = undefined;
+	if (passwordInput) {
+		password = passwordInput.value;
+	}
+
+	const body: Payload = {
+		code: codeInput.value,
+		password: password,
+	}
+
+	try {
+		const response = await fetch(requestUrl, {
+			method: "POST",
 			headers: {"Content-Type": "application/json"},
+			body: JSON.stringify(body),
 		});
-		return (await response.json()).has2FA;
-	}
 
-	private async handleToggle(event?: Event): Promise<void> {
-		if (this.toggleSwitch?.checked || window.location.pathname === "/2fa/create") {
-			await this.create2FA();
-		}
-		else if (!this.toggleSwitch?.checked || window.location.pathname === "/2fa/remove") {
-			await this.remove2FA();
-		}
-	}
+		const data = await response.json();
 
-	private async handleSubmit(event: Event, toggle: boolean): Promise<void> {
-		event.preventDefault();
-
-		let codeInput;
-		let passwordInput;
-		let requestUrl;
-		switch (toggle) {
-			case true: {
-				codeInput = document.getElementById("2fa-code") as HTMLInputElement | null;
-				passwordInput = document.getElementById("2fa-password") as HTMLInputElement | null;
-				requestUrl = "/api/auth/2fa/create";
-				break;
-			}
-			case false: {
-				codeInput = document.getElementById("2fa-code-remove") as HTMLInputElement | null;
-				passwordInput = document.getElementById("2fa-password-remove") as HTMLInputElement | null;
-				requestUrl = "/api/auth/2fa/remove";
-				break;
-			}
-		}
-
-		if (!codeInput) {
-			console.error("Code field is missing.");
+		if (!response.ok) {
+			console.error(data.error);
 			return;
 		}
 
-		let password = undefined;
-		if (passwordInput) {
-			password = passwordInput.value;
-		}
+		window.location.href = "/settings";
 
-		const body: Payload = {
-			code: codeInput.value,
-			password: password,
-		}
-
-		try {
-			const response = await fetch(requestUrl, {
-				method: "POST",
-				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify(body),
-			});
-
-			const data = await response.json();
-
-			if (!response.ok) {
-				console.error(data.error);
-				return;
-			}
-
-			window.location.href = "/settings";
-
-		} catch (err) {
-			console.error(err);
-		}
+	} catch (err) {
+		console.error(err);
 	}
+}
 
-	private async create2FA() {
-		const popup = document.getElementById('toggle-2fa-popup') as HTMLDivElement | null;
+export class Add2FA implements Component {
 
-		if (!popup) {
-			console.error("Missing 2fa popup.");
+	private submitButton: HTMLInputElement | null = null;
+	private onSubmitBoundWrapper?: (event: Event) => void;
+
+	public async init(): Promise<void> {
+		this.submitButton = document.getElementById("2fa-submit") as HTMLInputElement | null;
+
+		if (!this.submitButton) {
+			console.error("Submit button not found!");
 			return;
 		}
 
@@ -152,7 +100,6 @@ export class Toggle2FA implements Component{
 			if (imageElement) {
 				imageElement.src = data.url;
 			}
-			this.provider = data.provider
 
 		} catch (err) {
 			console.error(err);
@@ -169,20 +116,29 @@ export class Toggle2FA implements Component{
 			this.submitButton.removeEventListener('click', this.onSubmitBoundWrapper);
 		}
 
-		this.onSubmitBoundWrapper = (event: Event) => this.handleSubmit(event, true);
+		this.onSubmitBoundWrapper = (event: Event) => handleSubmit(event, true);
 		this.submitButton.addEventListener("click", this.onSubmitBoundWrapper);
-
-		popup.classList.remove("hidden");
 	}
 
-	private async remove2FA() {
-		const popup = document.getElementById('remove-2fa-popup') as HTMLDivElement | null;
+	public destroy(): void {
+		if (this.submitButton && this.onSubmitBoundWrapper)
+			this.submitButton.removeEventListener("click", this.onSubmitBoundWrapper);
+	}
+}
 
-		if (!popup) {
-			console.error("Missing 2fa popup.");
+export class Remove2FA implements Component {
+
+	private submitButton: HTMLInputElement | null = null;
+	private onSubmitBoundWrapper?: (event: Event) => void;
+
+	public async init(): Promise<void> {
+		this.submitButton = document.getElementById("2fa-submit-remove") as HTMLInputElement | null;
+
+		if (!this.submitButton) {
+			console.error("Submit button not found!");
 			return;
 		}
-
+	
 		try {
 			const response = await fetch("/api/auth/2fa/remove", {
 				method: "GET",
@@ -203,13 +159,6 @@ export class Toggle2FA implements Component{
 				return;
 			}
 
-			const imageElement = document.getElementById('qrCodeImage') as HTMLImageElement;
-
-			if (imageElement) {
-				imageElement.src = data.url;
-			}
-			this.provider = data.provider
-
 		} catch (err) {
 			console.error(err);
 			return;
@@ -225,15 +174,11 @@ export class Toggle2FA implements Component{
 			this.submitButton.removeEventListener('click', this.onSubmitBoundWrapper);
 		}
 
-		this.onSubmitBoundWrapper = (event: Event) => this.handleSubmit(event, false);
+		this.onSubmitBoundWrapper = (event: Event) => handleSubmit(event, false);
 		this.submitButton.addEventListener("click", this.onSubmitBoundWrapper);
-
-		popup.classList.remove("hidden");
 	}
-	public destroy(): void {
-		if (this.toggleSwitch)
-			this.toggleSwitch.removeEventListener("change", this.onToggleSwitchBound)
 
+	public destroy(): void {
 		if (this.submitButton && this.onSubmitBoundWrapper)
 			this.submitButton.removeEventListener("click", this.onSubmitBoundWrapper);
 	}

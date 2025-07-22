@@ -6,25 +6,36 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/04 15:33:12 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/20 15:08:19 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Component } from "./component.js";
+import { loginForm } from "./menuInsert/loginForm.js";
+import { registerForm } from "./menuInsert/registerForm.js";
+import { game } from "./menuInsert/game.js";
+import { Login } from "./auth/login.js";
+import { Register } from "./auth/register.js";
+import { AuthUser } from './type.js';
+import { getUser, setUser } from "./user-handler.js";
+import { viewManager } from "./views/viewManager.js";
+
 
 
 export class menu implements Component {
     private videoMain: HTMLVideoElement;
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
-    private loginForm: HTMLElement;
-    private registerForm: HTMLElement;
-    private registerBtn: HTMLElement;
-    private loginBtn: HTMLElement;
-    // private ffaDiv: HTMLElement;
-    // private ffaBtn: HTMLElement;
+    //private visibleForm: "none" | "login" | "parametre" = "none";
+    private formsContainer: HTMLElement;
+    private formspicture: HTMLElement;
+    private options!: HTMLElement[];
+    private cursor!: HTMLVideoElement;
+    private selectedIdx: number = 0;
+    private viewManager: viewManager;
+    private keydownHandler: (e: KeyboardEvent) => void;
     
-    constructor(videoId: string, containerFormId: string, authBtnId: string, loginFormId: string, registerFormId: string, registerBtnId: string, loginBtnId: string) { 
+    constructor(videoId: string, containerFormId: string, authBtnId: string, currentUser: AuthUser | undefined) { 
         const video = document.getElementById(videoId) as HTMLVideoElement;
         if (!video) throw new Error('Video element not found');
         this.videoMain = video;
@@ -37,83 +48,141 @@ export class menu implements Component {
         if (!authBtn) throw new Error('Auth button not found');
         this.authBtn = authBtn;
 
-        const loginForm = document.getElementById(loginFormId);
-        if (!loginForm) throw new Error('Form wrapper not found');
-        this.loginForm = loginForm;
+        const formsContainer = document.getElementById('dynamic-content');
+        if (!formsContainer) throw new Error('Form wrapper not found');
+        this.formsContainer= formsContainer;
 
-        const registerForm = document.getElementById(registerFormId);
-        if (!registerForm) throw new Error('Form wrapper not found');
-        this.registerForm = registerForm;
+        const formspicture = document.getElementById('picture');
+        if (!formspicture) throw new Error('Form wrapper not found');
+        this.formspicture = formspicture;
 
-        const registerBtn = document.getElementById(registerBtnId);
-        if (!registerBtn) throw new Error('Form wrapper not found');
-        this.registerBtn = registerBtn;
+        this.viewManager = new viewManager(formsContainer,  this.formspicture, this.videoMain, () => this.setupGameMenu());
 
-        const loginBtn = document.getElementById(loginBtnId);
-        if (!loginBtn) throw new Error('Form wrapper not found');
-        this.loginBtn= loginBtn;
+        setUser(currentUser);
 
-        // const ffaDiv = document.getElementById(ffaId);
-        // if (!ffaDiv) throw new Error('Form wrapper not found');
-        // this.ffaDiv= ffaDiv;
+        this.keydownHandler = this.handleKeydown.bind(this);
     }
 
     public init(): void {
 
         window.addEventListener("resize", this.resize);
-        
         this.videoMain.addEventListener("loadedmetadata", () => {
             console.log("Loadedmetadata ready");
             this.resize();
         });
+        if (getUser()) {
+            this.formsContainer.insertAdjacentHTML('beforeend', game());
 
-        this.authBtnHandler = () => {
-            if(!this.loginForm.classList.contains('hidden')  || 
-            !this.registerForm.classList.contains('hidden')) {
-                this.loginForm.classList.add('hidden');
-                this.registerForm.classList.add('hidden');
-            } else {
-                this.loginForm.classList.remove('hidden');
-                this.registerForm.classList.add('hidden');
-                this.resize();
-            }
-            
-        };
-
-        this.registerBtnHandler = () => { 
-            this.loginForm.classList.add('hidden');
-            this.registerForm.classList.remove('hidden');
-            
-        };
-
-        this.loginBtnHandler = () => { 
-            this.registerForm.classList.add('hidden');
-            this.loginForm.classList.remove('hidden');
-        };
+        }
         this.authBtn.addEventListener('click', this.authBtnHandler);
-        this.registerBtn.addEventListener('click', this.registerBtnHandler);
-        this.loginBtn.addEventListener('click', this.loginBtnHandler);
     }
 
-    private authBtnHandler = () => {};
-    private registerBtnHandler = () => {};
-    private loginBtnHandler = () => {};
+ 
+    private authBtnHandler = () => {
+        if (!getUser()) {
+            this.viewManager.show('login');
+        } else {
+            this.viewManager.show('parametre');
+        }
+    };
+
+    /*private  async loadForm(formType: 'login' | 'register'){
+        this.formsContainer.innerHTML = '';
+
+        const formHtml = formType === 'login' ? loginForm() : registerForm();
+
+        this.formsContainer.insertAdjacentHTML('beforeend', formHtml);
+        if (formType === 'register') {
+            const register = new Register();
+            register.init();
+        }
+        else if (formType === 'login') {
+            const login = new Login();
+            login.init();
+        }
+        this.eventFormListeners();
+    }*/
+
+    /*private returnForm() {
+        this.formsContainer.innerHTML = '';
+        this.formsContainer.insertAdjacentHTML('beforeend', game());
+
+        this.loadAcceuil();
+        //this.visibleForm = "none";
+        this.eventFormListeners();
+    }
+
+    
+    private eventFormListeners() {
+        //document.getElementById('registerBtn')?.addEventListener('click', () => this.loadForm('register'));
+        //document.getElementById('loginBtn')?.addEventListener('click', () => this.loadForm('login'));
+        document.getElementById('parametreReturnBtn')?.addEventListener('click', () => this.returnForm());
+
+    }*/
+    
+
+    private loadAcceuil (){
+        this.videoMain.poster = "/img/pong.png";
+        this.videoMain.src = '/img/acceuil.mp4';
+        this.videoMain.load();
+    }
+  
+       
+
+    private updateCursor() {
+        if (!this.options.length) return;
+        const firstOption = this.options[0];
+        const selected = this.options[this.selectedIdx];
+        const offset = selected.offsetTop - firstOption.offsetTop;
+        this.cursor.style.top = offset + "px";
+        
+
+        this.options.forEach((opt, i) => {
+            opt.classList.toggle('selected', i === this.selectedIdx);
+        });
+    }
+    
+    private selectOption() {
+        if (!this.options.length) return;
+        const selected = this.options[this.selectedIdx];
+    }
+    
+    private handleKeydown(e: KeyboardEvent) {
+        if (!this.options.length) return;
+        if (e.key === "ArrowDown") {
+            this.selectedIdx = (this.selectedIdx + 1) % this.options.length;
+            this.updateCursor();
+        } else if (e.key === "ArrowUp") {
+            this.selectedIdx = (this.selectedIdx - 1 + this.options.length) % this.options.length;
+            this.updateCursor();
+        } else if (e.key === "Enter") {
+            this.selectOption();
+        }
+    }
+
+    private setupGameMenu() {
+        this.options = Array.from(document.querySelectorAll('.menu-option')) as HTMLElement[];
+        const cursor = document.getElementById('cursor-video') as HTMLVideoElement;
+        if (!cursor) throw new Error('Cursor video not found');
+        this.cursor = cursor;
+        this.updateCursor();
+        document.addEventListener('keydown', this.keydownHandler);
+    }
     
     private resize = () => {
         const rect = this.videoMain.getBoundingClientRect();
             
         this.containerForm.style.left = `${(rect.left )}px`;
         this.containerForm.style.top = `${(rect.top )}px`;
-        this.containerForm.style.width = `${rect.width * 0.8}px`;
+        this.containerForm.style.width = `${rect.width }px`;
         this.containerForm.style.height = `${rect.height}px`;
         this.containerForm.style.position = "absolute";
-        
     }
 
     public destroy(): void {
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
-        this.registerBtn.removeEventListener('click', this.registerBtnHandler);
-        this.loginBtn.removeEventListener('click', this.loginBtnHandler);
     }
 }
+
+

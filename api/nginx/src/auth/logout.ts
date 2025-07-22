@@ -1,4 +1,5 @@
 import { Component } from "../component.js";
+import { setUser } from "../user-handler.js";
 
 // Removed unused Payload interface
 
@@ -13,6 +14,8 @@ export class Logout implements Component{
 
 	public init(): void {
 		this.submitButton = document.getElementById("logout");
+
+		console.log("Logout button:", this.submitButton);
 
 		if (!this.submitButton) {
 			console.error("Logout button not found!");
@@ -31,8 +34,8 @@ export class Logout implements Component{
 				credentials: "include",
 			});
 
-			if (response.redirected) {
-				window.location.href = response.url;
+			if (response.ok) {
+				setUser(undefined);
 				return;
 			}
 

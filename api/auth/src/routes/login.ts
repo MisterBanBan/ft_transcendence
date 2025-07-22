@@ -6,11 +6,12 @@ import {createToken} from "./2fa/validate.js"
 import {signToken} from "../utils/sign-token.js";
 import {setCookie} from "../utils/set-cookie.js";
 import {verifyPassword} from "../utils/verify-password.js";
+import { getAvatar } from '../db/get-avatar.js';
 
 interface Cookie {
 	path: string,
 	httpOnly: boolean,
-	secure: boolean,
+	secure: boolean, 
 	maxAge: number
 }
 
@@ -26,13 +27,6 @@ export default async function (server: FastifyInstance) {
 				},
 				additionalProperties: false,
 			},
-			response: {
-				200: {
-					type: "object",
-					properties: {},
-					additionalProperties: false,
-				},
-			}
 		}
 	}, async (request, reply) => {
 
@@ -74,7 +68,18 @@ export default async function (server: FastifyInstance) {
 			}
 
 			await setCookie(reply, token);
-			return reply.status(200).send({ status: "LOGGED-IN" });
+
+			const currentUser = {
+				id: user.id!,
+				username: user.username,
+				avatar_url: await getAvatar(server.usersDb, user.username),
+				provider: user.provider,
+				provider_id: user.provider_id,
+				tfa: Boolean(user.tfa),
+				updatedAt: user.updatedAt
+			};
+
+			return reply.status(200).send({ status: "LOGGED-IN", user: currentUser });
 
 		} catch (err) {
 			return reply.status(500).send({

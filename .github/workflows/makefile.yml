@@ -1,0 +1,33 @@
+name: Makefile test
+
+on:
+  push:
+    branches: [ "front_end" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Create .env file for auth
+      run: |
+        mkdir -p api/auth
+        echo "COOKIE_SECRET=${{ secrets.COOKIE_SECRET }}" > api/auth/.env
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> api/auth/.env
+        echo "ARGON_SECRET=${{ secrets.ARGON_SECRET }}" >> api/auth/.env
+        echo "CLIENT_SECRET_42=${{ secrets.CLIENT_SECRET_42 }}" >> api/auth/.env
+        echo "CLIENT_ID_42=${{ secrets.CLIENT_ID_42 }}" >> api/auth/.env
+        echo "CLIENT_SECRET_GOOGLE=${{ secrets.CLIENT_SECRET_GOOGLE }}" >> api/auth/.env
+        echo "CLIENT_ID_GOOGLE=${{ secrets.CLIENT_ID_GOOGLE }}" >> api/auth/.env
+
+        echo "COOKIE_SECRET=${{ secrets.COOKIE_SECRET }}" > api/gateway/.env
+        echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> api/gateway/.env
+
+
+    - name: Install dependencies
+      run: make

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   intro.ts                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:52:39 by afavier           #+#    #+#             */
-/*   Updated: 2025/05/07 05:46:21 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/16 17:12:38 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ function initZoom() {
     }
 }
 
-/*Permet d'eviter que le player tourne en fond sur d'autres page*/
 interface IPlayerController {
     destroy(): void;
 }
