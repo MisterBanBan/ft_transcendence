@@ -45,7 +45,7 @@ export class InvitationService {
             const data = await response.json();
             ApiUtils.displayResponse('invitationsResponse', data, !response.ok);
 
-            this.displayInvitations(data.invitations || []);
+            this.displayInvitations(data.invitations);
         } catch (error) {
             ApiUtils.displayResponse('invitationsResponse', { error: (error as Error).message }, true);
         }
@@ -70,8 +70,8 @@ export class InvitationService {
 
             const data = await response.json();
         } catch (error) {
-        console.error(error);
-    }
+            console.error(error);
+        }
     }
 
     static async declineInvitation(): Promise<void> {
