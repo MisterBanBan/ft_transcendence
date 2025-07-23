@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   viewManager.ts                                     :+:      :+:    :+:   */
+/*   ViewManager.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/22 21:55:04 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/23 23:01:29 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ import { registerView } from './registerView.js';
 import { Component } from '../component.js';
 import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/picture.js';
+import { friendAction } from '../menuInsert/friendAction.js';
+import { friendsActif } from '../menuInsert/friendsActif.js';
 
 
 
@@ -50,7 +52,7 @@ export class viewManager{
         this.activeView?.destroy();
         
         this.container.innerHTML = '';
-        this.pictureContainer.innerHTML = '';
+        //this.pictureContainer.innerHTML = '';
         
         let newView: Component | null = null;
 
@@ -59,6 +61,11 @@ export class viewManager{
                 this.loadAcceuilVideo();
                 this.container.innerHTML = game();
                 this.pictureContainer.innerHTML = picture();
+                this.pictureContainer.innerHTML = picture();
+const firendDiv = document.getElementById('friendsActif');
+if (firendDiv) {
+    firendDiv.innerHTML = friendsActif();
+}
                 this.setupGameMenuCallback();
                 break;
             case 'login':

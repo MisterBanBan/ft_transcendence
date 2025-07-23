@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/20 17:32:30 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:05:47 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ export class friendsView implements Component {
     }
 
     public init(): void {
+        this.container.innerHTML = '';
         this.container.innerHTML = friendsList();
         this.friends();
         this.attachEventListeners();

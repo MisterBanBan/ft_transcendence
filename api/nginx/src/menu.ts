@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   menu.ts                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 22:25:30 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/23 16:18:07 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,40 +81,6 @@ export class menu implements Component {
             this.viewManager.show('parametre');
         }
     };
-
-    /*private  async loadForm(formType: 'login' | 'register'){
-        this.formsContainer.innerHTML = '';
-
-        const formHtml = formType === 'login' ? loginForm() : registerForm();
-
-        this.formsContainer.insertAdjacentHTML('beforeend', formHtml);
-        if (formType === 'register') {
-            const register = new Register();
-            register.init();
-        }
-        else if (formType === 'login') {
-            const login = new Login();
-            login.init();
-        }
-        this.eventFormListeners();
-    }*/
-
-    /*private returnForm() {
-        this.formsContainer.innerHTML = '';
-        this.formsContainer.insertAdjacentHTML('beforeend', game());
-
-        this.loadAcceuil();
-        //this.visibleForm = "none";
-        this.eventFormListeners();
-    }
-
-    
-    private eventFormListeners() {
-        //document.getElementById('registerBtn')?.addEventListener('click', () => this.loadForm('register'));
-        //document.getElementById('loginBtn')?.addEventListener('click', () => this.loadForm('login'));
-        document.getElementById('parametreReturnBtn')?.addEventListener('click', () => this.returnForm());
-
-    }*/
     
 
     private loadAcceuil (){

@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 20:22:54 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/20 18:09:29 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:06:08 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ export class SettingsView implements Component {
     }
 
     public init(): void{
+        this.container.innerHTML = '';
         this.container.innerHTML = settings();
         this.attachEventListeners();
     }

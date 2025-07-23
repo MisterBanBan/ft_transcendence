@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 13:56:40 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/21 16:19:32 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/23 16:05:53 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ export class loginView implements Component {
     }
 
     public init(): void {
+        this.container.innerHTML = '';
         this.container.innerHTML = loginForm();
         const loginLogic = new Login();
         loginLogic.init();
