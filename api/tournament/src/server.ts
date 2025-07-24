@@ -1,18 +1,19 @@
 import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
 import { join } from "node:path";
-import fs from "fs";
-import fastifyWebsocket from "@fastify/websocket";
-import wssGet from "./wss.js";
+import cors from "@fastify/cors";
+import fastifyIO from "fastify-socket.io";
 
 async function startServer() {
 
 	try {
 		const server = fastify();
 
-		await server.register(fastifyWebsocket);
-		await server.register(wssGet);
-		// await server.register(fastifyIO, { cors: { origin: "https://z3r6p4:8443", credentials: true } });
+		await server.register(cors, { origin: `http://10.13.4.2:8443` , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
+		await server.register(fastifyIO, {
+			path: "/wss/tournament",
+			cors: { origin: `http://10.13.4.2:8443`, credentials: true }
+		});
 
 		const dir = __dirname;
 		server.register(autoLoad, {

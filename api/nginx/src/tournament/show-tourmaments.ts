@@ -1,6 +1,4 @@
-import EnhancedSocket from "./enhanced-ws.js";
-
-export function showTourmaments(ws: EnhancedSocket, data: any) {
+export function showTourmaments(socket: any, data: any) {
 
 	const div = document.getElementById("tournaments");
 
@@ -68,7 +66,7 @@ export function showTourmaments(ws: EnhancedSocket, data: any) {
 					displayName: displayName.value
 				} as { name: string, displayName: string };
 
-				ws.sendAction("joinTournament", payload);
+				socket.sendAction("joinTournament", payload);
 
 				// const response = await fetch("/api/tournament/join", {
 				// 	method: "POST",

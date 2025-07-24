@@ -1,4 +1,4 @@
-import fastify, { FastifyInstance } from "fastify";
+import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 import autoLoad from "@fastify/autoload";
 import { join } from "path";

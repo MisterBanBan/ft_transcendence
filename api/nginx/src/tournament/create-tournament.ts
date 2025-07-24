@@ -1,22 +1,17 @@
 import {Component} from "../component.js";
-import EnhancedSocket from "./enhanced-ws.js";
-import { sendMessage } from "./ws-utils.js";
-
 declare const io: any;
 
 export class CreateTournament implements Component {
 
 	private submitButton: HTMLElement | null = null;
 	private readonly handleSubmitBound: (event: Event) => void;
-	// private socket = io('https://10.13.6.4:8081', {
-	// 	transports: ["websocket", "polling"],
-	// 	withCredentials: true,
-	// });
 
-	private ws: EnhancedSocket;
+	private readonly socket: any;
 
-	constructor(ws: EnhancedSocket) {
-		this.ws = ws;
+	constructor(socket: any) {
+		this.socket = socket;
+
+		console.log("Socket:", this.socket);
 
 		this.handleSubmitBound = this.handleSubmit.bind(this);
 	}
@@ -42,25 +37,25 @@ export class CreateTournament implements Component {
 
 		const nameInput = document.getElementById("tournament-name") as HTMLInputElement | null;
 		const sizeInput = document.getElementById("tournament-size") as HTMLInputElement | null;
+		const displayNameInput = document.getElementById("display-name") as HTMLInputElement | null;
 
-		if (!nameInput || !sizeInput) {
+		if (!nameInput || !sizeInput || !displayNameInput) {
 			console.error("Error: one or multiple fields is missing");
 			return;
 		}
 
 		const name = nameInput.value;
 		const size = sizeInput.value;
-
-		const payload = {
-			name: name,
-			size: parseInt(size)
-		} as { name: string, size: number };
+		const displayName = displayNameInput.value;
 
 		try {
 
-			console.log("Clicked");
+			console.log("Clicked:", this.socket);
 
-			this.ws.sendAction("createTournament", payload);
+			// this.socket.emit("createTournament", payload.name, payload.size);
+			this.socket.emit("createTournament", name, parseInt(size), displayName);
+
+			// this.ws.sendAction("createTournament", payload);
 
 			// this.socket.emit('createTournament');
 			//
