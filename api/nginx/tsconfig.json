@@ -6,7 +6,7 @@
     "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
-    "moduleResolution": "bundler"
+    "moduleResolution": "Bundler"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["dist", "node_modules"]

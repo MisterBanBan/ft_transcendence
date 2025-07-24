@@ -63,6 +63,10 @@ export default async function (server: FastifyInstance) {
 
 		await setCookie(reply, key.authToken);
 
-		return reply.status(200).send({ success: true });
+		return reply.setCookie("2FA-REQUIRED", "false", {
+			httpOnly: false,
+			sameSite: true,
+			maxAge: 60,
+		}).status(200).send({ success: true });
 	});
 }
