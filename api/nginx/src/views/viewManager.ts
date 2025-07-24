@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/23 23:01:29 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/24 11:49:32 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,12 @@ export class viewManager{
                 this.container.innerHTML = game();
                 this.pictureContainer.innerHTML = picture();
                 this.pictureContainer.innerHTML = picture();
-const firendDiv = document.getElementById('friendsActif');
-if (firendDiv) {
-    firendDiv.innerHTML = friendsActif();
-}
+                const firendDiv = document.getElementById('friendsActif');
+                if (firendDiv) {
+                    firendDiv.innerHTML = friendsActif();
+                }
+                document.querySelectorAll('#friend').forEach(btn => {
+                    btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
                 this.setupGameMenuCallback();
                 break;
             case 'login':
@@ -102,7 +104,23 @@ if (firendDiv) {
         
     }
 
-
+    private friendAction(e: MouseEvent) {
+        const x = e.clientX;
+        const y = e.clientY;
+        const friendsContainer = document.getElementById('friendsActif');
+        if (!friendsContainer) {
+            console.error('Friends container not found');
+            return;
+        }
+        const existingPopup = document.getElementById('friend-popup');
+        if (existingPopup) {
+            existingPopup.remove();
+            return;
+        }
+        const popupHtml = friendAction(x, y);
+        friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
+    }
+    
     private loadAcceuilVideo() {
         this.videoMain.poster = "/img/pong.png";
         this.videoMain.src = '/img/acceuil.mp4';

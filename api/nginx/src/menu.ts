@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/23 16:18:07 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/24 18:11:25 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ export class menu implements Component {
             console.log("Loadedmetadata ready");
             this.resize();
         });
+        this.resize();
         this.authBtn.addEventListener('click', this.authBtnHandler);
     }
 

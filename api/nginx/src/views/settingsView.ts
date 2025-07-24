@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 20:22:54 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/23 16:06:08 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/24 17:15:20 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ export class SettingsView implements Component {
     private handleNewPseudo = () => this.newPseudo();
     private handleNewPassword = () => this.newPassword();
     private handleToggle2FA = () => this.toggle2FA();
+    private handleSettings = () => this.viewManager.show('settings');
     private handleSettingsReturn = () => this.viewManager.show('parametre');
     private handlePseudoReturn = () => this.viewManager.show('settings');
 
@@ -48,6 +49,7 @@ export class SettingsView implements Component {
         document.getElementById('newPseudo')?.addEventListener('click', this.handleNewPseudo);
         document.getElementById('newPass')?.addEventListener('click', this.handleNewPassword);
         document.getElementById('toggle-2fa')?.addEventListener('change', this.handleToggle2FA);
+        document.getElementById('settings')?.addEventListener('click', this.handleSettings);
         document.getElementById('settingsReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
     }
 
@@ -99,6 +101,7 @@ export class SettingsView implements Component {
         document.getElementById('newPass')?.removeEventListener('click', this.handleNewPassword);
         document.getElementById('toggle-2fa')?.removeEventListener('change', this.handleToggle2FA);
         document.getElementById('settingsReturnBtn')?.removeEventListener('click', this.handleSettingsReturn);
+        document.getElementById('settings')?.removeEventListener('click', this.handleSettings);
         document.getElementById('pseudoReturnBtn')?.removeEventListener('click', this.handlePseudoReturn);
     }
 }

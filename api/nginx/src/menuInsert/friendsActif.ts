@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 21:25:26 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/23 23:11:08 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/24 11:20:02 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ export const friendsActif = () => {
     return `
         <div class="h-full w-full overflow-y-auto ">
             ${sortedFriends.map((f, i) => `
-            <div class="flex flex-row justify-between items-center gap-4 responsive-text-historique ">
+            <div class="flex flex-row justify-between items-center gap-2 responsive-text-historique ">
                 <img src="${f.img}" alt="${f.name}" class="w-10 h-10 rounded-full object-contain"/>
                 <button id="friend" class="responsive-text-historique">${f.name}</button>
                 <span class=" w-3 h-3 rounded-full border-2 border-white ${

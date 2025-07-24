@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/23 19:10:26 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/24 17:06:05 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ export const routes: Route[] = [
 							</video>
 						</div>
 				<div id="player"
-				class="fixed left-0 w-[30vw] h-[70vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-50">
+				class="fixed left-0 w-[30vw] h-[60vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-50">
 			</div>
 			`;
 		}	
