@@ -7,7 +7,8 @@ export async function up({ context }: { context: Database }) {
              winner_score INTEGER,
              loser_score INTEGER,
              winner VARCHAR(255) NOT NULL,
-             loser VARCHAR(255) NOT NULL
+             loser VARCHAR(255) NOT NULL, 
+             created_at INTEGER NOT NULL
         )
     `);
 }

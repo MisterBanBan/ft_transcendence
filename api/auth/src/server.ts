@@ -2,8 +2,6 @@ import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
-import {decodeToken} from "./utils/decode-token.js";
-import fs from "fs";
 
 async function startServer() {
 

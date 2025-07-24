@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/04 15:32:43 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/22 14:42:58 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,10 @@ const google_url = "https://accounts.google.com/o/oauth2/v2/auth?" +
 	"prompt=login"
 
 export interface Route {
-    path: string;
-    title: string;
-    /*Gestion du chargement asynchrone du contenu des templates grace a Promise*/
-    template: (() => Promise<string>) | string;
+	path: string;
+	title: string;
+	/*Gestion du chargement asynchrone du contenu des templates grace a Promise*/
+	template: (() => Promise<string>) | string;
 }
 
 export const routes: Route[] = [
@@ -38,40 +38,59 @@ export const routes: Route[] = [
             await new Promise(resolve => setTimeout(resolve, 300));
             return `
             <div class="fixed inset-0 h-full w-full relative overflow-hidden">
-                <div
-                  id="procedural-bg"
-                  class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
-                ></div>
+
+				
                 <canvas id="forest" class="absolute inset-0 -z-20"></canvas>
-                <div class="absolute left-0 bottom-0 w-full h-full z-10">
-  <img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[30%] object-cover pointer-events-none translate-y-2" />
-  <img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[17%] object-cover pointer-events-none translate-y-2" />
-</div>
+				
+				
 
 
 
 
                 <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
-                  <div class="w-screen h-screen relative">
-                    <div class="absolute inset-0 w-full h-full"></div>
-                  </div>
+					<div
+					id="procedural-bg"
+					class="absolute inset-0 -z-10 pointer-events-none overflow-hidden"
+					>
+				  
+					</div>
+				
+					<div class="w-screen h-screen relative">
+						<div class="absolute left-0 bottom-0 w-full h-full z-10">
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+			
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
 
-                  <div id="videoDoor" class="w-screen h-screen relative">
-                    <video autoplay loop muted class="absolute bottom-0 inset-0 w-full h-full object-contain bg-black">
-                      <source src="/img/door.mp4" type="video/mp4">
-                    </video>
-                    <div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
-                      <video autoplay loop muted class="w-12 h-12">
-                        <source src="/img/pressE.mp4" type="video/mp4">
-                      </video>
-                    </div>
-                  </div>
+						</div>        
+					</div>
+					<div class="w-screen h-screen relative">
+						<div class="absolute left-0 bottom-0 w-full h-full z-10">
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+		
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+						</div>      
+					</div>
+
+                  	<div id="videoDoor" class="w-screen h-screen relative z-50">
+                    	<img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50"/>
+						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
+							<video autoplay loop muted class="w-12 h-12">
+							<source src="/img/pressE.mp4" type="video/mp4">
+							</video>
+						</div>
+						<div class="absolute left-0 bottom-0 w-full h-full z-10">
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+	
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+						</div>  
+                  	</div>
+				      
                 </div>
-</div>
-                <!-- 3. Joueur par-dessus tout -->
-<div id="player"
-     class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
-</div>
+			</div>
+							<!-- 3. Joueur par-dessus tout -->
+			<div id="player"
+				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
+			</div>
               
 `;
             
@@ -89,74 +108,47 @@ export const routes: Route[] = [
             <section id="sec_video" class="w-screen h-screen relative overflow-hidden flex items-center justify-center">
               <video autoplay loop muted id="video_main"
                 class="block max-w-full max-h-full object-contain">
-                <source src="/img/game.mp4" type="video/mp4">
+                <source src="/img/acceuil.mp4" type="video/mp4">
               </video>
-              <div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
-                <button type="button" id="user" class="absolute top-6 right-8 w-10 h-10 rounded-full bg-indigo-500 flex text-white shadow-lg hover:bg-indigo-600 focus:outline-none">
-                  +
-                </button>
-                <form id="login"  class="flex hidden responsive-form-login flex-col items-center justify-center">
-                
-                
-                <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
-                <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
-                
-                
-                <input
-                    type="text"
-                    placeholder="Username"
-                    class="responsive-case-login responsive-placeholder responsive-case"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    class="responsive-case-login responsive-placeholder responsive-case"
-                  />
-                    <button type="submit" class="responsive-case-login responsive-text responsive-case text-white">Login</button>
-                    <button type="button" id="registerBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">2fa</button>
-                    <button type="button" id="2faBtn" class="text-white responsive-text responsive-case-login relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">register</button>
-                </form>
-                
-                <form id="register"  class="flex hidden responsive-form-register flex-col items-center justify-center">
-                  
-                
-                <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
-                <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
-                
-                
-                <input
-                    type="text"
-                    placeholder="Username"
-                    class="responsive-case-register responsive-placeholder responsive-case"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    class="responsive-case-register responsive-placeholder responsive-case"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    class="responsive-case-register responsive-placeholder responsive-case"
-                  />
-                    <button type="submit" class="responsive-case-register responsive-text responsive-case text-white">Login</button>
-                    <button type="button" id="loginBtn" class="text-white responsive-text ">LOGIN</button>
-                </form>
-                <div id="popup2fa" class="fixed inset-0 flex justify-center items-center bg-black/60 z-20">
-                  <input 
-                    type="text"
-                    placeholder="Enter 2FA code"
-                    class="responsive-placeholder responsive-case"
-                  />
-                  <button type="submit" class="responsive-case-register responsive-text responsive-case text-white">Valider</button>
-                  <button type="button" id="loginBtn" class="text-white responsive-text ">Return</button>
-                  </div>
-              </div>
-            
+
+             
+              	<div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
+					<div class="flex flex-col items-center justify-center h-full w-[80%] relative">	    
+						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto">
+								</button>
+						<div id="dynamic-content" class="h-full w-full flex items-center justify-center absolute"></div>
+					</div>
+					<div id="picture" class="h-full w-[20%] flex items-center justify-center relative">
+					</div>
+													
+					
+            	</div>
             </section>
             `;
         }
     },
+	{
+		path: "/chalet",
+		title: "Chalet",
+		template: async () => {
+			await new Promise(resolve => setTimeout(resolve, 300));
+			return `
+				<div id="chalet" class="fixed inset-0 h-full w-full relative overflow-hidden">
+					<div id="pageContainer" class="flex w-[200vw] h-full overflow-x-auto items-center justify-center relative">
+						<img src="/img/chalet_inside.png" class="inset-0 w-full h-[85%] object-fill z-50">
+						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
+							<video autoplay loop muted class="w-12 h-12">
+							<source src="/img/pressE.mp4" type="video/mp4">
+							</video>
+						</div>
+						</div>
+				</div>
+				<div id="player"
+				class="fixed left-0 w-[30vw] h-[70vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-50">
+			</div>
+			`;
+		}	
+	},
     {
         path: "/Tv",
         title: "Tv",
@@ -171,20 +163,19 @@ export const routes: Route[] = [
         }
     },
     {
-    
+
       path: "/Pong",
       title: "Pong",
       template: async () => {
         await new Promise(r => setTimeout(r, 300));
         return `
             <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
-            <img
+              <img
                 id="pong-bg"
                 src="/img/pong.png"
                 alt="Pong background"
                 class="block max-w-full max-h-full object-contain"
               />
-              <img id="ball"  src="/img/ball.png"  class="absolute" />
               <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
               <img id="right-bar" src="/img/bar_left.png" class="absolute" />
             </div>
@@ -193,12 +184,12 @@ export const routes: Route[] = [
         `;
       }
     },
-	{
-			path: "/auth",
-			title: "Authentication",
-			template: async () => {
-				await new Promise(resolve => setTimeout(resolve, 300));
-				return `
+    {
+        path: "/auth",
+        title: "Authentication",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `
 	<div class="flex m-auto gap-8 w-4/5">
 		<!-- Login Form -->
 		<form id="form-login" class="flex flex-col w-1/2 bg-gray-700 p-6 rounded-lg border border-gray-600">
@@ -275,14 +266,14 @@ export const routes: Route[] = [
 		</div>
 	  </div>
 	</div>`;
-			}
-		},
-		{
-			path: "/2fa/create",
-			title: "2FA create",
-			template: async () => {
-				await new Promise(resolve => setTimeout(resolve, 300));
-				return `
+        }
+    },
+    {
+        path: "/2fa/create",
+        title: "2FA create",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `
 			<!-- 2FA Toggle -->
 	<div id="toggle-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
 	  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
@@ -326,14 +317,14 @@ export const routes: Route[] = [
 		</button>
 			</div>
 	</div>`;
-			}
-		},
-		{
-			path: "/2fa/remove",
-			title: "2FA remove",
-			template: async () => {
-				await new Promise(resolve => setTimeout(resolve, 300));
-				return `
+        }
+    },
+    {
+        path: "/2fa/remove",
+        title: "2FA remove",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `
 			<!-- 2FA Remove -->
 	<div id="remove-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
 	  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
@@ -365,14 +356,14 @@ export const routes: Route[] = [
 		</button>
 			</div>
 	</div>`;
-			}
-		},
-		{
-			path: "/2fa",
-			title: "2FA",
-			template: async () => {
-				await new Promise(resolve => setTimeout(resolve, 300));
-				return `
+        }
+    },
+    {
+        path: "/2fa",
+        title: "2FA",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `
 	<div id="2fa" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
 	  <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
 		<h2 class="text-xl font-semibold mb-4 text-gray-800">Vérification 2FA requise</h2>
@@ -388,14 +379,14 @@ export const routes: Route[] = [
 		</div>
 	  </div>
 	</div>`;
-			}
-		},
-		{
-			path: "/settings",
-			title: "Settings",
-			template: async () => {
-				await new Promise(resolve => setTimeout(resolve, 300));
-				return `
+        }
+    },
+    {
+        path: "/settings",
+        title: "Settings",
+        template: async () => {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            return `
 	<div class="bg-white shadow-md rounded-lg p-6 w-full max-w-md">
     <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Paramètres du compte</h2>
 
@@ -530,9 +521,8 @@ export const routes: Route[] = [
 			</div>
 	</div>`;
 
-			}
-		},
-    
+        }
+    },
     {
         path: "*",
         title: "404 - Page not found",
@@ -540,3 +530,4 @@ export const routes: Route[] = [
             `
     }
 ];
+

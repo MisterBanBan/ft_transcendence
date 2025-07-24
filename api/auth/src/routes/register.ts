@@ -8,6 +8,7 @@ import {signToken} from "../utils/sign-token.js";
 import {setCookie} from "../utils/set-cookie.js";
 import {validatePassword} from "../utils/validate-password.js";
 import {validateUsername} from "../utils/validate-username.js";
+import { getAvatar } from "../db/get-avatar.js";
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/register', {
@@ -21,13 +22,6 @@ export default async function (server: FastifyInstance) {
 					cpassword: { type: "string", minLength: 8 }
 				},
 			},
-			response: {
-				200: {
-					type: "object",
-					properties: {},
-					additionalProperties: false,
-				},
-			}
 		}
 	}, async (request, reply) => {
 
@@ -100,7 +94,17 @@ export default async function (server: FastifyInstance) {
 
 			await setCookie(reply, token);
 
-			return reply.status(200).send({ success: true });
+			const currentUser = {
+				id: id,
+				username: userData.username,
+				avatar_url: await getAvatar(server.usersDb, userData.username),
+				provider: userData.provider,
+				provider_id: undefined,
+				tfa: false,
+				updatedAt: userData.updatedAt
+			};
+
+			return reply.status(200).send({ success: true, user: currentUser });
 
 		} catch (err) {
 			return reply.status(500).send({
