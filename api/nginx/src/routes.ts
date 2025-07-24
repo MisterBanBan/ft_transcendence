@@ -178,6 +178,7 @@ export const routes: Route[] = [
                 alt="Pong background"
                 class="block max-w-full max-h-full object-contain"
               />
+              <img id="ball"  src="/img/ball.png"  class="absolute" />
               <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
               <img id="right-bar" src="/img/bar_left.png" class="absolute" />
             </div>

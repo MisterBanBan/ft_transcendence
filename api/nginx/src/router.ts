@@ -14,8 +14,7 @@
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
 import { AuthUser } from './type.js';
-
-export let currentUser: AuthUser | undefined = undefined;
+import {getUser, setUser} from "./user-handler.js";
 
 class Router {
     private routes: Route[];
@@ -96,12 +95,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             method: "GET",
         });
 
-        const data: AuthUser = await response.json();
+        const data: AuthUser | undefined = await response.json();
         if (data) {
-            currentUser = data;
+            setUser(data);
         }
 
-        const router = new Router(routes, currentUser);
+        const router = new Router(routes, getUser());
         await router.updatePage();
     } catch (error) {
         console.error("Wrong init :", error);

@@ -28,10 +28,10 @@ import { Zoom } from './zoom.js';
 import { proceduralBackground } from './proceduralBackground.js';
 import { pong } from './pong.js';
 import { AuthUser } from './type.js';
+import {getUser, setUser} from "./user-handler.js";
 
 //permet de gerer la destruction des new
 let activeComponent: Component | null = null;
-let currentUser: AuthUser | undefined = undefined;
 
 const routeComponents: Record<string, Component> = {
 
@@ -68,7 +68,7 @@ const routeComponents: Record<string, Component> = {
     "/game": {
         init: () => {
             activeComponent?.destroy?.();
-			const me = new menu('video_main','container_form', 'user', currentUser);
+			const me = new menu('video_main','container_form', 'user', getUser());
             me.init();
 			const login = new Login();
 
@@ -103,8 +103,8 @@ const routeComponents: Record<string, Component> = {
                 'left-bar',      // ID de la barre gauche
                 'right-bar',	// ID de la barre droite
                 'ball',			// ID de la balle
+				'pong',
                 'pong-bg', // ID du conteneur de jeu
-                'pong',
                 mode
               );
             pongGame.init();
@@ -196,7 +196,7 @@ const routeComponents: Record<string, Component> = {
 export function handleRouteComponents(path: string, user?: AuthUser) {
 	const component = routeComponents[path];
 	if(component) {
-		currentUser = user;
+		setUser(user);
 		component.init();
 	}
 }

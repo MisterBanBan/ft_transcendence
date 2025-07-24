@@ -54,7 +54,7 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
-	private socket = io(`https://10.14.8.1:8443`, {
+	private socket = io(`https://10.13.4.2:8443`, {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
         path: "/wss/matchmaking"
@@ -120,35 +120,31 @@ export class pong implements Component {
         this.ball.element.style.top = `${imgTop + this.ball.position.y}px`;
 
     }
-    
+
+
     public init(): void{
         if (this.mode)
 		    this.socket.emit(this.mode);
         else
             this.socket.emit("error");
-        this.imgPong.onload = () => {
-            this.leftBar = new Bar(this.leftBEle);
-            this.rightBar = new Bar(this.rightBEle);
-            this.ball = new Ball(this.ballEle);
-            
-            this.backRect = this.imgPong.getBoundingClientRect();
-            const backRectHeight = this.backRect.height;
-            const margin = backRectHeight * 0.1;
-            const centerY = margin +(backRectHeight - margin * 2 - this.leftBar.height) / 2;
-            this.leftBar.position.y = centerY; // changer pour des valeurs exacts plus tard
-            this.rightBar.position.y = centerY;
-            this.ball.position.y = centerY;
-    
-            window.addEventListener('resize', this.barResize);
-            window.addEventListener('keydown', this.onKeyDown);
-            window.addEventListener('keyup', this.onKeyUp);
-            this.barResize();
-			this.updateHandler();
-            };
-            
-            if (this.imgPong.complete && this.imgPong.onload) {
-                this.imgPong.onload(new Event("load"));
-            }
+
+		this.leftBar = new Bar(this.leftBEle);
+		this.rightBar = new Bar(this.rightBEle);
+		this.ball = new Ball(this.ballEle);
+
+		this.backRect = this.imgPong.getBoundingClientRect();
+		const backRectHeight = this.backRect.height;
+		const margin = backRectHeight * 0.1;
+		const centerY = margin +(backRectHeight - margin * 2 - this.leftBar.height) / 2;
+		this.leftBar.position.y = centerY; // changer pour des valeurs exacts plus tard
+		this.rightBar.position.y = centerY;
+		this.ball.position.y = centerY;
+
+		window.addEventListener('resize', this.barResize);
+		window.addEventListener('keydown', this.onKeyDown);
+		window.addEventListener('keyup', this.onKeyUp);
+		this.barResize();
+		this.updateHandler();
     }
     private onKeyDown = (e: KeyboardEvent) => {
 		const k = e.key.toLowerCase();
