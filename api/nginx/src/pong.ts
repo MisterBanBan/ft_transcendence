@@ -54,7 +54,7 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
-	private socket = io(`https://10.13.4.2:8443`, {
+	private socket = io(`https://10.13.3.5:8443`, {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
         path: "/wss/matchmaking"
@@ -79,7 +79,7 @@ export class pong implements Component {
         this.leftBEle = leftBarElement;
         this.rightBEle = rightBarElement;
         this.ballEle = ballElement;
-        this.imgPong = document.getElementById(imgPongId) as HTMLImageElement;
+        this.imgPong = document.getElementById(containerId) as HTMLImageElement;
 
         this.mode = mode;
 
@@ -128,23 +128,27 @@ export class pong implements Component {
         else
             this.socket.emit("error");
 
-		this.leftBar = new Bar(this.leftBEle);
-		this.rightBar = new Bar(this.rightBEle);
-		this.ball = new Ball(this.ballEle);
+		this.imgPong.onload = () => {
+			this.leftBar = new Bar(this.leftBEle);
+			this.rightBar = new Bar(this.rightBEle);
+			this.ball = new Ball(this.ballEle);
+			this.backRect = this.imgPong.getBoundingClientRect();
+			const backRectHeight = this.backRect.height;
+			const margin = backRectHeight * 0.1;
+			const centerY = margin +(backRectHeight - margin * 2 - this.leftBar.height) / 2;
+			this.leftBar.position.y = centerY; // changer pour des valeurs exacts plus tard
+			this.rightBar.position.y = centerY;
+			this.ball.position.y = centerY;
+			window.addEventListener('resize', this.barResize);
+			window.addEventListener('keydown', this.onKeyDown);
+			window.addEventListener('keyup', this.onKeyUp);
+			this.barResize();
+			this.updateHandler();
+		};
 
-		this.backRect = this.imgPong.getBoundingClientRect();
-		const backRectHeight = this.backRect.height;
-		const margin = backRectHeight * 0.1;
-		const centerY = margin +(backRectHeight - margin * 2 - this.leftBar.height) / 2;
-		this.leftBar.position.y = centerY; // changer pour des valeurs exacts plus tard
-		this.rightBar.position.y = centerY;
-		this.ball.position.y = centerY;
-
-		window.addEventListener('resize', this.barResize);
-		window.addEventListener('keydown', this.onKeyDown);
-		window.addEventListener('keyup', this.onKeyUp);
-		this.barResize();
-		this.updateHandler();
+        if (this.imgPong.complete && this.imgPong.onload) {
+			this.imgPong.onload(new Event("load"));
+		}
     }
     private onKeyDown = (e: KeyboardEvent) => {
 		const k = e.key.toLowerCase();
@@ -257,7 +261,7 @@ export class pong implements Component {
             }
             if (data && data.state && data.state.score)
         		updateScore(data.state.score.player1, data.state.score.player2);
-			console.log("Game Update - Ball:", ball);
+			console.log("Game Update - Ball:", ball);	
         });
 
         this.socket.on("connect_error", (err: any) => {

@@ -1,11 +1,11 @@
 import { Socket } from "socket.io";
 import { FastifyInstance } from "fastify";
 
-export function localManager(socket: Socket, app: FastifyInstance) {
+export function localManager(socket: Socket, app: FastifyInstance, userID: string) {
 	const gameSocket = app.gameSocket;
 	const gameId = `game-${socket.id}`;
 
-	app.playerToGame.set(socket.id, { playerName: "local", gameId: gameId, side: "undefined" });
+	app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "undefined" });
 
     gameSocket.emit("create-game", {
       gameId,
@@ -19,7 +19,7 @@ export function localManager(socket: Socket, app: FastifyInstance) {
 
 	console.log(gameId, "started");
 
-	socket.on("player-input", (data) => {
+	socket.on("player-input", (data: any) => {
 	const value = app.playerToGame.get(socket.id);
 		if (!value?.gameId) return;
 
@@ -32,7 +32,5 @@ export function localManager(socket: Socket, app: FastifyInstance) {
 
 	socket.on("disconnect", () => {
 	console.log("Client disconnected:", socket.id);
-
-	app.playerToGame.delete(socket.id);
 	});
 }
