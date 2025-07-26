@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/24 11:49:32 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/25 18:35:23 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/picture.js';
 import { friendAction } from '../menuInsert/friendAction.js';
 import { friendsActif } from '../menuInsert/friendsActif.js';
+import { tournamentView } from './tournamentView.js';
 
 
 
@@ -61,14 +62,18 @@ export class viewManager{
                 this.loadAcceuilVideo();
                 this.container.innerHTML = game();
                 this.pictureContainer.innerHTML = picture();
-                this.pictureContainer.innerHTML = picture();
                 const firendDiv = document.getElementById('friendsActif');
                 if (firendDiv) {
                     firendDiv.innerHTML = friendsActif();
                 }
-                document.querySelectorAll('#friend').forEach(btn => {
-                    btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
-                this.setupGameMenuCallback();
+                //document.querySelectorAll('#friend').forEach(btn => {
+                 //   btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
+                    document.querySelectorAll('#friend').forEach(btn => {
+                        const clone = btn.cloneNode(true);
+                        btn.replaceWith(clone);
+                        clone.addEventListener('click', (e) => this.friendAction(e as MouseEvent));
+                    });
+                    this.setupGameMenuCallback();
                 break;
             case 'login':
                 newView =  new loginView(this.container, this);
@@ -87,6 +92,8 @@ export class viewManager{
             case 'acceuil':
                 this.loadAcceuilVideo();
                 break;
+            case 'tournament':
+                newView = new tournamentView(this.container, this);
             case 'parametre':
                 newView = new parameterView(this.container, this, this.videoMain);
                 break;

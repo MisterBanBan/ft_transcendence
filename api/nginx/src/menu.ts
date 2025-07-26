@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/24 18:11:25 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/25 17:37:10 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,9 +108,25 @@ export class menu implements Component {
     private selectOption() {
         if (!this.options.length) return;
         const selected = this.options[this.selectedIdx];
+        if (selected.id === 'Offline') {
+            window.history.pushState(null, "", "Pong?mode=offline");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+        if (selected.id === 'Online') {
+            window.history.pushState(null, "", "Pong?mode=online");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+        if (selected.id === 'AI') {
+            window.history.pushState(null, "", "Pong?mode=ai");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+        if (selected.id === 'Tournament') {
+            this.viewManager.show('parametre');
+        }
     }
     
     private handleKeydown(e: KeyboardEvent) {
+        console.log(e.key)
         if (!this.options.length) return;
         if (e.key === "ArrowDown") {
             this.selectedIdx = (this.selectedIdx + 1) % this.options.length;
@@ -129,6 +145,14 @@ export class menu implements Component {
         if (!cursor) throw new Error('Cursor video not found');
         this.cursor = cursor;
         this.updateCursor();
+        this.options.forEach((opt, i) => {
+            opt.addEventListener('click', () => {
+                this.selectedIdx = i;
+                this.updateCursor();
+                this.selectOption();
+            });
+        });
+        document.removeEventListener('keydown', this.keydownHandler);
         document.addEventListener('keydown', this.keydownHandler);
     }
     
@@ -145,6 +169,7 @@ export class menu implements Component {
     public destroy(): void {
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
+        document.removeEventListener('keydown', this.keydownHandler);
     }
 }
 

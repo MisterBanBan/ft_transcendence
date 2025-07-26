@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/23 16:05:47 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/26 11:24:20 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ import { searchMate } from "../menuInsert/searchMate.js";
 import { playerPerso } from "../menuInsert/playerPerso.js";
 import { friendAction } from "../menuInsert/friendAction.js";
 import { Component } from "../component.js";
+import { tournoisAction } from "../menuInsert/tournoisAction.js";
 
 import { viewManager } from "./viewManager.js";
 import { friendsList } from "../menuInsert/friendsList.js";
@@ -25,7 +26,7 @@ export class friendsView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
     private handleReturn = () => this.viewManager.show('parametre');
-    private handleFriends = () => this.friends();
+    private handleFriends = () => this.friends("dynamic-popup", 'friends');
     private handleInvites = () => this.invites();
 
     constructor(container: HTMLElement, viewManager: viewManager) {
@@ -36,7 +37,7 @@ export class friendsView implements Component {
     public init(): void {
         this.container.innerHTML = '';
         this.container.innerHTML = friendsList();
-        this.friends();
+        this.friends("dynamic-popup", 'friends');
         this.attachEventListeners();
     }
 
@@ -66,39 +67,56 @@ export class friendsView implements Component {
         //this.eventFormListeners();
     }
     
-    private friends() {
-        const friendsContainer = document.getElementById('dynamic-friends');
+    private friends(name: string, view: string) {
+        const friendsContainer = document.getElementById(name);
         if (!friendsContainer) {
             console.error('Friends container not found');
             return;
         }
-        const leftFriends = document.getElementById('perso');
+        const leftFriends = document.getElementById('divLeft');
         if (!leftFriends) {
             console.error('Left friends container not found');
             return;
         }
         leftFriends.innerHTML = '';
-        leftFriends.insertAdjacentHTML('beforeend', playerPerso());
         friendsContainer.innerHTML = '';
-        friendsContainer.insertAdjacentHTML('beforeend', friends());
+        if(view === 'friends') {
+            leftFriends.insertAdjacentHTML('beforeend', playerPerso());
+            friendsContainer.insertAdjacentHTML('beforeend', friends());
+        }
+        
+        
         document.querySelectorAll('#friend').forEach(btn => {
-            btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
+            btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent,'friends'));          });
     }
     
-    private friendAction(e: MouseEvent) {
+    private friendAction(e: MouseEvent, view: string){
         const x = e.clientX;
         const y = e.clientY;
-        const friendsContainer = document.getElementById('dynamic-friends');
+        const friendsContainer = document.getElementById('dynamic-popup');
         if (!friendsContainer) {
             console.error('Friends container not found');
             return;
         }
-        const existingPopup = document.getElementById('friend-popup');
-        if (existingPopup) {
-            existingPopup.remove();
-            return;
+        if( view === 'friends') {
+            const existingPopup = document.getElementById('friend-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+                return;
+            }
+        } else if (view === 'tournois') {
+            const existingPopup = document.getElementById('tournois-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+                return;
+            }
         }
-        const popupHtml = friendAction(x, y);
+        let popupHtml = '';
+        if( view === 'friends') {
+            popupHtml = friendAction(x, y);
+        } else if (view === 'tournois') {
+            popupHtml = tournoisAction(x, y);
+        }
         friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
     }
 
@@ -107,7 +125,7 @@ export class friendsView implements Component {
         document.getElementById('friends')?.removeEventListener('click', this.handleFriends);
         document.getElementById('invites')?.removeEventListener('click', this.handleInvites);
         document.querySelectorAll('#friend').forEach(btn => {
-            btn.removeEventListener('click', (e) => this.friendAction(e as MouseEvent));
+            btn.removeEventListener('click', (e) => this.friendAction(e as MouseEvent, 'friends'));
         });
         
     }
