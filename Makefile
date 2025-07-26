@@ -27,6 +27,7 @@ update-env:
 	echo "HOSTNAME=$(shell hostname -s)" > .env
 
 all: build up
+	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout certs/key.key -out certs/cert.crt -subj "/C=FR/ST=RA/L=Lyon/O=42/CN=localhost"
 
 re: fclean all
 

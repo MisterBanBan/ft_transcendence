@@ -1,0 +1,28 @@
+import { Socket } from "socket.io";
+import { FastifyInstance } from "fastify";
+import { playerInfo } from "../utils/interface";
+import { inputData } from "../utils/interface";
+
+export function reconnect(socket: Socket, app: FastifyInstance, userID: string, oldPlayer: playerInfo)
+{
+	app.playerToGame.set(socket.id, { userID: userID, gameId: oldPlayer.gameId, side: oldPlayer.side });
+	socket.emit("game-started", {
+		gameId: oldPlayer.gameId,
+		playerId: socket.id,
+	});
+
+	const gameSocket = app.gameSocket;
+
+	socket.on("player-input", (data: inputData) => {
+	const value = app.playerToGame.get(socket.id);
+	if (value!.side !== "undefined")
+		data.player = value!.side;
+	if (!value?.gameId) return;
+
+	gameSocket.emit("player-input", {
+		gameId: value.gameId,
+		playerId: socket.id,
+		input: data,
+	});
+	});
+}
