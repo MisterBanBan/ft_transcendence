@@ -87,13 +87,12 @@ export default async function (server: FastifyInstance, opts: any) {
 		websocket: true,
 		wsClientOptions: {
 			queryString(search, reqUrl, request) {
-				const url = new URL(reqUrl, 'http://10.13.4.2');
+				const url = new URL(reqUrl, 'http://10.13.3.5');
 				let encodedUser = request.headers['x-current-user'];
 				if (encodedUser && validUser(encodedUser)) {
 					if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];
-					url.searchParams.set('user', encodeURIComponent(encodedUser));
+					url.searchParams.set('user', encodedUser);
 				}
-
 				return url.searchParams.toString();
 			}
 		}
