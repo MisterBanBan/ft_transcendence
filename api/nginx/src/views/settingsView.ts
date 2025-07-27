@@ -6,18 +6,18 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 20:22:54 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/26 12:01:20 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 10:50:14 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-import { settings } from "../menuInsert/settings.js";
-import { newPseudo } from "../menuInsert/newPseudo.js";
-import { newPass } from "../menuInsert/newPass.js";
-import { newTwoFa } from "../menuInsert/newTwoFa.js";
+import { settings } from "../menuInsert/Settings/settings.js";
+import { newPseudo } from "../menuInsert/Settings/newPseudo.js";
+import { newPass } from "../menuInsert/Settings/newPass.js";
+import { newTwoFa } from "../menuInsert/Settings/newTwoFa.js";
 import {ChangeUsername} from "../auth/change-username.js";
 import {ChangePassword} from "../auth/change-password.js";
 import {Add2FA, Remove2FA} from "../auth/toggle-2fa.js";
-import { removeTwoFa } from "../menuInsert/removeTwoFa.js";
+import { removeTwoFa } from "../menuInsert/Settings/removeTwoFa.js";
 
 import { getUser } from "../user-handler.js";
 import { viewManager } from "./viewManager.js";

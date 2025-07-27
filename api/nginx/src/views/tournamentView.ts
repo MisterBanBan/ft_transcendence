@@ -6,12 +6,13 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 16:24:16 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/25 16:59:24 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 12:02:59 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Component } from "../component.js";
 import { viewManager } from "./viewManager.js";
+import { tournament } from "../menuInsert/tournament.js";
 
 export class tournamentView implements Component{
     
@@ -25,10 +26,12 @@ export class tournamentView implements Component{
 
     public init(): void {
         this.container.innerHTML = '';
-        this.container.innerHTML = `<div class="tournament-view">
-            <h1>Tournament View</h1>
-            <p>Here you can view and manage tournaments.</p>
-        </div>`;
+        this.container.innerHTML = tournament();
+        this.attachEventListeners();
+    }
+
+    private attachEventListeners() {
+        //document.getElementById('score')?.addEventListener('click', this.handleScore);
     }
 
     public destroy(): void {

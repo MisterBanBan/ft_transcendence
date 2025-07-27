@@ -6,14 +6,14 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 22:32:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/23 16:21:47 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 10:49:30 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { parametre } from "../menuInsert/parametre.js";
 import { score } from "../score/score.js";
 import { viewManager } from "./viewManager.js";
-import { profile } from "../menuInsert/profile.js";
+import { profile } from "../menuInsert/Profile/profile.js";
 import { Logout } from "../auth/logout.js";
 import { Component } from "../component.js";
 

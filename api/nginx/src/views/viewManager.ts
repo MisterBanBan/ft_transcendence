@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/25 18:35:23 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:38:06 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,10 @@ import { loginView } from './loginView.js';
 import { registerView } from './registerView.js';
 import { Component } from '../component.js';
 import { game } from '../menuInsert/game.js';
-import { picture } from '../menuInsert/picture.js';
-import { friendAction } from '../menuInsert/friendAction.js';
-import { friendsActif } from '../menuInsert/friendsActif.js';
+import { picture } from '../menuInsert/Picture/picture.js';
+import { friendsActif } from '../menuInsert/Picture/friendsActif.js';
 import { tournamentView } from './tournamentView.js';
+import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
 
 
 
@@ -57,6 +57,8 @@ export class viewManager{
         
         let newView: Component | null = null;
 
+
+        console.log(`Switching to view: ${viewName}`);
         switch (viewName) {
             case 'game':
                 this.loadAcceuilVideo();
@@ -71,9 +73,13 @@ export class viewManager{
                     document.querySelectorAll('#friend').forEach(btn => {
                         const clone = btn.cloneNode(true);
                         btn.replaceWith(clone);
-                        clone.addEventListener('click', (e) => this.friendAction(e as MouseEvent));
+                        clone.addEventListener('click', (e) => this.friendActionLog(e as MouseEvent));
                     });
-                    this.setupGameMenuCallback();
+                    try {
+                        this.setupGameMenuCallback();
+                    } catch (error) {
+                        console.error("Error setting up game menu:", error);
+                    }
                 break;
             case 'login':
                 newView =  new loginView(this.container, this);
@@ -111,7 +117,7 @@ export class viewManager{
         
     }
 
-    private friendAction(e: MouseEvent) {
+    private friendActionLog(e: MouseEvent) {
         const x = e.clientX;
         const y = e.clientY;
         const friendsContainer = document.getElementById('friendsActif');
@@ -124,7 +130,7 @@ export class viewManager{
             existingPopup.remove();
             return;
         }
-        const popupHtml = friendAction(x, y);
+        const popupHtml = friendActifLog(x, y);
         friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
     }
     

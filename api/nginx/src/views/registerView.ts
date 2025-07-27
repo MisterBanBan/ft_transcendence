@@ -6,12 +6,12 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 14:23:46 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/23 16:06:04 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 11:02:48 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { viewManager } from "./viewManager.js";
-import { registerForm } from "../menuInsert/registerForm.js";
+import { registerForm } from "../menuInsert/Connexion/registerForm.js";
 import { getUser } from "../user-handler.js";
 import { wait } from "../wait.js";
 import { Register } from "../auth/register.js";

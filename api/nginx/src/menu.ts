@@ -6,16 +6,11 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:58 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/26 12:01:08 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:40:00 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Component } from "./component.js";
-import { loginForm } from "./menuInsert/loginForm.js";
-import { registerForm } from "./menuInsert/registerForm.js";
-import { game } from "./menuInsert/game.js";
-import { Login } from "./auth/login.js";
-import { Register } from "./auth/register.js";
 import { AuthUser } from './type.js';
 import { getUser, setUser } from "./user-handler.js";
 import { viewManager } from "./views/viewManager.js";
@@ -26,7 +21,6 @@ export class menu implements Component {
     private videoMain: HTMLVideoElement;
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
-    //private visibleForm: "none" | "login" | "parametre" = "none";
     private formsContainer: HTMLElement;
     private formspicture: HTMLElement;
     private options!: HTMLElement[];
@@ -35,7 +29,7 @@ export class menu implements Component {
     private viewManager: viewManager;
     private keydownHandler: (e: KeyboardEvent) => void;
     
-    constructor(videoId: string, containerFormId: string, authBtnId: string, currentUser: AuthUser | undefined) { 
+    constructor(videoId: string, containerFormId: string, authBtnId: string) { 
         const video = document.getElementById(videoId) as HTMLVideoElement;
         if (!video) throw new Error('Video element not found');
         this.videoMain = video;
@@ -55,12 +49,10 @@ export class menu implements Component {
         const formspicture = document.getElementById('picture');
         if (!formspicture) throw new Error('Form wrapper not found');
         this.formspicture = formspicture;
-
-        this.viewManager = new viewManager(formsContainer,  this.formspicture, this.videoMain, () => this.setupGameMenu());
-
-        setUser(currentUser);
-
+        
         this.keydownHandler = this.handleKeydown.bind(this);
+        
+        this.viewManager = new viewManager(this.formsContainer,  this.formspicture, this.videoMain, () => this.setupGameMenu());
     }
 
     public init(): void {
@@ -121,7 +113,7 @@ export class menu implements Component {
             window.dispatchEvent(new PopStateEvent("popstate"));
         }
         if (selected.id === 'Tournament') {
-            this.viewManager.show('parametre');
+            this.viewManager.show('tournament');
         }
     }
     
@@ -145,6 +137,7 @@ export class menu implements Component {
         if (!cursor) throw new Error('Cursor video not found');
         this.cursor = cursor;
         this.updateCursor();
+        console.log('Cursor updated:', this.cursor);
         this.options.forEach((opt, i) => {
             opt.addEventListener('click', () => {
                 this.selectedIdx = i;
@@ -170,6 +163,11 @@ export class menu implements Component {
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
         document.removeEventListener('keydown', this.keydownHandler);
+        if (this.options) {
+            this.options.forEach((opt) => {
+                opt.replaceWith(opt.cloneNode(true)); // retire tous les listeners
+            });
+        }
     }
 }
 

@@ -6,17 +6,17 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 13:56:40 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/23 16:05:53 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 11:03:02 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { viewManager } from "./viewManager.js";
 import { getUser } from "../user-handler.js";
 import { wait } from "../wait.js";
-import { twoFApopUp } from "../menuInsert/twoFApopUp.js";
+import { twoFApopUp } from "../menuInsert/Connexion/twoFApopUp.js";
 import {TFAValidate} from "../auth/2fa-validate.js";
 import { Login } from "../auth/login.js";
-import { loginForm } from "../menuInsert/loginForm.js";
+import { loginForm } from "../menuInsert/Connexion/loginForm.js";
 import { Component } from "../component.js";
 
 
