@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 14:38:06 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 17:21:26 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,20 +24,57 @@ import { tournamentView } from './tournamentView.js';
 import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
 
 
-
-export class viewManager{
-    private container: HTMLElement;
-    private pictureContainer: HTMLElement;
-    private videoMain: HTMLVideoElement;
-    private setupGameMenuCallback: () => void;
+export class viewManager implements Component {
+    //private pictureContainer: HTMLElement;
     private activeView : Component | null = null;
 
-    constructor(container: HTMLElement, picture: HTMLElement, videoMain: HTMLVideoElement, setupGameMenuCallback: () => void) {
-        this.container = container;
-        this.videoMain = videoMain;
-        this.pictureContainer = picture;
-        this.setupGameMenuCallback = setupGameMenuCallback;
+    private videoMain: HTMLVideoElement;
+    private containerForm: HTMLElement;
+    private authBtn: HTMLElement;
+    private formsContainer: HTMLElement;
+    private formspicture: HTMLElement;
+    private options!: HTMLElement[];
+    private cursor!: HTMLVideoElement;
+    private selectedIdx: number = 0;
+    private keydownHandler: (e: KeyboardEvent) => void;
+
+    constructor(videoId: string, containerId: string, authBtnId: string) {
+
+
+        const video = document.getElementById(videoId) as HTMLVideoElement;
+        if (!video) throw new Error('Video element not found');
+        this.videoMain = video;
+
+        const containerForm = document.getElementById(containerId);
+        if (!containerForm) throw new Error('Form wrapper not found');
+        this.containerForm = containerForm;
+
+        const authBtn = document.getElementById(authBtnId);
+        if (!authBtn) throw new Error('Auth button not found');
+        this.authBtn = authBtn;
+
+        const formsContainer = document.getElementById('dynamic-content');
+        if (!formsContainer) throw new Error('Form wrapper not found');
+        this.formsContainer= formsContainer;
+
+        const formspicture = document.getElementById('picture');
+        if (!formspicture) throw new Error('Form wrapper not found');
+        this.formspicture = formspicture;
+        
+        this.keydownHandler = this.handleKeydown.bind(this);
+        
         this.userLog();
+    }
+
+    public init(): void {
+
+        window.addEventListener("resize", this.resize);
+        this.videoMain.addEventListener("loadedmetadata", () => {
+            console.log("Loadedmetadata ready");
+            this.resize();
+        });
+        this.resize();
+        this.authBtn.addEventListener('click', this.authBtnHandler);
     }
 
     private userLog()
@@ -52,7 +89,7 @@ export class viewManager{
         
         this.activeView?.destroy();
         
-        this.container.innerHTML = '';
+        this.formsContainer.innerHTML = '';
         //this.pictureContainer.innerHTML = '';
         
         let newView: Component | null = null;
@@ -62,8 +99,8 @@ export class viewManager{
         switch (viewName) {
             case 'game':
                 this.loadAcceuilVideo();
-                this.container.innerHTML = game();
-                this.pictureContainer.innerHTML = picture();
+                this.formsContainer.innerHTML = game();
+                this.formspicture.innerHTML = picture();
                 const firendDiv = document.getElementById('friendsActif');
                 if (firendDiv) {
                     firendDiv.innerHTML = friendsActif();
@@ -76,21 +113,21 @@ export class viewManager{
                         clone.addEventListener('click', (e) => this.friendActionLog(e as MouseEvent));
                     });
                     try {
-                        this.setupGameMenuCallback();
+                        this.setupGameMenu();
                     } catch (error) {
                         console.error("Error setting up game menu:", error);
                     }
                 break;
             case 'login':
-                newView =  new loginView(this.container, this);
+                newView =  new loginView(this.formsContainer, this);
                 break;
             case 'register':
-                newView = new registerView(this.container, this.pictureContainer, this);
+                newView = new registerView(this.formsContainer, this.formspicture, this);
                 break;
             case 'settings':
                 const currentUser = getUser();
                 if (currentUser) {
-                    newView = new SettingsView(this.container,  this);
+                    newView = new SettingsView(this.formsContainer,  this);
                 } else {
                     console.error("No user is currently authenticated.");
                 }
@@ -99,12 +136,12 @@ export class viewManager{
                 this.loadAcceuilVideo();
                 break;
             case 'tournament':
-                newView = new tournamentView(this.container, this);
+                newView = new tournamentView(this.formsContainer, this);
             case 'parametre':
-                newView = new parameterView(this.container, this, this.videoMain);
+                newView = new parameterView(this.formsContainer, this, this.videoMain);
                 break;
             case 'friendsList':
-                newView = new friendsView(this.container, this);
+                newView = new friendsView(this.formsContainer, this);
                 break;
             default:
                 console.error(`View "${viewName}" is not implemented.`);
@@ -144,5 +181,108 @@ export class viewManager{
         this.videoMain.poster = "/img/acceuilDraw.png";
         this.videoMain.src = "/img/acceuilParam.mp4";
         this.videoMain.load();
+    }
+
+    private authBtnHandler = () => {
+        if (!getUser()) {
+            this.show('login');
+        } else {
+            this.show('parametre');
+        }
+    };
+    
+
+    private loadAcceuil (){
+        this.videoMain.poster = "/img/pong.png";
+        this.videoMain.src = '/img/acceuil.mp4';
+        this.videoMain.load();
+    }
+  
+       
+
+    private updateCursor() {
+        if (!this.options.length) return;
+        const firstOption = this.options[0];
+        const selected = this.options[this.selectedIdx];
+        const offset = selected.offsetTop - firstOption.offsetTop;
+        this.cursor.style.top = offset + "px";
+        
+
+        this.options.forEach((opt, i) => {
+            opt.classList.toggle('selected', i === this.selectedIdx);
+        });
+    }
+    
+    private selectOption() {
+        if (!this.options.length) return;
+        const selected = this.options[this.selectedIdx];
+        if (selected.id === 'Offline') {
+            window.history.pushState(null, "", "Pong?mode=local");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+        if (selected.id === 'Online') {
+            window.history.pushState(null, "", "Pong?mode=online");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+        if (selected.id === 'IA') {
+            window.history.pushState(null, "", "Pong?mode=ai");
+            window.dispatchEvent(new PopStateEvent("popstate"));
+        }
+        if (selected.id === 'Tournament') {
+            this.show('tournament');
+        }
+    }
+    
+    private handleKeydown(e: KeyboardEvent) {
+        console.log(e.key)
+        if (!this.options.length) return;
+        if (e.key === "ArrowDown") {
+            this.selectedIdx = (this.selectedIdx + 1) % this.options.length;
+            this.updateCursor();
+        } else if (e.key === "ArrowUp") {
+            this.selectedIdx = (this.selectedIdx - 1 + this.options.length) % this.options.length;
+            this.updateCursor();
+        } else if (e.key === "Enter") {
+            this.selectOption();
+        }
+    }
+
+    private setupGameMenu() {
+        this.options = Array.from(document.querySelectorAll('.menu-option')) as HTMLElement[];
+        const cursor = document.getElementById('cursor-video') as HTMLVideoElement;
+        if (!cursor) throw new Error('Cursor video not found');
+        this.cursor = cursor;
+        this.updateCursor();
+        console.log('Cursor updated:', this.cursor);
+        this.options.forEach((opt, i) => {
+            opt.addEventListener('click', () => {
+                this.selectedIdx = i;
+                this.updateCursor();
+                this.selectOption();
+            });
+        });
+        document.removeEventListener('keydown', this.keydownHandler);
+        document.addEventListener('keydown', this.keydownHandler);
+    }
+    
+    private resize = () => {
+        const rect = this.videoMain.getBoundingClientRect();
+            
+        this.containerForm.style.left = `${(rect.left )}px`;
+        this.containerForm.style.top = `${(rect.top )}px`;
+        this.containerForm.style.width = `${rect.width }px`;
+        this.containerForm.style.height = `${rect.height}px`;
+        this.containerForm.style.position = "absolute";
+    }
+
+    public destroy(): void {
+        window.removeEventListener('resize', this.resize);
+        this.authBtn.removeEventListener('click', this.authBtnHandler);
+        document.removeEventListener('keydown', this.keydownHandler);
+        if (this.options) {
+            this.options.forEach((opt) => {
+                opt.replaceWith(opt.cloneNode(true)); // retire tous les listeners
+            });
+        }
     }
 }

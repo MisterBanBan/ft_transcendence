@@ -6,11 +6,12 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/10 15:16:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 14:46:47 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 21:38:07 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Component } from "./component.js"
+import { score } from "./score/score.js";
 
 declare const io: any;
 
@@ -45,6 +46,8 @@ export class pong implements Component {
     private boundKeyDownHandler!: (e: KeyboardEvent) => void;
     private boundKeyUpHandler!: (e: KeyboardEvent) => void;
     private mode: string | null;
+    private scorePlayer1: HTMLElement;
+    private scorePlayer2: HTMLElement;
     private leftBar!: Bar;
     private rightBar!: Bar;
     private ball!: Ball;
@@ -60,7 +63,7 @@ export class pong implements Component {
         path: "/wss/matchmaking"
 	});
     
-    constructor(leftBarId: string, rightBarId: string, ballId: string, imgPongId: string,containerId: string, mode: string | null) {
+    constructor(leftBarId: string, rightBarId: string, ballId: string, imgPongId: string,containerId: string, scorePlayer1: string, scorePlayer2: string, mode: string | null) {
         const leftBarElement = document.getElementById(leftBarId);
         if(!leftBarElement) {
             throw new Error('Left bar not found');
@@ -76,6 +79,18 @@ export class pong implements Component {
             throw new Error('Ball not found');
         }
 
+        const  score_player1 = document.getElementById(scorePlayer1);
+        if(!score_player1) {
+            throw new Error('Score Player 1 not found');
+        }
+        this.scorePlayer1 = score_player1;
+        
+        const score_player2 = document.getElementById(scorePlayer2);
+        if(!score_player2) {
+            throw new Error('Score Player 2 not found');
+        }
+        this.scorePlayer2 = score_player2;
+        
         this.leftBEle = leftBarElement;
         this.rightBEle = rightBarElement;
         this.ballEle = ballElement;
@@ -118,6 +133,9 @@ export class pong implements Component {
         this.leftBar.element.style.top  = `${imgTop + this.leftBar.position.y}px`;
         this.rightBar.element.style.top = `${imgTop + this.rightBar.position.y}px`;
         this.ball.element.style.top = `${imgTop + this.ball.position.y}px`;
+
+        //this.scorePlayer1.style.left = `${imgRect.left + imgWidth * 0.5}px`;
+        //this.scorePlayer1.style.top = `${imgRect.top + imgHeight * 0.5}px`;
 
     }
 
@@ -211,29 +229,21 @@ export class pong implements Component {
         });
     };
     
+    private updateScore(newScore_player1: number, newScore_player2: number) {
+        //const score_player1 = newScore_player1;
+        //const score_player2 = newScore_player2;
+    
+        this.scorePlayer1.textContent = newScore_player1.toString();
+
+        this.scorePlayer2.textContent = newScore_player2.toString();
+    }
+    
     private updateHandler() {
         let gameId: string;
         let playerId: string[];
 
         let ball = { x: 0, y: 0 };
 
-        let score_player1 = 0;
-        let score_player2 = 0;
-
-        function updateScore(newScore_player1: number, newScore_player2: number) {
-        	score_player1 = newScore_player1;
-        	score_player2 = newScore_player2;
-        
-        	const scoreElement_player1 = document.getElementById("score-player1");
-        	if (scoreElement_player1) {
-        		scoreElement_player1.textContent = score_player1.toString();
-        	}
-        
-        	const scoreElement_player2 = document.getElementById("score-player2");
-        	if (scoreElement_player2) {
-        		scoreElement_player2.textContent = score_player2.toString();
-        	}
-        }
 
         this.socket.on("connect", () => {
           console.log("Connected with id:", this.socket.id);
@@ -248,7 +258,7 @@ export class pong implements Component {
         this.socket.on("game-update", (data: { gameId: string, state: {
 			bar: { left: number, right: number},
         	ball: { x: number, y: number},
-        	score: {player1: number, player2: number}}}) => {
+        	score: {playerLeft: number, playerRight: number}}}) => {
         	if (data && data.state && data.state.ball) {
             	ball = data.state.ball;
 
@@ -259,9 +269,10 @@ export class pong implements Component {
 				this.rightBar.position.y = data.state.bar.right * this.backRect.height / 1714 - (this.rightBar.height * 0.5);
 				this.rafId = requestAnimationFrame(this.gameLoop);
             }
+            console.log(data.state);
             if (data && data.state && data.state.score)
-        		updateScore(data.state.score.player1, data.state.score.player2);
-			console.log("Game Update - Ball:", ball);	
+        		this.updateScore(data.state.score.playerLeft, data.state.score.playerRight);
+			//console.log("Game Update - Ball:", ball);	
         });
 
         this.socket.on("connect_error", (err: any) => {

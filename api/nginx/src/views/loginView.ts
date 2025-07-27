@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 13:56:40 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 11:03:02 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 16:03:06 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ export class loginView implements Component {
                 this.viewManager.show('game');
             }
         } else if (attempts >= limit) {
+            if (submitBtn) submitBtn.disabled = false;
             console.error("Login request timed out.");
         }
          

@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/24 17:06:05 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 23:03:28 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,17 +171,29 @@ export const routes: Route[] = [
       template: async () => {
         await new Promise(r => setTimeout(r, 300));
         return `
-            <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
-              <img
-                id="pong-bg"
-                src="/img/pong.png"
-                alt="Pong background"
-                class="block max-w-full max-h-full object-contain"
-              />
-              <img id="ball"  src="/img/ball.png"  class="absolute" />
-              <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
-              <img id="right-bar" src="/img/bar_left.png" class="absolute" />
-            </div>
+            <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center">
+				<img
+					id="pong-bg"
+					src="/img/pong.png"
+					alt="Pong background"
+					class="block max-w-full max-h-full object-contain"
+				/>
+				<img id="ball" src="/img/ball.png" class="absolute z-20" />
+				<img id="left-bar" src="/img/bar_left.png" class="absolute z-20" />
+				<img id="right-bar" src="/img/bar_left.png" class="absolute z-20" />
+				
+				<!-- Score superposé -->
+<div id="score" class="absolute bg-black/80 top-[8%] left-[4%] w-[75%] h-[75%] flex flex-row z-10 rounded-xl">
+  <div class="flex flex-col items-center justify-center h-full w-[50%] relative z-0">
+    <p id="score-player1"  class="text-white/80 text-[calc(20vw)] font-omori w-full h-full flex items-center justify-center text-center z-0 opacity-70 drop-shadow">0</p>
+  </div>
+  <div class="w-px h-full bg-white/40 mx-4 z-10"></div>
+  <div class="flex flex-col items-center justify-center h-full w-[50%] relative z-0">
+    <p id="score-player2" class="text-white/80 text-[calc(20vw)] font-omori w-full h-full flex items-center justify-center text-center z-0 opacity-70 drop-shadow">0</p>
+  </div>
+</div>
+
+			</div>
 
 
         `;
