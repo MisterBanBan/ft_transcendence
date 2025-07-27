@@ -1,4 +1,4 @@
-export function showTourmaments(socket: any, data: any) {
+export function showTourmaments(socket: any, tournamentsList: any) {
 
 	const div = document.getElementById("tournaments");
 
@@ -9,10 +9,9 @@ export function showTourmaments(socket: any, data: any) {
 
 	const tournamentsNames: string[] = [];
 
-	data.forEach((tournamentObj: { [key: string]: { size: number; players: number } }) => {
+	type Tournament = { name: string, size: number, players: number };
 
-		const name = Object.keys(tournamentObj)[0];
-		const details = tournamentObj[name];
+	tournamentsList.forEach(({ name, size, players }: Tournament) => {
 		const tournamentDiv = document.getElementById(`tournament-${name}`);
 
 		tournamentsNames.push(name);
@@ -20,7 +19,7 @@ export function showTourmaments(socket: any, data: any) {
 		if (tournamentDiv) {
 			const element = document.getElementById(`tournament-${name}-size`);
 			if (element) {
-				element.innerText = `${details.players}/${details.size}`;
+				element.innerText = `${players}/${size}`;
 			}
 		}
 		else {
@@ -35,7 +34,7 @@ export function showTourmaments(socket: any, data: any) {
 			const h3 = document.createElement("h3");
 			h3.id = `tournament-${name}-size`;
 			h3.className = "text-2xl text-gray-700 mb-4 text-center";
-			h3.innerText = `${details.players}/${details.size}`;
+			h3.innerText = `${players}/${size}`;
 
 			const button = document.createElement("button");
 			button.type = "submit";
@@ -61,12 +60,14 @@ export function showTourmaments(socket: any, data: any) {
 					return;
 				}
 
-				const payload = {
-					name: name,
-					displayName: displayName.value
-				} as { name: string, displayName: string };
+				console.log("JOINING", name)
 
-				socket.sendAction("joinTournament", payload);
+				// const payload = {
+				// 	name: name,
+				// 	displayName: displayName.value
+				// } as { name: string, displayName: string };
+
+				// socket.sendAction("joinTournament", payload);
 
 				// const response = await fetch("/api/tournament/join", {
 				// 	method: "POST",
@@ -81,12 +82,8 @@ export function showTourmaments(socket: any, data: any) {
 				// 	return;
 				// }
 			})
-
-			console.log(`Tournoi : ${name}`);
-			console.log(`  - Taille : ${details.size}`);
-			console.log(`  - Joueurs : ${details.players}`);
 		}
-	});
+	})
 
 	for (let child of div.children) {
 		const parts = child.id.split("-");

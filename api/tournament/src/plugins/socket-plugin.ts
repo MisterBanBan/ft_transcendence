@@ -44,9 +44,6 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			}
 			// TODO validate username
 			await createTournament(app, name, size, displayName, user.id);
-			const set: Set<string> = await app.io.allSockets()
-
-			console.log(set.size)
 		})
 	});
 };

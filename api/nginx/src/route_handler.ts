@@ -135,11 +135,9 @@ const routeComponents: Record<string, Component> = {
 				tournamentsList.forEach(({name, size, players}: Tournament) => {
 					console.log(`Tournoi: ${name} | Taille: ${size} | Joueurs inscrits: ${players}`);
 				});
-			})
 
-			// socket.on("showTournaments", () => {
-			// 	showTourmaments(socket, data.tournaments);
-			// });
+				showTourmaments(socket, tournamentsList);
+			})
 
 			// const ws = new EnhancedSocket('wss://10.13.4.2:8443/wss/tournament');
 
