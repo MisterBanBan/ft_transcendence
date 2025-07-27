@@ -13,10 +13,10 @@ async function start() {
 
 	const app = fastify();
 
-	await app.register(cors, { origin: `http://localhost:8443` , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
+	await app.register(cors, { origin: `http://${process.env.HOSTNAME}:8443` , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
 	await app.register(fastifyIO, {
 		path: "/wss/matchmaking",
-		cors: { origin: `http://localhost:8443`, credentials: true }
+		cors: { origin: `http://${process.env.HOSTNAME}:8443`, credentials: true }
 	});
 
 	app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });

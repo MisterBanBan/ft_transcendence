@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/10 15:16:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 10:09:33 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 14:46:47 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
-	private socket = io(`https://localhost:8443`, {
+	private socket = io(`/`, {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
         path: "/wss/matchmaking"
