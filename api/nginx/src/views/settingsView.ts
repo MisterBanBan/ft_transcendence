@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 20:22:54 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/24 17:15:20 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/26 12:01:20 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ import {Add2FA, Remove2FA} from "../auth/toggle-2fa.js";
 import { removeTwoFa } from "../menuInsert/removeTwoFa.js";
 
 import { getUser } from "../user-handler.js";
-import { viewManager } from "../views/viewManager.js";
+import { viewManager } from "./viewManager.js";
 import { Component } from "../component.js";
 
 export class SettingsView implements Component {
