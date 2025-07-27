@@ -126,8 +126,16 @@ const routeComponents: Record<string, Component> = {
 			console.log(typeof socket);
 
 			socket.on("connect", () => {
-				console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+				console.log(socket.id);
 			});
+
+			socket.on("updateTournamentList", (tournamentsList: any) => {
+				console.log(tournamentsList);
+				type Tournament = { name: string, size: number, players: number };
+				tournamentsList.forEach(({name, size, players}: Tournament) => {
+					console.log(`Tournoi: ${name} | Taille: ${size} | Joueurs inscrits: ${players}`);
+				});
+			})
 
 			// socket.on("showTournaments", () => {
 			// 	showTourmaments(socket, data.tournaments);

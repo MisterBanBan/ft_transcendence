@@ -1,26 +1,38 @@
 import { FastifyPluginAsync } from "fastify";
 import { Socket } from "socket.io";
 import {createTournament} from "../socket/createTournament.js";
+import updateTournamentList from "../socket/updateTournamentList.js";
 
 const socketPlugin: FastifyPluginAsync = async (app) => {
 	app.io.on("connection", (socket: Socket) => {
-		console.log("Client connected:", socket.id);
+		const queryUser: string | undefined | string[] = socket.handshake.query.user
+		let user: {
+			id: number;
+			username: string;
+			avatar_url: string;
+			provider: string;
+			provider_id?: string;
+			tfa: boolean;
+			updatedAt: number;
+		};
 
-		const user: string | undefined | string[] = socket.handshake.query.user
-
-		if (typeof user === 'string') {
+		if (typeof queryUser === 'string') {
 			try {
-				const jsonStr = Buffer.from(user, 'base64').toString()
-				const obj = JSON.parse(jsonStr)
-				console.log(obj)
+				const jsonStr = Buffer.from(queryUser, 'base64').toString()
+				user = JSON.parse(jsonStr)
 			} catch (e) {
 				console.error('User header could not be parsed:', e)
+				return;
 			}
 		} else {
 			console.error('No valid user in handshake')
+			return;
 		}
+		console.log("Client connected:", socket.id, user.username);
 
-		socket.on("createTournament", (name, size, displayName) => {
+		updateTournamentList(app, socket);
+
+		socket.on("createTournament", async (name, size, displayName) => {
 			console.log("createTOURNAMENT");
 			if (typeof name !== "string" || typeof size !== "number" || typeof displayName !== "string") {
 				// TODO error
@@ -31,9 +43,10 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return;
 			}
 			// TODO validate username
-			console.log(name, "\t|", size, "\t|", displayName);
-			console.log("-------------------");
-			// createTournament();
+			await createTournament(app, name, size, displayName, user.id);
+			const set: Set<string> = await app.io.allSockets()
+
+			console.log(set.size)
 		})
 	});
 };
