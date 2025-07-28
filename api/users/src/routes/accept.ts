@@ -57,14 +57,12 @@ export default async function (server: FastifyInstance) {
                 });
             }
 
-            // Verify that the authenticated user is the addressee
             if (invitation.addressee_id !== addressee_id) {
                 return reply.status(403).send({
                     error: 'Not authorized to accept this invitation'
                 });
             }
 
-            // Update invitation status
             const result = await server.db.run(
                 'UPDATE relationships SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE invitation_token = ? AND status = ?',
                 'accepted', token, 'pending'

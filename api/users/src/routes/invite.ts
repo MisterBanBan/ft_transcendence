@@ -56,8 +56,6 @@ export default async function (server: FastifyInstance) {
         const { userId: requester_id } = request.params;
         const { addressee_id } = request.body;
 
-        console.log('test');
-
         try {
             const requesterExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
@@ -72,12 +70,10 @@ export default async function (server: FastifyInstance) {
                 return reply.status(404).send({ error: 'User not found' });
             }
 
-            // Prevent self-invitation
             if (requester_id === addressee_id) {
                 return reply.status(400).send({ error: 'Cannot invite yourself' });
             }
 
-            // Check if relationship already exists
             const existingRelation = await server.db.get(
                 'SELECT * FROM relationships WHERE requester_id = ? AND addressee_id = ?',
                 requester_id, addressee_id
@@ -89,7 +85,6 @@ export default async function (server: FastifyInstance) {
 
             const invitationToken = randomUUID();
 
-            // Create the invitation
             await server.db.run(
                 'INSERT INTO relationships (requester_id, addressee_id, status, invitation_token) VALUES (?, ?, ?, ?)',
                 requester_id, addressee_id, 'pending', invitationToken

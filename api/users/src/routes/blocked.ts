@@ -5,7 +5,6 @@ export default async function (server: FastifyInstance) {
     server.post<{
         Body: { invitation_token: string };
     }>('/api/invitations/block', {
-        // Add JWT authentication middleware here
         preHandler: [server.authenticate],
         schema: {
             body: {
@@ -17,11 +16,10 @@ export default async function (server: FastifyInstance) {
             }
         }
     }, async (request, reply) => {
-        const blocker_id = request.user?.id; // From JWT token
+        const blocker_id = request.user?.id;
         const { invitation_token } = request.body;
 
         try {
-            // Get invitation details from token
             const invitation = await server.db.get(
                 'SELECT requester_id, addressee_id, status FROM relationships WHERE invitation_token = ? AND status = ?',
                 invitation_token, 'pending'
@@ -31,7 +29,6 @@ export default async function (server: FastifyInstance) {
                 return reply.status(404).send({ error: 'Invitation not found or already processed' });
             }
 
-            // Determine who to block based on who is making the request
             const blocked_user_id = invitation.requester_id === blocker_id
                 ? invitation.addressee_id
                 : invitation.requester_id;
@@ -41,7 +38,6 @@ export default async function (server: FastifyInstance) {
                 return reply.status(400).send({ error: 'Cannot block yourself' });
             }
 
-            // Update or create blocking relationship
             await server.db.run(
                 'UPDATE relationships SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE invitation_token = ?',
                 'blocked', invitation_token
