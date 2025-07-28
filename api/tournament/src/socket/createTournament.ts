@@ -1,9 +1,10 @@
 import {Match, Tournament, TournamentStructure} from "../class/Tournament.js";
 import {tournaments} from "../server.js";
 import {joinTournament} from "../utils/joinTournament.js";
-import updateTournamentList from "./updateTournamentList.js";
+import updateTournamentsList from "./updateTournamentsList.js";
 import {FastifyInstance} from "fastify";
 import {createMatchs} from "../utils/createMatchs.js";
+import {Socket} from "socket.io";
 
 function printTournament(tournament: TournamentStructure): void {
 	console.log("Tournament Rounds:");
@@ -26,14 +27,14 @@ function printTournament(tournament: TournamentStructure): void {
 }
 
 
-export async function createTournament(app: FastifyInstance, name: string, size: number, displayName: string, ownerId: number): Promise<Tournament | null> {
+export async function createTournament(app: FastifyInstance, socket: Socket, name: string, size: number, displayName: string, ownerId: number): Promise<Tournament | null> {
 
 	if (tournaments.has(name)) return null;
 
 	if (![4, 8, 16].includes(size)) return null;
 
 	const tournament = new Tournament(name, ownerId, size);
-	await joinTournament(app, ownerId, displayName, tournament);
+	await joinTournament(app, socket, ownerId, displayName, tournament);
 
 	for (let round = 1; round < size; round *= 2) {
 		const match = size / Math.pow(2, round);
@@ -44,6 +45,6 @@ export async function createTournament(app: FastifyInstance, name: string, size:
 
 	tournaments.set(name, tournament);
 
-	await updateTournamentList(app);
+	await updateTournamentsList(app);
 	return tournament;
 }

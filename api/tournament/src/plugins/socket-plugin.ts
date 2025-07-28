@@ -1,7 +1,7 @@
 import { FastifyPluginAsync } from "fastify";
 import { Socket } from "socket.io";
 import {createTournament} from "../socket/createTournament.js";
-import updateTournamentList from "../socket/updateTournamentList.js";
+import updateTournamentsList from "../socket/updateTournamentsList.js";
 import {joinTournament} from "../utils/joinTournament.js";
 import {tournaments} from "../server.js";
 import {validateUsername} from "../utils/validateUsername.js";
@@ -34,7 +34,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 		}
 		console.log("Client connected:", socket.id, user.username);
 
-		updateTournamentList(app, socket);
+		updateTournamentsList(app, socket);
 
 		socket.on("createTournament", async (name, size, displayName) => {
 			console.log("createTOURNAMENT");
@@ -52,7 +52,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
-			await createTournament(app, name, size, displayName, user.id);
+			await createTournament(app, socket, name, size, displayName, user.id);
 		})
 
 		socket.on("joinTournament", async (name, displayName) => {
@@ -80,13 +80,16 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
-			await joinTournament(app, user.id, displayName, tournament);
+			await joinTournament(app, socket, user.id, displayName, tournament);
+			socket.join(name);
+
 		})
 
 		socket.on("disconnect", async () => {
 			for (let [_, tournament] of tournaments) {
 				if (tournament.hasPlayer(user.id)) {
-					await leaveTournament(app, user.id, tournament);
+					await leaveTournament(app, socket, user.id, tournament);
+					socket.leave(tournament.getName())
 					break;
 				}
 			}

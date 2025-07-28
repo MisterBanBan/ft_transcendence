@@ -530,6 +530,17 @@ export const routes: Route[] = [
 			template: async () => {
 				await new Promise(resolve => setTimeout(resolve, 300));
 				return `
+				
+	<div id="tournament-info" class="fixed top-4 right-4 bg-gray-100 p-4 rounded shadow-md w-64">
+	  <h3 class="text-lg font-semibold mb-2">Tournament Info</h3>
+	  <p><strong>Name:</strong> <span id="tournament-name-display">---</span></p>
+	  <div class="mt-2">
+		<strong>Players:</strong>
+		<ul id="players-list" class="list-disc list-inside max-h-40 overflow-auto text-sm text-gray-700"></ul>
+	  </div>
+	  <button id="start-tournament" class="mt-4 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition duration-200">Start</button>
+	</div>
+
 	<div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
     	<h2 class="text-2xl font-semibold mb-6 text-center">Formulaire</h2>
     	<form class="space-y-4">

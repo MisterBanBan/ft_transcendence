@@ -4,7 +4,7 @@ import { tournaments } from "../server.js"
 
 type Tournament = { name: string, size: number, registered: number, players: Array<string> };
 
-export default async function updateTournamentList(app: FastifyInstance, socket?: Socket) {
+export default async function updateTournamentsList(app: FastifyInstance, socket?: Socket) {
 	const tournamentsList: Tournament[] = [];
 
 	tournaments.forEach((tournament, name) => {
@@ -19,9 +19,9 @@ export default async function updateTournamentList(app: FastifyInstance, socket?
 	console.log(tournamentsList);
 
 	if (socket)
-		socket.emit("updateTournamentList", tournamentsList);
+		socket.emit("updateTournamentsList", tournamentsList);
 	else
 		app.io.sockets.sockets.forEach((socket: Socket) => {
-			socket.emit("updateTournamentList", tournamentsList);
+			socket.emit("updateTournamentsList", tournamentsList);
 		})
 }

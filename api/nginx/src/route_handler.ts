@@ -129,7 +129,7 @@ const routeComponents: Record<string, Component> = {
 				console.log(socket.id);
 			});
 
-			socket.on("updateTournamentList", (tournamentsList: any) => {
+			socket.on("updateTournamentsList", (tournamentsList: any) => {
 				console.log(tournamentsList);
 				type Tournament = { name: string, size: number, registered: number, players: Array<string> };
 				tournamentsList.forEach(({name, size, registered, players}: Tournament) => {
@@ -138,6 +138,20 @@ const routeComponents: Record<string, Component> = {
 				});
 
 				showTourmaments(socket, tournamentsList);
+			})
+
+			socket.on("updateTournamentInfos", (tournamentInfos: any) => {
+				const infos = tournamentInfos as { name: string, size: number, registered: number, players: Array<string> }
+
+				const name = document.getElementById("tournament-name-display") as HTMLElement
+				const playersList = document.getElementById("players-list") as HTMLUListElement
+				if (!name || !playersList) {
+					console.error("Missing elements to show tournament info");
+					return;
+				}
+
+				name.innerText = infos.name
+				playersList.innerText = infos.players.toString()
 			})
 
 			// const ws = new EnhancedSocket('wss://10.13.4.2:8443/wss/tournament');
