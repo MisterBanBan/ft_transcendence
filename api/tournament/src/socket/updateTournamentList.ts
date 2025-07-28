@@ -1,18 +1,22 @@
-import {tournaments} from "../routes/create.js";
 import {FastifyInstance} from "fastify";
 import {Socket} from "socket.io";
+import { tournaments } from "../server.js"
 
-type Tournament = { name: string, size: number, players: number }[];
+type Tournament = { name: string, size: number, registered: number, players: Array<string> };
 
 export default async function updateTournamentList(app: FastifyInstance, socket?: Socket) {
-	const tournamentsList: Tournament = [];
+	const tournamentsList: Tournament[] = [];
+
 	tournaments.forEach((tournament, name) => {
 		tournamentsList.push({
 			"name": name,
 			"size": tournament.getSize(),
-			"players": tournament.getPlayers().size
+			"registered": tournament.getPlayers().size,
+			"players": Array.from(tournament.getPlayers().values())
 		})
 	});
+
+	console.log(tournamentsList);
 
 	if (socket)
 		socket.emit("updateTournamentList", tournamentsList);

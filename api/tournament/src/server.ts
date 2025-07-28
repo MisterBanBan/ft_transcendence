@@ -1,9 +1,10 @@
 import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
 import { join } from "node:path";
-import cors from "@fastify/cors";
 import fastifyIO from "fastify-socket.io";
-import {tournaments} from "./routes/create.js";
+import {Tournament} from "./class/Tournament.js";
+
+export const tournaments = new Map<string, Tournament>();
 
 async function startServer() {
 

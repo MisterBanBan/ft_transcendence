@@ -9,9 +9,9 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 
 	const tournamentsNames: string[] = [];
 
-	type Tournament = { name: string, size: number, players: number };
+	type Tournament = { name: string, size: number, registered: number, players: Array<string> };
 
-	tournamentsList.forEach(({ name, size, players }: Tournament) => {
+	tournamentsList.forEach(({ name, size, registered, players }: Tournament) => {
 		const tournamentDiv = document.getElementById(`tournament-${name}`);
 
 		tournamentsNames.push(name);
@@ -19,7 +19,7 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 		if (tournamentDiv) {
 			const element = document.getElementById(`tournament-${name}-size`);
 			if (element) {
-				element.innerText = `${players}/${size}`;
+				element.innerText = `${registered}/${size}`;
 			}
 		}
 		else {
@@ -34,7 +34,7 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 			const h3 = document.createElement("h3");
 			h3.id = `tournament-${name}-size`;
 			h3.className = "text-2xl text-gray-700 mb-4 text-center";
-			h3.innerText = `${players}/${size}`;
+			h3.innerText = `${registered}/${size}`;
 
 			const button = document.createElement("button");
 			button.type = "submit";
@@ -61,6 +61,8 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 				}
 
 				console.log("JOINING", name)
+
+				socket.emit("joinTournament", name, displayName.value)
 
 				// const payload = {
 				// 	name: name,

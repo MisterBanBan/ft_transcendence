@@ -131,9 +131,10 @@ const routeComponents: Record<string, Component> = {
 
 			socket.on("updateTournamentList", (tournamentsList: any) => {
 				console.log(tournamentsList);
-				type Tournament = { name: string, size: number, players: number };
-				tournamentsList.forEach(({name, size, players}: Tournament) => {
-					console.log(`Tournoi: ${name} | Taille: ${size} | Joueurs inscrits: ${players}`);
+				type Tournament = { name: string, size: number, registered: number, players: Array<string> };
+				tournamentsList.forEach(({name, size, registered, players}: Tournament) => {
+					console.log(players);
+					console.log(`Tournoi: ${name} | Taille: ${size} | Inscrits: ${registered} | Joueurs: ${players}`);
 				});
 
 				showTourmaments(socket, tournamentsList);

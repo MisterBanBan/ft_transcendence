@@ -1,5 +1,5 @@
 import {Match, Tournament} from "../class/Tournament.js";
-import {tournaments} from "../routes/create.js";
+import {tournaments} from "../server.js";
 import {joinTournament} from "../utils/joinTournament.js";
 import updateTournamentList from "./updateTournamentList.js";
 import {FastifyInstance} from "fastify";
@@ -20,14 +20,14 @@ async function createMatchs(matchesNb: number): Promise<Match[]> {
 	return matchs;
 }
 
-export async function createTournament(app: FastifyInstance, name: string, size: number, displayName: string, currentUserId: number): Promise<Tournament | null> {
+export async function createTournament(app: FastifyInstance, name: string, size: number, displayName: string, ownerId: number): Promise<Tournament | null> {
 
 	if (tournaments.has(name)) return null;
 
 	if (![4, 8, 16].includes(size)) return null;
 
-	const tournament = new Tournament(name, currentUserId, size);
-	joinTournament(currentUserId, "DISPLAY", tournament);
+	const tournament = new Tournament(name, ownerId, size);
+	await joinTournament(app, ownerId, displayName, tournament);
 
 	for (let matchesNb = size / 2; matchesNb > 1; matchesNb /= 2) {
 		tournament.getStructure().rounds[matchesNb.toString()] = await createMatchs(matchesNb);

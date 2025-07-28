@@ -2,6 +2,10 @@ import { FastifyPluginAsync } from "fastify";
 import { Socket } from "socket.io";
 import {createTournament} from "../socket/createTournament.js";
 import updateTournamentList from "../socket/updateTournamentList.js";
+import {joinTournament} from "../utils/joinTournament.js";
+import {tournaments} from "../server.js";
+import {validateUsername} from "../utils/validateUsername.js";
+import {leaveTournament} from "../utils/leaveTournament.js";
 
 const socketPlugin: FastifyPluginAsync = async (app) => {
 	app.io.on("connection", (socket: Socket) => {
@@ -42,8 +46,50 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				// TODO error
 				return;
 			}
-			// TODO validate username
+
+			if (!await validateUsername(displayName)) {
+				console.log("Display name", displayName, "is invalid");
+				return
+			}
+
 			await createTournament(app, name, size, displayName, user.id);
+		})
+
+		socket.on("joinTournament", async (name, displayName) => {
+			console.log("joinTournament");
+			if (typeof name !== "string" || typeof displayName !== "string") {
+				// TODO error
+				console.log("Invalid type for name: ", typeof name, "| displayName:", typeof displayName)
+				return;
+			}
+
+			const tournament = tournaments.get(name);
+			if (!tournament) {
+				// TODO error
+				console.log("Tournament", name, "not found");
+				return
+			}
+
+			if (!await validateUsername(displayName)) {
+				console.log("Display name", displayName, "is invalid");
+				return
+			}
+
+			if (tournament.hasPlayer(user.id)) {
+				console.log(user.username, `(${user.id})`, 'is already in the tournament', tournament.getName())
+				return
+			}
+
+			await joinTournament(app, user.id, displayName, tournament);
+		})
+
+		socket.on("disconnect", async () => {
+			for (let [_, tournament] of tournaments) {
+				if (tournament.hasPlayer(user.id)) {
+					await leaveTournament(app, user.id, tournament);
+					break;
+				}
+			}
 		})
 	});
 };
