@@ -5,6 +5,7 @@ import updateTournamentsList from "../socket/updateTournamentsList.js";
 import {FastifyInstance} from "fastify";
 import {Socket} from "socket.io";
 import {updateTournamentInfo} from "../room/updateTournamentInfo.js";
+import {allJoinRoom} from "./joinRoom.js";
 
 export async function joinTournament(app: FastifyInstance, socket: Socket, playerId: number, displayName: string, tournament: Tournament) {
 
@@ -16,8 +17,9 @@ export async function joinTournament(app: FastifyInstance, socket: Socket, playe
 	}
 
 	tournament.addPlayer(playerId, displayName);
-	socket.join(tournament.getName());
+	allJoinRoom(app, playerId, tournament.getName());
+	// socket.join(tournament.getName());
 
-	await updateTournamentInfo(app, playerId, tournament);
+	await updateTournamentInfo(app, playerId, tournament, true);
 	await updateTournamentsList(app);
 }

@@ -13,6 +13,6 @@ export async function leaveTournament(app: FastifyInstance, socket: Socket, play
 	if (tournament.getPlayers().size == 0)
 		tournaments.delete(tournament.getName());
 
-	await updateTournamentInfo(app, playerId, tournament);
+	await updateTournamentInfo(app, playerId, tournament, true);
 	await updateTournamentsList(app)
 }
