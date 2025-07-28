@@ -4,7 +4,7 @@ import {FastifyInstance} from "fastify";
 import {Socket} from "socket.io";
 import {allLeaveRoom} from "../utils/all-leave-room.js";
 import updateTournamentsList from "./update-tournaments-list.js";
-import {updateTournamentInfo} from "../room/updateTournamentInfo.js";
+import {updateTournamentInfo} from "../room/update-tournament-info.js";
 
 export async function leave(app: FastifyInstance, socket: Socket, playerId: number, tournament: Tournament) {
 

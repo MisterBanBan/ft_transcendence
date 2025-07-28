@@ -6,8 +6,8 @@ import {tournaments} from "../server.js";
 import {leave} from "../socket/leave.js";
 import {validateUsername} from "../utils/validate-username.js";
 import updateTournamentsList from "../socket/update-tournaments-list.js";
-import {updateTournamentInfo} from "../room/updateTournamentInfo.js";
 import {inTournament} from "../utils/in-tournament.js";
+import {updateTournamentInfo} from "../room/update-tournament-info.js";
 
 export const usersSockets = new Map<number, Set<string>>()
 
