@@ -6,20 +6,21 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/20 17:32:30 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 12:21:50 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 //import { Component } from "./component.js";
-import { friends } from "../menuInsert/friends.js";
-import { invites } from "../menuInsert/invites.js";
-import { searchMate } from "../menuInsert/searchMate.js";
-import { playerPerso } from "../menuInsert/playerPerso.js";
-import { friendAction } from "../menuInsert/friendAction.js";
+import { friends } from "../menuInsert/Friends/friends.js";
+//import { invites } from "../menuInsert/Friends/invites.js";
+import { searchMate } from "../menuInsert/Friends/searchMate.js";
+import { playerPerso } from "../menuInsert/Profile/playerPerso.js";
+import { friendAction } from "../menuInsert/Friends/friendAction.js";
 import { Component } from "../component.js";
+import { InvitationService } from "../relationship/invitationService.js";
 
 import { viewManager } from "./viewManager.js";
-import { friendsList } from "../menuInsert/friendsList.js";
+import { friendsList } from "../menuInsert/Friends/friendsList.js";
 
 export class friendsView implements Component {
     private container: HTMLElement;
@@ -35,6 +36,7 @@ export class friendsView implements Component {
 
     public init(): void {
         this.container.innerHTML = friendsList();
+        console.log(this.container.innerHTML);
         this.friends();
         this.attachEventListeners();
     }
@@ -47,12 +49,12 @@ export class friendsView implements Component {
     }
 
     private invites() {
-        const invitesContainer = document.getElementById('dynamic-friends');
+        const invitesContainer = document.getElementById('dynamic-popup');
         if (!invitesContainer) {
             console.error('Invites container not found');
             return;
         }
-        const leftFriends = document.getElementById('perso');
+        const leftFriends = document.getElementById('divLeft');
         if (!leftFriends) {
             console.error('Left friends container not found');
             return;
@@ -60,18 +62,39 @@ export class friendsView implements Component {
         leftFriends.innerHTML = '';
         leftFriends.insertAdjacentHTML('beforeend', searchMate());
         invitesContainer.innerHTML = '';
-        invitesContainer.insertAdjacentHTML('beforeend', invites());
+        document.addEventListener('DOMContentLoaded', () => {
+            InvitationService.loadInvitations();
+        });
+        console.log('Invites loaded');
+            console.log('DOMContentLoaded event fired');
+            const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
+            const shareInviteButton = document.getElementById('Share Invite');
+            console.log('Invite input:', inviteInput);
+            if (shareInviteButton && inviteInput) {
+                shareInviteButton.addEventListener('click', () => {
+                    const inviteValue = inviteInput.value.trim();
+        
+                    if (!inviteValue) {
+                        console.log('Input is empty');
+                        return;
+                    }
+        
+                    console.log(`Sending invite to: ${inviteValue}`);
+                    InvitationService.sendInvitation(); // Appelle ta méthode existante
+                });
+            }
+        ;
         //this.eventFriendsListener();
         //this.eventFormListeners();
     }
     
     private friends() {
-        const friendsContainer = document.getElementById('dynamic-friends');
+        const friendsContainer = document.getElementById('dynamic-popup');
         if (!friendsContainer) {
             console.error('Friends container not found');
             return;
         }
-        const leftFriends = document.getElementById('perso');
+        const leftFriends = document.getElementById('divLeft');
         if (!leftFriends) {
             console.error('Left friends container not found');
             return;
@@ -87,7 +110,7 @@ export class friendsView implements Component {
     private friendAction(e: MouseEvent) {
         const x = e.clientX;
         const y = e.clientY;
-        const friendsContainer = document.getElementById('dynamic-friends');
+        const friendsContainer = document.getElementById('dynamic-popup');
         if (!friendsContainer) {
             console.error('Friends container not found');
             return;

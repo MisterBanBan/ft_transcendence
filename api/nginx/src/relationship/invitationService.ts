@@ -1,5 +1,5 @@
 import { ApiUtils } from './apiUtils.js';
-import {getUser} from "../user-handler";
+import {getUser} from "../user-handler.js";
 
 interface InvitationRequest {
     addressee_id: string;
@@ -176,25 +176,27 @@ export class InvitationService {
     }
 
     private static displayInvitations(invitations: Invitation[]): void {
-        const invitationsList = document.getElementById('invitationsList');
+        const invitationsList = document.getElementById('dynamic-popup');
         if (!invitationsList) return;
 
         if (invitations.length > 0) {
-            invitationsList.innerHTML = invitations.map(inv => `
-                <div class="invitation-item pending">
-                    <div class="invitation-info">
-                        <strong>${this.escapeHtml(inv.username)}</strong> (${this.escapeHtml(inv.requester_id)})
-                        <br>Status: ${this.escapeHtml(inv.status)}
-                        <br>Avatar: ${inv.avatar_url ? this.escapeHtml(inv.avatar_url) : 'N/A'}
+            invitationsList.innerHTML = `
+            <div class="h-full w-full overflow-y-auto flex flex-col items-center justify-center">
+                ${invitations.map(inv => `
+                    <div class="flex flex-row items-center justify-between responsive-text-historique">
+                        <div class="flex flex-row items-center gap-4">
+                            <img src="${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
+                            <span class="text-white">${this.escapeHtml(inv.username)}</span>
+                        </div>
+                        <span class="right-0">${this.escapeHtml(inv.status)}</span>
                     </div>
-                    <div class="invitation-actions">
-                        <button onclick="InvitationService.acceptInvitation('${this.escapeHtml(inv.requester_id)}')" 
-                                class="btn-accept">Accept</button>
-                        <button onclick="InvitationService.declineInvitation('${this.escapeHtml(inv.requester_id)}')" 
-                                class="btn-decline">Decline</button>
+                    <div class="flex flex-row justify-center gap-8 responsive-text-historique">
+                        <button onclick="InvitationService.declineInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-red-600">REJECT</button>
+                        <button onclick="InvitationService.acceptInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-green-600">ACCEPT</button>
                     </div>
-                </div>
-            `).join('');
+                `).join('')}
+            </div>
+        `;
         } else {
             invitationsList.innerHTML = '<p class="text-gray-400">Aucune invitation en attente</p>';
         }

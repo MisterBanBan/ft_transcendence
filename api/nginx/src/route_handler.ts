@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   route_handler.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 15:06:27 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/27 18:50:12 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,15 +23,15 @@ import {Logout} from "./auth/logout.js";
 // import { proceduralBackground } from './proceduralBackground.js';
 //import { generateTrees } from './generateTrees.js';
 import { introduction } from './intro.js';
-import { menu } from './menu.js';
 import { Zoom } from './zoom.js';
 import { proceduralBackground } from './proceduralBackground.js';
 import { pong } from './pong.js';
 import { AuthUser } from './type.js';
+import {getUser, setUser} from "./user-handler.js";
+import { viewManager } from './views/viewManager.js';
 
 //permet de gerer la destruction des new
 let activeComponent: Component | null = null;
-let currentUser: AuthUser | undefined = undefined;
 
 const routeComponents: Record<string, Component> = {
 
@@ -68,10 +68,10 @@ const routeComponents: Record<string, Component> = {
     "/game": {
         init: () => {
             activeComponent?.destroy?.();
-			const me = new menu('video_main','container_form', 'user', currentUser);
+			const me = new viewManager('video_main','container_form', 'user');
             me.init();
 			const login = new Login();
-
+			console.log("Login component initialized");
 			login.init();
 	
             activeComponent = {
@@ -103,9 +103,12 @@ const routeComponents: Record<string, Component> = {
                 'left-bar',      // ID de la barre gauche
                 'right-bar',	// ID de la barre droite
                 'ball',			// ID de la balle
-                'pong-bg', // ID du conteneur de jeu
-                'pong',
+				'pong',
+                'pong-bg',
+				'score-player1',
+				'score-player2', // ID du conteneur de jeu
                 mode
+				
               );
             pongGame.init();
             activeComponent = {
@@ -196,7 +199,7 @@ const routeComponents: Record<string, Component> = {
 export function handleRouteComponents(path: string, user?: AuthUser) {
 	const component = routeComponents[path];
 	if(component) {
-		currentUser = user;
+		setUser(user);
 		component.init();
 	}
 }
