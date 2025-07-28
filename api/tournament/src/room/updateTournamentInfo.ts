@@ -1,7 +1,9 @@
 import {FastifyInstance} from "fastify";
 import {Tournament} from "../class/Tournament.js";
+import {emitAll} from "../utils/emitAll.js";
+import {usersSockets} from "../plugins/socket-plugin.js";
 
-export async function updateTournamentInfo(app: FastifyInstance, tournament: Tournament) {
+export async function updateTournamentInfo(app: FastifyInstance, userId: number, tournament: Tournament) {
 
 	const infos = {
 		"name": tournament.getName(),
@@ -10,5 +12,6 @@ export async function updateTournamentInfo(app: FastifyInstance, tournament: Tou
 		"players": Array.from(tournament.getPlayers().values())
 	}
 
-	app.io.to(tournament.getName()).emit("updateTournamentInfos", infos)
+	emitAll(app, userId, "updateTournamentInfos", infos);
+	// app.io.to(tournament.getName()).emit("updateTournamentInfos", infos)
 }

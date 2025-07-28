@@ -6,9 +6,13 @@ import {joinTournament} from "../utils/joinTournament.js";
 import {tournaments} from "../server.js";
 import {validateUsername} from "../utils/validateUsername.js";
 import {leaveTournament} from "../utils/leaveTournament.js";
+import {inTournament} from "../utils/inTournament.js";
+import {updateTournamentInfo} from "../room/updateTournamentInfo.js";
+
+export const usersSockets = new Map<number, Set<string>>()
 
 const socketPlugin: FastifyPluginAsync = async (app) => {
-	app.io.on("connection", (socket: Socket) => {
+	app.io.on("connection", async (socket: Socket) => {
 		const queryUser: string | undefined | string[] = socket.handshake.query.user
 		let user: {
 			id: number;
@@ -33,6 +37,19 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			return;
 		}
 		console.log("Client connected:", socket.id, user.username);
+
+		const hasSockets = usersSockets.has(user.id);
+		if (!hasSockets)
+			usersSockets.set(user.id, new Set<string>())
+		usersSockets.get(user.id)?.add(socket.id);
+
+		if (hasSockets) {
+			const tournament = await inTournament(user.id)
+			if (tournament)
+				updateTournamentInfo(app, user.id, tournament);
+		}
+
+		console.log("Sockets id for", user.username, ":", usersSockets.get(user.id));
 
 		updateTournamentsList(app, socket);
 
@@ -86,6 +103,18 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 		})
 
 		socket.on("disconnect", async () => {
+
+			const userSockets = usersSockets.get(user.id);
+
+			console.log("User", user.id, "disconnected");
+
+			if (userSockets && userSockets.size - 1 !== 0) {
+				userSockets.delete(socket.id);
+
+				console.log("Sockets id for", user.username, ":", usersSockets.get(user.id));
+				return;
+			}
+
 			for (let [_, tournament] of tournaments) {
 				if (tournament.hasPlayer(user.id)) {
 					await leaveTournament(app, socket, user.id, tournament);
@@ -93,6 +122,8 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 					break;
 				}
 			}
+
+			usersSockets.delete(user.id);
 		})
 	});
 };

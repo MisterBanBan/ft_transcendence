@@ -18,6 +18,6 @@ export async function joinTournament(app: FastifyInstance, socket: Socket, playe
 	tournament.addPlayer(playerId, displayName);
 	socket.join(tournament.getName());
 
-	await updateTournamentInfo(app, tournament);
+	await updateTournamentInfo(app, playerId, tournament);
 	await updateTournamentsList(app);
 }
