@@ -52,17 +52,13 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 			document.getElementById(`join-tournament-${name}`)!.addEventListener("click", async (e) => {
 				e.preventDefault();
 
-				console.log("clicked");
-
 				const displayName = document.getElementById('display-name') as HTMLInputElement | undefined;
 				if (!displayName) {
 					console.error("Display name input not found");
 					return;
 				}
 
-				console.log("JOINING", name)
-
-				socket.emit("joinTournament", name, displayName.value)
+				socket.emit("join", name, displayName.value)
 
 				// const payload = {
 				// 	name: name,
@@ -83,6 +79,18 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 				// 	console.error(data.message);
 				// 	return;
 				// }
+			})
+
+			document.getElementById('start-tournament')!.addEventListener("click", async (e) => {
+				e.preventDefault()
+
+				socket.emit("start")
+			})
+
+			document.getElementById('leave-tournament')!.addEventListener("click", async (e) => {
+				e.preventDefault()
+
+				socket.emit("leave")
 			})
 		}
 	})

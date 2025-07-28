@@ -53,7 +53,7 @@ export class CreateTournament implements Component {
 			console.log("Clicked:", this.socket);
 
 			// this.socket.emit("createTournament", payload.name, payload.size);
-			this.socket.emit("createTournament", name, parseInt(size), displayName);
+			this.socket.emit("create", name, parseInt(size), displayName);
 
 			// this.ws.sendAction("createTournament", payload);
 

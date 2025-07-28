@@ -8,6 +8,7 @@ import {validateUsername} from "../utils/validate-username.js";
 import updateTournamentsList from "../socket/update-tournaments-list.js";
 import {inTournament} from "../utils/in-tournament.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
+import {start} from "../socket/start.js";
 
 export const usersSockets = new Map<number, Set<string>>()
 
@@ -99,9 +100,41 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
-			await join(app, socket, user.id, displayName, tournament);
+			await join(app, user.id, displayName, tournament);
 			socket.join(name);
 
+		})
+
+		socket.on("start", async () => {
+
+			const tournament = await inTournament(user.id);
+			if (!tournament) {
+				console.log(`${user.username} is not in a tournament`);
+				return
+			}
+
+			if (!tournament.hasOwnership(user.id)) {
+				console.log(`${user.username} (${user.id}) is not the owner of the tournament` )
+				return
+			}
+
+			// if (!tournament.isFull()) {
+			// 	console.log(`Tournament ${tournament.getName()} is not full` )
+			// 	return
+			// }
+
+			await start(app, tournament);
+		})
+
+		socket.on("leave", async () => {
+
+			const tournament = await inTournament(user.id);
+			if (!tournament) {
+				console.log(`${user.username} is not in a tournament`);
+				return
+			}
+
+			await leave(app, user.id, tournament);
 		})
 
 		socket.on("disconnect", async () => {
@@ -119,7 +152,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			}
 
 			if (tournament)
-				await leave(app, socket, user.id, tournament);
+				await leave(app, user.id, tournament);
 
 			usersSockets.delete(user.id);
 		})

@@ -154,33 +154,9 @@ const routeComponents: Record<string, Component> = {
 				playersList.innerText = infos.players.toString()
 			})
 
-			// const ws = new EnhancedSocket('wss://10.13.4.2:8443/wss/tournament');
-
-			// ws.onopen = () => {
-			// 	console.log('WebSocket opened');
-			// 	ws.send('Hello from client');
-			// };
-			// ws.onmessage = (event) => {
-			// 	const data = JSON.parse(event.data);
-			// 	if (data.type === "tournamentsList") {
-			// 		console.log(typeof data);
-			// 		showTourmaments(ws, data.tournaments);
-			// 	}
-			// 	//console.log('Message from server:', event.data);
-			// };
-			// ws.onerror = (e) => {
-			// 	console.error('WebSocket error:', e);
-			// };
-			// ws.onclose = (event) => {
-			// 	console.log(event);
-			// 	console.log('WebSocket closed', event.code, event.reason);
-			// };
-
 			const createTournament = new CreateTournament(socket);
-			//const getTournaments = new GetTournaments(ws);
 
 			createTournament.init();
-			//getTournaments.init();
 
 			activeComponent = {
 				init: () => {},

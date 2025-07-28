@@ -539,6 +539,7 @@ export const routes: Route[] = [
 		<ul id="players-list" class="list-disc list-inside max-h-40 overflow-auto text-sm text-gray-700"></ul>
 	  </div>
 	  <button id="start-tournament" class="mt-4 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition duration-200">Start</button>
+	  <button id="leave-tournament" class="mt-4 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition duration-200">Leave</button>
 	</div>
 
 	<div class="bg-white p-8 rounded shadow-md w-full max-w-sm">

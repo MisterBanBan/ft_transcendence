@@ -34,7 +34,7 @@ export async function create(app: FastifyInstance, socket: Socket, name: string,
 	if (![4, 8, 16].includes(size)) return null;
 
 	const tournament = new Tournament(name, ownerId, size);
-	await join(app, socket, ownerId, displayName, tournament);
+	await join(app, ownerId, displayName, tournament);
 
 	for (let round = 1; round < size; round *= 2) {
 		const match = size / Math.pow(2, round);
