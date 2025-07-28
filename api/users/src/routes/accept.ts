@@ -1,3 +1,4 @@
+/*
 import {FastifyInstance} from "fastify";
 
 export default async function (server: FastifyInstance) {
@@ -20,9 +21,10 @@ export default async function (server: FastifyInstance) {
                         invitation: {
                             type: 'object',
                             properties: {
+                                token: { type: 'string' },
                                 requester_id: { type: 'string' },
                                 addressee_id: { type: 'string' },
-                                status: { type: 'string' }
+                                status: { type: 'string' },
                             }
                         }
                     }
@@ -43,7 +45,7 @@ export default async function (server: FastifyInstance) {
         }
     }, async (request, reply) => {
         const { token } = request.params;
-        const addressee_id = request.user?.id;
+        const addressee_id = request.currentUser?.id;
 
         try {
             const invitation = await server.db.get(
@@ -92,3 +94,4 @@ export default async function (server: FastifyInstance) {
     });
 }
 
+*/

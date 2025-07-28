@@ -1,26 +1,18 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 import {InviteBody, UserParams} from "../types/request.js";
 import { randomUUID } from 'crypto';
 
 export default async function (server: FastifyInstance) {
     server.post<{
-        Params: UserParams;
         Body: InviteBody;
     }>('/api/users/:userId/invite', {
         schema: {
-            params: {
-                    type: 'object',
-                properties: {
-                    userId: { type: 'string' }
-                },
-                required: ['userId']
-            },
             body: {
                 type: 'object',
                 properties: {
-                    addressee_id: { type: 'string' }
+                    addressee_username: { type: 'string' }
                 },
-                required: ['addressee_id']
+                required: ['addressee_username']
             },
             response: {
                 201: {
@@ -30,12 +22,17 @@ export default async function (server: FastifyInstance) {
                         invitation: {
                             type: 'object',
                             properties: {
-                                token: { type: 'string' },
                                 requester_id: { type: 'string' },
-                                addressee_id: { type: 'string' },
+                                username: { type: 'string' },
                                 status: { type: 'string' }
                             }
                         }
+                    }
+                },
+                400: {
+                    type: 'object',
+                    properties: {
+                        error: { type: 'string' }
                     }
                 },
                 404: {
@@ -52,26 +49,44 @@ export default async function (server: FastifyInstance) {
                 }
             }
         }
-    }, async (request, reply) => {
-        const { userId: requester_id } = request.params;
-        const { addressee_id } = request.body;
+    }, async (request: FastifyRequest, reply) => {
+        const requester_id = request.currentUser?.id;
+        const { addressee_username } = request.body as { addressee_username: string };
+
+        console.log(request.currentUser);
+        if (!requester_id) {
+            return reply.status(401).send({ error: 'User not authenticated' });
+        }
+
+        console.log('Requester ID:', requester_id);
+        console.log('Addressee username:', addressee_username);
 
         try {
+            const addresseeUser = await server.db.get(
+                'SELECT id, username FROM users WHERE username = ?',
+                addressee_username
+            );
+
+            if (!addresseeUser) {
+                return reply.status(404).send({
+                    error: 'User not found'
+                });
+            }
+
+            const addressee_id = addresseeUser.id;
+            console.log('Addressee ID:', addressee_id);
+
+            if (requester_id === addressee_id) {
+                return reply.status(400).send({ error: 'Cannot invite yourself' });
+            }
+
             const requesterExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
                 requester_id
             );
-            const addresseeExists = await server.db.get(
-                'SELECT id FROM users WHERE id = ?',
-                addressee_id
-            );
 
-            if (!requesterExists || !addresseeExists) {
-                return reply.status(404).send({ error: 'User not found' });
-            }
-
-            if (requester_id === addressee_id) {
-                return reply.status(400).send({ error: 'Cannot invite yourself' });
+            if (!requesterExists) {
+                return reply.status(404).send({ error: 'Requester not found' });
             }
 
             const existingRelation = await server.db.get(
@@ -93,15 +108,14 @@ export default async function (server: FastifyInstance) {
             return reply.status(201).send({
                 message: 'Invitation sent successfully',
                 invitation: {
-                    token: invitationToken,
                     requester_id,
-                    addressee_id,
+                    username: addressee_username,
                     status: 'pending'
                 }
             });
 
         } catch (error) {
-            server.log.error(error);
+            server.log.error('Error in invite endpoint:', error);
             return reply.status(500).send({ error: 'Internal server error' });
         }
     });

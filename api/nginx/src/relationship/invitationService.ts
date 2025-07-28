@@ -2,7 +2,7 @@ import { ApiUtils } from './apiUtils.js';
 import {getUser} from "../user-handler.js";
 
 interface InvitationRequest {
-    addressee_id: string;
+    addressee_username: string;
 }
 
 interface InvitationResponse {
@@ -29,10 +29,10 @@ export class InvitationService {
         }
 
         const addresseeElement = document.getElementById('inviteUserId') as HTMLInputElement;
-        const addresseeId = addresseeElement?.value?.trim();
+        const addresseeUsername = addresseeElement?.value?.trim();
 
-        if (!addresseeId) {
-            ApiUtils.showAlert('Please enter a user ID to invite');
+        if (!addresseeUsername) {
+            ApiUtils.showAlert('Please enter a user username to invite');
             return;
         }
 
@@ -40,11 +40,10 @@ export class InvitationService {
             const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invite`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'user-id': currentUser.id.toString()
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    addressee_id: addresseeId
+                    addressee_username: addresseeUsername
                 } as InvitationRequest)
             });
 
@@ -70,11 +69,7 @@ export class InvitationService {
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invitations`, {
-                headers: {
-                    'user-id': currentUser.id.toString()
-                }
-            });
+            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invitations`);
 
             const data: InvitationResponse = await response.json();
 

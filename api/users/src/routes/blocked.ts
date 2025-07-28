@@ -1,3 +1,4 @@
+/*
 import {FastifyInstance} from "fastify";
 import {BlockUserBody, UserParams} from "../types/request.js";
 
@@ -59,3 +60,4 @@ export default async function (server: FastifyInstance) {
         }
     });
 }
+*/
