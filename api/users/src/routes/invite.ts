@@ -1,5 +1,6 @@
 import {FastifyInstance} from "fastify";
 import {InviteBody, UserParams} from "../types/request.js";
+import { randomUUID } from 'crypto';
 
 export default async function (server: FastifyInstance) {
     server.post<{
@@ -29,6 +30,7 @@ export default async function (server: FastifyInstance) {
                         invitation: {
                             type: 'object',
                             properties: {
+                                token: { type: 'string' },
                                 requester_id: { type: 'string' },
                                 addressee_id: { type: 'string' },
                                 status: { type: 'string' }
@@ -85,15 +87,18 @@ export default async function (server: FastifyInstance) {
                 return reply.status(409).send({ error: 'Invitation already exists' });
             }
 
+            const invitationToken = randomUUID();
+
             // Create the invitation
             await server.db.run(
-                'INSERT INTO relationships (requester_id, addressee_id, status) VALUES (?, ?, ?)',
-                requester_id, addressee_id, 'pending'
+                'INSERT INTO relationships (requester_id, addressee_id, status, invitation_token) VALUES (?, ?, ?, ?)',
+                requester_id, addressee_id, 'pending', invitationToken
             );
 
             return reply.status(201).send({
                 message: 'Invitation sent successfully',
                 invitation: {
+                    token: invitationToken,
                     requester_id,
                     addressee_id,
                     status: 'pending'

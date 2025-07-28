@@ -15,6 +15,7 @@ export async function up({ context }: { context: Database }) {
         CREATE TABLE IF NOT EXISTS relationships (
             requester_id INTEGER NOT NULL,
             addressee_id INTEGER NOT NULL,
+            invitation_token VARCHAR(255) UNIQUE NOT NULL,
             status TEXT NOT NULL CHECK(status IN ('pending', 'accepted', 'blocked')),
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (requester_id) REFERENCES users(id),
