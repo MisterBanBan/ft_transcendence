@@ -1,13 +1,13 @@
 import { FastifyPluginAsync } from "fastify";
 import { Socket } from "socket.io";
-import {createTournament} from "../socket/createTournament.js";
-import updateTournamentsList from "../socket/updateTournamentsList.js";
-import {joinTournament} from "../utils/joinTournament.js";
+import {create} from "../socket/create.js";
+import {join} from "../socket/join.js";
 import {tournaments} from "../server.js";
-import {validateUsername} from "../utils/validateUsername.js";
-import {leaveTournament} from "../utils/leaveTournament.js";
-import {inTournament} from "../utils/inTournament.js";
+import {leave} from "../socket/leave.js";
+import {validateUsername} from "../utils/validate-username.js";
+import updateTournamentsList from "../socket/update-tournaments-list.js";
 import {updateTournamentInfo} from "../room/updateTournamentInfo.js";
+import {inTournament} from "../utils/in-tournament.js";
 
 export const usersSockets = new Map<number, Set<string>>()
 
@@ -55,7 +55,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 
 		await updateTournamentsList(app, socket);
 
-		socket.on("createTournament", async (name, size, displayName) => {
+		socket.on("create", async (name, size, displayName) => {
 			console.log("createTOURNAMENT");
 			if (typeof name !== "string" || typeof size !== "number" || typeof displayName !== "string") {
 				// TODO error
@@ -71,10 +71,10 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
-			await createTournament(app, socket, name, size, displayName, user.id);
+			await create(app, socket, name, size, displayName, user.id);
 		})
 
-		socket.on("joinTournament", async (name, displayName) => {
+		socket.on("join", async (name, displayName) => {
 			console.log("joinTournament");
 			if (typeof name !== "string" || typeof displayName !== "string") {
 				// TODO error
@@ -99,7 +99,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
-			await joinTournament(app, socket, user.id, displayName, tournament);
+			await join(app, socket, user.id, displayName, tournament);
 			socket.join(name);
 
 		})
@@ -119,7 +119,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			}
 
 			if (tournament)
-				await leaveTournament(app, socket, user.id, tournament);
+				await leave(app, socket, user.id, tournament);
 
 			usersSockets.delete(user.id);
 		})

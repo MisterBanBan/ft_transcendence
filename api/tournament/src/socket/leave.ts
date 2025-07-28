@@ -1,12 +1,12 @@
 import {Tournament} from "../class/Tournament.js";
 import {tournaments} from "../server.js";
-import updateTournamentsList from "../socket/updateTournamentsList.js";
 import {FastifyInstance} from "fastify";
-import {updateTournamentInfo} from "../room/updateTournamentInfo.js";
 import {Socket} from "socket.io";
-import {allLeaveRoom} from "./allLeaveRoom.js";
+import {allLeaveRoom} from "../utils/all-leave-room.js";
+import updateTournamentsList from "./update-tournaments-list.js";
+import {updateTournamentInfo} from "../room/updateTournamentInfo.js";
 
-export async function leaveTournament(app: FastifyInstance, socket: Socket, playerId: number, tournament: Tournament) {
+export async function leave(app: FastifyInstance, socket: Socket, playerId: number, tournament: Tournament) {
 
 	tournament.removePlayer(playerId);
 	allLeaveRoom(app, playerId, tournament.getName());

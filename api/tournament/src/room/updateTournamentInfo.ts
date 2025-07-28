@@ -1,7 +1,6 @@
 import {FastifyInstance} from "fastify";
 import {Tournament} from "../class/Tournament.js";
-import {emitAll} from "../utils/emitAll.js";
-import {usersSockets} from "../plugins/socket-plugin.js";
+import {emitAll} from "../utils/emit-all.js";
 
 export async function updateTournamentInfo(app: FastifyInstance, userId: number, tournament: Tournament, room: boolean) {
 
