@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 17:21:26 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 12:19:45 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ export class viewManager implements Component {
     private options!: HTMLElement[];
     private cursor!: HTMLVideoElement;
     private selectedIdx: number = 0;
+    private activeViewName: string | null = null;
     private keydownHandler: (e: KeyboardEvent) => void;
 
     constructor(videoId: string, containerId: string, authBtnId: string) {
@@ -86,7 +87,9 @@ export class viewManager implements Component {
     }
 
     public show(viewName: string) {
-        
+        if (this.activeViewName === 'game') {
+            this.destroyGameListeners();
+        }
         this.activeView?.destroy();
         
         this.formsContainer.innerHTML = '';
@@ -147,13 +150,16 @@ export class viewManager implements Component {
                 console.error(`View "${viewName}" is not implemented.`);
         }
         this.activeView = newView;
-        
+        this.activeViewName = viewName;
         if (this.activeView) {
             this.activeView.init();
         }
         
     }
-
+    public destroyGameListeners(): void {
+        document.removeEventListener('keydown', this.keydownHandler);
+        console.log('Game listeners removed');
+    }
     private friendActionLog(e: MouseEvent) {
         const x = e.clientX;
         const y = e.clientY;

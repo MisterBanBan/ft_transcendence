@@ -6,10 +6,11 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/09 17:18:30 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/11 20:46:34 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 11:24:43 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+/*
 export const invites = () => `
 
 
@@ -29,8 +30,8 @@ export const invites = () => `
                         `).join('')}
                     </div>
 `
-
-
+*/
+/*
 const invite = [
     { pseudo: "Jean", img: "/img/last_airbender.jpg", trophee: 1200 },
     { pseudo: "Alice", img: "/img/last_airbender.jpg", trophee: 950 },
@@ -52,4 +53,4 @@ const invite = [
     { pseudo: "Zoé", img: "/img/last_airbender.jpg", trophee: 950 },
     { pseudo: "Maël", img: "/img/last_airbender.jpg", trophee: 500 },
     { pseudo: "Lucie", img: "/img/last_airbender.jpg", trophee: 1800 },
-  ];
+  ];*/
