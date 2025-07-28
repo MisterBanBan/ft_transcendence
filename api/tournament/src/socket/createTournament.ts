@@ -1,24 +1,30 @@
-import {Match, Tournament} from "../class/Tournament.js";
+import {Match, Tournament, TournamentStructure} from "../class/Tournament.js";
 import {tournaments} from "../server.js";
 import {joinTournament} from "../utils/joinTournament.js";
 import updateTournamentList from "./updateTournamentList.js";
 import {FastifyInstance} from "fastify";
+import {createMatchs} from "../utils/createMatchs.js";
 
-async function createMatchs(matchesNb: number): Promise<Match[]> {
-	const matchs: Match[] = [];
-
-	for (let i = 0; i < matchesNb; i++) {
-		const match: Match = {
-			player1: undefined,
-			player2: undefined,
-			winner: undefined,
-		}
-
-		matchs.push(match);
+function printTournament(tournament: TournamentStructure): void {
+	console.log("Tournament Rounds:");
+	for (const roundName in tournament.rounds) {
+		console.log(`\nRound: ${roundName}`);
+		const matches = tournament.rounds[roundName];
+		matches.forEach((match: Match, index: number) => {
+			const p1 = match.player1 !== undefined ? `Player ${match.player1}` : "Unknown player 1";
+			const p2 = match.player2 !== undefined ? `Player ${match.player2}` : "Unknown player 2";
+			const winner = match.winner !== undefined ? ` - Winner: Player ${match.winner}` : "";
+			console.log(`  Match ${index + 1}: ${p1} vs ${p2}${winner}`);
+		});
 	}
 
-	return matchs;
+	if (tournament.winner) {
+		console.log(`\nOverall Winner: ${tournament.winner}`);
+	} else {
+		console.log("\nOverall Winner not yet decided.");
+	}
 }
+
 
 export async function createTournament(app: FastifyInstance, name: string, size: number, displayName: string, ownerId: number): Promise<Tournament | null> {
 
@@ -29,10 +35,12 @@ export async function createTournament(app: FastifyInstance, name: string, size:
 	const tournament = new Tournament(name, ownerId, size);
 	await joinTournament(app, ownerId, displayName, tournament);
 
-	for (let matchesNb = size / 2; matchesNb > 1; matchesNb /= 2) {
-		tournament.getStructure().rounds[matchesNb.toString()] = await createMatchs(matchesNb);
+	for (let round = 1; round < size; round *= 2) {
+		const match = size / Math.pow(2, round);
+		tournament.getStructure().rounds[round.toString()] = await createMatchs(match);
 	}
-	tournament.getStructure().rounds["1"] = await createMatchs(1);
+
+	printTournament(tournament.getStructure())
 
 	tournaments.set(name, tournament);
 

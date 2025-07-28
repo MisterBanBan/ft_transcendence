@@ -4,7 +4,7 @@ export interface Match {
 	winner?: number;
 }
 
-interface TournamentStructure {
+export interface TournamentStructure {
 	rounds: {
 		[rounds: string]: Match[];
 	};
