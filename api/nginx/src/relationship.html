@@ -1,0 +1,768 @@
+<!--
+<!DOCTYPE html>Add commentMore actions
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouvement au Clavier</title>
+    <link href="/css/tailwind.css" rel="stylesheet">
+    &lt;!&ndash; <script src="https://cdn.tailwindcss.com"></script> &ndash;&gt;
+    <link rel="stylesheet" href="/css/output.css">
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+    <style>
+        html, body, #app {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+
+</head>
+<body class="overflow-hidden h-screen bg-black">
+<div id="app" class="p-0">
+    &lt;!&ndash; Le contenu des pages sera chargé ici &ndash;&gt;
+</div>
+
+<script type="module" src="/public/router.js"></script>
+
+
+</body>
+</html>-->
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transcendance - Test API Complet</title>
+    <style>
+
+        .block-user-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+            margin-left: 5px;
+        }
+
+        .block-user-btn:hover {
+            background-color: #c82333;
+        }
+
+
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .invitation-item, .friend-item {
+            background: #f8f9fa;
+
+
+
+
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+
+        }
+
+        .pending {
+            border-left-color: #ffc107;
+
+
+        }
+
+        .accepted {
+            border-left-color: #28a745;
+
+
+        }
+
+        .response {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+
+
+        }
+
+        .user-list {
+            display: flex;
+
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .user-card {
+            background: #e9ecef;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .remove-friend-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .remove-friend-btn:hover {
+            background-color: #c82333;
+        }
+
+        .blocked-item {
+            background-color: #f8f9fa;
+            border: 1px solid #dc3545;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .unblock-user-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .unblock-user-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+<h1>🎮 Transcendance - Test API Complet</h1>
+
+<!-- Configuration -->
+<div class="container">
+    <h2>⚙️ Configuration</h2>
+    <div class="form-group">
+        <label for="apiUrl">URL de l'API:</label>
+        <input type="text" id="apiUrl" value="https://localhost:8443">
+    </div>
+    <div class="form-group">
+        <label for="currentUserId">ID Utilisateur Actuel:</label>
+        <input type="text" id="currentUserId" value="user1" placeholder="ex: user1">
+    </div>
+</div>
+
+<!-- Créer des utilisateurs -->
+<div class="container">
+    <h2>👤 Créer des Utilisateurs</h2>
+    <div class="form-group">
+        <label for="newUserId">ID Utilisateur:</label>
+        <input type="text" id="newUserId" placeholder="ex: user5">
+    </div>
+    <div class="form-group">
+        <label for="newUsername">Nom d'utilisateur:</label>
+        <input type="text" id="newUsername" placeholder="ex: Emma">
+
+
+
+
+    </div>
+    <button onclick="createUser()">Créer l'utilisateur</button>
+    <button onclick="createTestUsers()">Créer utilisateurs de test</button>
+    <div id="createUserResponse" class="response"></div>
+
+    <div id="usersList" class="user-list"></div>
+</div>
+
+<!-- Envoyer une invitation -->
+<div class="container">
+    <h2>📤 Envoyer une Invitation</h2>
+    <div class="form-group">
+        <label for="inviteUserId">ID de l'utilisateur à inviter:</label>
+        <input type="text" id="inviteUserId" placeholder="ex: user2">
+    </div>
+    <button onclick="sendInvitation()">Envoyer l'invitation</button>
+    <div id="inviteResponse" class="response"></div>
+
+
+
+</div>
+
+<!-- Voir les invitations reçues -->
+<div class="container">
+    <h2>📥 Invitations Reçues</h2>
+    <button onclick="loadInvitations()">Charger les invitations</button>
+    <div id="invitationsList"></div>
+    <div id="invitationsResponse" class="response"></div>
+</div>
+
+<!-- Gérer les invitations -->
+<div class="container">
+    <h2>✅ Gérer les Invitations</h2>
+    <div class="form-group">
+        <label for="requesterIdAccept">ID du demandeur:</label>
+        <input type="text" id="requesterIdAccept" placeholder="ex: user3">
+    </div>
+    <button onclick="acceptInvitation()">Accepter</button>
+    <button onclick="declineInvitation()" style="background-color: #dc3545;">Refuser</button>
+    <div id="manageResponse" class="response"></div>
+</div>
+
+<!-- Liste des amis -->
+<div class="container">
+    <h2>👥 Liste des Amis</h2>
+    <button onclick="loadFriends()">Charger les amis</button>
+    <div id="friendsList"></div>
+    <div id="friendsResponse" class="response"></div>
+    <div id="removeFriendResponse"></div>
+</div>
+
+<!-- Liste des bloques -->
+<div class="container">
+    <h2>👥 Liste des bloques</h2>
+    <button onclick="loadBlockedUsers()">Charger les bloques</button>
+    <div id="BlockedList"></div>
+    <div id="blockUserResponse" class="response"></div>
+    <div id="unblockResponse"></div>
+</div>
+
+<!-- Outils de test -->
+<div class="container">
+    <h2>🧪 Outils de Test</h2>
+    <button onclick="clearResponses()" style="background-color: #6c757d;">Effacer les réponses</button>
+    <button onclick="testAllRoutes()" style="background-color: #17a2b8;">Tester toutes les routes</button>
+    <div id="testResponse" class="response"></div>
+</div>
+
+<script>
+    // Get API base URL
+    function getApiUrl() {
+        return document.getElementById('apiUrl').value;
+    }
+
+    console.log(getApiUrl());
+
+    // Get current user ID
+    function getCurrentUserId() {
+        return document.getElementById('currentUserId').value;
+    }
+
+    // Display response in a container
+    function displayResponse(containerId, response, isError = false) {
+        const container = document.getElementById(containerId);
+        container.textContent = JSON.stringify(response, null, 2);
+        container.className = `response ${isError ? 'error' : 'success'}`;
+    }
+
+    // Create a single user
+    async function createUser() {
+        const apiUrl = getApiUrl();
+        const userId = document.getElementById('newUserId').value;
+        const username = document.getElementById('newUsername').value;
+
+        if (!userId || !username) {
+            alert('Please enter both user ID and username');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${apiUrl}/api/users/create`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    username: username
+                })
+            });
+
+            const data = await response.json();
+            displayResponse('createUserResponse', data, !response.ok);
+
+            // Clear form
+            document.getElementById('newUserId').value = '';
+            document.getElementById('newUsername').value = '';
+
+            // Refresh user list
+            updateUsersList();
+        } catch (error) {
+            displayResponse('createUserResponse', { error: error.message }, true);
+        }
+    }
+
+    // Create test users
+    async function createTestUsers() {
+        const testUsers = [
+            { userId: 'user1', username: 'Alice' },
+            { userId: 'user2', username: 'Bob' },
+            { userId: 'user3', username: 'Charlie' },
+            { userId: 'user4', username: 'Diana' }
+        ];
+
+        const results = [];
+        const apiUrl = getApiUrl();
+
+        for (const user of testUsers) {
+            try {
+                const response = await fetch(`${apiUrl}/api/users/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(user)
+                });
+
+                const data = await response.json();
+                results.push({ user: user.username, result: data });
+            } catch (error) {
+                results.push({ user: user.username, error: error.message });
+            }
+        }
+
+        displayResponse('createUserResponse', {
+            message: 'Test users creation attempted',
+            results: results
+        });
+
+        updateUsersList();
+    }
+
+
+    // Update users list display
+    function updateUsersList() {
+        const usersList = document.getElementById('usersList');
+        const testUsers = ['user1 (Alice)', 'user2 (Bob)', 'user3 (Charlie)', 'user4 (Diana)'];
+
+        usersList.innerHTML = testUsers.map(user =>
+            `<div class="user-card">${user}</div>`
+        ).join('');
+    }
+
+    // Send friend invitation
+    async function sendInvitation() {
+        const apiUrl = getApiUrl();
+        const currentUserId = getCurrentUserId();
+        console.log(currentUserId);
+        const addresseeId = document.getElementById('inviteUserId').value;
+        console.log(addresseeId);
+
+        if (!addresseeId) {
+            alert('Please enter a user ID to invite');
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/invite`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'userId': currentUserId
+                },
+                body: JSON.stringify({
+                    addressee_id: addresseeId
+                })
+            });
+
+            const data = await response.json();
+            displayResponse('inviteResponse', data, !response.ok);
+        } catch (error) {
+            displayResponse('inviteResponse', { error: error.message }, true);
+        }
+    }
+
+    // Load pending invitations
+    async function loadInvitations() {
+        const apiUrl = getApiUrl();
+        const currentUserId = getCurrentUserId();
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/invitations`, {
+                headers: {
+                    'user-id': currentUserId
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('invitationsResponse', data, !response.ok);
+
+            // Display invitations in a nice format
+            const invitationsList = document.getElementById('invitationsList');
+            if (data.invitations && data.invitations.length > 0) {
+                invitationsList.innerHTML = data.invitations.map(inv => `
+                    <div class="invitation-item pending">
+                        <strong>${inv.username}</strong> (${inv.requester_id})
+                        <br>Status: ${inv.status}
+                        <br>Avatar: ${inv.avatar_url || 'N/A'}
+                    </div>
+                `).join('');
+            } else {
+                invitationsList.innerHTML = '<p>Aucune invitation en attente</p>';
+            }
+        } catch (error) {
+            displayResponse('invitationsResponse', { error: error.message }, true);
+        }
+    }
+
+    // Accept invitation
+    async function acceptInvitation() {
+        const apiUrl = getApiUrl();
+        const requesterId = document.getElementById('requesterIdAccept').value;
+
+        if (!requesterId) {
+            alert('Please enter the requester ID');
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${requesterId}/accept`, {
+                method: 'PUT',
+                headers: {
+                    'user-id': getCurrentUserId()
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('manageResponse', data, !response.ok);
+        } catch (error) {
+            displayResponse('manageResponse', { error: error.message }, true);
+        }
+    }
+
+    // Decline invitation
+    async function declineInvitation() {
+        const apiUrl = getApiUrl();
+        const requesterId = document.getElementById('requesterIdAccept').value;
+
+        if (!requesterId) {
+            alert('Please enter the requester ID');
+
+
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${requesterId}/decline`, {
+                method: 'DELETE',
+                headers: {
+                    'user-id': getCurrentUserId()
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('manageResponse', data, !response.ok);
+        } catch (error) {
+            displayResponse('manageResponse', { error: error.message }, true);
+        }
+    }
+
+    // Load friends list
+    async function loadFriends() {
+        const apiUrl = getApiUrl();
+        const currentUserId = getCurrentUserId();
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/friendsList`, {
+                headers: {
+                    'user-id': currentUserId
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('friendsResponse', data, !response.ok);
+
+            // Display friends in a nice format
+            const friendsList = document.getElementById('friendsList');
+            if (data.friends && data.friends.length > 0) {
+                friendsList.innerHTML = data.friends.map(friend => `
+                <div class="friend-item accepted">
+                    <strong>${friend.username}</strong> (${friend.id})
+                    <br>Status: ${friend.status || 'online'}
+                    <br>Avatar: ${friend.avatar_url || 'N/A'}
+                    <br>
+                    <button onclick="removeFriend('${friend.id}')" class="remove-friend-btn">
+                        Remove Friend
+                    </button>
+                    <button onclick="blockUser('${friend.id}')" class="block-user-btn">
+                        Block User
+                    </button>
+                </div>
+            `).join('');
+            } else {
+                friendsList.innerHTML = '<p>Aucun ami pour le moment</p>';
+            }
+        } catch (error) {
+            displayResponse('friendsResponse', { error: error.message }, true);
+        }
+    }
+
+    async function removeFriend(friendId) {
+        const currentUserId = getCurrentUserId();
+
+        if (!confirm('Are you sure you want to remove this friend?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/removeFriend`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': currentUserId
+                },
+                body: JSON.stringify({
+                    friend_id: friendId
+                })
+            });
+
+            const data = await response.json();
+            displayResponse('removeFriendResponse', data, !response.ok);
+
+            if (response.ok) {
+                // Reload the friends list after successful removal
+                await loadFriends();
+            }
+        } catch (error) {
+            displayResponse('removeFriendResponse', { error: error.message }, true);
+        }
+    }
+
+    async function blockUser(userIdToBlock) {
+        const currentUserId = getCurrentUserId();
+
+
+        if (!confirm('Are you sure you want to block this user?')) {
+
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/blockUser`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': currentUserId
+                },
+                body: JSON.stringify({
+                    blocked_user_id: userIdToBlock
+                })
+            });
+
+            const data = await response.json();
+            displayResponse('blockUserResponse', data, !response.ok);
+
+            if (response.ok) {
+                // Optionally reload friends list or blocked list after successful blocking
+                if (typeof loadFriends === 'function') {
+                    await loadFriends();
+                }
+                if (typeof loadBlockedUsers === 'function') {
+                    await loadBlockedUsers();
+                }
+            }
+        } catch (error) {
+            displayResponse('blockUserResponse', { error: error.message }, true);
+        }
+    }
+
+    // Function to add block button to existing user lists
+    function addBlockButtonToUserList(userId, username, containerId) {
+        const container = document.getElementById(containerId);
+        if (container) {
+            const blockButton = document.createElement('button');
+            blockButton.textContent = 'Block User';
+            blockButton.className = 'block-user-btn';
+            blockButton.onclick = () => blockUser(userId);
+
+            // Find the user item and add the button
+            const userItems = container.querySelectorAll('.friend-item, .user-item');
+            userItems.forEach(item => {
+                if (item.textContent.includes(username) || item.textContent.includes(userId)) {
+                    item.appendChild(blockButton);
+                }
+            });
+        }
+    }
+
+    async function loadBlockedUsers() {
+        const apiUrl = getApiUrl();
+        const currentUserId = getCurrentUserId();
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/blockedList`, {
+                headers: {
+                    'user-id': currentUserId
+                }
+            });
+
+            const data = await response.json();
+            displayResponse('blockUserResponse', data, !response.ok); // Utiliser un ID existant
+
+            // Correction de l'ID du conteneur
+            const blockedList = document.getElementById('BlockedList'); // Avec B majuscule
+            if (data.blocked && data.blocked.length > 0) {
+                blockedList.innerHTML = data.blocked.map(blockedUser => `
+                <div class="blocked-item">
+                    <strong>${blockedUser.username}</strong> (${blockedUser.id})
+                    <br>Status: Blocked
+                    <br>Avatar: ${blockedUser.avatar_url || 'N/A'}
+                    <br>
+                    <button onclick="unblockUser('${blockedUser.id}')" class="unblock-user-btn">
+                        Unblock User
+                    </button>
+                </div>
+            `).join('');
+            } else {
+                blockedList.innerHTML = '<p>Aucun utilisateur bloqué</p>';
+            }
+        } catch (error) {
+            displayResponse('blockUserResponse', { error: error.message }, true);
+        }
+    }
+
+    async function unblockUser(blockedUserId) {
+        const currentUserId = getCurrentUserId();
+
+
+
+
+
+
+
+
+        if (!confirm('Are you sure you want to unblock this user?')) {
+            return;
+
+
+
+
+
+
+
+        }
+
+
+        try {
+            const response = await fetch(`https://localhost:8443/api/users/${currentUserId}/unblockUser`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': currentUserId
+                },
+                body: JSON.stringify({
+                    blocked_user_id: blockedUserId
+                })
+            });
+
+            const data = await response.json();
+            displayResponse('unblockResponse', data, !response.ok);
+
+            if (response.ok) {
+                // Reload the blocked users list after successful unblocking
+                await loadBlockedUsers();
+            }
+        } catch (error) {
+            displayResponse('unblockResponse', { error: error.message }, true);
+        }
+    }
+
+    // Test all routes sequentially
+    async function testAllRoutes() {
+        const testResults = [];
+
+
+
+        try {
+            // Test 1: Create users
+            testResults.push("=== Testing user creation ===");
+            await createTestUsers();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Test 2: Send invitation
+            testResults.push("=== Testing invitation sending ===");
+            document.getElementById('inviteUserId').value = 'user2';
+            await sendInvitation();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Test 3: Load invitations
+            testResults.push("=== Testing invitations loading ===");
+            document.getElementById('currentUserId').value = 'user2';
+            await loadInvitations();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Test 4: Accept invitation
+            testResults.push("=== Testing invitation acceptance ===");
+            document.getElementById('requesterIdAccept').value = 'user1';
+            await acceptInvitation();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            // Test 5: Load friends
+            testResults.push("=== Testing friends loading ===");
+            await loadFriends();
+
+            displayResponse('testResponse', {
+                message: 'All routes tested successfully',
+                tests: testResults
+            });
+
+        } catch (error) {
+            displayResponse('testResponse', {
+                error: 'Error during testing',
+                details: error.message
+            }, true);
+        }
+
+
+    }
+
+    // Clear all response containers
+    function clearResponses() {
+        const responseContainers = [
+            'createUserResponse', 'inviteResponse', 'invitationsResponse',
+            'manageResponse', 'friendsResponse', 'testResponse',
+            'blockUserResponse', 'unblockResponse' // Ajouter ces IDs
+
+        ];
+
+        responseContainers.forEach(id => {
+            const container = document.getElementById(id);
+            if (container) { // Vérifier que l'élément existe
+                container.textContent = '';
+                container.className = 'response';
+            }
+
+        });
+
+        // Clear lists avec vérification
+        const lists = ['invitationsList', 'friendsList', 'usersList', 'BlockedList'];
+        lists.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                element.innerHTML = '';
+            }
+        });
+    }
+
+    window.addEventListener('load', () => {
+        console.log('🎮 Transcendance API Tester loaded');
+        console.log('Make sure your Fastify server is running on the configured URL');
+        updateUsersList();
+    });
+</script>
+</body>

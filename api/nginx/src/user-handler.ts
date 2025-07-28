@@ -12,7 +12,7 @@
 
 import { AuthUser } from "./type";
 
-let user: AuthUser | undefined = undefined;
+let user: AuthUser | undefined = undefined
 
 export function setUser(newUser: AuthUser | undefined): void {
     user = newUser;

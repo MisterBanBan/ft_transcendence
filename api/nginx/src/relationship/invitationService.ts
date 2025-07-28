@@ -1,0 +1,209 @@
+import { ApiUtils } from './apiUtils.js';
+import {getUser} from "../user-handler";
+
+interface InvitationRequest {
+    addressee_id: string;
+}
+
+interface InvitationResponse {
+    message?: string;
+    error?: string;
+    invitations?: Invitation[];
+}
+
+interface Invitation {
+    requester_id: string;
+    username: string;
+    status: 'pending' | 'accepted' | 'declined';
+    avatar_url?: string;
+}
+
+export class InvitationService {
+    private static readonly BASE_URL = 'https://localhost:8443';
+
+    static async sendInvitation(): Promise<void> {
+        const currentUser = getUser();
+        if (!currentUser) {
+            ApiUtils.showAlert('User not authenticated');
+            return;
+        }
+
+        const addresseeElement = document.getElementById('inviteUserId') as HTMLInputElement;
+        const addresseeId = addresseeElement?.value?.trim();
+
+        if (!addresseeId) {
+            ApiUtils.showAlert('Please enter a user ID to invite');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invite`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'user-id': currentUser.id.toString()
+                },
+                body: JSON.stringify({
+                    addressee_id: addresseeId
+                } as InvitationRequest)
+            });
+
+            const data: InvitationResponse = await response.json();
+
+            if (response.ok) {
+                addresseeElement.value = '';
+                ApiUtils.showAlert(data.message || 'Invitation sent successfully');
+            } else {
+                ApiUtils.showAlert(data.error || 'Failed to send invitation');
+            }
+        } catch (error) {
+            console.error('Error sending invitation:', error);
+            ApiUtils.showAlert('Error sending invitation');
+        }
+    }
+
+    static async loadInvitations(): Promise<void> {
+        const currentUser = getUser();
+        if (!currentUser) {
+            ApiUtils.showAlert('User not authenticated');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invitations`, {
+                headers: {
+                    'user-id': currentUser.id.toString()
+                }
+            });
+
+            const data: InvitationResponse = await response.json();
+
+            if (response.ok && data.invitations) {
+                this.displayInvitations(data.invitations);
+            } else {
+                ApiUtils.showAlert(data.error || 'Failed to load invitations');
+            }
+        } catch (error) {
+            console.error('Error loading invitations:', error);
+            ApiUtils.showAlert('Error loading invitations');
+        }
+    }
+
+    static async acceptInvitation(requesterId?: string): Promise<boolean> {
+        const currentUser = getUser();
+        if (!currentUser) {
+            ApiUtils.showAlert('User not authenticated');
+            return false;
+        }
+
+        let finalRequesterId = requesterId;
+        if (!finalRequesterId) {
+            const requesterElement = document.getElementById('requesterIdAccept') as HTMLInputElement;
+            finalRequesterId = requesterElement?.value?.trim();
+        }
+
+        if (!finalRequesterId) {
+            ApiUtils.showAlert('Please enter the requester ID');
+            return false;
+        }
+
+        try {
+            const response = await fetch(`${this.BASE_URL}/api/users/${finalRequesterId}/accept`, {
+                method: 'PUT',
+                headers: {
+                    'user-id': currentUser.id.toString()
+                }
+            });
+
+            const data: InvitationResponse = await response.json();
+
+            if (response.ok) {
+                ApiUtils.showAlert('Invitation accepted successfully');
+                await this.loadInvitations();
+                return true;
+            } else {
+                ApiUtils.showAlert(data.error || 'Failed to accept invitation');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error accepting invitation:', error);
+            ApiUtils.showAlert('Error accepting invitation');
+            return false;
+        }
+    }
+
+    static async declineInvitation(requesterId?: string): Promise<boolean> {
+        const currentUser = getUser();
+        if (!currentUser) {
+            ApiUtils.showAlert('User not authenticated');
+            return false;
+        }
+
+        let finalRequesterId = requesterId;
+        if (!finalRequesterId) {
+            const requesterElement = document.getElementById('requesterIdDecline') as HTMLInputElement;
+            finalRequesterId = requesterElement?.value?.trim();
+        }
+
+        if (!finalRequesterId) {
+            ApiUtils.showAlert('Please enter the requester ID');
+            return false;
+        }
+
+        try {
+            const response = await fetch(`${this.BASE_URL}/api/users/${finalRequesterId}/decline`, {
+                method: 'DELETE',
+                headers: {
+                    'user-id': currentUser.id.toString()
+                }
+            });
+
+            const data: InvitationResponse = await response.json();
+
+            if (response.ok) {
+                ApiUtils.showAlert('Invitation declined successfully');
+                await this.loadInvitations();
+                return true;
+            } else {
+                ApiUtils.showAlert(data.error || 'Failed to decline invitation');
+                return false;
+            }
+        } catch (error) {
+            console.error('Error declining invitation:', error);
+            ApiUtils.showAlert('Error declining invitation');
+            return false;
+        }
+    }
+
+    private static displayInvitations(invitations: Invitation[]): void {
+        const invitationsList = document.getElementById('invitationsList');
+        if (!invitationsList) return;
+
+        if (invitations.length > 0) {
+            invitationsList.innerHTML = invitations.map(inv => `
+                <div class="invitation-item pending">
+                    <div class="invitation-info">
+                        <strong>${this.escapeHtml(inv.username)}</strong> (${this.escapeHtml(inv.requester_id)})
+                        <br>Status: ${this.escapeHtml(inv.status)}
+                        <br>Avatar: ${inv.avatar_url ? this.escapeHtml(inv.avatar_url) : 'N/A'}
+                    </div>
+                    <div class="invitation-actions">
+                        <button onclick="InvitationService.acceptInvitation('${this.escapeHtml(inv.requester_id)}')" 
+                                class="btn-accept">Accept</button>
+                        <button onclick="InvitationService.declineInvitation('${this.escapeHtml(inv.requester_id)}')" 
+                                class="btn-decline">Decline</button>
+                    </div>
+                </div>
+            `).join('');
+        } else {
+            invitationsList.innerHTML = '<p class="text-gray-400">Aucune invitation en attente</p>';
+        }
+    }
+
+    // for XSS
+    private static escapeHtml(text: string): string {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    }
+}
