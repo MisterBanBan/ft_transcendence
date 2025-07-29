@@ -84,7 +84,6 @@ export class InvitationService {
             const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invitations`);
 
             if (!response.ok) {
-                ApiUtils.showAlert(`Failed to load invitations: ${response.status}`);
                 return;
             }
 
@@ -92,9 +91,8 @@ export class InvitationService {
 
             if (data.invitations && data.invitations.length > 0) {
                 this.displayInvitations(data.invitations);
-                ApiUtils.showAlert(data.message || 'Invitations loaded successfully');
             } else {
-                ApiUtils.showAlert('No pending invitations found');
+                console.log('No pending invitations found');
             }
         } catch (error) {
             console.error('Error loading invitations:', error);
