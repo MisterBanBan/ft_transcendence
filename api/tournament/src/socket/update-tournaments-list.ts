@@ -8,20 +8,19 @@ export default async function updateTournamentsList(app: FastifyInstance, socket
 	const tournamentsList: Tournament[] = [];
 
 	tournaments.forEach((tournament, name) => {
-		tournamentsList.push({
-			"name": name,
-			"size": tournament.getSize(),
-			"registered": tournament.getPlayers().size,
-			"players": Array.from(tournament.getPlayers().values())
-		})
+		if (!tournament.hasStarted())
+			tournamentsList.push({
+				"name": name,
+				"size": tournament.getSize(),
+				"registered": tournament.getPlayers().size,
+				"players": Array.from(tournament.getPlayers().values())
+			})
 	});
-
-	console.log(tournamentsList);
 
 	if (socket)
 		socket.emit("updateTournamentsList", tournamentsList);
 	else
-		app.io.sockets.sockets.forEach((socket: Socket) => {
-			socket.emit("updateTournamentsList", tournamentsList);
+		app.io.sockets.sockets.forEach((appSocket: Socket) => {
+			appSocket.emit("updateTournamentsList", tournamentsList);
 		})
 }

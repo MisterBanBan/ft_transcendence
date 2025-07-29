@@ -4,12 +4,7 @@ export async function createMatchs(matchesNb: number): Promise<Match[]> {
 	const matchs: Match[] = [];
 
 	for (let i = 0; i < matchesNb; i++) {
-		const match: Match = {
-			player1: undefined,
-			player2: undefined,
-			winner: undefined,
-		}
-
+		const match: Match = new Match()
 		matchs.push(match);
 	}
 

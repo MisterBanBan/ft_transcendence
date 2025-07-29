@@ -26,25 +26,46 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 	console.log(players)
 	console.log("----------------------")
 
-	const round = tournament.getStructure().rounds["1"];
+	const round1 = tournament.getStructure().rounds[0];
 
-	// round.forEach(( match: Match, index: number ) => {
-	// 	console.log(match, index)
-	// })
+	console.log(round1);
 
 	let iteration = 0
 	let index = 0
 	players.forEach((value, key) => {
 		if (iteration % 2 === 0)
-			round[index].player1 = key
+			round1[index].setPlayer1(key)
 		else {
-			round[index].player2 = key
+			round1[index].setPlayer2(key)
 			index++;
 		}
 		iteration++;
 	})
 
-	round.forEach(( match: Match, index: number ) => {
-		console.log(match, index)
-	})
+	const length = tournament.getStructure().rounds.length;
+	for (let i = 0; i < length; i++) {
+
+		const round = tournament.getStructure().rounds[i];
+
+		let matchPromises = round.map((match: Match) => {
+			return match.startMatch();
+		});
+
+		await Promise.all(matchPromises);
+
+		tournament.getStructure().rounds[i].forEach(( match: Match, index: number ) => {
+			console.log(index, match);
+		})
+
+		if (i + 1 < length) {
+			tournament.getStructure().rounds[i + 1].forEach((match: Match, index: number) => {
+				match.setPlayer1(tournament.getStructure().rounds[i][index * 2].getWinner())
+				match.setPlayer2(tournament.getStructure().rounds[i][index * 2 + 1].getWinner())
+			})
+		}
+		else {
+			console.log("Winner:", round[0].getWinner());
+			// TODO fin de tournois
+		}
+	}
 }

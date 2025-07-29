@@ -88,7 +88,6 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 		})
 
 		socket.on("join", async (name) => {
-			console.log("joinTournament");
 			if (typeof name !== "string") {
 				console.log("Invalid type for name: ", typeof name)
 				return;
@@ -97,6 +96,11 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			const tournament = tournaments.get(name);
 			if (!tournament) {
 				console.log("Tournament", name, "not found");
+				return
+			}
+
+			if (tournament.hasStarted()) {
+				console.log("Tournament", name, "already started")
 				return
 			}
 
@@ -123,11 +127,18 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
+			if (tournament.hasStarted()) {
+				console.log("Tournament", tournament.getName(), "already started")
+				return
+			}
+
 			if (!tournament.isFull()) {
 				console.log(`Tournament ${tournament.getName()} is not full` )
 				return
 			}
 
+			tournament.start();
+			await  updateTournamentsList(app, socket);
 			await start(app, tournament);
 		})
 

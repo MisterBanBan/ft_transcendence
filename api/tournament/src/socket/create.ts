@@ -12,9 +12,9 @@ function printTournament(tournament: TournamentStructure): void {
 		console.log(`\nRound: ${roundName}`);
 		const matches = tournament.rounds[roundName];
 		matches.forEach((match: Match, index: number) => {
-			const p1 = match.player1 !== undefined ? `Player ${match.player1}` : "Unknown player 1";
-			const p2 = match.player2 !== undefined ? `Player ${match.player2}` : "Unknown player 2";
-			const winner = match.winner !== undefined ? ` - Winner: Player ${match.winner}` : "";
+			const p1 = match.getPlayer1() !== undefined ? `Player ${match.getPlayer1()}` : "Unknown player 1";
+			const p2 = match.getPlayer2() !== undefined ? `Player ${match.getPlayer2()}` : "Unknown player 2";
+			const winner = match.getWinner() !== undefined ? ` - Winner: Player ${match.getWinner()}` : "";
 			console.log(`  Match ${index + 1}: ${p1} vs ${p2}${winner}`);
 		});
 	}
@@ -32,9 +32,11 @@ export async function create(app: FastifyInstance, socket: Socket, name: string,
 	const tournament = new Tournament(name, ownerId, size);
 	await join(app, ownerId, displayName, tournament);
 
+	let index = 0
 	for (let round = 1; round < size; round *= 2) {
 		const match = size / Math.pow(2, round);
-		tournament.getStructure().rounds[round.toString()] = await createMatchs(match);
+		tournament.getStructure().rounds[index] = await createMatchs(match);
+		index++;
 	}
 
 	printTournament(tournament.getStructure())
