@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tournamentView.ts                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 16:24:16 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 18:57:39 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/29 18:23:36 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@ import { Component } from "../component.js";
 import { viewManager } from "./viewManager.js";
 import { tournament } from "../menuInsert/tournament.js";
 import { tournamentList } from "../menuInsert/listingTournament.js";
-import { tournamentPage } from "../menuInsert/tournamentPage.js";
+import { tournamentPage8 } from "../menuInsert/tournamentPage8.js";
 
 export class tournamentView implements Component{
     
@@ -58,7 +58,8 @@ export class tournamentView implements Component{
             return;
         }
         tournamentPageContainer.innerHTML = '';
-        tournamentPageContainer.insertAdjacentHTML('beforeend', tournamentPage());
+        tournamentPageContainer.insertAdjacentHTML('beforeend', tournamentPage8());
+        
     }
 
     public destroy(): void {
