@@ -179,6 +179,9 @@ export const routes: Route[] = [
               <img id="ball"  src="/img/ball.png"  class="absolute" />
               <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
               <img id="right-bar" src="/img/bar_left.png" class="absolute" />
+			  
+    		  <p id="score-player1"  class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
+    		  <p id="score-player2" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
             </div>
 
 

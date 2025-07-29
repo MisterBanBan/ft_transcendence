@@ -32,7 +32,7 @@ export function gameUpdate(app: FastifyInstance){
 				const clientSocket = app.io.sockets.sockets.get(playerId);
 				if (clientSocket) {
 					clientSocket.emit("game-end", data.score);
-					app.playerToGame.delete(playerId);
+					while(app.playerToGame.delete(playerId));
 				}
 				if (playerId === app.aiSocket.id) {
 					app.aiSocket.emit("game-end", data.gameId);

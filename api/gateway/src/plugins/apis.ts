@@ -87,7 +87,7 @@ export default async function (server: FastifyInstance, opts: any) {
 		websocket: true,
 		wsClientOptions: {
 			queryString(search, reqUrl, request) {
-				const url = new URL(reqUrl, 'http://10.13.3.5');
+				const url = new URL(reqUrl, 'http://10.13.2.6');
 				let encodedUser = request.headers['x-current-user'];
 				if (encodedUser && validUser(encodedUser)) {
 					if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];
