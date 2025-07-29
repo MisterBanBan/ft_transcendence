@@ -29,10 +29,6 @@ function printTournament(tournament: TournamentStructure): void {
 
 export async function create(app: FastifyInstance, socket: Socket, name: string, size: number, displayName: string, ownerId: number): Promise<Tournament | null> {
 
-	if (tournaments.has(name)) return null;
-
-	if (![4, 8, 16].includes(size)) return null;
-
 	const tournament = new Tournament(name, ownerId, size);
 	await join(app, ownerId, displayName, tournament);
 

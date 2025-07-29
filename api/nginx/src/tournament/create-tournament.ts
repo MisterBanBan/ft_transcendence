@@ -37,23 +37,21 @@ export class CreateTournament implements Component {
 
 		const nameInput = document.getElementById("tournament-name") as HTMLInputElement | null;
 		const sizeInput = document.getElementById("tournament-size") as HTMLInputElement | null;
-		const displayNameInput = document.getElementById("display-name") as HTMLInputElement | null;
 
-		if (!nameInput || !sizeInput || !displayNameInput) {
+		if (!nameInput || !sizeInput) {
 			console.error("Error: one or multiple fields is missing");
 			return;
 		}
 
 		const name = nameInput.value;
 		const size = sizeInput.value;
-		const displayName = displayNameInput.value;
 
 		try {
 
 			console.log("Clicked:", this.socket);
 
 			// this.socket.emit("createTournament", payload.name, payload.size);
-			this.socket.emit("create", name, parseInt(size), displayName);
+			this.socket.emit("create", name, parseInt(size));
 
 			// this.ws.sendAction("createTournament", payload);
 

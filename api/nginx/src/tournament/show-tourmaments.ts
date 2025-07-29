@@ -52,13 +52,7 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 			document.getElementById(`join-tournament-${name}`)!.addEventListener("click", async (e) => {
 				e.preventDefault();
 
-				const displayName = document.getElementById('display-name') as HTMLInputElement | undefined;
-				if (!displayName) {
-					console.error("Display name input not found");
-					return;
-				}
-
-				socket.emit("join", name, displayName.value)
+				socket.emit("join", name)
 
 				// const payload = {
 				// 	name: name,

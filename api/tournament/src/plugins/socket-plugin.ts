@@ -9,6 +9,7 @@ import updateTournamentsList from "../socket/update-tournaments-list.js";
 import {inTournament} from "../utils/in-tournament.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
 import {start} from "../socket/start.js";
+import {type} from "node:os";
 
 export const usersSockets = new Map<number, Set<string>>()
 
@@ -56,42 +57,46 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 
 		await updateTournamentsList(app, socket);
 
-		socket.on("create", async (name, size, displayName) => {
+		socket.on("create", async (name, size) => {
 			console.log("createTOURNAMENT");
-			if (typeof name !== "string" || typeof size !== "number" || typeof displayName !== "string") {
-				// TODO error
-				return;
-			}
-			if (name.trim().length <= 0) {
-				// TODO error
+			if (typeof name !== "string" || typeof size !== "number") {
+				console.log("Invalid type for name: ", typeof name, "| number:", typeof size)
 				return;
 			}
 
-			if (!await validateUsername(displayName)) {
-				console.log("Display name", displayName, "is invalid");
+			if (name.trim().length <= 0) {
+				console.log("Tournament name can't be empty,");
+				return;
+			}
+
+			if (name.length > 20) {
+				console.log("Tournament name needs to be below 20 characters");
+				return;
+			}
+
+			if (tournaments.has(name)) {
+				console.log("Tournament with name", name, "already exists");
 				return
 			}
 
-			await create(app, socket, name, size, displayName, user.id);
+			if (![4, 8].includes(size)) {
+				console.log("Tournament size needs to be 4 or 8, not", size.toString());
+				return
+			}
+
+			await create(app, socket, name, size, user.username, user.id);
 		})
 
-		socket.on("join", async (name, displayName) => {
+		socket.on("join", async (name) => {
 			console.log("joinTournament");
-			if (typeof name !== "string" || typeof displayName !== "string") {
-				// TODO error
-				console.log("Invalid type for name: ", typeof name, "| displayName:", typeof displayName)
+			if (typeof name !== "string") {
+				console.log("Invalid type for name: ", typeof name)
 				return;
 			}
 
 			const tournament = tournaments.get(name);
 			if (!tournament) {
-				// TODO error
 				console.log("Tournament", name, "not found");
-				return
-			}
-
-			if (!await validateUsername(displayName)) {
-				console.log("Display name", displayName, "is invalid");
 				return
 			}
 
@@ -100,7 +105,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
-			await join(app, user.id, displayName, tournament);
+			await join(app, user.id, user.username, tournament);
 			socket.join(name);
 
 		})
@@ -118,10 +123,10 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
-			// if (!tournament.isFull()) {
-			// 	console.log(`Tournament ${tournament.getName()} is not full` )
-			// 	return
-			// }
+			if (!tournament.isFull()) {
+				console.log(`Tournament ${tournament.getName()} is not full` )
+				return
+			}
 
 			await start(app, tournament);
 		})
