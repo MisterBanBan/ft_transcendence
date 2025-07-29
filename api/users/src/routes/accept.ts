@@ -1,17 +1,16 @@
-/*
-import {FastifyInstance} from "fastify";
+import { FastifyInstance, FastifyRequest } from "fastify";
 
 export default async function (server: FastifyInstance) {
     server.put<{
-        Params: { token: string };
-    }>('/api/invitations/:token/accept', {
+        Params: { requesterId: string };
+    }>('/api/users/invitations/:requesterId/accept', {
         schema: {
             params: {
                 type: 'object',
                 properties: {
-                    token: { type: 'string' }
+                    requesterId: { type: 'string' }
                 },
-                required: ['token']
+                required: ['requesterId']
             },
             response: {
                 200: {
@@ -21,10 +20,9 @@ export default async function (server: FastifyInstance) {
                         invitation: {
                             type: 'object',
                             properties: {
-                                token: { type: 'string' },
                                 requester_id: { type: 'string' },
                                 addressee_id: { type: 'string' },
-                                status: { type: 'string' },
+                                status: { type: 'string' }
                             }
                         }
                     }
@@ -35,7 +33,13 @@ export default async function (server: FastifyInstance) {
                         error: { type: 'string' }
                     }
                 },
-                410: {
+                403: {
+                    type: 'object',
+                    properties: {
+                        error: { type: 'string' }
+                    }
+                },
+                401: {
                     type: 'object',
                     properties: {
                         error: { type: 'string' }
@@ -43,14 +47,20 @@ export default async function (server: FastifyInstance) {
                 }
             }
         }
-    }, async (request, reply) => {
-        const { token } = request.params;
-        const addressee_id = request.currentUser?.id;
+    }, async (request: FastifyRequest, reply) => {
+        const userId = request.currentUser?.id;
+        const { requesterId } = request.params as { requesterId: string };
+
+        if (!userId) {
+            return reply.status(401).send({
+                error: 'User not authenticated'
+            });
+        }
 
         try {
             const invitation = await server.db.get(
-                'SELECT * FROM relationships WHERE invitation_token = ? AND status = ?',
-                token, 'pending'
+                'SELECT * FROM relationships WHERE requester_id = ? AND addressee_id = ? AND status = ?',
+                requesterId, userId, 'pending'
             );
 
             if (!invitation) {
@@ -59,15 +69,9 @@ export default async function (server: FastifyInstance) {
                 });
             }
 
-            if (invitation.addressee_id !== addressee_id) {
-                return reply.status(403).send({
-                    error: 'Not authorized to accept this invitation'
-                });
-            }
-
             const result = await server.db.run(
-                'UPDATE relationships SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE invitation_token = ? AND status = ?',
-                'accepted', token, 'pending'
+                'UPDATE relationships SET status = ?, updated_at = CURRENT_TIMESTAMP WHERE requester_id = ? AND addressee_id = ? AND status = ?',
+                'accepted', requesterId, userId, 'pending'
             );
 
             if (result.changes === 0) {
@@ -93,5 +97,3 @@ export default async function (server: FastifyInstance) {
         }
     });
 }
-
-*/

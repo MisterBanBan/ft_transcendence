@@ -17,7 +17,7 @@ export default async function (server: FastifyInstance) {
                                 type: 'object',
                                 properties: {
                                     requester_id: { type: 'string' },
-                                    username: { type: 'string' }, // Added missing username
+                                    username: { type: 'string' },
                                     avatar_url: { type: 'string' }
                                 }
                             }
