@@ -18,6 +18,18 @@ interface Invitation {
     avatar_url?: string;
 }
 
+interface LoadInvitationResponse {
+    message?: string;
+    error?: string;
+    invitations?: LoadInvitation[];
+}
+
+interface LoadInvitation {
+    requester_id: string;
+    username: string;
+    avatar_url: string;
+}
+
 export class InvitationService {
     private static readonly BASE_URL = 'https://localhost:8443';
 
@@ -71,12 +83,18 @@ export class InvitationService {
         try {
             const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invitations`);
 
-            const data: InvitationResponse = await response.json();
+            if (!response.ok) {
+                ApiUtils.showAlert(`Failed to load invitations: ${response.status}`);
+                return;
+            }
 
-            if (response.ok && data.invitations) {
+            const data: LoadInvitationResponse = await response.json();
+
+            if (data.invitations && data.invitations.length > 0) {
                 this.displayInvitations(data.invitations);
+                ApiUtils.showAlert(data.message || 'Invitations loaded successfully');
             } else {
-                ApiUtils.showAlert(data.error || 'Failed to load invitations');
+                ApiUtils.showAlert('No pending invitations found');
             }
         } catch (error) {
             console.error('Error loading invitations:', error);
@@ -170,7 +188,7 @@ export class InvitationService {
         }
     }
 
-    private static displayInvitations(invitations: Invitation[]): void {
+    private static displayInvitations(invitations: LoadInvitation[]): void {
         const invitationsList = document.getElementById('dynamic-popup');
         if (!invitationsList) return;
 
@@ -181,9 +199,10 @@ export class InvitationService {
                     <div class="flex flex-row items-center justify-between responsive-text-historique">
                         <div class="flex flex-row items-center gap-4">
                             <img src="${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
-                            <span class="text-white">${this.escapeHtml(inv.username)}</span>
+                            <span class="responsive-text-historique text-white font-medium">
+                            ${this.escapeHtml(inv.username)}
+                        </span>
                         </div>
-                        <span class="right-0">${this.escapeHtml(inv.status)}</span>
                     </div>
                     <div class="flex flex-row justify-center gap-8 responsive-text-historique">
                         <button onclick="InvitationService.declineInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-red-600">REJECT</button>

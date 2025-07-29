@@ -62,9 +62,11 @@ export class friendsView implements Component {
         leftFriends.innerHTML = '';
         leftFriends.insertAdjacentHTML('beforeend', searchMate());
         invitesContainer.innerHTML = '';
-        document.addEventListener('DOMContentLoaded', () => {
+        InvitationService.loadInvitations();
+ /*       document.addEventListener('DOMContentLoaded', () => {
             InvitationService.loadInvitations();
-        });
+            console.log('test');
+        });*/
         console.log('Invites loaded');
             console.log('DOMContentLoaded event fired');
             const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;

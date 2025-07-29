@@ -98,11 +98,9 @@ export default async function (server: FastifyInstance) {
                 return reply.status(409).send({ error: 'Invitation already exists' });
             }
 
-            const invitationToken = randomUUID();
-
             await server.db.run(
-                'INSERT INTO relationships (requester_id, addressee_id, status, invitation_token) VALUES (?, ?, ?, ?)',
-                requester_id, addressee_id, 'pending', invitationToken
+                'INSERT INTO relationships (requester_id, addressee_id, status) VALUES (?, ?, ?)',
+                requester_id, addressee_id, 'pending'
             );
 
             return reply.status(201).send({

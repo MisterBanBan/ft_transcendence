@@ -10,15 +10,14 @@ export default async function (server: FastifyInstance) {
                 200: {
                     type: 'object',
                     properties: {
+                        message: { type: 'string' },
                         invitations: {
                             type: 'array',
                             items: {
                                 type: 'object',
                                 properties: {
                                     requester_id: { type: 'string' },
-                                    addressee_id: { type: 'string' },
-                                    status: { type: 'string' },
-                                    username: { type: 'string' },
+                                    username: { type: 'string' }, // Added missing username
                                     avatar_url: { type: 'string' }
                                 }
                             }
@@ -32,13 +31,17 @@ export default async function (server: FastifyInstance) {
 
         try {
             const invitations = await server.db.all(`
-                SELECT r.*, u.username, u.avatar_url 
-                FROM relationships r 
-                JOIN users u ON r.requester_id = u.id 
+                SELECT r.requester_id, u.username, u.avatar_url
+                FROM relationships r
+                         JOIN users u ON r.requester_id = u.id
                 WHERE r.addressee_id = ? AND r.status = 'pending'
             `, userId);
 
-            return reply.send({ invitations });
+            console.log(invitations);
+            return reply.send({
+                message: 'Invitations retrieved successfully',
+                invitations
+            });
 
         } catch (error) {
             server.log.error(error);
