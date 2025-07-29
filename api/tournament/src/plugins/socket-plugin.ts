@@ -142,6 +142,27 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			await leave(app, user.id, tournament);
 		})
 
+		// Dev only
+		socket.on("fakeJoin", async () => {
+
+			const tournament = await inTournament(user.id);
+			if (!tournament) {
+				console.log(`${user.username} is not in a tournament`);
+				return
+			}
+
+			await join(app, 22, "Coucou", tournament)
+			await join(app, 23, "Bonjour", tournament)
+			await join(app, 24, "Hello", tournament)
+
+			if (tournament.getSize() === 8) {
+				await join(app, 18, "cOUCOU", tournament)
+				await join(app, 19, "mbaron-t", tournament)
+				await join(app, 20, "Mael-tFOJlb", tournament)
+				await join(app, 25, "YoLeBoss", tournament)
+			}
+		})
+
 		socket.on("disconnect", async () => {
 
 			const userSockets = usersSockets.get(user.id);

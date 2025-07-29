@@ -75,6 +75,12 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 				// }
 			})
 
+			document.getElementById('fake-join-tournament')!.addEventListener("click", async (e) => {
+				e.preventDefault()
+
+				socket.emit("fakeJoin")
+			})
+
 			document.getElementById('start-tournament')!.addEventListener("click", async (e) => {
 				e.preventDefault()
 
