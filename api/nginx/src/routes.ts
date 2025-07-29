@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/27 23:03:28 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:49:55 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,14 +133,14 @@ export const routes: Route[] = [
 		template: async () => {
 			await new Promise(resolve => setTimeout(resolve, 300));
 			return `
-				<div id="chalet" class="fixed inset-0 h-full w-full relative overflow-hidden">
+				<div id="chalet" class="fixed inset-0 h-full w-full overflow-hidden">
 					<div id="pageContainer" class="flex w-[200vw] h-full overflow-x-auto items-center justify-center relative">
 						<img src="/img/chalet_inside.png" class="inset-0 w-full h-[75%] object-fill z-50">
 						
 						</div>
 				</div>
 				
-				<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
+				<div id="pressE" class="hidden absolute flex z-20 items-center justify-center bg-black bg-opacity-50">
 							<video autoplay loop muted class="w-12 h-12">
 							<source src="/img/pressE.mp4" type="video/mp4">
 							</video>

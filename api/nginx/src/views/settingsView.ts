@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 20:22:54 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 10:50:14 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 18:06:11 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ export class SettingsView implements Component {
     }
 
     private newPseudo() {
-
+        this.container.innerHTML = '';
         this.container.insertAdjacentHTML('beforeend', newPseudo());
         const changeUsername = new ChangeUsername();
         changeUsername.init();
@@ -62,6 +62,7 @@ export class SettingsView implements Component {
     }
 
     private newPassword(){
+        this.container.innerHTML = '';
         this.container.insertAdjacentHTML('beforeend', newPass());
         const changePassword = new ChangePassword();
         changePassword.init();
@@ -81,6 +82,7 @@ export class SettingsView implements Component {
     }
 
     private new2fa(){
+        this.container.innerHTML = '';
         this.container.insertAdjacentHTML('beforeend', newTwoFa());
         const add2FA = new Add2FA();
         add2FA.init();
@@ -89,6 +91,7 @@ export class SettingsView implements Component {
     }
 
     private remove2fa() {
+        this.container.innerHTML = '';
         this.container.insertAdjacentHTML('beforeend', removeTwoFa());
         const remove2FA = new Remove2FA();
         remove2FA.init();

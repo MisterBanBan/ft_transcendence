@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 22:32:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 10:49:30 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 15:19:35 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ export class parameterView implements Component {
     private handleScore = () => this.loadScore();
     private handleProfile = () => this.loadProfile();
     private handleFriendsList = () => this.viewManager.show('friendsList');
-    private handleSettings = () => this.viewManager.show('parametre');
+    private handleSettings = () => this.viewManager.show('settings');
     private handleLogout = () => this.viewManager.show('login');
     
     

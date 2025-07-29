@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 12:21:50 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 21:50:02 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ export class friendsView implements Component {
 
     public init(): void {
         this.container.innerHTML = friendsList();
-        console.log(this.container.innerHTML);
         this.friends();
         this.attachEventListeners();
     }
@@ -65,11 +64,8 @@ export class friendsView implements Component {
         document.addEventListener('DOMContentLoaded', () => {
             InvitationService.loadInvitations();
         });
-        console.log('Invites loaded');
-            console.log('DOMContentLoaded event fired');
             const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
             const shareInviteButton = document.getElementById('Share Invite');
-            console.log('Invite input:', inviteInput);
             if (shareInviteButton && inviteInput) {
                 shareInviteButton.addEventListener('click', () => {
                     const inviteValue = inviteInput.value.trim();
@@ -78,9 +74,7 @@ export class friendsView implements Component {
                         console.log('Input is empty');
                         return;
                     }
-        
-                    console.log(`Sending invite to: ${inviteValue}`);
-                    InvitationService.sendInvitation(); // Appelle ta méthode existante
+                    InvitationService.sendInvitation(); 
                 });
             }
         ;

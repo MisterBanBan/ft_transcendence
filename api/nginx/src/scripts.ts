@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   scripts.ts                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 18:39:05 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/28 17:09:31 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ export class PlayerController implements IPlayerController{
     private playerWidth: number;
     private playerHeight: number;
     private playerElement: HTMLElement;
+    private worldIs: number = 4;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
@@ -116,13 +117,19 @@ export class PlayerController implements IPlayerController{
                 if (this.isInTriggerZone && !this.isDoorOpen) {
                     this.isDoorOpen = true;
                     const path = window.location.pathname;
-                        if (path === "/")
+                        if (path === "/" && this.worldIs === 2)
                         {
                             worldPath = "/chalet";
                         }
-                        else
+                        else if (path === "/chalet")
                         {
-                            worldPath = "/game";
+                            if (this.worldIs === 1)
+                            {
+                                worldPath = "/";
+                            } else if (this.worldIs === 0)
+                            {
+                                worldPath = "/game";
+                            }
                         }
                         window.history.pushState(null, "", worldPath);
                         window.dispatchEvent(new PopStateEvent("popstate"));
@@ -216,17 +223,33 @@ export class PlayerController implements IPlayerController{
         const path = window.location.pathname;
         const pressE = document.getElementById("pressE");
         if (!pressE) return;
-        if (path === "/chalet")
-        {
+
+        if (path === "/chalet") {
             const triggerX = 0.8 * window.innerWidth * 2;
-            
+            const triggerY = 0.5 * window.innerHeight;
+
+            const shouldShowPressEBack = this.worldPosX <= triggerY;
             const shouldShowPressE = this.worldPosX >= triggerX;
-            this.isInTriggerZone = shouldShowPressE;
-            pressE.classList.toggle("hidden", !shouldShowPressE);
+
+            // Masque pressE par défaut
+            pressE.classList.add("hidden");
+
+            if (shouldShowPressE) {
+                this.worldIs = 0;
+                this.isInTriggerZone = true;
+                pressE.classList.remove("hidden");
+            } else if (shouldShowPressEBack) {
+                this.worldIs = 1;
+                this.isInTriggerZone = true;
+                pressE.classList.remove("hidden");
+            } else {
+                // Si aucune condition n'est remplie, masque pressE
+                this.isInTriggerZone = false;
+                pressE.classList.add("hidden");
+            }
         }
+
         const door = document.getElementById("trigger");
-
-
         if (!door || !pressE) return;
 
         
@@ -240,6 +263,7 @@ export class PlayerController implements IPlayerController{
         const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
 
         if (inZone !== this.isInTriggerZone) {
+            this.worldIs = 2;
             this.isInTriggerZone = inZone;
             pressE.classList.toggle("hidden", !inZone);
           }

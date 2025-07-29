@@ -6,11 +6,10 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:24 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/18 10:56:45 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 16:42:24 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-//import { introduction } from './intro.js'
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
 import { AuthUser } from './type.js';

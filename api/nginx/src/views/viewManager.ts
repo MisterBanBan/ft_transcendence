@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 12:19:45 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 17:59:48 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,7 @@ export class viewManager implements Component {
                 break;
             case 'tournament':
                 newView = new tournamentView(this.formsContainer, this);
+                break;
             case 'parametre':
                 newView = new parameterView(this.formsContainer, this, this.videoMain);
                 break;
