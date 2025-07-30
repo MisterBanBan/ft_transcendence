@@ -112,6 +112,11 @@ export class tournamentView implements Component{
 			})
 		})
 
+		tournamentSocket.on("newMatch", () => {
+			window.history.pushState(null, "", "Pong?mode=private");
+			window.dispatchEvent(new PopStateEvent("popstate"));
+		})
+
 		const createTournamentSubmit = document.getElementById('create-tournament-submit');
 		if (!createTournamentSubmit) {
 			console.error('Create tournament button not found');

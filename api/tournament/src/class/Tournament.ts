@@ -1,3 +1,6 @@
+import {emitAll} from "../utils/emit-all.js";
+import {FastifyInstance} from "fastify";
+
 export class Match {
 	private player1?: number;
 	private player2?: number;
@@ -9,8 +12,8 @@ export class Match {
 		this.winner = undefined
 	}
 
-	public async startMatch(): Promise<void> {
-		console.log("Starting match")
+	public async startMatch(app: FastifyInstance): Promise<void> {
+		console.log(Date.now(), "Starting match")
 		if (this.player1 === undefined && this.player2 === undefined) {
 			this.winner = undefined
 			return Promise.resolve()
@@ -26,9 +29,24 @@ export class Match {
 			return Promise.resolve()
 		}
 
-		// TODO starting game
+		const body = { client1: this.player1!.toString(), client2: this.player2!.toString() } as { client1: string, client2: string }
+		const response = await fetch('http://matchmaking:8083/api/matchmaking/private', {
+			method: 'POST',
+			body: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		})
 
-		this.winner = Math.random() < 0.5 ? this.player1! : this.player2!
+		emitAll(app, this.player1!, "newMatch", undefined);
+		emitAll(app, this.player2!, "newMatch", undefined);
+
+		const results = await response.json()
+
+		console.log(Date.now(), results);
+
+		// Handle status: 'timeout'
+		this.winner = parseInt(results);
 		return Promise.resolve()
 	}
 

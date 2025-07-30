@@ -48,7 +48,7 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 		const round = tournament.getStructure().rounds[i];
 
 		let matchPromises = round.map((match: Match) => {
-			return match.startMatch();
+			return match.startMatch(app);
 		});
 
 		await Promise.all(matchPromises);
