@@ -1,5 +1,3 @@
-import {Component} from "../component.js";
-
 export function showTourmaments(socket: any, tournamentsList: any, div: HTMLElement) {
 
 	const tournamentsNames: string[] = [];
@@ -43,11 +41,13 @@ export function showTourmaments(socket: any, tournamentsList: any, div: HTMLElem
 
 			div.appendChild(tournamentDiv);
 
-			document.getElementById(`join-tournament-${name}`)!.addEventListener("click", async (e) => {
-				e.preventDefault();
+			const joinTournament = document.getElementById(`join-tournament-${name}`)
+			if (joinTournament)
+				joinTournament.addEventListener("click", async (e) => {
+					e.preventDefault();
 
-				socket.emit("join", name)
-			})
+					socket.emit("join", name)
+				})
 		}
 	})
 

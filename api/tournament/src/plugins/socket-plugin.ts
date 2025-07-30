@@ -4,12 +4,10 @@ import {create} from "../socket/create.js";
 import {join} from "../socket/join.js";
 import {tournaments} from "../server.js";
 import {leave} from "../socket/leave.js";
-import {validateUsername} from "../utils/validate-username.js";
 import updateTournamentsList from "../socket/update-tournaments-list.js";
 import {inTournament} from "../utils/in-tournament.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
 import {start} from "../socket/start.js";
-import {type} from "node:os";
 
 export const usersSockets = new Map<number, Set<string>>()
 

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   viewManager.ts                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/30 10:22:13 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { SettingsView } from './settingsView.js';
 import { getUser } from '../user-handler.js';
 import { parameterView } from './parameterView.js';
@@ -22,6 +10,7 @@ import { picture } from '../menuInsert/Picture/picture.js';
 import { friendsActif } from '../menuInsert/Picture/friendsActif.js';
 import { tournamentView } from './tournamentView.js';
 import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
+import {tournamentSocket} from "../router.js";
 
 
 export class viewManager implements Component {
@@ -91,6 +80,8 @@ export class viewManager implements Component {
             this.destroyGameListeners();
         }
         this.activeView?.destroy();
+
+        tournamentSocket.emit("leave");
         
         this.formsContainer.innerHTML = '';
         //this.pictureContainer.innerHTML = '';
@@ -141,23 +132,7 @@ export class viewManager implements Component {
                 this.loadAcceuilVideo();
                 break;
             case 'tournament':
-
-                const socket = io(`/`, {
-                    transports: ["websocket", "polling"],
-                    withCredentials: true,
-                    path: "/wss/tournament"
-                });
-
-                socket.on("connect", () => {
-                    console.log("Connected:", socket.id)
-                    newView = new tournamentView(this.formsContainer, this, socket);
-
-                    this.activeView = newView;
-                    this.activeViewName = viewName;
-                    if (this.activeView)
-                        this.activeView.init();
-                });
-
+                newView = new tournamentView(this.formsContainer, this);
                 break;
             case 'parametre':
                 newView = new parameterView(this.formsContainer, this, this.videoMain);
@@ -169,12 +144,10 @@ export class viewManager implements Component {
                 console.error(`View "${viewName}" is not implemented.`);
         }
 
-        if (viewName !== "tournament") {
-            this.activeView = newView;
-            this.activeViewName = viewName;
-            if (this.activeView)
-                this.activeView.init();
-        }
+        this.activeView = newView;
+        this.activeViewName = viewName;
+        if (this.activeView)
+            this.activeView.init();
     }
     public destroyGameListeners(): void {
         document.removeEventListener('keydown', this.keydownHandler);
@@ -303,6 +276,7 @@ export class viewManager implements Component {
     }
 
     public destroy(): void {
+        console.log("Destroying viewManager");
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
         document.removeEventListener('keydown', this.keydownHandler);

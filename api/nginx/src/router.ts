@@ -15,6 +15,18 @@ import { handleRouteComponents } from './route_handler.js';
 import { AuthUser } from './type.js';
 import {getUser, setUser} from "./user-handler.js";
 
+declare const io: any;
+
+export const tournamentSocket: any = io(`/`, {
+    transports: ["websocket", "polling"],
+    withCredentials: true,
+    path: "/wss/tournament"
+});
+
+tournamentSocket.on("connect", () => {
+    console.log("Connected:", tournamentSocket.id)
+});
+
 class Router {
     private routes: Route[];
     private appDiv: HTMLElement;

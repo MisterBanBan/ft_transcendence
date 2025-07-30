@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tournamentView.ts                                  :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/25 16:24:16 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/30 11:13:53 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { Component } from "../component.js";
 import { viewManager } from "./viewManager.js";
 import { tournament } from "../menuInsert/tournament.js";
@@ -20,24 +8,20 @@ import { joinTournament } from "../menuInsert/joinTournament.js"
 import {tournamentPage4} from "../menuInsert/tournamentPage4.js";
 import {showTourmaments} from "../tournament/show-tourmaments.js";
 import {leftTournamentInfos} from "../menuInsert/leftTournamentInfos.js";
+import {tournamentSocket} from "../router.js";
 
 export class tournamentView implements Component{
 
 	private container: HTMLElement;
 	private viewManager: viewManager;
 
-	private readonly socket: any;
-
-	constructor(container: HTMLElement, viewManager: viewManager, socket: any) {
+	constructor(container: HTMLElement, viewManager: viewManager) {
 		this.container = container;
 		this.viewManager = viewManager;
-		console.log("socket:", socket)
-		this.socket = socket;
 	}
 
 	public init(): void {
 
-		console.log("init");
 		this.container.innerHTML = '';
 		this.container.innerHTML = tournament();
 		this.listTournament();
@@ -75,19 +59,19 @@ export class tournamentView implements Component{
 			this.viewManager.show('game');
 		});
 
-		// See a tournament
-		this.socket.on("updateTournamentsList", (tournamentsList: any) => {
-			console.log(tournamentsList);
-			type Tournament = { name: string, size: number, registered: number, players: Array<string> };
-			tournamentsList.forEach(({name, size, registered, players}: Tournament) => {
-				console.log(players);
-				console.log(`Tournoi: ${name} | Taille: ${size} | Inscrits: ${registered} | Joueurs: ${players}`);
-			});
-
-			showTourmaments(this.socket, tournamentsList, tournamentsListDiv);
+		const response = fetch('/api/tournament/getTournamentsList')
+		response.then((data) => {
+			data.json().then((json) => {
+				showTourmaments(tournamentSocket, json, tournamentsListDiv);
+			})
 		})
 
-		this.socket.on("updateTournamentInfos", (tournamentInfos: any) => {
+		// See a tournament
+		tournamentSocket.on("updateTournamentsList", (tournamentsList: any) => {
+			showTourmaments(tournamentSocket, tournamentsList, tournamentsListDiv);
+		})
+
+		tournamentSocket.on("updateTournamentInfos", (tournamentInfos: any) => {
 
 			const infos = tournamentInfos as { name: string, size: number, registered: number, players: Array<string> }
 
@@ -160,14 +144,14 @@ export class tournamentView implements Component{
 			fakeJoin.addEventListener("click", async (e) => {
 				e.preventDefault()
 
-				this.socket.emit("fakeJoin")
+				tournamentSocket.emit("fakeJoin")
 			})
 
 		if (start)
 			start.addEventListener("click", async (e) => {
 				e.preventDefault()
 
-				this.socket.emit("start")
+				tournamentSocket.emit("start")
 			})
 
 		if (leave)
@@ -175,7 +159,7 @@ export class tournamentView implements Component{
 				e.preventDefault()
 
 				this.listTournament()
-				this.socket.emit("leave")
+				tournamentSocket.emit("leave")
 
 			})
 
@@ -200,7 +184,7 @@ export class tournamentView implements Component{
 		const name = nameInput.value;
 		const size = sizeInput.value;
 
-		this.socket.emit("create", name, parseInt(size));
+		tournamentSocket.emit("create", name, parseInt(size));
 	}
 
 	public destroy(): void {

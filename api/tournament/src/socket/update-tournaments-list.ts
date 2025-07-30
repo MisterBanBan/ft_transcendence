@@ -2,10 +2,10 @@ import {FastifyInstance} from "fastify";
 import {Socket} from "socket.io";
 import { tournaments } from "../server.js"
 
-type Tournament = { name: string, size: number, registered: number, players: Array<string> };
+type TournamentJSON = { name: string, size: number, registered: number, players: Array<string> };
 
 export default async function updateTournamentsList(app: FastifyInstance, socket?: Socket) {
-	const tournamentsList: Tournament[] = [];
+	let tournamentsList: TournamentJSON[] = []
 
 	tournaments.forEach((tournament, name) => {
 		if (!tournament.hasStarted())
