@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 16:24:16 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/29 18:23:36 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/30 11:13:53 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@ import { viewManager } from "./viewManager.js";
 import { tournament } from "../menuInsert/tournament.js";
 import { tournamentList } from "../menuInsert/listingTournament.js";
 import { tournamentPage8 } from "../menuInsert/tournamentPage8.js";
+import { createTournament } from "../menuInsert/createTournament.js";
+import { joinTournament } from "../menuInsert/joinTournament.js"
 
 export class tournamentView implements Component{
     
@@ -43,8 +45,24 @@ export class tournamentView implements Component{
             console.error('Tournament container not found');
             return;
         }
+        const creatTournament = document.getElementById('creatTournament');
+        if (!creatTournament) {
+            console.error('Tournament page container not found');
+            return;
+        }
+        const tournamentButton = document.getElementById('tournamentButton');
+
+        creatTournament.innerHTML = '';
+        creatTournament.insertAdjacentHTML('beforeend', createTournament());
         listtournament.innerHTML = '';
         listtournament.insertAdjacentHTML('beforeend', tournamentList());
+        if (!tournamentButton) {
+            console.error('Tournament page container not found');
+            return;
+        }
+        tournamentButton.addEventListener('click', () => {
+            this.viewManager.show('game');
+        });
         document.querySelectorAll('.tournament-btn').forEach(item => {
             console.log('Button clicked:', item);
             item.addEventListener('click', () =>  this.tournamentPage());
@@ -52,14 +70,25 @@ export class tournamentView implements Component{
     }
 
     private tournamentPage() {
+        
         const tournamentPageContainer = document.getElementById('dynamic-tournament');
         if (!tournamentPageContainer) {
             console.error('Tournament page container not found');
             return;
         }
+        const creatTournament = document.getElementById('creatTournament');
+        if (!creatTournament) {
+            console.error('Tournament page container not found');
+            return;
+        }
+
         tournamentPageContainer.innerHTML = '';
-        tournamentPageContainer.insertAdjacentHTML('beforeend', tournamentPage8());
-        
+tournamentPageContainer.insertAdjacentHTML('beforeend', tournamentPage8());
+const tournamentButton = document.getElementById('tournamentButton');
+tournamentButton?.addEventListener('click', () => this.listTournament());
+
+        creatTournament.innerHTML = '';
+        creatTournament.insertAdjacentHTML('beforeend', joinTournament());
     }
 
     public destroy(): void {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   friendsActif.ts                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 21:25:26 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/24 11:20:02 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/29 22:32:33 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ export const friendsActif = () => {
         <div class="h-full w-full overflow-y-auto ">
             ${sortedFriends.map((f, i) => `
             <div class="flex flex-row justify-between items-center gap-2 responsive-text-historique ">
-                <img src="${f.img}" alt="${f.name}" class="w-10 h-10 rounded-full object-contain"/>
+                <img src="${f.img}" alt="${f.name}" class="w-10 h-10 rounded-full object-contain mt-2 ml-2"/>
                 <button id="friend" class="responsive-text-historique">${f.name}</button>
-                <span class=" w-3 h-3 rounded-full border-2 border-white ${
+                <span class=" w-3 h-3 rounded-full border-2 mr-4 border-white ${
                     f.pastille === "vert" ? "bg-green-500" : f.pastille === "rouge" ? "bg-red-500" : "bg-gray-400"
                   }"></span>
             </div>

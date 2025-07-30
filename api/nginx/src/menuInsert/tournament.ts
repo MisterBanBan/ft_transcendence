@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 17:36:29 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/29 18:08:41 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/30 11:01:13 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ export const tournament = () => `
                     
                 </div>
                 <div class="w-[70%] h-[30%]">
-                    
+                    <button type="button" id="tournamentButton" class="w-full h-full bg-white/60 rounded-lg text-black responsive-text-friendsList">Return</button>
                 </div>
             </div>
         </div>
