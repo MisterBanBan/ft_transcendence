@@ -6,14 +6,14 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 22:32:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/20 17:48:47 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/28 15:19:35 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { parametre } from "../menuInsert/parametre.js";
 import { score } from "../score/score.js";
 import { viewManager } from "./viewManager.js";
-import { profile } from "../menuInsert/profile.js";
+import { profile } from "../menuInsert/Profile/profile.js";
 import { Logout } from "../auth/logout.js";
 import { Component } from "../component.js";
 
@@ -22,7 +22,7 @@ export class parameterView implements Component {
     private viewManager: viewManager;
     //private videoMain: HTMLVideoElement;
 
-    private handleReturn = () => this.viewManager.show('game');
+    private handleReturn = () => {console.log('clicked');this.viewManager.show('game');};
     private handleScore = () => this.loadScore();
     private handleProfile = () => this.loadProfile();
     private handleFriendsList = () => this.viewManager.show('friendsList');
@@ -38,6 +38,7 @@ export class parameterView implements Component {
     }
 
     public init(): void {
+        this.container.innerHTML = '';
         this.container.innerHTML = parametre();
         const logout = new Logout();
         logout.init();
@@ -50,16 +51,18 @@ export class parameterView implements Component {
         document.getElementById('friendsList')?.addEventListener('click', this.handleFriendsList);
         document.getElementById('settings')?.addEventListener('click', this.handleSettings);
         document.getElementById('logout')?.addEventListener('click', this.handleLogout);
-        document.getElementById('parametreReturnBtn')?.addEventListener('click', this.handleReturn);
+       document.getElementById('parametreReturnBtn')?.addEventListener('click', this.handleReturn);
     }
 
     private async loadScore() {
+        this.container.innerHTML = '';
         const scoreHtml = await score();
         this.container.innerHTML = scoreHtml;    
         document.getElementById('scoreReturnBtn')?.addEventListener('click', this.handleSettings);
     }
     
     private loadProfile() {
+        this.container.innerHTML = '';
         this.container.innerHTML = profile();
         document.getElementById('profileReturnBtn')?.addEventListener('click', this.handleSettings);
     }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   scripts.ts                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 14:39:18 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/28 17:09:31 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ export class PlayerController implements IPlayerController{
     private playerWidth: number;
     private playerHeight: number;
     private playerElement: HTMLElement;
+    private worldIs: number = 4;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
@@ -106,17 +107,32 @@ export class PlayerController implements IPlayerController{
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
+        
+        let worldPath: string;
+        
         this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.player, this.isDoorOpen, this.isInTriggerZone, e);
         this.boundKeyUpHandler = (e) => {
             handleKeyReleasePlayer(this.stats, this.player, e);
             if (e.key.toLowerCase() === 'e') {
                 if (this.isInTriggerZone && !this.isDoorOpen) {
                     this.isDoorOpen = true;
-                    const doorContainer = document.getElementById("videoDoor");
-                    if (doorContainer) {
-                        window.history.pushState(null, "", "/Tv");
+                    const path = window.location.pathname;
+                        if (path === "/" && this.worldIs === 2)
+                        {
+                            worldPath = "/chalet";
+                        }
+                        else if (path === "/chalet")
+                        {
+                            if (this.worldIs === 1)
+                            {
+                                worldPath = "/";
+                            } else if (this.worldIs === 0)
+                            {
+                                worldPath = "/game";
+                            }
+                        }
+                        window.history.pushState(null, "", worldPath);
                         window.dispatchEvent(new PopStateEvent("popstate"));
-                    }
                 }
             }
         };
@@ -204,11 +220,39 @@ export class PlayerController implements IPlayerController{
     }
 
     private checkTriggers() {
-
-        const door = document.getElementById("videoDoor");
+        const path = window.location.pathname;
         const pressE = document.getElementById("pressE");
+        if (!pressE) return;
 
+        if (path === "/chalet") {
+            const triggerX = 0.8 * window.innerWidth * 2;
+            const triggerY = 0.5 * window.innerHeight;
+
+            const shouldShowPressEBack = this.worldPosX <= triggerY;
+            const shouldShowPressE = this.worldPosX >= triggerX;
+
+            // Masque pressE par défaut
+            pressE.classList.add("hidden");
+
+            if (shouldShowPressE) {
+                this.worldIs = 0;
+                this.isInTriggerZone = true;
+                pressE.classList.remove("hidden");
+            } else if (shouldShowPressEBack) {
+                this.worldIs = 1;
+                this.isInTriggerZone = true;
+                pressE.classList.remove("hidden");
+            } else {
+                // Si aucune condition n'est remplie, masque pressE
+                this.isInTriggerZone = false;
+                pressE.classList.add("hidden");
+            }
+        }
+
+        const door = document.getElementById("trigger");
         if (!door || !pressE) return;
+
+        
 
         const rect = door.getBoundingClientRect();
         
@@ -219,6 +263,7 @@ export class PlayerController implements IPlayerController{
         const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
 
         if (inZone !== this.isInTriggerZone) {
+            this.worldIs = 2;
             this.isInTriggerZone = inZone;
             pressE.classList.toggle("hidden", !inZone);
           }

@@ -5,10 +5,20 @@ import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 import corsConfig from './config/cors.js';
 import fileValidationConfig from "./config/file-validation.js";
-import fs from "fs";
-// import validationErrorHandler from "./error/validation-errors.js";
-// import websocket from "@fastify/websocket";
+import websocket from "@fastify/websocket";
+import cleanupPlugin from "./plugins/cleanup.js";
 
+declare module 'fastify' {
+    interface FastifyInstance {
+        activeConnections: Map<string, { socket: any; userId: string }>;
+        userStatus: Map<string, string>;
+        broadcastToAll: (message: any, excludeUserId?: string) => void;
+        broadcastToUser: (userId: string, message: any) => void;
+    }
+}
+
+const activeConnections = new Map();
+const userStatus = new Map();
 
 async function startServer() {
 
@@ -28,7 +38,12 @@ async function startServer() {
     // Register cors config
     await server.register(corsConfig);
 
-    /*    server.register(websocket);*/
+    // Init websocket
+    await server.register(websocket);
+    server.decorate('activeConnections', activeConnections);
+    server.decorate('userStatus', userStatus);
+    server.decorate('broadcastToAll', broadcastToAll);
+    server.decorate('broadcastToUser', broadcastToUser);
 
     try {
         server.register(autoLoad, {
@@ -37,9 +52,13 @@ async function startServer() {
         });
 
         server.register(multipart);
+
         server.register(autoLoad, {
             dir: join(dir, "routes/")
         });
+
+        await server.register(cleanupPlugin);
+
         await server.listen({ port: 8080, host: '0.0.0.0' });
         console.log(`Users service is running on 0.0.0.0:8080`);
 
@@ -48,6 +67,21 @@ async function startServer() {
         server.log.error(err);
         process.exit(1);
     }
+}
+
+function broadcastToUser(userId: string, message: any) {
+    const connection = activeConnections.get(userId);
+    if (connection && connection.socket.readyState === WebSocket.OPEN) {
+        connection.socket.send(JSON.stringify(message));
+    }
+}
+
+function broadcastToAll(message: any, excludeUserId?: string) {
+    activeConnections.forEach((conn, userId) => {
+        if (userId !== excludeUserId && conn.socket.readyState === WebSocket.OPEN) {
+            conn.socket.send(JSON.stringify(message));
+        }
+    });
 }
 
 startServer();

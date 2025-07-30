@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 14:42:58 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/28 16:49:55 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ export const routes: Route[] = [
 						</div>      
 					</div>
 
-                  	<div id="videoDoor" class="w-screen h-screen relative z-50">
+                  	<div id="trigger" class="w-screen h-screen relative z-50">
                     	<img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50"/>
 						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
 							<video autoplay loop muted class="w-12 h-12">
@@ -112,13 +112,13 @@ export const routes: Route[] = [
               </video>
 
              
-              	<div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
+              	<div id="container_form" class=" w-full h-full flex items-center justify-center pointer-events-auto ">
 					<div class="flex flex-col items-center justify-center h-full w-[80%] relative">	    
 						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto">
 								</button>
 						<div id="dynamic-content" class="h-full w-full flex items-center justify-center absolute"></div>
 					</div>
-					<div id="picture" class="h-full w-[20%] flex items-center justify-center relative">
+					<div id="picture" class="h-full w-[20%] flex justify-center relative">
 					</div>
 													
 					
@@ -133,21 +133,23 @@ export const routes: Route[] = [
 		template: async () => {
 			await new Promise(resolve => setTimeout(resolve, 300));
 			return `
-				<div id="chalet" class="fixed inset-0 h-full w-full relative overflow-hidden">
+				<div id="chalet" class="fixed inset-0 h-full w-full overflow-hidden">
 					<div id="pageContainer" class="flex w-[200vw] h-full overflow-x-auto items-center justify-center relative">
-						<img src="/img/chalet_inside.png" class="inset-0 w-full h-[85%] object-fill z-50">
-						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
+						<img src="/img/chalet_inside.png" class="inset-0 w-full h-[75%] object-fill z-50">
+						
+						</div>
+				</div>
+				
+				<div id="pressE" class="hidden absolute flex z-20 items-center justify-center bg-black bg-opacity-50">
 							<video autoplay loop muted class="w-12 h-12">
 							<source src="/img/pressE.mp4" type="video/mp4">
 							</video>
 						</div>
-						</div>
-				</div>
 				<div id="player"
-				class="fixed left-0 w-[30vw] h-[70vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-50">
+				class="fixed left-0 w-[30vw] h-[60vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-50">
 			</div>
 			`;
-		}
+		}	
 	},
     {
         path: "/Tv",
@@ -169,20 +171,29 @@ export const routes: Route[] = [
       template: async () => {
         await new Promise(r => setTimeout(r, 300));
         return `
-            <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
-              <img
-                id="pong-bg"
-                src="/img/pong.png"
-                alt="Pong background"
-                class="block max-w-full max-h-full object-contain"
-              />
-              <img id="ball"  src="/img/ball.png"  class="absolute" />
-              <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
-              <img id="right-bar" src="/img/bar_left.png" class="absolute" />
-			  
-    		  <p id="score-player1"  class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
-    		  <p id="score-player2" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
-            </div>
+            <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center">
+				<img
+					id="pong-bg"
+					src="/img/pong.png"
+					alt="Pong background"
+					class="block max-w-full max-h-full object-contain"
+				/>
+				<img id="ball" src="/img/ball.png" class="absolute z-20" />
+				<img id="left-bar" src="/img/bar_left.png" class="absolute z-20" />
+				<img id="right-bar" src="/img/bar_left.png" class="absolute z-20" />
+				
+				<!-- Score superposé -->
+<div id="score" class="absolute bg-black/80 top-[8%] left-[4%] w-[75%] h-[75%] flex flex-row z-10 rounded-xl">
+  <div class="flex flex-col items-center justify-center h-full w-[50%] relative z-0">
+    <p id="score-player1"  class="text-white/80 text-[calc(20vw)] font-omori w-full h-full flex items-center justify-center text-center z-0 opacity-70 drop-shadow">0</p>
+  </div>
+  <div class="w-px h-full bg-white/40 mx-4 z-10"></div>
+  <div class="flex flex-col items-center justify-center h-full w-[50%] relative z-0">
+    <p id="score-player2" class="text-white/80 text-[calc(20vw)] font-omori w-full h-full flex items-center justify-center text-center z-0 opacity-70 drop-shadow">0</p>
+  </div>
+</div>
+
+			</div>
 
 
         `;
@@ -568,9 +579,8 @@ export const routes: Route[] = [
 	<div id="tournaments" class="bg-white p-8 rounded shadow-md w-full max-w-sm">
 	</div>`;
 
-			}
-		},
-
+        }
+    },
     {
         path: "*",
         title: "404 - Page not found",

@@ -72,13 +72,13 @@ export class pong implements Component {
             throw new Error('Score Player 1 not found');
         }
         this.scorePlayer1 = score_player1;
-        
+
         const score_player2 = document.getElementById(scorePlayer2);
         if(!score_player2) {
             throw new Error('Score Player 2 not found');
         }
         this.scorePlayer2 = score_player2;
-        
+
         this.leftBEle = leftBarElement;
         this.rightBEle = rightBarElement;
         this.ballEle = ballElement;
@@ -221,19 +221,36 @@ export class pong implements Component {
 		this.scorePlayer2.style.top = `${imgTop}px`;
 		this.scorePlayer1.style.fontSize = `${imgWidth * 0.25}px`; // taille de la police
     };
-    
-    private updateScore(newScore_player1: number, newScore_player2: number) {    
+
+    private updateScore(newScore_player1: number, newScore_player2: number) {
         this.scorePlayer1.textContent = newScore_player1.toString();
         this.scorePlayer2.textContent = newScore_player2.toString();
     }
-	
-    
+
+
     private updateHandler() {
         let gameId: string;
         let playerId: string[];
 
         let ball = { x: 0, y: 0 };
 
+        let score_player1 = 0;
+        let score_player2 = 0;
+
+        function updateScore(newScore_player1: number, newScore_player2: number) {
+        	score_player1 = newScore_player1;
+        	score_player2 = newScore_player2;
+        
+        	const scoreElement_player1 = document.getElementById("score-player1");
+        	if (scoreElement_player1) {
+        		scoreElement_player1.textContent = score_player1.toString();
+        	}
+        
+        	const scoreElement_player2 = document.getElementById("score-player2");
+        	if (scoreElement_player2) {
+        		scoreElement_player2.textContent = score_player2.toString();
+        	}
+        }
 
         this.socket.on("connect", () => {
           console.log("Connected with id:", this.socket.id);
