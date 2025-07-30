@@ -10,6 +10,29 @@ export default async function (server: FastifyInstance) {
 
 		server.privateQueue.set(client1, client2);
 		server.privateQueue.set(client2, client1);
-		reply.code(200).send({ status: 'ok' });
+		
+		// Attendre que client1 ou client2 soit dans privateResult (timeout 10s)
+        const waitForResult = (keys: string[], timeout = 10000) => new Promise((resolve, reject) => {
+            const start = Date.now();
+            const check = () => {
+                for (const key of keys) {
+                    if (server.privateResult.has(key)) {
+                        return resolve({ key, value: server.privateResult.get(key) });
+                    }
+                }
+                if (Date.now() - start > timeout) {
+                    return reject(new Error("Timeout"));
+                }
+                setTimeout(check, 100);
+            };
+            check();
+        });
+
+        try {
+            const result = await waitForResult([client1, client2]);
+            reply.code(200).send({ status: 'ok', result });
+        } catch (e) {
+            reply.code(504).send({ status: 'timeout' });
+        }
     });
 }

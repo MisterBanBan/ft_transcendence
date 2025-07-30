@@ -9,5 +9,6 @@ declare module 'fastify' {
         aiSocket: Socket;
         playerToGame: Map<string, playerInfo>;
         privateQueue: Map<string, string>;
+        privateResult: Map<string, string>;
     }
 }

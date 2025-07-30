@@ -26,8 +26,8 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 			findOpp = true;
 
 			const gameId = `game-${oppSocket.id}${socket.id}`;
-			app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left" });
-			app.playerToGame.set(oppSocket.id, { userID: oppID, gameId: gameId, side: "right" });
+			app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left", type: "private" });
+			app.playerToGame.set(oppSocket.id, { userID: oppID, gameId: gameId, side: "right", type: "private" });
 
 			gameSocket.emit("create-game", {
 				gameId,

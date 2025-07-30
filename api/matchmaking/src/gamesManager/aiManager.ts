@@ -5,8 +5,8 @@ import { inputData } from "../utils/interface";
 export function aiManager(socket: Socket, app: FastifyInstance, userID: string) {
 	const gameSocket = app.gameSocket;
 	const gameId = `game-${socket.id}`;
-	app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left" });
-	app.playerToGame.set(app.aiSocket.id, { userID: "AI", gameId: gameId, side: "right" });
+	app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left", type: "ai" });
+	app.playerToGame.set(app.aiSocket.id, { userID: "AI", gameId: gameId, side: "right", type: "ai" });
 
 	gameSocket.emit("create-game", {
 		gameId,
