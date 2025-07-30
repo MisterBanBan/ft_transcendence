@@ -1,25 +1,16 @@
-import {FastifyInstance} from "fastify";
-import {UserParams, RemoveFriendBody} from "../types/request.js";
+import {FastifyInstance, FastifyRequest} from "fastify";
 
 export default async function (server: FastifyInstance) {
     server.delete<{
-        Params: UserParams;
-        Body: RemoveFriendBody;
-    }>('/api/users/:userId/removeFriend', {
+        Params: { friendId: string };
+    }>('/api/users/:friendId/removeFriend', {
         schema: {
             params: {
                 type: 'object',
                 properties: {
-                    userId: { type: 'string' }
+                    friendId: { type: 'string' }
                 },
-                required: ['userId']
-            },
-            body: {
-                type: 'object',
-                properties: {
-                    friend_id: { type: 'string' }
-                },
-                required: ['friend_id']
+                required: ['friendId']
             },
             response: {
                 200: {
@@ -29,9 +20,8 @@ export default async function (server: FastifyInstance) {
                         removed_relationship: {
                             type: 'object',
                             properties: {
-                                requester_id: { type: 'string' },
-                                addressee_id: { type: 'string' },
-                                status: { type: 'string' }
+                                friendId: { type: 'string' },
+                                userId: { type: 'string' },
                             }
                         }
                     }
@@ -50,27 +40,31 @@ export default async function (server: FastifyInstance) {
                 }
             }
         }
-    }, async (request, reply) => {
-        const { userId: requester_id } = request.params;
-        const { friend_id } = request.body;
+    }, async (request: FastifyRequest, reply) => {
+        const userId = request.currentUser?.id;
+        const { friendId } = request.params as { friendId: string };
 
-        console.log('Removing friend:', friend_id, 'for user:', requester_id);
+        console.log('Removing friend:', friendId, 'for user:', userId);
+
+        if (!userId) {
+            return reply.status(401).send({ error: 'User not authenticated' });
+        }
 
         try {
             const requesterExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
-                requester_id
+                userId
             );
             const friendExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
-                friend_id
+                friendId
             );
 
             if (!requesterExists || !friendExists) {
                 return reply.status(404).send({ error: 'User not found' });
             }
 
-            if (requester_id === friend_id) {
+            if (String(userId) === friendId) {
                 return reply.status(400).send({ error: 'Cannot remove yourself' });
             }
 
@@ -78,7 +72,7 @@ export default async function (server: FastifyInstance) {
                 `SELECT * FROM relationships 
                  WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))
                  AND status = 'accepted'`,
-                requester_id, friend_id, friend_id, requester_id
+                userId, friendId, friendId, userId
             );
 
             if (!existingRelation) {
@@ -89,18 +83,16 @@ export default async function (server: FastifyInstance) {
                 `DELETE FROM relationships 
                  WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))
                  AND status = 'accepted'`,
-                requester_id, friend_id, friend_id, requester_id
+                userId, friendId, friendId, userId
             );
 
             return reply.status(200).send({
                 message: 'Friend removed successfully',
                 removed_relationship: {
-                    requester_id: existingRelation.requester_id,
-                    addressee_id: existingRelation.addressee_id,
-                    status: existingRelation.status
+                    userId: userId,
+                    friend_id: friendId,
                 }
             });
-
         } catch (error) {
             server.log.error(error);
             return reply.status(500).send({ error: 'Internal server error' });

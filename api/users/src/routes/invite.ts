@@ -1,6 +1,5 @@
 import {FastifyInstance, FastifyRequest} from "fastify";
-import {InviteBody, UserParams} from "../types/request.js";
-import { randomUUID } from 'crypto';
+import {InviteBody} from "../types/request.js";
 
 export default async function (server: FastifyInstance) {
     server.post<{
