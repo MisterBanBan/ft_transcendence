@@ -1,27 +1,29 @@
 import { Socket } from "socket.io";
 import { FastifyInstance } from "fastify";
+import { waitingUser } from "../utils/interface";
+import { inputData } from "../utils/interface";
 
-let waitingPlayer: Socket | null = null;
+let waitingPlayer: waitingUser | null = null;
 
-export function onlineManager(socket: Socket, app: FastifyInstance) {
+export function onlineManager(socket: Socket, app: FastifyInstance, userID: string) {
 	const gameSocket = app.gameSocket;
 
 	if (!waitingPlayer) {
-		waitingPlayer = socket;
+		waitingPlayer = {socket, userID};
 	} else {
-		const gameId = `game-${waitingPlayer.id}${socket.id}`;
+		const gameId = `game-${waitingPlayer.socket.id}${socket.id}`;
 
-		app.playerToGame.set(socket.id, { playerName: "Michel", gameId: gameId, side: "left" }); // remplacer par les noms des users
-		app.playerToGame.set(waitingPlayer.id, { playerName: "Michel", gameId: gameId, side: "right" });
+		app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left" , type: "online" });
+		app.playerToGame.set(waitingPlayer.socket.id, { userID: waitingPlayer.userID, gameId: gameId, side: "right", type: "online" });
 
 		gameSocket.emit("create-game", {
 			gameId,
-			playerIds: [waitingPlayer.id, socket.id],
+			playerIds: [waitingPlayer.socket.id, socket.id],
 		});
 
-		waitingPlayer.emit("game-started", {
+		waitingPlayer.socket.emit("game-started", {
 			gameId,
-			playerId: waitingPlayer.id,
+			playerId: waitingPlayer.socket.id,
 		});
 
 		socket.emit("game-started", {
@@ -34,7 +36,7 @@ export function onlineManager(socket: Socket, app: FastifyInstance) {
 		waitingPlayer = null;
 	}
 
-	socket.on("player-input", (data: { direction: string, state: boolean, player: string}) => {
+	socket.on("player-input", (data: inputData) => {
 	const value = app.playerToGame.get(socket.id);
 	data.player = value!.side;
 	if (!value?.gameId) return;
@@ -49,10 +51,8 @@ export function onlineManager(socket: Socket, app: FastifyInstance) {
 	socket.on("disconnect", () => {
 		console.log("Client disconnected:", socket.id);
 
-		if (waitingPlayer?.id === socket.id) {
+		if (waitingPlayer?.socket.id === socket.id) {
 			waitingPlayer = null;
 		}
-
-		app.playerToGame.delete(socket.id); // remove for reconnect on a game
   	});
 }

@@ -1,11 +1,12 @@
 import { Socket } from "socket.io";
 import { FastifyInstance } from "fastify";
+import { inputData } from "../utils/interface";
 
-export function aiManager(socket: Socket, app: FastifyInstance) {
+export function aiManager(socket: Socket, app: FastifyInstance, userID: string) {
 	const gameSocket = app.gameSocket;
 	const gameId = `game-${socket.id}`;
-	app.playerToGame.set(socket.id, { playerName: "player", gameId: gameId, side: "left" });
-	app.playerToGame.set(app.aiSocket.id, { playerName: "AI", gameId: gameId, side: "right" });
+	app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left", type: "ai" });
+	app.playerToGame.set(app.aiSocket.id, { userID: "AI", gameId: gameId, side: "right", type: "ai" });
 
 	gameSocket.emit("create-game", {
 		gameId,
@@ -24,7 +25,7 @@ export function aiManager(socket: Socket, app: FastifyInstance) {
 
 	console.log(gameId, "started");
 
-	socket.on("player-input", (data: { direction: string, state: boolean, player: string}) => {
+	socket.on("player-input", (data: inputData) => {
 		const value = app.playerToGame.get(socket.id);
 		data.player = value!.side;
 		if (!value?.gameId) return;
@@ -47,7 +48,5 @@ export function aiManager(socket: Socket, app: FastifyInstance) {
 	
 	socket.on("disconnect", () => {
 	console.log("Client disconnected:", socket.id);
-
-    app.playerToGame.delete(socket.id);
   });
 }

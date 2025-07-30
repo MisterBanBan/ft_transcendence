@@ -1,4 +1,5 @@
 import { Database } from "sqlite";
+import { playerInfo } from "../utils/interface";
 
 declare module 'fastify' {
     interface FastifyInstance {
@@ -6,7 +7,8 @@ declare module 'fastify' {
         io: Server
         gameSocket: Socket;
         aiSocket: Socket;
-        playerToGame: Map<string, { playerName: string, gameId: string, side: string }>;
+        playerToGame: Map<string, playerInfo>;
         privateQueue: Map<string, string>;
+        privateResult: Map<string, string>;
     }
 }

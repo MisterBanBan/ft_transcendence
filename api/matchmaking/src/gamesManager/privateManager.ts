@@ -1,58 +1,80 @@
 import { Socket } from "socket.io";
 import { FastifyInstance } from "fastify";
+import { inputData } from "../utils/interface";
 
-let privateWaiting = new Map<string, string>();
+let privateWaiting = new Map<string, Socket>();
 
-export function privateManager(socket: Socket, app: FastifyInstance) {
-	// const gameSocket = app.gameSocket;
+export function privateManager(socket: Socket, app: FastifyInstance, userID: string) {
+	const gameSocket = app.gameSocket;
 
-	// if (!waitingPlayer) {
-	// 	waitingPlayer = socket;
-	// } else {
-	// 	const gameId = `game-${waitingPlayer.id}${socket.id}`;
+	let opponent: string | null = null;
+	for (const [player, opp] of app.privateQueue.entries()) {
+		if (userID === player)
+		{
+			opponent = opp;
+			break ;
+		}
+	}
 
-	// 	app.playerToGame.set(socket.id, { playerName: "Michel", gameId: gameId, side: "left" }); // remplacer par les noms des users
-	// 	app.playerToGame.set(waitingPlayer.id, { playerName: "Michel", gameId: gameId, side: "right" });
+	if (opponent === null)
+		return;
 
-	// 	gameSocket.emit("create-game", {
-	// 		gameId,
-	// 		playerIds: [waitingPlayer.id, socket.id],
-	// 	});
+	let findOpp: boolean = false;
+	for (const [oppID, oppSocket] of privateWaiting.entries()) {
+		if (oppID === opponent)
+		{
+			findOpp = true;
 
-	// 	waitingPlayer.emit("game-started", {
-	// 		gameId,
-	// 		playerId: waitingPlayer.id,
-	// 	});
+			const gameId = `game-${oppSocket.id}${socket.id}`;
+			app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left", type: "private" });
+			app.playerToGame.set(oppSocket.id, { userID: oppID, gameId: gameId, side: "right", type: "private" });
 
-	// 	socket.emit("game-started", {
-	// 		gameId,
-	// 		playerId: socket.id,
-	// 	});
+			gameSocket.emit("create-game", {
+				gameId,
+				playerIds: [oppSocket.id, socket.id],
+			});
 
-	// 	console.log(gameId, "started");
+			oppSocket.emit("game-started", {
+				gameId,
+				playerId: oppSocket.id,
+			});
 
-	// 	waitingPlayer = null;
-	// }
+			socket.emit("game-started", {
+				gameId,
+				playerId: socket.id,
+			});
 
-	// socket.on("player-input", (data: { direction: string, state: boolean, player: string}) => {
-	// const value = app.playerToGame.get(socket.id);
-	// data.player = value!.side;
-	// if (!value?.gameId) return;
+			privateWaiting.delete(oppID);
+			console.log(gameId, "started");
+		}
+	}
 
-	// gameSocket.emit("player-input", {
-	// 	gameId: value.gameId,
-	// 	playerId: socket.id,
-	// 	input: data,
-	// });
-	// });
+	if (findOpp == false)
+	{
+		privateWaiting.set(userID, socket);
+	}
 
-	// socket.on("disconnect", () => {
-	// 	console.log("Client disconnected:", socket.id);
+	socket.on("player-input", (data: inputData) => {
+	const value = app.playerToGame.get(socket.id);
+	data.player = value!.side;
+	if (!value?.gameId) return;
 
-	// 	if (waitingPlayer?.id === socket.id) {
-	// 		waitingPlayer = null;
-	// 	}
+	gameSocket.emit("player-input", {
+		gameId: value.gameId,
+		playerId: socket.id,
+		input: data,
+	});
+	});
 
-	// 	app.playerToGame.delete(socket.id); // remove for reconnect on a game
-  	// });
+	socket.on("disconnect", () => {
+		console.log("Client disconnected:", socket.id);
+
+		for (const [oppID, oppSocket] of privateWaiting.entries()) {
+			if (oppSocket.id === socket.id)
+			{
+				privateWaiting.delete(oppID);
+			}
+		}
+
+  	});
 }

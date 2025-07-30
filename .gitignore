@@ -1,5 +1,6 @@
 .env
 key.key
+cert.crt
 .idea/
 node_modules/
 .DS_Store

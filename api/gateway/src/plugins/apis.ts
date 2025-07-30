@@ -70,9 +70,8 @@ export default async function (server: FastifyInstance, opts: any) {
 				let encodedUser = request.headers['x-current-user'];
 				if (encodedUser && validUser(encodedUser)) {
 					if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];
-					url.searchParams.set('user', encodeURIComponent(encodedUser));
+					url.searchParams.set('user', encodedUser);
 				}
-
 				return url.searchParams.toString();
 			}
 		}
@@ -95,22 +94,4 @@ export default async function (server: FastifyInstance, opts: any) {
 			}
 		}
 	})
-
-	// server.register(fastifyHttpProxy, {
-	// 	upstream: 'ws://tournament:8081/wss/tournament',
-	// 	prefix: '/wss/tournament',
-	// 	websocket: true,
-	// 	wsClientOptions: {
-	// 		queryString(search, reqUrl, request) {
-	// 			let encodedUser = request.headers['x-current-user'];
-	//
-	// 			if (encodedUser && validUser(encodedUser)) {
-	// 				if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];
-	// 				return `user=${encodeURIComponent(encodedUser)}`;
-	// 			} else {
-	// 				return "";
-	// 			}
-	// 		}
-	// 	}
-	// })
 }

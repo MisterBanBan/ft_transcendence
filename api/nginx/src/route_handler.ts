@@ -103,6 +103,8 @@ const routeComponents: Record<string, Component> = {
                 'ball',			// ID de la balle
 				'pong',
                 'pong-bg', // ID du conteneur de jeu
+				'score-player1',
+				'score-player2', // ID du conteneur de jeu
                 mode
               );
             pongGame.init();
