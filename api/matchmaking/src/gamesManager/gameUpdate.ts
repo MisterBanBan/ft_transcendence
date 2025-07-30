@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify";
+import { playerInfo } from "../utils/interface";
 
 
 export function gameUpdate(app: FastifyInstance){
@@ -28,7 +29,7 @@ export function gameUpdate(app: FastifyInstance){
 		console.log("game", data.gameId, "end with a score of", data.score.playerLeft, ":", data.score.playerRight);
 		console.log(app.playerToGame.entries())
 		const toDelete: string[] = [];
-		let   privateResult: string[] | null = null;
+		let   privateResult: playerInfo[] | null = null;
 		for (const [playerId, value] of app.playerToGame.entries()) {
     		if (value.gameId === data.gameId) {
         		const clientSocket = app.io.sockets.sockets.get(playerId);
@@ -43,8 +44,8 @@ export function gameUpdate(app: FastifyInstance){
 					if (!privateResult) {
 						privateResult = [];
 					}
-					if (!privateResult.includes(value.userID))
-						privateResult.push(value.userID);
+					if (!privateResult.includes(value))
+						privateResult.push(value);
 				}
     		}
 		}
@@ -53,7 +54,12 @@ export function gameUpdate(app: FastifyInstance){
 			console.log(playerId, "disconnected from game", data.gameId);
 		}
 		if (privateResult && privateResult.length == 2) {
-			app.privateResult.set(privateResult[0], privateResult[1]);
+			if (data.score.playerLeft > data.score.playerRight && privateResult[0].side === "left" ||
+				data.score.playerLeft < data.score.playerRight && privateResult[0].side === "right") {
+				app.privateResult.set(privateResult[0].userID, privateResult[1].userID);
+			} else {
+				app.privateResult.set(privateResult[1].userID, privateResult[0].userID);
+			}
 			console.log("Private game result for game", data.gameId, ":", privateResult);
 		}
 	})
