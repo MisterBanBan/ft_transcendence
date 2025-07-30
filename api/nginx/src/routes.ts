@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/28 16:49:55 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:48:03 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,9 @@ export const routes: Route[] = [
 				      
                 </div>
 			</div>
+			<div id="skip" class="fixed h-[3%] right-0 bottom-0 w-[5%] item-center justify-center text-omori text-white">
+				<button type="button" id="skipButton">SKIP</button>
+			</div
 							<!-- 3. Joueur par-dessus tout -->
 			<div id="player"
 				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
@@ -114,7 +117,7 @@ export const routes: Route[] = [
              
               	<div id="container_form" class=" w-full h-full flex items-center justify-center pointer-events-auto ">
 					<div class="flex flex-col items-center justify-center h-full w-[80%] relative">	    
-						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto">
+						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto transition-transform duration-200 hover:scale-125">
 								</button>
 						<div id="dynamic-content" class="h-full w-full flex items-center justify-center absolute"></div>
 					</div>

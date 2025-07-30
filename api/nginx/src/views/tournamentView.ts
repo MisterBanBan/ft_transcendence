@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 16:24:16 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/30 11:13:53 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/30 13:56:17 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,14 @@ export class tournamentView implements Component{
             console.error('Tournament page container not found');
             return;
         }
-        const tournamentButton = document.getElementById('tournamentButton');
+        
 
         creatTournament.innerHTML = '';
         creatTournament.insertAdjacentHTML('beforeend', createTournament());
         listtournament.innerHTML = '';
         listtournament.insertAdjacentHTML('beforeend', tournamentList());
+        
+        const tournamentButton = document.getElementById('tournamentButton');
         if (!tournamentButton) {
             console.error('Tournament page container not found');
             return;

@@ -161,4 +161,13 @@
   animation: cloud 20s linear infinite;
 }
 
+.friend span {
+  display: inline-block;
+  transition: transform 0.8s;
+}
+.friend:hover span {
+  transform: translateX(-30px);
+}
+
+
 

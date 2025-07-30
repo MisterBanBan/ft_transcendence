@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/30 10:22:13 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/30 18:03:51 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ export class viewManager implements Component {
                     } catch (error) {
                         console.error("Error setting up game menu:", error);
                     }
+                    this.wordAnimation();
                 break;
             case 'login':
                 newView =  new loginView(this.formsContainer, this);
@@ -142,7 +143,7 @@ export class viewManager implements Component {
                 newView = new tournamentView(this.formsContainer, this);
                 break;
             case 'parametre':
-                newView = new parameterView(this.formsContainer, this, this.videoMain);
+                newView = new parameterView(this.formsContainer, this, this.formspicture);
                 break;
             case 'friendsList':
                 newView = new friendsView(this.formsContainer, this);
@@ -161,6 +162,24 @@ export class viewManager implements Component {
         document.removeEventListener('keydown', this.keydownHandler);
         console.log('Game listeners removed');
     }
+    
+    private wordAnimation() {
+        const friends = document.querySelectorAll('.friend');
+        friends.forEach(div => {
+            const word = div.textContent?.trim() || '';
+            div.textContent = '';
+            word.split('').forEach((letter, idx) => {
+            const span = document.createElement('span');
+            span.textContent = letter;
+            span.style.transitionDelay = `${idx * 0.1}s`;
+            div.appendChild(span);
+            });
+        });
+    }
+
+
+
+    
     private friendActionLog(e: MouseEvent) {
         const x = e.clientX;
         const y = e.clientY;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   friendsView.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 21:50:02 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/30 13:24:31 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,10 +93,18 @@ export class friendsView implements Component {
             console.error('Left friends container not found');
             return;
         }
+        const returnn = document.getElementById('friendReturnBtn');
+        if (!returnn) {
+            console.error('Left friends container not found');
+            return;
+        }
+        returnn.addEventListener('click', this.handleReturn);
+        
         leftFriends.innerHTML = '';
         leftFriends.insertAdjacentHTML('beforeend', playerPerso());
         friendsContainer.innerHTML = '';
         friendsContainer.insertAdjacentHTML('beforeend', friends());
+        
         document.querySelectorAll('#friend').forEach(btn => {
             btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
     }

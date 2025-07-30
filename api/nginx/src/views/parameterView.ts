@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parameterView.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 22:32:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 15:19:35 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/30 18:04:04 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,20 +20,21 @@ import { Component } from "../component.js";
 export class parameterView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
-    //private videoMain: HTMLVideoElement;
+    private picture: HTMLElement;
 
     private handleReturn = () => {console.log('clicked');this.viewManager.show('game');};
     private handleScore = () => this.loadScore();
     private handleProfile = () => this.loadProfile();
     private handleFriendsList = () => this.viewManager.show('friendsList');
-    private handleSettings = () => this.viewManager.show('settings');
-    private handleLogout = () => this.viewManager.show('login');
+    private handleSettings = () => this.viewManager.show('parametre');
+    private handleLogout = () => {this.viewManager.show('login'), this.picture.innerHTML = ''};
     
     
 
-    constructor(container: HTMLElement, viewManager: viewManager, videoMain: HTMLVideoElement) {
+    constructor(container: HTMLElement, viewManager: viewManager, picture: HTMLElement) {
         this.container = container;
         this.viewManager = viewManager;
+        this.picture = picture;
         //this.videoMain = videoMain;
     }
 

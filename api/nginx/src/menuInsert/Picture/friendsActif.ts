@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 21:25:26 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/29 22:32:33 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/30 14:04:28 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ export const friendsActif = () => {
             ${sortedFriends.map((f, i) => `
             <div class="flex flex-row justify-between items-center gap-2 responsive-text-historique ">
                 <img src="${f.img}" alt="${f.name}" class="w-10 h-10 rounded-full object-contain mt-2 ml-2"/>
-                <button id="friend" class="responsive-text-historique">${f.name}</button>
+                <button class="friend group responsive-text-historique">${f.name}</button>
                 <span class=" w-3 h-3 rounded-full border-2 mr-4 border-white ${
                     f.pastille === "vert" ? "bg-green-500" : f.pastille === "rouge" ? "bg-red-500" : "bg-gray-400"
                   }"></span>

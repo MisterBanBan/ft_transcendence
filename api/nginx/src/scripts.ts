@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   scripts.ts                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/28 17:09:31 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/30 17:58:53 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,7 @@ export class PlayerController implements IPlayerController{
     private playerWidth: number;
     private playerHeight: number;
     private playerElement: HTMLElement;
+    private skipButton: HTMLElement;
     private worldIs: number = 4;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
@@ -99,9 +100,17 @@ export class PlayerController implements IPlayerController{
         window.addEventListener('resize', this.handleResize.bind(this));
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
-
-        this.playerElement = playerElement; 
+        this.playerElement = playerElement;
+        
         console.log("PlayerController initialisé !");
+        
+        const skipButton = document.getElementById('skipButton');
+        if(!skipButton) throw new Error('Player element not found');
+        this.skipButton = skipButton;
+        this.skipButton.addEventListener('click', () => {
+            window.history.pushState(null, "", "/game");
+            window.dispatchEvent(new PopStateEvent("popstate"));}
+        )
         
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
@@ -304,5 +313,3 @@ export class PlayerController implements IPlayerController{
 }
 
 export default PlayerController;
-
-8

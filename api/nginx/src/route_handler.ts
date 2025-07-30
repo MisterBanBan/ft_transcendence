@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   route_handler.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/27 18:50:12 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/30 15:58:05 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ import { pong } from './pong.js';
 import { AuthUser } from './type.js';
 import {getUser, setUser} from "./user-handler.js";
 import { viewManager } from './views/viewManager.js';
+import { chaletCadre } from './chaletCadre.js';
 
 //permet de gerer la destruction des new
 let activeComponent: Component | null = null;
@@ -55,11 +56,12 @@ const routeComponents: Record<string, Component> = {
 		init: () => {
 			activeComponent?.destroy?.();
 			const playerIntro = new introduction('player');
-
+			const chalet = new chaletCadre('chalet');
+			chalet.init();
 			playerIntro.init();
 			activeComponent = {
 				init: () => {},
-				destroy: () => { playerIntro.destroy(); }
+				destroy: () => { playerIntro.destroy(); chalet.destroy(); }
 			};
 		},
 		destroy: () => {}
