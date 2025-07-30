@@ -124,8 +124,6 @@ const routeComponents: Record<string, Component> = {
 				path: "/wss/tournament"
 			});
 
-			console.log(typeof socket);
-
 			socket.on("connect", () => {
 				console.log(socket.id);
 			});
@@ -138,7 +136,7 @@ const routeComponents: Record<string, Component> = {
 					console.log(`Tournoi: ${name} | Taille: ${size} | Inscrits: ${registered} | Joueurs: ${players}`);
 				});
 
-				showTourmaments(socket, tournamentsList);
+				// showTourmaments(socket, tournamentsList);
 			})
 
 			socket.on("updateTournamentInfos", (tournamentInfos: any) => {

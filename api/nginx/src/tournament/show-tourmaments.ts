@@ -1,17 +1,12 @@
-export function showTourmaments(socket: any, tournamentsList: any) {
+import {Component} from "../component.js";
 
-	const div = document.getElementById("tournaments");
-
-	if (!div) {
-		console.error("Tournaments list not found");
-		return;
-	}
+export function showTourmaments(socket: any, tournamentsList: any, div: HTMLElement) {
 
 	const tournamentsNames: string[] = [];
 
 	type Tournament = { name: string, size: number, registered: number, players: Array<string> };
 
-	tournamentsList.forEach(({ name, size, registered, players }: Tournament) => {
+	tournamentsList.forEach(({ name, size, registered, players }: Tournament, index: number) => {
 		const tournamentDiv = document.getElementById(`tournament-${name}`);
 
 		tournamentsNames.push(name);
@@ -25,21 +20,21 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 		else {
 			const tournamentDiv = document.createElement("div");
 			tournamentDiv.id = `tournament-${name}`;
-			tournamentDiv.className = "bg-white shadow-md w-full max-w-sm";
+			tournamentDiv.className = "flex flex-row justify-between items-center gap-4 responsive-text-historique "
 
 			const h2 = document.createElement("h2");
-			h2.className = "text-2xl font-semibold mb-6 text-center";
+			h2.className = "responsive-text-historique";
 			h2.innerText = name;
 
 			const h3 = document.createElement("h3");
 			h3.id = `tournament-${name}-size`;
-			h3.className = "text-2xl text-gray-700 mb-4 text-center";
+			h3.className = "responsive-text-historique";
 			h3.innerText = `${registered}/${size}`;
 
 			const button = document.createElement("button");
 			button.type = "submit";
 			button.id = `join-tournament-${name}`;
-			button.className = "w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200";
+			button.className = 'responsive-placeholder placeholder-gray-600 responsive-case responsive-text'
 			button.innerText = "Join";
 
 			tournamentDiv.appendChild(h2);
@@ -48,49 +43,10 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 
 			div.appendChild(tournamentDiv);
 
-			console.log("Creating eventListener for", name);
 			document.getElementById(`join-tournament-${name}`)!.addEventListener("click", async (e) => {
 				e.preventDefault();
 
 				socket.emit("join", name)
-
-				// const payload = {
-				// 	name: name,
-				// 	displayName: displayName.value
-				// } as { name: string, displayName: string };
-
-				// socket.sendAction("joinTournament", payload);
-
-				// const response = await fetch("/api/tournament/join", {
-				// 	method: "POST",
-				// 	headers: {"Content-Type": "application/json"},
-				// 	body: JSON.stringify({ name: name, displayName: displayName.value } as { name: string, displayName: string }),
-				// })
-				//
-				// const data = await response.json();
-				//
-				// if (!response.ok) {
-				// 	console.error(data.message);
-				// 	return;
-				// }
-			})
-
-			document.getElementById('fake-join-tournament')!.addEventListener("click", async (e) => {
-				e.preventDefault()
-
-				socket.emit("fakeJoin")
-			})
-
-			document.getElementById('start-tournament')!.addEventListener("click", async (e) => {
-				e.preventDefault()
-
-				socket.emit("start")
-			})
-
-			document.getElementById('leave-tournament')!.addEventListener("click", async (e) => {
-				e.preventDefault()
-
-				socket.emit("leave")
 			})
 		}
 	})
@@ -98,7 +54,7 @@ export function showTourmaments(socket: any, tournamentsList: any) {
 	for (let child of div.children) {
 		const parts = child.id.split("-");
 		if (parts.length >= 2) {
-			const name = parts[1];
+			const name = parts.slice(1, parts.length).join("-");
 			if (!tournamentsNames.includes(name)) {
 				child.remove();
 			}

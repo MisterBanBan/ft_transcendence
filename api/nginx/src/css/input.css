@@ -25,6 +25,10 @@
     lg:text-2xl text-white;
   }
 
+  .responsive-text-players-list {
+    @apply font-omori text-sm sm:text-base md:text-xl
+    lg:text-4xl text-white;
+  }
 
   .responsive-text-parametre {
     @apply font-omori text-sm sm:text-base md:text-2xl

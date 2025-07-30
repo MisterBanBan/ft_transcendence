@@ -94,11 +94,11 @@ export class viewManager implements Component {
         
         this.formsContainer.innerHTML = '';
         //this.pictureContainer.innerHTML = '';
-        
+
         let newView: Component | null = null;
 
-
         console.log(`Switching to view: ${viewName}`);
+
         switch (viewName) {
             case 'game':
                 this.loadAcceuilVideo();
@@ -110,19 +110,21 @@ export class viewManager implements Component {
                 }
                 //document.querySelectorAll('#friend').forEach(btn => {
                  //   btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
-                    document.querySelectorAll('#friend').forEach(btn => {
-                        const clone = btn.cloneNode(true);
-                        btn.replaceWith(clone);
-                        clone.addEventListener('click', (e) => this.friendActionLog(e as MouseEvent));
-                    });
-                    try {
-                        this.setupGameMenu();
-                    } catch (error) {
-                        console.error("Error setting up game menu:", error);
-                    }
+                document.querySelectorAll('#friend').forEach(btn => {
+                    const clone = btn.cloneNode(true);
+                    btn.replaceWith(clone);
+                    clone.addEventListener('click', (e) => this.friendActionLog(e as MouseEvent));
+                });
+
+                try {
+                    this.setupGameMenu();
+                } catch (error) {
+                    console.error("Error setting up game menu:", error);
+                }
+
                 break;
             case 'login':
-                newView =  new loginView(this.formsContainer, this);
+                newView = new loginView(this.formsContainer, this);
                 break;
             case 'register':
                 newView = new registerView(this.formsContainer, this.formspicture, this);
@@ -139,7 +141,23 @@ export class viewManager implements Component {
                 this.loadAcceuilVideo();
                 break;
             case 'tournament':
-                newView = new tournamentView(this.formsContainer, this);
+
+                const socket = io(`/`, {
+                    transports: ["websocket", "polling"],
+                    withCredentials: true,
+                    path: "/wss/tournament"
+                });
+
+                socket.on("connect", () => {
+                    console.log("Connected:", socket.id)
+                    newView = new tournamentView(this.formsContainer, this, socket);
+
+                    this.activeView = newView;
+                    this.activeViewName = viewName;
+                    if (this.activeView)
+                        this.activeView.init();
+                });
+
                 break;
             case 'parametre':
                 newView = new parameterView(this.formsContainer, this, this.videoMain);
@@ -150,12 +168,13 @@ export class viewManager implements Component {
             default:
                 console.error(`View "${viewName}" is not implemented.`);
         }
-        this.activeView = newView;
-        this.activeViewName = viewName;
-        if (this.activeView) {
-            this.activeView.init();
+
+        if (viewName !== "tournament") {
+            this.activeView = newView;
+            this.activeViewName = viewName;
+            if (this.activeView)
+                this.activeView.init();
         }
-        
     }
     public destroyGameListeners(): void {
         document.removeEventListener('keydown', this.keydownHandler);
@@ -236,6 +255,7 @@ export class viewManager implements Component {
             window.dispatchEvent(new PopStateEvent("popstate"));
         }
         if (selected.id === 'Tournament') {
+            // window.history.pushState(null, "", "tournament");
             this.show('tournament');
         }
     }

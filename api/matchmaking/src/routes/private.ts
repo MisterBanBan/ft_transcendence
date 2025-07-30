@@ -1,7 +1,7 @@
 import { FastifyInstance } from "fastify";
 
 export default async function (server: FastifyInstance) {
-    server.post('/private', async (request, reply) => {
+    server.post('/api/matchmaking/private', async (request, reply) => {
 		
         const { client1, client2 } = request.body as {
 			client1: string;

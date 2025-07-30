@@ -50,40 +50,7 @@ export class CreateTournament implements Component {
 
 			console.log("Clicked:", this.socket);
 
-			// this.socket.emit("createTournament", payload.name, payload.size);
 			this.socket.emit("create", name, parseInt(size));
-
-			// this.ws.sendAction("createTournament", payload);
-
-			// this.socket.emit('createTournament');
-			//
-			// this.socket.on('createdTournament', () => {
-			// 	console.log("createdTournament");
-			// });
-
-			// const response = await fetch("/api/tournament/createTournament", {
-			// 	method: "POST",
-			// 	headers: {"Content-Type": "application/json"},
-			// 	body: JSON.stringify(payload),
-			// });
-			//
-			// const data = await response.json();
-			//
-			// if (!response.ok) {
-			// 	// const error = document.getElementById(`popup-2fa-error`)
-			// 	// if (!error) {
-			// 	// 	console.error("Can't display error");
-			// 	// 	return;
-			// 	// }
-			//
-			// 	// error.textContent = data.message;
-			// 	console.error(data.message);
-			// 	return;
-			// }
-			//
-			// if (data.success) {
-			// 	return window.location.href = '/';
-			// }
 
 		} catch (error) {
 			console.error(error);

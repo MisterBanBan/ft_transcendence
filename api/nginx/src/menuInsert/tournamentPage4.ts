@@ -1,4 +1,4 @@
-export const tournamentPage = () => `
+export const tournamentPage4 = () => `
     <div class="h-full w-full overflow-y-auto ">
         <div id="tournamentList" class="flex flex-row items-center justify-center h-full w-full">
             <div id="player1" class="flex flex-col items-center justify-center h-full w-full gap-2">    

@@ -17,10 +17,13 @@ export default async function updateTournamentsList(app: FastifyInstance, socket
 			})
 	});
 
-	if (socket)
-		socket.emit("updateTournamentsList", tournamentsList);
+	if (socket) {
+		if (socket.rooms.size === 1)
+			socket.emit("updateTournamentsList", tournamentsList);
+	}
 	else
 		app.io.sockets.sockets.forEach((appSocket: Socket) => {
-			appSocket.emit("updateTournamentsList", tournamentsList);
+			if (appSocket.rooms.size === 1)
+				appSocket.emit("updateTournamentsList", tournamentsList);
 		})
 }
