@@ -8,18 +8,27 @@ export default async function (server: FastifyInstance) {
 
 		const token = request.cookies?.token;
 
-		if (!token) return reply.send(false);
+		if (!token) return reply.status(404).send({
+			error: "Not Found",
+			message: "User not connected"
+		});
 
 		let decodedToken = undefined
 
 		try {
 			decodedToken = await decodeToken(server, token, reply);
 		} catch {
-			return reply.code(404).send(undefined);
+			return reply.status(404).send({
+				error: "Not Found",
+				message: "User not connected"
+			});
 		}
 
 		if (!decodedToken) {
-			return reply.code(404).send(undefined);
+			return reply.status(404).send({
+				error: "Not Found",
+				message: "User not connected"
+			});
 		}
 
 		const user = await getUserByUsername(server.db, decodedToken.username)

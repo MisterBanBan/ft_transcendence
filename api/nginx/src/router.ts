@@ -95,11 +95,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             method: "GET",
         });
 
-        const data: AuthUser | undefined = await response.json();
-        if (data) {
-            setUser(data);
+        if (response.ok) {
+            const data: AuthUser | undefined = await response.json();
+            if (data)
+                setUser(data);
         }
-
         const router = new Router(routes, getUser());
         await router.updatePage();
     } catch (error) {
