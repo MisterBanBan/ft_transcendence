@@ -213,11 +213,13 @@ export class pong implements Component {
             bar.element.style.top = `${imgTop + bar.position.y}px`;
         });
 
-		this.scorePlayer1.style.left = `${imgLeft + imgWidth * 0.25}px`; // position horizontale
-		this.scorePlayer1.style.top = `${imgTop + this.backRect.height * 0.1}px`;   // position verticale
+		this.scorePlayer1.style.left = `${imgLeft + imgWidth * 0.1}px`; // position horizontale
+		this.scorePlayer1.style.top = `${imgTop}px`;   // position verticale
+		this.scorePlayer1.style.fontSize = `${imgWidth * 0.25}px`; // taille de la police
 
 		this.scorePlayer2.style.left = `${imgLeft + imgWidth * 0.65}px`;
-		this.scorePlayer2.style.top = `${imgTop + this.backRect.height * 0.1}px`;
+		this.scorePlayer2.style.top = `${imgTop}px`;
+		this.scorePlayer1.style.fontSize = `${imgWidth * 0.25}px`; // taille de la police
     };
     
     private updateScore(newScore_player1: number, newScore_player2: number) {    
