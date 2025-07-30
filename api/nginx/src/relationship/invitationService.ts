@@ -126,7 +126,7 @@ export class InvitationService {
             const data: InvitationResponse = await response.json();
 
             ApiUtils.showAlert(data.message || 'Invitation accepted successfully');
-            this.loadInvitations();
+            await this.loadInvitations();
             return true;
 
         } catch (error) {
@@ -144,38 +144,31 @@ export class InvitationService {
             return false;
         }
 
-        let finalRequesterId = requesterId;
-        if (!finalRequesterId) {
-            const requesterElement = document.getElementById('requesterIdDecline') as HTMLInputElement;
-            finalRequesterId = requesterElement?.value?.trim();
-        }
-
-        if (!finalRequesterId) {
-            ApiUtils.showAlert('Please enter the requester ID');
+        if (!requesterId) {
+            ApiUtils.showAlert('Requester ID missing');
             return false;
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${finalRequesterId}/decline`, {
-                method: 'DELETE',
-                headers: {
-                    'user-id': currentUser.id.toString()
-                }
+            const response = await fetch(`${this.BASE_URL}/api/users/invitations/${requesterId}/decline`, {
+                method: 'PUT',
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                ApiUtils.showAlert(errorData.error || `Failed to decline invitation: ${response.status}`);
+                return false;
+            }
 
             const data: InvitationResponse = await response.json();
 
-            if (response.ok) {
-                ApiUtils.showAlert('Invitation declined successfully');
-                await this.loadInvitations();
-                return true;
-            } else {
-                ApiUtils.showAlert(data.error || 'Failed to decline invitation');
-                return false;
-            }
+            ApiUtils.showAlert(data.message || 'Invitation declined successfully');
+            await this.loadInvitations();
+            return true;
+
         } catch (error) {
-            console.error('Error declining invitation:', error);
-            ApiUtils.showAlert('Error declining invitation');
+            console.error('Error on refusal of invitation:', error);
+            ApiUtils.showAlert('Network error: Unable to decline invitation');
             return false;
         }
     }
