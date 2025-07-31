@@ -56,7 +56,6 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 		await updateTournamentsList(app, socket);
 
 		socket.on("create", async (name, size) => {
-			console.log("createTOURNAMENT");
 			if (typeof name !== "string" || typeof size !== "number") {
 				console.log("Invalid type for name: ", typeof name, "| number:", typeof size)
 				return;

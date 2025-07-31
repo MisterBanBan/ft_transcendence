@@ -1,6 +1,7 @@
 import {FastifyInstance} from "fastify";
 import {Tournament} from "../class/Tournament.js";
 import {emitAll} from "../utils/emit-all.js";
+import {createStructure} from "../utils/create-structure.js";
 
 export async function updateTournamentInfo(app: FastifyInstance, userId: number, tournament: Tournament, room: boolean) {
 
@@ -8,8 +9,13 @@ export async function updateTournamentInfo(app: FastifyInstance, userId: number,
 		"name": tournament.getName(),
 		"size": tournament.getSize(),
 		"registered": tournament.getPlayers().size,
-		"players": Array.from(tournament.getPlayers().values())
+		"ownerId": tournament.getOwner(),
+		"players": Array.from(tournament.getPlayers()),
+		"started": tournament.hasStarted(),
+		"structure": createStructure(tournament)
 	}
+
+	console.log(infos);
 
 	if (room)
 		emitAll(app, userId, "updateTournamentInfos", tournament.getName(), infos);

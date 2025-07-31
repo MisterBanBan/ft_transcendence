@@ -17,21 +17,11 @@ import {getUser, setUser} from "./user-handler.js";
 
 declare const io: any;
 
-export const tournamentSocket: any = io(`/`, {
-    transports: ["websocket", "polling"],
-    withCredentials: true,
-    path: "/wss/tournament"
-});
-
-tournamentSocket.on("connect", () => {
-    console.log("Connected:", tournamentSocket.id)
-});
-
 class Router {
     private routes: Route[];
     private appDiv: HTMLElement;
     
-    constructor(routes: Route[], private user?: AuthUser) {
+    constructor(routes: Route[]) {
         this.routes = routes;
         /*recupere l'element app dans index.html*/
         const app = document.getElementById("app");
@@ -64,7 +54,8 @@ class Router {
             console.error("URL not good : ", url);
             return;
         }
-        history.pushState(null, "",url);
+        history.pushState(null, "", url);
+        console.info("navigateTo", url);
         this.updatePage();
     }
 
@@ -85,7 +76,8 @@ class Router {
                     }
                 }
                 this.appDiv.innerHTML = content;
-                handleRouteComponents(path, this.user);
+                console.info("updatePage");
+                handleRouteComponents(path);
             } else {
                 this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
                 return
@@ -98,7 +90,7 @@ class Router {
     }
 }
 
-
+export const router = new Router(routes);
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
@@ -111,7 +103,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (data)
                 setUser(data);
         }
-        const router = new Router(routes, getUser());
+        console.warn("Router updatePage");
         await router.updatePage();
     } catch (error) {
         console.error("Wrong init :", error);

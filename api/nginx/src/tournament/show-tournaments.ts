@@ -1,4 +1,10 @@
-export function showTourmaments(socket: any, tournamentsList: any, div: HTMLElement) {
+export function showTournaments(socket: any, tournamentsList: any) {
+
+	const div = document.getElementById('right-box-infos');
+	if (!div) {
+		console.error('Tournaments list container not found');
+		return;
+	}
 
 	const tournamentsNames: string[] = [];
 

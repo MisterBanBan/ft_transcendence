@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 import { Component } from "./component.js";
+import { router } from "./router.js";
 
 export class Zoom implements Component{
     private boundKeyUpHandler!: (e: KeyboardEvent) => void;
@@ -44,8 +45,7 @@ export class Zoom implements Component{
     private handleTransitionEnd = (event: TransitionEvent) => {
         if (event.propertyName === 'transform') {
             this.video.removeEventListener('transitionend', this.handleTransitionEnd);
-            window.history.pushState(null, "", "/game");
-            window.dispatchEvent(new PopStateEvent("popstate"));
+            router.navigateTo("/game");
         }
     }
 

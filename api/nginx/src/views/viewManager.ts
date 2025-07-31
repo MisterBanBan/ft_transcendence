@@ -10,7 +10,8 @@ import { picture } from '../menuInsert/Picture/picture.js';
 import { friendsActif } from '../menuInsert/Picture/friendsActif.js';
 import { tournamentView } from './tournamentView.js';
 import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
-import {tournamentSocket} from "../router.js";
+import {router} from "../router.js";
+import {tournamentSocket} from "../tournaments.js"
 
 
 export class viewManager implements Component {
@@ -52,7 +53,8 @@ export class viewManager implements Component {
         this.formspicture = formspicture;
         
         this.keydownHandler = this.handleKeydown.bind(this);
-        
+
+        console.info("Constructing")
         this.userLog();
     }
 
@@ -60,7 +62,6 @@ export class viewManager implements Component {
 
         window.addEventListener("resize", this.resize);
         this.videoMain.addEventListener("loadedmetadata", () => {
-            console.log("Loadedmetadata ready");
             this.resize();
         });
         this.resize();
@@ -71,8 +72,10 @@ export class viewManager implements Component {
     {
         if (!getUser())
             this.show("login");
-        else
+        else {
+            console.log("ASPODIJASOD")
             this.show("game");
+        }
     }
 
     public show(viewName: string) {
@@ -81,14 +84,22 @@ export class viewManager implements Component {
         }
         this.activeView?.destroy();
 
-        tournamentSocket.emit("leave");
-        
+        const hash = window.location.hash;
+        if (!hash || (hash && hash !== '#tournament')) {
+            console.log("Hash:", hash, "| link:", window.location);
+            tournamentSocket.emit("leave", "hash");
+        }
+
+        if (hash) {
+            viewName = hash.replace('#', '')
+        }
+
+        console.info(`Redirecting to ${viewName}`)
+
         this.formsContainer.innerHTML = '';
         //this.pictureContainer.innerHTML = '';
 
         let newView: Component | null = null;
-
-        console.log(`Switching to view: ${viewName}`);
 
         switch (viewName) {
             case 'game':
@@ -151,7 +162,6 @@ export class viewManager implements Component {
     }
     public destroyGameListeners(): void {
         document.removeEventListener('keydown', this.keydownHandler);
-        console.log('Game listeners removed');
     }
     private friendActionLog(e: MouseEvent) {
         const x = e.clientX;
@@ -216,19 +226,15 @@ export class viewManager implements Component {
         if (!this.options.length) return;
         const selected = this.options[this.selectedIdx];
         if (selected.id === 'Offline') {
-            window.history.pushState(null, "", "Pong?mode=local");
-            window.dispatchEvent(new PopStateEvent("popstate"));
+            router.navigateTo("/Pong?mode=local");
         }
         if (selected.id === 'Online') {
-            window.history.pushState(null, "", "Pong?mode=online");
-            window.dispatchEvent(new PopStateEvent("popstate"));
+            router.navigateTo("/Pong?mode=online");
         }
         if (selected.id === 'IA') {
-            window.history.pushState(null, "", "Pong?mode=ai");
-            window.dispatchEvent(new PopStateEvent("popstate"));
+            router.navigateTo("/Pong?mode=ai");
         }
         if (selected.id === 'Tournament') {
-            // window.history.pushState(null, "", "tournament");
             this.show('tournament');
         }
     }
@@ -253,7 +259,6 @@ export class viewManager implements Component {
         if (!cursor) throw new Error('Cursor video not found');
         this.cursor = cursor;
         this.updateCursor();
-        console.log('Cursor updated:', this.cursor);
         this.options.forEach((opt, i) => {
             opt.addEventListener('click', () => {
                 this.selectedIdx = i;
@@ -276,7 +281,9 @@ export class viewManager implements Component {
     }
 
     public destroy(): void {
-        console.log("Destroying viewManager");
+
+        console.log("Destroying ViewManager")
+
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
         document.removeEventListener('keydown', this.keydownHandler);
@@ -285,5 +292,7 @@ export class viewManager implements Component {
                 opt.replaceWith(opt.cloneNode(true)); // retire tous les listeners
             });
         }
+        if (this.activeView)
+            this.activeView.destroy();
     }
 }

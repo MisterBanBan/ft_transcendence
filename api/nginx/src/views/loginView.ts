@@ -66,6 +66,7 @@ export class loginView implements Component {
                 tfaValidate.init();
             }
             else {
+                console.log("caca")
                 this.viewManager.show('game');
             }
         } else if (attempts >= limit) {

@@ -45,11 +45,11 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
-	private socket = io(`/`, {
-		transports: ["websocket", "polling"],
-		withCredentials: true,
-        path: "/wss/matchmaking"
-	});
+	// private socket = io(`/`, {
+	// 	transports: ["websocket", "polling"],
+	// 	withCredentials: true,
+    //     path: "/wss/matchmaking"
+	// });
     
     constructor(leftBarId: string, rightBarId: string, ballId: string, imgPongId: string,containerId: string, scorePlayer1: string, scorePlayer2: string, mode: string | null) {
         const leftBarElement = document.getElementById(leftBarId);
@@ -126,10 +126,10 @@ export class pong implements Component {
 
 
     public init(): void{
-        if (this.mode)
-		    this.socket.emit(this.mode);
-        else
-            this.socket.emit("error");
+        // if (this.mode)
+		    // this.socket.emit(this.mode);
+        // else
+            // this.socket.emit("error");
 
 		this.imgPong.onload = () => {
 			this.leftBar = new Bar(this.leftBEle);
@@ -142,9 +142,13 @@ export class pong implements Component {
 			this.leftBar.position.y = centerY; // changer pour des valeurs exacts plus tard
 			this.rightBar.position.y = centerY;
 			this.ball.position.y = centerY;
+
+			this.boundKeyDownHandler = this.onKeyDown.bind(this);
+			this.boundKeyUpHandler = this.onKeyUp.bind(this);
+			window.addEventListener('keydown', this.boundKeyDownHandler);
+			window.addEventListener('keyup', this.boundKeyUpHandler);
 			window.addEventListener('resize', this.barResize);
-			window.addEventListener('keydown', this.onKeyDown);
-			window.addEventListener('keyup', this.onKeyUp);
+
 			this.barResize();
 			this.updateHandler();
 		};
@@ -157,20 +161,20 @@ export class pong implements Component {
 		const k = e.key.toLowerCase();
 		if (k === "w".toLowerCase() && !this.leftBar.upKeyPress) {
 			this.leftBar.upKeyPress = true;
-			this.socket.emit("player-input", { direction: "up", state: true, player: "left"} );
+			// this.socket.emit("player-input", { direction: "up", state: true, player: "left"} );
 		}
 		if (k === "s".toLowerCase() && !this.leftBar.downKeyPress) {
 			this.leftBar.downKeyPress = true;
-			this.socket.emit("player-input", { direction: "down", state: true, player: "left"} );
+			// this.socket.emit("player-input", { direction: "down", state: true, player: "left"} );
 		}
 
 		if (k === "ArrowUp".toLowerCase() && !this.rightBar.upKeyPress) {
 			this.rightBar.upKeyPress = true;
-			this.socket.emit("player-input", { direction: "up", state: true, player: "right"} );
+			// this.socket.emit("player-input", { direction: "up", state: true, player: "right"} );
 		}
 		if (k === "ArrowDown".toLowerCase() && !this.rightBar.downKeyPress) {
 			this.rightBar.downKeyPress = true;
-			this.socket.emit("player-input", { direction: "down", state: true, player: "right"} );
+			// this.socket.emit("player-input", { direction: "down", state: true, player: "right"} );
 		}
     };
     
@@ -178,20 +182,20 @@ export class pong implements Component {
         const k = e.key.toLowerCase();
 		if (k === "w".toLowerCase() && this.leftBar.upKeyPress) {
 			this.leftBar.upKeyPress = false;
-			this.socket.emit("player-input", { direction: "up", state: false, player: "left"} );
+			// this.socket.emit("player-input", { direction: "up", state: false, player: "left"} );
 		}
 		if (k === "s".toLowerCase() && this.leftBar.downKeyPress) {
 			this.leftBar.downKeyPress = false;
-			this.socket.emit("player-input", { direction: "down", state: false, player: "left"} );
+			// this.socket.emit("player-input", { direction: "down", state: false, player: "left"} );
 		}
 
 		if (k === "ArrowUp".toLowerCase() && this.rightBar.upKeyPress) {
 			this.rightBar.upKeyPress = false;
-			this.socket.emit("player-input", { direction: "up", state: false, player: "right"} );
+			// this.socket.emit("player-input", { direction: "up", state: false, player: "right"} );
 		}
 		if (k === "ArrowDown".toLowerCase() && this.rightBar.downKeyPress) {
 			this.rightBar.downKeyPress = false;
-			this.socket.emit("player-input", { direction: "down", state: false, player: "right"} );
+			// this.socket.emit("player-input", { direction: "down", state: false, player: "right"} );
 		}
     };
     
@@ -252,49 +256,52 @@ export class pong implements Component {
         	}
         }
 
-        this.socket.on("connect", () => {
-          console.log("Connected with id:", this.socket.id);
-        });
+        // this.socket.on("connect", () => {
+        //   console.log("Connected with id:", this.socket.id);
+        // });
 
-        this.socket.on("game-started", (data: { gameId: string, playerId: string[]}) => {
-          gameId = data.gameId;
-          playerId = data.playerId;
-          console.log("Game started! Game ID:", gameId, "Player ID:", playerId);
-        });
+        // this.socket.on("game-started", (data: { gameId: string, playerId: string[]}) => {
+        //   gameId = data.gameId;
+        //   playerId = data.playerId;
+        //   console.log("Game started! Game ID:", gameId, "Player ID:", playerId);
+        // });
 
-        this.socket.on("game-update", (data: { gameId: string, state: {
-			bar: { left: number, right: number},
-        	ball: { x: number, y: number},
-        	score: {playerLeft: number, playerRight: number}}}) => {
-        	if (data && data.state && data.state.ball) {
-            	ball = data.state.ball;
+        // this.socket.on("game-update", (data: { gameId: string, state: {
+		// 	bar: { left: number, right: number},
+        // 	ball: { x: number, y: number},
+        // 	score: {playerLeft: number, playerRight: number}}}) => {
+        // 	if (data && data.state && data.state.ball) {
+        //     	ball = data.state.ball;
+		//
+		// 		// img ball pos = ball pos * ratio current_size and base_size - ball size / 2
+        //         this.ball.position.x =  data.state.ball.x * this.backRect.width / 4096 - (this.ball.height * 0.5);
+        //         this.ball.position.y = data.state.ball.y * this.backRect.height / 1714 - (this.ball.height * 0.5);
+		// 		this.leftBar.position.y = data.state.bar.left * this.backRect.height / 1714 - (this.leftBar.height * 0.5) ;
+		// 		this.rightBar.position.y = data.state.bar.right * this.backRect.height / 1714 - (this.rightBar.height * 0.5);
+		// 		this.rafId = requestAnimationFrame(this.gameLoop);
+        //     }
+        //     console.log(data.state);
+        //     if (data && data.state && data.state.score)
+        // 		this.updateScore(data.state.score.playerLeft, data.state.score.playerRight);
+		// // console.log("Game Update - Ball:", ball);
+        // });
 
-				// img ball pos = ball pos * ratio current_size and base_size - ball size / 2 
-                this.ball.position.x =  data.state.ball.x * this.backRect.width / 4096 - (this.ball.height * 0.5);
-                this.ball.position.y = data.state.ball.y * this.backRect.height / 1714 - (this.ball.height * 0.5);
-				this.leftBar.position.y = data.state.bar.left * this.backRect.height / 1714 - (this.leftBar.height * 0.5) ;
-				this.rightBar.position.y = data.state.bar.right * this.backRect.height / 1714 - (this.rightBar.height * 0.5);
-				this.rafId = requestAnimationFrame(this.gameLoop);
-            }
-            console.log(data.state);
-            if (data && data.state && data.state.score)
-        		this.updateScore(data.state.score.playerLeft, data.state.score.playerRight);
-			// console.log("Game Update - Ball:", ball);
-        });
+        // this.socket.on("connect_error", (err: any) => {
+        //     console.error("Connection error:", err);
+        // });
 
-        this.socket.on("connect_error", (err: any) => {
-            console.error("Connection error:", err);
-        });
-
-        this.socket.on("game-end", (score: {playerLeft: number, playerRight: number}) => {
-            console.log("Game end with a score of ", score.playerLeft, ":", score.playerRight);
-        })
+        // this.socket.on("game-end", (score: {playerLeft: number, playerRight: number}) => {
+        //     console.log("Game end with a score of ", score.playerLeft, ":", score.playerRight);
+        // })
     }
     
     public destroy(): void {
+		console.log("Destroy pong")
         window.removeEventListener('keydown', this.boundKeyDownHandler);
         window.removeEventListener('keyup', this.boundKeyUpHandler);
         window.removeEventListener('resize', this.barResize);
         cancelAnimationFrame(this.rafId);
+		// this.socket.removeAllListeners();
+		// this.socket.disconnect();
     }
 }

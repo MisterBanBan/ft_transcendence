@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 import { PlayerAnimation } from "./player_animation.js";
+import {router} from "./router.js";
 
 interface IPlayerController {
     destroy(): void;
@@ -109,7 +110,7 @@ export class PlayerController implements IPlayerController{
         this.playerHeight = sizePlayer.height;
         
         let worldPath: string;
-        
+
         this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.player, this.isDoorOpen, this.isInTriggerZone, e);
         this.boundKeyUpHandler = (e) => {
             handleKeyReleasePlayer(this.stats, this.player, e);
@@ -131,8 +132,7 @@ export class PlayerController implements IPlayerController{
                                 worldPath = "/game";
                             }
                         }
-                        window.history.pushState(null, "", worldPath);
-                        window.dispatchEvent(new PopStateEvent("popstate"));
+                        router.navigateTo(worldPath);
                 }
             }
         };

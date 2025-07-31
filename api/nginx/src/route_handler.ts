@@ -17,14 +17,10 @@ import {TFAValidate} from "./auth/2fa-validate.js";
 import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
 import {Logout} from "./auth/logout.js";
-import {CreateTournament} from "./tournament/create-tournament.js";
-import {showTourmaments} from "./tournament/show-tourmaments.js";
 import { introduction } from './intro.js';
 import { Zoom } from './zoom.js';
 import { proceduralBackground } from './proceduralBackground.js';
 import { pong } from './pong.js';
-import { AuthUser } from './type.js';
-import { setUser} from "./user-handler.js";
 import { viewManager } from './views/viewManager.js';
 
 //permet de gerer la destruction des new
@@ -65,10 +61,11 @@ const routeComponents: Record<string, Component> = {
     "/game": {
         init: () => {
             activeComponent?.destroy?.();
+
+			console.log("Init /game");
 			const me = new viewManager('video_main','container_form', 'user');
             me.init();
 			const login = new Login();
-			console.log("Login component initialized");
 			login.init();
 
             activeComponent = {
@@ -114,56 +111,6 @@ const routeComponents: Record<string, Component> = {
         },
         destroy: () => {}
     },
-	"/tournament": {
-		init: () => {
-			activeComponent?.destroy?.();
-
-			const socket = io(`/`, {
-				transports: ["websocket", "polling"],
-				withCredentials: true,
-				path: "/wss/tournament"
-			});
-
-			socket.on("connect", () => {
-				console.log(socket.id);
-			});
-
-			socket.on("updateTournamentsList", (tournamentsList: any) => {
-				console.log(tournamentsList);
-				type Tournament = { name: string, size: number, registered: number, players: Array<string> };
-				tournamentsList.forEach(({name, size, registered, players}: Tournament) => {
-					console.log(players);
-					console.log(`Tournoi: ${name} | Taille: ${size} | Inscrits: ${registered} | Joueurs: ${players}`);
-				});
-
-				// showTourmaments(socket, tournamentsList);
-			})
-
-			socket.on("updateTournamentInfos", (tournamentInfos: any) => {
-				const infos = tournamentInfos as { name: string, size: number, registered: number, players: Array<string> }
-
-				const name = document.getElementById("tournament-name-display") as HTMLElement
-				const playersList = document.getElementById("players-list") as HTMLUListElement
-				if (!name || !playersList) {
-					console.error("Missing elements to show tournament info");
-					return;
-				}
-
-				name.innerText = infos.name
-				playersList.innerText = infos.players.toString()
-			})
-
-			const createTournament = new CreateTournament(socket);
-
-			createTournament.init();
-
-			activeComponent = {
-				init: () => {},
-				destroy: () => { createTournament.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
 	"/settings": {
 		init: () => {
 			activeComponent?.destroy?.();
@@ -198,33 +145,6 @@ const routeComponents: Record<string, Component> = {
 		},
 		destroy: () => {}
 	},
-	// "/2fa/create": {
-	// 	init: () => {
-	// 		activeComponent?.destroy?.();
-
-	// 		const toggle2FA = new Toggle2FA();
-	// 		toggle2FA.init();
-
-	// 		activeComponent = {
-	// 			init: () => {},
-	// 			destroy: () => { toggle2FA.destroy(); },
-	// 		};
-	// 	},
-	// 	destroy: () => {}
-	// },
-	// "/2fa/remove": {
-	// 	init: () => {
-	// 		activeComponent?.destroy?.();
-
-	// 		const toggle2FA = new Toggle2FA();
-	// 		toggle2FA.init();
-	// 		activeComponent = {
-	// 			init: () => {},
-	// 			destroy: () => { toggle2FA.destroy(); },
-	// 		};
-	// 	},
-	// 	destroy: () => {}
-	// },
 	"/auth": {
 		init: () => {
 			activeComponent?.destroy?.();
@@ -242,10 +162,10 @@ const routeComponents: Record<string, Component> = {
 	},
 };
 
-export function handleRouteComponents(path: string, user?: AuthUser) {
+export function handleRouteComponents(path: string) {
 	const component = routeComponents[path];
 	if(component) {
-		setUser(user);
+		console.warn(path, "component init");
 		component.init();
 	}
 }

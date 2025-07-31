@@ -1,5 +1,6 @@
 import {emitAll} from "../utils/emit-all.js";
 import {FastifyInstance} from "fastify";
+import {wait} from "../socket/start.js";
 
 export class Match {
 	private player1?: number;
@@ -12,7 +13,7 @@ export class Match {
 		this.winner = undefined
 	}
 
-	public async startMatch(app: FastifyInstance): Promise<void> {
+	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
 		console.log(Date.now(), "Starting match")
 		if (this.player1 === undefined && this.player2 === undefined) {
 			this.winner = undefined
@@ -29,24 +30,33 @@ export class Match {
 			return Promise.resolve()
 		}
 
-		const body = { client1: this.player1!.toString(), client2: this.player2!.toString() } as { client1: string, client2: string }
-		const response = await fetch('http://matchmaking:8083/api/matchmaking/private', {
-			method: 'POST',
-			body: JSON.stringify(body),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		})
+		// const body = { client1: this.player1!.toString(), client2: this.player2!.toString() } as { client1: string, client2: string }
+		// const fetchPromise = fetch('http://matchmaking:8083/api/matchmaking/private', {
+		// 	method: 'POST',
+		// 	body: JSON.stringify(body),
+		// 	headers: {
+		// 		'Content-Type': 'application/json'
+		// 	}
+		// })
 
 		emitAll(app, this.player1!, "newMatch", undefined);
 		emitAll(app, this.player2!, "newMatch", undefined);
 
-		const results = await response.json()
+		// const response = await fetchPromise;
+		// const results = await response.json()
+
+		await wait(5000);
+
+		const results = Math.random() < 0.5 ? this.player1! : this.player2!
 
 		console.log(Date.now(), results);
 
 		// Handle status: 'timeout'
-		this.winner = parseInt(results);
+		this.winner = results;
+
+		emitAll(app, this.player1!, "matchEnded", undefined)
+		emitAll(app, this.player2!, "matchEnded", undefined)
+
 		return Promise.resolve()
 	}
 
@@ -73,7 +83,7 @@ export class Match {
 
 export interface TournamentStructure {
 	rounds: Match[][];
-	winner?: string;
+	winner?: number;
 }
 
 export class Tournament {

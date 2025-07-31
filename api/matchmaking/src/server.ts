@@ -37,6 +37,9 @@ async function start() {
 	const privateQueue = new Map<string, string>();
 	app.decorate("privateQueue", privateQueue);
 
+	const privateResult = new Map<string, string>();
+	app.decorate("privateResult", privateResult)
+
 	gameUpdate(app);
 
 	app.listen({ port: 8083, host: "0.0.0.0" }, (err) => {

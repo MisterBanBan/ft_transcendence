@@ -1,5 +1,7 @@
 import {FastifyInstance} from "fastify";
 import {Match, Tournament} from "../class/Tournament.js";
+import {emitAll} from "../utils/emit-all.js";
+import {updateTournamentInfo} from "../room/update-tournament-info.js";
 
 function shuffleMap<K, V>(map: Map<K, V>): Map<K, V> {
 	const entries = Array.from(map.entries());
@@ -10,6 +12,10 @@ function shuffleMap<K, V>(map: Map<K, V>): Map<K, V> {
 	}
 
 	return new Map(entries);
+}
+
+export function wait(ms: number): Promise<void> {
+	return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 export async function start(app: FastifyInstance, tournament: Tournament) {
@@ -48,7 +54,7 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 		const round = tournament.getStructure().rounds[i];
 
 		let matchPromises = round.map((match: Match) => {
-			return match.startMatch(app);
+			return match.startMatch(app, tournament);
 		});
 
 		await Promise.all(matchPromises);
@@ -62,10 +68,16 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 				match.setPlayer1(tournament.getStructure().rounds[i][index * 2].getWinner())
 				match.setPlayer2(tournament.getStructure().rounds[i][index * 2 + 1].getWinner())
 			})
+
+			await wait(5000);
 		}
 		else {
 			console.log("Winner:", round[0].getWinner());
-			// TODO fin de tournois
+			tournament.getStructure().winner = round[0].getWinner();
+
+			await wait(5000);
 		}
+
+		await updateTournamentInfo(app, 0, tournament, true);
 	}
 }
