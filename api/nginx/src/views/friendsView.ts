@@ -109,7 +109,7 @@ export class friendsView implements Component {
             const friendsHtml = FriendService.displayFriends(friendsList);
             friendsContainer.insertAdjacentHTML('beforeend', friendsHtml);
 
-            document.querySelectorAll('#friend').forEach(btn => {
+            document.querySelectorAll('.friend-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));
             });
         } catch (error) {
@@ -123,6 +123,14 @@ export class friendsView implements Component {
         const y = e.clientY;
         const target = e.target as HTMLElement;
         const friendId = target.getAttribute('data-friend-id');
+        const username = target.getAttribute('data-username');
+
+        console.log('Friend action triggered for:', { friendId, username });
+
+        if (!friendId || friendId === 'undefined') {
+            console.error('Invalid friend ID:', friendId);
+            return;
+        }
 
         const friendsContainer = document.getElementById('dynamic-popup');
         if (!friendsContainer) {
@@ -140,12 +148,8 @@ export class friendsView implements Component {
         friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
 
         document.getElementById('removeFriend')?.addEventListener('click', async () => {
-            if (!friendId) {
-                console.error('Friend ID not found');
-                return;
-            }
-
             try {
+                console.log('Attempting to remove friend with ID:', friendId);
                 await FriendService.removeFriend(friendId);
 
                 const popup = document.getElementById('friend-popup');
@@ -157,6 +161,7 @@ export class friendsView implements Component {
 
             } catch (error) {
                 console.error('Error removing friend:', error);
+                alert('Failed to remove friend. Please try again.');
             }
         });
     }
@@ -165,9 +170,10 @@ export class friendsView implements Component {
         document.getElementById('friendsReturnBtn')?.removeEventListener('click', this.handleReturn);
         document.getElementById('friends')?.removeEventListener('click', this.handleFriends);
         document.getElementById('invites')?.removeEventListener('click', this.handleInvites);
-        document.querySelectorAll('#friend').forEach(btn => {
+
+        document.querySelectorAll('.friend-btn').forEach(btn => {
             btn.removeEventListener('click', (e) => this.friendAction(e as MouseEvent));
         });
-        
     }
+
 }

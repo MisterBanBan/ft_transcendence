@@ -1,7 +1,7 @@
 import {getUser} from "../user-handler.js";
 import {ApiUtils} from "./apiUtils.js";
 
-interface loadFriendsResponse{
+interface loadFriendsResponse {
     message?: string;
     error?: string;
     friends?: Friends[];
@@ -9,14 +9,20 @@ interface loadFriendsResponse{
 
 interface Friends {
     username: string;
-    friendsId: string;
+    id: string;
     avatar_url: string;
+    status: string;
 }
 
 export class FriendService {
     private static readonly BASE_URL = 'https://localhost:8443';
 
     static async removeFriend(friendId: string): Promise<void> {
+
+        if (!friendId || friendId === 'undefined') {
+            throw new Error('Invalid friend ID');
+        }
+
         try {
             const response = await fetch(`${this.BASE_URL}/api/users/${friendId}/removeFriend`, {
                 method: 'DELETE',
@@ -81,16 +87,16 @@ export class FriendService {
         let nb = 0;
 
         return `
-            <div class="h-full w-full overflow-y-auto">
-                ${sortedFriends.map(friend => `
-                    <div class="flex flex-row justify-between items-center gap-4 responsive-text-historique">
-                        <p class="w-10 h-10">${nb++}</p>
-                        <img src="${friend.avatar_url || '/default-avatar.png'}" alt="${friend.username}" class="w-10 h-10 rounded-full object-contain"/>
-                        <button id="friend" data-friend-id="${friend.friendsId}" class="responsive-text-historique">${friend.username}</button>
-                        <span>Online</span>
-                    </div>
-                `).join('')}
-            </div>
-        `;
+        <div class="h-full w-full overflow-y-auto">
+            ${sortedFriends.map(friend => `
+                <div class="flex flex-row justify-between items-center gap-4 responsive-text-historique">
+                    <p class="w-10 h-10">${nb++}</p>
+                    <img src="${friend.avatar_url || '../../img/last_airbender.jpg'}" alt="${friend.username}" class="w-10 h-10 rounded-full object-contain"/>
+                    <button class="friend-btn responsive-text-historique" data-friend-id="${friend.id}" data-username="${friend.username}">${friend.username}</button>
+                    <span>Online</span>
+                </div>
+            `).join('')}
+        </div>
+    `;
     }
 }
