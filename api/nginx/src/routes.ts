@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/30 17:48:03 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/02 22:53:55 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,44 +55,54 @@ export const routes: Route[] = [
 				  
 					</div>
 				
-					<div class="w-screen h-screen relative">
+					<div id="pageOne" class="w-screen h-screen relative bg-black/50">
 						<div class="absolute left-0 bottom-0 w-full h-full z-10">
-							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+							<div class="relative top-0 left-[30%] w-[40%] h-[18%] object-contain">
+								<img id="text" src="/img/text.png" class="w-full h-full"/>
+								<div
+									id="dialogueBox"
+									class="absolute inset-0 flex items-center justify-center text-center px-4 break-words text-white font-omori text-2xl w-full h-full"
+								>
+								</div>
+							</div>
+
+							<img id="infoUser" src="/img/infoUser.png" class="absolute top-[40%] left-[38%]  w-[20%] h-[18%] object-cover pointer-events-none translate-y-2"/>
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2"/>
 			
-							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2"/>
 
 						</div>        
 					</div>
-					<div class="w-screen h-screen relative">
+					<div id="secondWindow" class="w-screen h-screen relative">
 						<div class="absolute left-0 bottom-0 w-full h-full z-10">
-							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2"/>
 		
-							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2"/>
 						</div>      
 					</div>
 
                   	<div id="trigger" class="w-screen h-screen relative z-50">
-                    	<img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50"/>
-						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
-							<video autoplay loop muted class="w-12 h-12">
-							<source src="/img/pressE.mp4" type="video/mp4">
-							</video>
+                    	<img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain"/>
+						 <div id="pressE" class="absolute hidden inset-0 z-[999] flex items-center justify-center">
+							<img src="/img/enter.png" class="absolute top-1/2 left-[30%] -translate-x-1/2 -translate-y-1/2 w-24 h-24"/>
 						</div>
 						<div class="absolute left-0 bottom-0 w-full h-full z-10">
-							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2"/>
 	
-							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2"/>
 						</div>  
                   	</div>
 				      
                 </div>
 			</div>
-			<div id="skip" class="fixed h-[3%] right-0 bottom-0 w-[5%] item-center justify-center text-omori text-white">
-				<button type="button" id="skipButton">SKIP</button>
+			<div id="skip" class="fixed h-[10%] right-0 bottom-0 w-[10%] item-center justify-center text-omori text-white">
+				<button id="skipButton" class="w-full h-full object-contain">
+				<img src="/img/skip.png" class="w-full h-full "/>
+				</button>
 			</div
 							<!-- 3. Joueur par-dessus tout -->
 			<div id="player"
-				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
+				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop1.png')] bg-contain bg-no-repeat z-10">
 			</div>
               
 `;
@@ -117,7 +127,7 @@ export const routes: Route[] = [
              
               	<div id="container_form" class=" w-full h-full flex items-center justify-center pointer-events-auto ">
 					<div class="flex flex-col items-center justify-center h-full w-[80%] relative">	    
-						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto transition-transform duration-200 hover:scale-125">
+						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-no-repeat bg-center z-20 pointer-events-auto transition-transform duration-200 hover:scale-125">
 								</button>
 						<div id="dynamic-content" class="h-full w-full flex items-center justify-center absolute"></div>
 					</div>
@@ -139,17 +149,24 @@ export const routes: Route[] = [
 				<div id="chalet" class="fixed inset-0 h-full w-full overflow-hidden">
 					<div id="pageContainer" class="flex w-[200vw] h-full overflow-x-auto items-center justify-center relative">
 						<img src="/img/chalet_inside.png" class="inset-0 w-full h-[75%] object-fill z-50">
-						
+
+					</div>
+				<div class="absolute top-0 left-[30%] w-[40%] h-[18%] z-30">
+						<img id="text" src="/img/text.png" alt="texte" class="w-full h-full object-contain" />
+						<div
+							id="dialogueBox"
+							class="absolute inset-0 flex items-center justify-center text-center px-4 break-words text-white font-omori text-2xl"
+						>
 						</div>
 				</div>
 				
-				<div id="pressE" class="hidden absolute flex z-20 items-center justify-center bg-black bg-opacity-50">
-							<video autoplay loop muted class="w-12 h-12">
-							<source src="/img/pressE.mp4" type="video/mp4">
-							</video>
-						</div>
-				<div id="player"
-				class="fixed left-0 w-[30vw] h-[60vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-50">
+				<div id="pressE"
+					class="hidden absolute inset-0 z-20 bg-black bg-opacity-50">
+							<img src="/img/back.png" id="img" class="absolute top-[30%] w-28 h-28 -translate-x-1/2 -translate-y-1/2"/>
+					
+				</div>
+				<div id="playerChalet"
+				class="fixed left-0 w-[30vw] h-[60vh] bg-[url('/img/kodama_stop1.png')] bg-contain bg-no-repeat z-50">
 			</div>
 			`;
 		}	
@@ -185,17 +202,27 @@ export const routes: Route[] = [
 				<img id="left-bar" src="/img/bar_left.png" class="absolute z-20" />
 				<img id="right-bar" src="/img/bar_left.png" class="absolute z-20" />
 				
-				<!-- Score superposé -->
-<div id="score" class="absolute bg-black/80 top-[8%] left-[4%] w-[75%] h-[75%] flex flex-row z-10 rounded-xl">
-  <div class="flex flex-col items-center justify-center h-full w-[50%] relative z-0">
-    <p id="score-player1"  class="text-white/80 text-[calc(20vw)] font-omori w-full h-full flex items-center justify-center text-center z-0 opacity-70 drop-shadow">0</p>
-  </div>
-  <div class="w-px h-full bg-white/40 mx-4 z-10"></div>
-  <div class="flex flex-col items-center justify-center h-full w-[50%] relative z-0">
-    <p id="score-player2" class="text-white/80 text-[calc(20vw)] font-omori w-full h-full flex items-center justify-center text-center z-0 opacity-70 drop-shadow">0</p>
-  </div>
-</div>
+				<div id="score" class="absolute bg-black/80 top-[8%] left-[4%] w-[75%] h-[75%] flex flex-row z-10 rounded-xl">
+				<div class="flex flex-col items-center justify-center h-full w-[50%] relative z-0">
+					<p id="score-player1"  class="text-white/80 text-[calc(20vw)] font-omori w-full h-full flex items-center justify-center text-center z-0 opacity-70 drop-shadow">0</p>
+				</div>
+				<div class="w-px h-full bg-white/40 mx-4 z-10"></div>
+				<div class="flex flex-col items-center justify-center h-full w-[50%] relative z-0">
+					<p id="score-player2" class="text-white/80 text-[calc(20vw)] font-omori w-full h-full flex items-center justify-center text-center z-0 opacity-70 drop-shadow">0</p>
+				</div>
+				
+				</div>
 
+			</div>
+			<div class="fixed top-[45%] left-[80%] z-10">
+				<button class="p-0 border-none bg-transparent">
+					<img id="backPong" src="/img/backPong.png" class="h-[144px] w-[144px] hover:scale-110 transition-transform duration-300"/>
+				</button>
+			</div>
+			<div class="fixed top-[45%] left-[89%] z-10">
+				<button class="p-0 border-none bg-transparent">
+					<img id="backPong" src="/img/profile.png" class="h-[154px] w-[154px]  hover:scale-110 transition-transform duration-300"/>
+				</button>
 			</div>
 
 

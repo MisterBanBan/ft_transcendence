@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/10 15:16:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 21:38:07 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:58:40 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
+    private backButton!: HTMLElement;
 	private socket = io(`/`, {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
@@ -160,6 +161,14 @@ export class pong implements Component {
 			window.addEventListener('resize', this.barResize);
 			window.addEventListener('keydown', this.onKeyDown);
 			window.addEventListener('keyup', this.onKeyUp);
+            const backButton = document.getElementById('backPong');
+            if (backButton) {
+                this.backButton = backButton;
+                this.backButton.addEventListener('click', () => {
+                    window.history.pushState(null, "", "/game");
+                    window.dispatchEvent(new PopStateEvent("popstate"));
+                });
+            }
 			this.barResize();
 			this.updateHandler();
 		};
@@ -289,5 +298,6 @@ export class pong implements Component {
         window.removeEventListener('keyup', this.boundKeyUpHandler);
         window.removeEventListener('resize', this.barResize);
         cancelAnimationFrame(this.rafId);
+        
     }
 }

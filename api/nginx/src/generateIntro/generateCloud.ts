@@ -6,11 +6,11 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/07 05:58:52 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/10 16:15:31 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/02 23:12:56 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-export function generateCloud(containerId: string, count: number = 15): HTMLElement[] {
+export function generateCloud(containerId: string, count: number = 20): HTMLElement[] {
     const container = document.getElementById(containerId);
     if (!container) {
         throw new Error(`Container #${containerId} not found`);
@@ -18,14 +18,22 @@ export function generateCloud(containerId: string, count: number = 15): HTMLElem
 
     const clouds: HTMLElement[] = [];
     const step = 100 / count;
+
+    const cloudImages = [
+        '/img/cloud1.png',
+        '/img/cloud2.png',
+        '/img/cloud3.png',
+        '/img/cloud4.png',
+        '/img/cloud5.png',
+        '/img/cloud6.png',
+        '/img/cloud7.png',
+        '/img/cloud8.png',
+    ];
+    
     for (let i = 0; i < count; i++) {
         const cloud = document.createElement('img');
-        if(i < 5)
-            cloud.src = '/img/clouds.png';
-        else if(i < 10)
-            cloud.src = '/img/cloudd.png';
-        else
-            cloud.src = '/img/cloudss.png';
+        const randomImage = cloudImages[Math.floor(Math.random() * cloudImages.length)];
+        cloud.src = randomImage;
         cloud.alt = 'cloud';
         cloud.style.position = 'absolute';
         const minVw = 5;

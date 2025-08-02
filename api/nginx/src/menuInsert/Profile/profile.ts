@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 13:42:52 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/09 16:46:16 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:30:37 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@ export const profile = () => `
     <div class="h-[85%] w-[90%] flex flex-col items-center justify-center bg-black/60">
         <div class="flex flex-row items-center justify-center  h-full w-full">
             <div id="perso"  class="flex flex-col items-center justify-center h-full w-[30%]">
-                <img src="/img/kodama_stop.png" alt="Kodama" class="w-[40%] h-[80%] bg-white rounded-full">
+                <img src="/img/kodama_stop1.png" alt="Kodama" class="w-[40%] h-[80%] bg-white rounded-full">
                 <p class="text-white responsive-text">Kodama</p>
             </div>
         

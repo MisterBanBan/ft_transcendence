@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   viewManager.ts                                     :+:      :+:    :+:   */
+/*   ViewManager.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/30 18:03:51 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/31 17:50:14 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -310,5 +310,7 @@ export class viewManager implements Component {
                 opt.replaceWith(opt.cloneNode(true)); // retire tous les listeners
             });
         }
+        this.activeView?.destroy();
+        
     }
 }

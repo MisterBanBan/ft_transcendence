@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parameterView.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 22:32:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/30 18:04:04 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/01 16:23:11 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ export class parameterView implements Component {
     private handleScore = () => this.loadScore();
     private handleProfile = () => this.loadProfile();
     private handleFriendsList = () => this.viewManager.show('friendsList');
-    private handleSettings = () => this.viewManager.show('parametre');
+    private handleSettings = () => this.viewManager.show('settings');
     private handleLogout = () => {this.viewManager.show('login'), this.picture.innerHTML = ''};
     
     
