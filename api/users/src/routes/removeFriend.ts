@@ -2,10 +2,18 @@ import {FastifyInstance, FastifyRequest} from "fastify";
 
 export default async function (server: FastifyInstance) {
     server.delete<{
-        Params: { friendId: string };
-    }>('/api/users/:friendId/removeFriend', {
+        Params: { userId: string };
+        Body: { friendId: string };
+    }>('/api/users/:userId/removeFriend', {
         schema: {
             params: {
+                type: 'object',
+                properties: {
+                    userId: { type: 'string' }
+                },
+                required: ['userId']
+            },
+            body: {
                 type: 'object',
                 properties: {
                     friendId: { type: 'string' }
@@ -53,20 +61,12 @@ export default async function (server: FastifyInstance) {
             }
         }
     }, async (request: FastifyRequest, reply) => {
-        const { friendId } = request.params as { friendId: string };
+        const { userId } = request.params as { userId: string };
+        const { friendId } = request.body as { friendId: string };
 
-        if (!friendId || friendId.trim() === '') {
-            console.log('Invalid friendId parameter:', friendId);
-            return reply.status(400).send({ error: 'Invalid friend ID parameter' });
+        if (String(request.currentUser?.id) !== String(userId)) {
+            return reply.status(403).send({ error: 'Unauthorized' });
         }
-
-        const userId = request.currentUser?.id;
-
-        console.log('Removing friend request:', {
-            friendId,
-            userId,
-            hasCurrentUser: !!request.currentUser
-        });
 
         if (!userId) {
             console.log('User not authenticated:', request.currentUser);

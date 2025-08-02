@@ -18,23 +18,19 @@ export class FriendService {
     private static readonly BASE_URL = 'https://localhost:8443';
 
     static async removeFriend(friendId: string): Promise<void> {
-
-        if (!friendId || friendId === 'undefined') {
-            throw new Error('Invalid friend ID');
+        const currentUser = getUser();
+        if (!currentUser) {
+            throw new Error('User not authenticated');
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${friendId}/removeFriend`, {
+            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/removeFriend`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                body: JSON.stringify({ friendId: friendId })
             });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to remove friend');
-            }
 
             const data = await response.json();
             console.log(data.message);
