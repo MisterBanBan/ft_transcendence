@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 13:42:52 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 14:39:47 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/03 23:25:22 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ export const profile = () => `
                         <p class="text-white">70%</p>
                     </div>
                 </div>
-                <div class="w-[70%] h-[35%]">
+                <div class="w-[70%] h-[35%] flex flex-col">
                     
                         <div class="h-[10%] w-full flex flex-row mb-8 justify-between items-center">
                             <p class="responsive-text-profile">Player1</p>
@@ -49,17 +49,22 @@ export const profile = () => `
                             <p class="responsive-text-profile">Game Type</p>
                         </div>
                         <div class="h-full w-full overflow-y-auto ">
-                        ${matches.slice(0, 10).map(match => `
-                        <div class="flex flex-row justify-between items-center responsive-text-historique ">
-                            <span class="">${match.player1}</span>
-                            <span class="">${match.player2}</span>
-                            <span class="">${match.score1} - ${match.score2}</span>
-                            <span class="">${match.date}</span>
-                        </div>
-                        `).join('')}
+                            ${matches.slice(0, 10).map(match => `
+                            <div class="flex flex-row justify-between items-center responsive-text-historique ">
+                                <span class="">${match.player1}</span>
+                                <span class="">${match.player2}</span>
+                                <span class="">${match.score1} - ${match.score2}</span>
+                                <span class="">${match.date}</span>
+                            </div>
+                            `).join('')}
                     </div>
+
                 </div>
+                                                <div class="w-[70%] h-[10%] items-center justify-center flex flex-col">
+                    <button type="button" id="profileReturnBtn" class="text-white responsive-text-parametre ">Return</button>
+                    </div>
             </div>
+
         </div>
         </div>
     </div>

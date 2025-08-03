@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 22:32:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 13:44:40 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/03 23:59:42 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ export class parameterView implements Component {
     private handleProfile = () => this.loadProfile();
     private handleFriendsList = () => this.viewManager.show('friendsList');
     private handleSettings = () => this.viewManager.show('settings');
+    private handleParametre = () => this.viewManager.show('parametre');
     private handleLogout = () => {this.viewManager.show('login'), this.picture.innerHTML = ''};
     
     
@@ -55,7 +56,7 @@ export class parameterView implements Component {
     private loadProfile() {
         this.container.innerHTML = '';
         this.container.innerHTML = profile();
-        document.getElementById('profileReturnBtn')?.addEventListener('click', this.handleSettings);
+        document.getElementById('profileReturnBtn')?.addEventListener('click', this.handleParametre);
     }
 
     public destroy(): void {
@@ -64,7 +65,7 @@ export class parameterView implements Component {
         document.getElementById('settings')?.removeEventListener('click', this.handleSettings);
         document.getElementById('logout')?.removeEventListener('click', this.handleLogout);
         document.getElementById('parametreReturnBtn')?.removeEventListener('click', this.handleReturn);
-        document.getElementById('profileReturnBtn')?.removeEventListener('click', this.handleSettings);
+        document.getElementById('profileReturnBtn')?.removeEventListener('click', this.handleParametre);
         
     }
 }

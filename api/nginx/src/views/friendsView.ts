@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   friendsView.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 12:21:50 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/03 23:50:50 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ export class friendsView implements Component {
     }
 
     private attachEventListeners() {
-        document.getElementById('friendsReturnBtn')?.addEventListener('click', this.handleReturn);
+        document.getElementById('friendReturnBtn')?.addEventListener('click', this.handleReturn);
         document.getElementById('friends')?.addEventListener('click', this.handleFriends);
         document.getElementById('invites')?.addEventListener('click', this.handleInvites);
     }
@@ -167,7 +167,7 @@ export class friendsView implements Component {
     }
 
     destroy(): void {
-        document.getElementById('friendsReturnBtn')?.removeEventListener('click', this.handleReturn);
+        document.getElementById('friendReturnBtn')?.removeEventListener('click', this.handleReturn);
         document.getElementById('friends')?.removeEventListener('click', this.handleFriends);
         document.getElementById('invites')?.removeEventListener('click', this.handleInvites);
 

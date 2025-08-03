@@ -19,7 +19,7 @@ export class ProfilePictureManager {
     public init(): void {
         if (this.isInitialized) return;
 
-        this.pictureElement = document.getElementById('picture') as HTMLButtonElement;
+        this.pictureElement = document.getElementById('picture-profile') as HTMLButtonElement;
 
         if (!this.pictureElement) {
             console.warn('Picture element not found, will retry later');

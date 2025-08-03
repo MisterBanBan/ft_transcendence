@@ -36,16 +36,15 @@ export const picture = () => {
 
     return `
     <div class="w-full h-full flex flex-col relative">
-        <div class="w-full h-[47%] flex items-center justify-center relative">
+        <div class="w-full h-[46%] flex items-center justify-center relative">
             <button
                 type="button"
-                id="picture"
-                class="w-[65%] h-[72%] mt-4 mr-4 bg-[url(/uploads/${avatarUrl})] bg-[length:100%_100%] bg-white/60 bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
+                id="picture-profile"
+                class="w-[65%] h-[68%] mt-4 mr-4 bg-[url(/uploads/${avatarUrl})] bg-[length:100%_100%] bg-white/60 bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
                 title="Click to change profile picture"
             ></button>
         </div>
-        <div id="friendsActif" class="w-[95%] h-[53%] border-4 rounded-lg border-white/60 bg-black flex items-center justify-center mb-4">
-        </div>
+
     </div>
     `;
 };
