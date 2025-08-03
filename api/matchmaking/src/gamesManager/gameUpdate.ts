@@ -40,7 +40,7 @@ export function gameUpdate(app: FastifyInstance){
 					app.aiSocket.emit("game-end", data.gameId);
 				}
 				toDelete.push(playerId);
-				if (value.type === "private") {
+				if (value.type === "tournament" || value.type === "friend") {
 					if (!privateResult) {
 						privateResult = [];
 					}
@@ -56,9 +56,9 @@ export function gameUpdate(app: FastifyInstance){
 		if (privateResult && privateResult.length == 2) {
 			if (data.score.playerLeft > data.score.playerRight && privateResult[0].side === "left" ||
 				data.score.playerLeft < data.score.playerRight && privateResult[0].side === "right") {
-				app.privateResult.set(privateResult[0].userID, privateResult[1].userID);
+				app.privateResult.set(privateResult[0].userID, {opponent: privateResult[1].userID, type: privateResult[0].type});
 			} else {
-				app.privateResult.set(privateResult[1].userID, privateResult[0].userID);
+				app.privateResult.set(privateResult[1].userID, {opponent: privateResult[0].userID, type: privateResult[0].type});
 			}
 			console.log("Private game result for game", data.gameId, ":", privateResult);
 		}
