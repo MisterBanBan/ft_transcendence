@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   pong.ts                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/10 15:16:55 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/02 22:58:40 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/03 13:50:19 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { Component } from "./component.js"
-import { score } from "./score/score.js";
 
 declare const io: any;
 

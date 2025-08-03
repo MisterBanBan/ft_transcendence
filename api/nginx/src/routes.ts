@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/08/02 22:53:55 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/03 13:22:11 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,12 +216,12 @@ export const routes: Route[] = [
 			</div>
 			<div class="fixed top-[45%] left-[80%] z-10">
 				<button class="p-0 border-none bg-transparent">
-					<img id="backPong" src="/img/backPong.png" class="h-[144px] w-[144px] hover:scale-110 transition-transform duration-300"/>
+					<img id="backPong" src="/img/backPong.png" class="h-[47%] w-[45%] hover:scale-110 transition-transform duration-300"/>
 				</button>
 			</div>
 			<div class="fixed top-[45%] left-[89%] z-10">
 				<button class="p-0 border-none bg-transparent">
-					<img id="backPong" src="/img/profile.png" class="h-[154px] w-[154px]  hover:scale-110 transition-transform duration-300"/>
+					<img id="backPong" src="/img/profile.png" class="h-[85%] w-[85%]  hover:scale-110 transition-transform duration-300"/>
 				</button>
 			</div>
 
