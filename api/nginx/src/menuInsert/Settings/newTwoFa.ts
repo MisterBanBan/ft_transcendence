@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   newTwoFa.ts                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/06 18:52:33 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/30 19:05:57 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/03 15:13:20 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ export const newTwoFa = () => `
 			<img id="qrCodeImage" src="" alt="QR Code" />
 				</div>
 		</div>
-    <p class="text-gray-600 text-center text-sm">
+    <p class="text-white font-omori text-center text-xl">
 				Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
 		</p>                 
                   <input

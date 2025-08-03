@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/08/03 13:22:11 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/03 15:13:30 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -333,7 +333,7 @@ export const routes: Route[] = [
 		</div>
 	
 		<!-- Texte explicatif -->
-		<p class="text-gray-600 text-center text-sm">
+		<p class="text-white font-omori text-center text-xl">
 				Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
 		</p>
 	
@@ -504,7 +504,7 @@ export const routes: Route[] = [
 		</div>
 	
 		<!-- Texte explicatif -->
-		<p class="text-gray-600 text-center text-sm">
+		<p class="text-white font-omori text-center text-xl">
 				Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
 		</p>
 	
