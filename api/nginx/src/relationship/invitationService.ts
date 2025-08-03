@@ -31,7 +31,6 @@ interface LoadInvitation {
 }
 
 export class InvitationService {
-    private static readonly BASE_URL = 'https://localhost:8443';
 
     static async sendInvitation(): Promise<void> {
         const currentUser = getUser();
@@ -49,7 +48,7 @@ export class InvitationService {
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invite`, {
+            const response = await fetch(`/api/users/${currentUser.id}/invite`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -81,7 +80,7 @@ export class InvitationService {
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invitations`);
+            const response = await fetch(`/api/users/${currentUser.id}/invitations`);
 
             if (!response.ok) {
                 return;
@@ -113,7 +112,7 @@ export class InvitationService {
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/invitations/${requesterId}/accept`, {
+            const response = await fetch(`/api/users/invitations/${requesterId}/accept`, {
                 method: 'PUT',
             });
 
@@ -150,7 +149,7 @@ export class InvitationService {
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/invitations/${requesterId}/decline`, {
+            const response = await fetch(`/api/users/invitations/${requesterId}/decline`, {
                 method: 'PUT',
             });
 

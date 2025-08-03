@@ -15,7 +15,6 @@ interface Friends {
 }
 
 export class FriendService {
-    private static readonly BASE_URL = 'https://localhost:8443';
 
     static async removeFriend(friendId: string): Promise<void> {
         const currentUser = getUser();
@@ -24,7 +23,7 @@ export class FriendService {
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/removeFriend`, {
+            const response = await fetch(`/api/users/${currentUser.id}/removeFriend`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -49,7 +48,7 @@ export class FriendService {
 
         try {
             console.log(`Fetching friends for user ID: ${currentUser.id}`);
-            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/friendsList`, {
+            const response = await fetch(`/api/users/${currentUser.id}/friendsList`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
