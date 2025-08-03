@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ViewManager.ts                                     :+:      :+:    :+:   */
+/*   viewManager.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/31 17:50:14 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/03 14:52:04 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,9 +19,7 @@ import { registerView } from './registerView.js';
 import { Component } from '../component.js';
 import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/Picture/picture.js';
-import { friendsActif } from '../menuInsert/Picture/friendsActif.js';
 import { tournamentView } from './tournamentView.js';
-import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
 
 
 export class viewManager implements Component {
@@ -104,23 +102,11 @@ export class viewManager implements Component {
                 this.loadAcceuilVideo();
                 this.formsContainer.innerHTML = game();
                 this.formspicture.innerHTML = picture();
-                const firendDiv = document.getElementById('friendsActif');
-                if (firendDiv) {
-                    firendDiv.innerHTML = friendsActif();
-                }
-                //document.querySelectorAll('#friend').forEach(btn => {
-                 //   btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
-                    document.querySelectorAll('#friend').forEach(btn => {
-                        const clone = btn.cloneNode(true);
-                        btn.replaceWith(clone);
-                        clone.addEventListener('click', (e) => this.friendActionLog(e as MouseEvent));
-                    });
                     try {
                         this.setupGameMenu();
                     } catch (error) {
                         console.error("Error setting up game menu:", error);
                     }
-                    this.wordAnimation();
                 break;
             case 'login':
                 newView =  new loginView(this.formsContainer, this);
@@ -163,49 +149,23 @@ export class viewManager implements Component {
         console.log('Game listeners removed');
     }
     
-    private wordAnimation() {
-        const friends = document.querySelectorAll('.friend');
-        friends.forEach(div => {
-            const word = div.textContent?.trim() || '';
-            div.textContent = '';
-            word.split('').forEach((letter, idx) => {
-            const span = document.createElement('span');
-            span.textContent = letter;
-            span.style.transitionDelay = `${idx * 0.1}s`;
-            div.appendChild(span);
-            });
-        });
-    }
-
-
-
-    
-    private friendActionLog(e: MouseEvent) {
-        const x = e.clientX;
-        const y = e.clientY;
-        const friendsContainer = document.getElementById('friendsActif');
-        if (!friendsContainer) {
-            console.error('Friends container not found');
-            return;
-        }
-        const existingPopup = document.getElementById('friend-popup');
-        if (existingPopup) {
-            existingPopup.remove();
-            return;
-        }
-        const popupHtml = friendActifLog(x, y);
-        friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
-    }
+    // private wordAnimation() {
+    //     const friends = document.querySelectorAll('.friend');
+    //     friends.forEach(div => {
+    //         const word = div.textContent?.trim() || '';
+    //         div.textContent = '';
+    //         word.split('').forEach((letter, idx) => {
+    //         const span = document.createElement('span');
+    //         span.textContent = letter;
+    //         span.style.transitionDelay = `${idx * 0.1}s`;
+    //         div.appendChild(span);
+    //         });
+    //     });
+    // }
     
     private loadAcceuilVideo() {
         this.videoMain.poster = "/img/pong.png";
         this.videoMain.src = '/img/acceuil.mp4';
-        this.videoMain.load();
-    }
-    
-    private loadSettingsVideo() {
-        this.videoMain.poster = "/img/acceuilDraw.png";
-        this.videoMain.src = "/img/acceuilParam.mp4";
         this.videoMain.load();
     }
 
@@ -216,13 +176,6 @@ export class viewManager implements Component {
             this.show('parametre');
         }
     };
-    
-
-    private loadAcceuil (){
-        this.videoMain.poster = "/img/pong.png";
-        this.videoMain.src = '/img/acceuil.mp4';
-        this.videoMain.load();
-    }
   
        
 
