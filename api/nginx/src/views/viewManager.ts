@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ViewManager.ts                                     :+:      :+:    :+:   */
+/*   viewManager.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 12:19:45 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/03 17:11:29 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ import { Component } from '../component.js';
 import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/Picture/picture.js';
 import { tournamentView } from './tournamentView.js';
-import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
 import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
 
 
@@ -118,18 +117,7 @@ export class viewManager implements Component {
                         this.profilePictureManager.reinitialize();
                     }
                 }, 100);
-
-                const firendDiv = document.getElementById('friendsActif');
-                if (firendDiv) {
-                    firendDiv.innerHTML = friendsActif();
-                }
-                //document.querySelectorAll('#friend').forEach(btn => {
-                 //   btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
-                    document.querySelectorAll('#friend').forEach(btn => {
-                        const clone = btn.cloneNode(true);
-                        btn.replaceWith(clone);
-                        clone.addEventListener('click', (e) => this.friendActionLog(e as MouseEvent));
-                    });
+                
                     try {
                         this.setupGameMenu();
                     } catch (error) {
