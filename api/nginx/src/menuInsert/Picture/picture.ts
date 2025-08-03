@@ -1,27 +1,51 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   picture.ts                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/02 14:36:48 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 14:55:18 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+import { getUser } from '../../user-handler.js';
 
+interface UserWithAvatar {
+    avatar_url?: string | { avatar_url: string } | undefined;
+}
 
-export const picture = () => `
-						
-  <div class="w-full h-full flex flex-col relative">
-    <div class="w-full h-[46%] flex items-center justify-center relative">
-      <button
-        type="button"
-        id="picture"
-        class="w-[65%] h-[72%] mt-2 mr-3  bg-[url('/img/last_airbender.jpg')] bg-[length:100%_100%] bg-white/60 bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full transition-transform duration-200 hover:scale-125"
-      ></button>
+export const picture = () => {
+    const currentUser = getUser() as UserWithAvatar;
+
+    let avatarUrl: string = 'last_airbender.jpg';
+
+    try {
+        if (currentUser && (currentUser as any).avatar_url) {
+            const rawAvatarUrl = (currentUser as any).avatar_url;
+
+            if (typeof rawAvatarUrl === 'string') {
+                avatarUrl = rawAvatarUrl;
+                console.log('Used string avatar_url:', avatarUrl);
+            } else if (typeof rawAvatarUrl === 'object' && rawAvatarUrl.avatar_url) {
+                avatarUrl = rawAvatarUrl.avatar_url;
+                console.log('Used nested avatar_url:', avatarUrl);
+            } else {
+                console.log('Unknown avatar_url format, using default');
+                avatarUrl = 'last_airbender.jpg';
+            }
+        }
+    } catch (error) {
+        console.error('Error processing avatar_url:', error);
+        avatarUrl = 'last_airbender.jpg';
+    }
+
+    if (typeof avatarUrl !== 'string') {
+        console.error('avatarUrl is not a string! Type:', typeof avatarUrl, 'Value:', avatarUrl);
+        avatarUrl = 'last_airbender.jpg';
+    }
+
+    return `
+    <div class="w-full h-full flex flex-col relative">
+        <div class="w-full h-[47%] flex items-center justify-center relative">
+            <button
+                type="button"
+                id="picture"
+                class="w-[65%] h-[72%] mt-4 mr-4 bg-[url(/uploads/${avatarUrl})] bg-[length:100%_100%] bg-white/60 bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
+                title="Click to change profile picture"
+            ></button>
+        </div>
+        <div id="friendsActif" class="w-[95%] h-[53%] border-4 rounded-lg border-white/60 bg-black flex items-center justify-center mb-4">
+        </div>
     </div>
-  </div>
-
-						
-					`
+    `;
+};

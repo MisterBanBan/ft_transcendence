@@ -8,7 +8,6 @@ interface ProfileParams {
 export default async function (fastify: FastifyInstance) {
     const userService = new UserService(fastify.db);
 
-    // Get user profile with stats and match history
     fastify.get<{ Params: ProfileParams }>('/user/:userId/profile', async (request: FastifyRequest<{ Params: ProfileParams }>, reply: FastifyReply) => {
         try {
             const { userId } = request.params;
@@ -33,7 +32,6 @@ export default async function (fastify: FastifyInstance) {
         }
     });
 
-    // Get detailed match history
     fastify.get<{
         Params: ProfileParams;
         Querystring: { page?: number; limit?: number }
@@ -64,7 +62,6 @@ export default async function (fastify: FastifyInstance) {
         }
     });
 
-    // Update user status
     fastify.post<{
         Params: ProfileParams;
         Body: { status: 'offline' | 'online' | 'in_game' }
@@ -78,7 +75,6 @@ export default async function (fastify: FastifyInstance) {
                 [status, userId]
             );
 
-            // Broadcast status change via WebSocket
             fastify.broadcastToAll({
                 type: 'user_status_change',
                 userId,

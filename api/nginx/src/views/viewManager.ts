@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   viewManager.ts                                     :+:      :+:    :+:   */
+/*   ViewManager.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 14:52:04 by afavier          ###   ########.fr       */
+/*   Updated: 2025/07/28 12:19:45 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,14 @@ import { Component } from '../component.js';
 import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/Picture/picture.js';
 import { tournamentView } from './tournamentView.js';
+import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
+import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
 
 
 export class viewManager implements Component {
     //private pictureContainer: HTMLElement;
     private activeView : Component | null = null;
-
+    private profilePictureManager: ProfilePictureManager | null = null;
     private videoMain: HTMLVideoElement;
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
@@ -63,6 +65,7 @@ export class viewManager implements Component {
         this.keydownHandler = this.handleKeydown.bind(this);
         
         this.userLog();
+        this.initializeProfilePictureManager();
     }
 
     public init(): void {
@@ -74,6 +77,13 @@ export class viewManager implements Component {
         });
         this.resize();
         this.authBtn.addEventListener('click', this.authBtnHandler);
+    }
+
+    private initializeProfilePictureManager(): void {
+        const currentUser = getUser();
+        if (currentUser) {
+            this.profilePictureManager = new ProfilePictureManager(currentUser.id.toString());
+        }
     }
 
     private userLog()
@@ -102,6 +112,24 @@ export class viewManager implements Component {
                 this.loadAcceuilVideo();
                 this.formsContainer.innerHTML = game();
                 this.formspicture.innerHTML = picture();
+
+                setTimeout(() => {
+                    if (this.profilePictureManager) {
+                        this.profilePictureManager.reinitialize();
+                    }
+                }, 100);
+
+                const firendDiv = document.getElementById('friendsActif');
+                if (firendDiv) {
+                    firendDiv.innerHTML = friendsActif();
+                }
+                //document.querySelectorAll('#friend').forEach(btn => {
+                 //   btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
+                    document.querySelectorAll('#friend').forEach(btn => {
+                        const clone = btn.cloneNode(true);
+                        btn.replaceWith(clone);
+                        clone.addEventListener('click', (e) => this.friendActionLog(e as MouseEvent));
+                    });
                     try {
                         this.setupGameMenu();
                     } catch (error) {
@@ -148,7 +176,7 @@ export class viewManager implements Component {
         document.removeEventListener('keydown', this.keydownHandler);
         console.log('Game listeners removed');
     }
-    
+
     // private wordAnimation() {
     //     const friends = document.querySelectorAll('.friend');
     //     friends.forEach(div => {
@@ -258,12 +286,16 @@ export class viewManager implements Component {
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
         document.removeEventListener('keydown', this.keydownHandler);
+        if (this.profilePictureManager) {
+            this.profilePictureManager.destroy();
+            this.profilePictureManager = null;
+        }
         if (this.options) {
             this.options.forEach((opt) => {
-                opt.replaceWith(opt.cloneNode(true)); // retire tous les listeners
+                opt.replaceWith(opt.cloneNode(true));
             });
         }
         this.activeView?.destroy();
-        
+
     }
 }
