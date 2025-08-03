@@ -6,7 +6,6 @@ import path from 'path';
 import dotenv from 'dotenv';
 // import sharp from 'sharp';
 
-// Load environment variables
 dotenv.config();
 
 export default async function (server: FastifyInstance) {
@@ -42,7 +41,6 @@ export default async function (server: FastifyInstance) {
                 return reply.code(413).send({ error: 'File size exceeds limit' });
             }
 
-            // Extension validation
             const extension = path.extname(data.filename).toLowerCase();
             const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
 

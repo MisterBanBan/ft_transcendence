@@ -22,12 +22,13 @@ import { picture } from '../menuInsert/Picture/picture.js';
 import { friendsActif } from '../menuInsert/Picture/friendsActif.js';
 import { tournamentView } from './tournamentView.js';
 import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
+import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
 
 
 export class viewManager implements Component {
     //private pictureContainer: HTMLElement;
     private activeView : Component | null = null;
-
+    private profilePictureManager: ProfilePictureManager | null = null;
     private videoMain: HTMLVideoElement;
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
@@ -65,6 +66,7 @@ export class viewManager implements Component {
         this.keydownHandler = this.handleKeydown.bind(this);
         
         this.userLog();
+        this.initializeProfilePictureManager();
     }
 
     public init(): void {
@@ -76,6 +78,13 @@ export class viewManager implements Component {
         });
         this.resize();
         this.authBtn.addEventListener('click', this.authBtnHandler);
+    }
+
+    private initializeProfilePictureManager(): void {
+        const currentUser = getUser();
+        if (currentUser) {
+            this.profilePictureManager = new ProfilePictureManager(currentUser.id.toString());
+        }
     }
 
     private userLog()
@@ -104,6 +113,13 @@ export class viewManager implements Component {
                 this.loadAcceuilVideo();
                 this.formsContainer.innerHTML = game();
                 this.formspicture.innerHTML = picture();
+
+                setTimeout(() => {
+                    if (this.profilePictureManager) {
+                        this.profilePictureManager.reinitialize();
+                    }
+                }, 100);
+
                 const firendDiv = document.getElementById('friendsActif');
                 if (firendDiv) {
                     firendDiv.innerHTML = friendsActif();
@@ -285,9 +301,13 @@ export class viewManager implements Component {
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
         document.removeEventListener('keydown', this.keydownHandler);
+        if (this.profilePictureManager) {
+            this.profilePictureManager.destroy();
+            this.profilePictureManager = null;
+        }
         if (this.options) {
             this.options.forEach((opt) => {
-                opt.replaceWith(opt.cloneNode(true)); // retire tous les listeners
+                opt.replaceWith(opt.cloneNode(true));
             });
         }
     }
