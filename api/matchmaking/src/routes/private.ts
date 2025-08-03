@@ -23,7 +23,7 @@ export default async function (server: FastifyInstance) {
                 if (Date.now() - start > timeout) {
                     return reject(new Error("Timeout"));
                 }
-                setTimeout(check, 100);
+                setTimeout(check, 1000);
             };
             check();
         });
