@@ -29,6 +29,16 @@ export default async function (server: FastifyInstance) {
                 fs.mkdirSync(uploadDir, { recursive: true });
             }
 
+            const currentUser = await server.db.get(
+                'SELECT avatar_url FROM users WHERE id = ?',
+                [userId]
+            );
+
+            if (!currentUser) {
+                console.error('User not found:', userId);
+                return reply.code(404).send({ error: 'User not found' });
+            }
+
             const data = await request.file();
 
             if (!data) {
@@ -63,8 +73,23 @@ export default async function (server: FastifyInstance) {
             );
 
             if (result.changes === 0) {
-                console.error('User not found:', userId);
-                return reply.code(404).send({ error: 'User not found' });
+                console.error('Database update failed');
+                fs.unlinkSync(uploadPath);
+                return reply.code(500).send({ error: 'Failed to update user avatar' });
+            }
+
+            if (currentUser.avatar_url && currentUser.avatar_url !== 'last_airbender.jpg') {
+                const oldFilePath = path.join(uploadDir, currentUser.avatar_url);
+                try {
+                    if (fs.existsSync(oldFilePath)) {
+                        fs.unlinkSync(oldFilePath);
+                        console.log('Old avatar deleted:', currentUser.avatar_url);
+                    }
+                } catch (deleteError) {
+                    console.error('Error deleting old avatar:', deleteError);
+                }
+            } else if (currentUser.avatar_url === 'last_airbender.jpg') {
+                console.log('Default avatar preserved:', currentUser.avatar_url);
             }
 
             console.log('Avatar updated successfully for', userId);
