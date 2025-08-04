@@ -46,20 +46,23 @@ export class Match {
 		const response = await fetchPromise;
 		const results = await response.json()
 
-		console.log(Date.now(), "Match:", this.player1, "vs", this.player2, "finished | Waiting 5 sec");
-
-		await wait(5000)
-
-		console.log(results)
 		if (results.status === "ok") {
+			console.log(results.result);
 			this.winner = parseInt(results.result.key);
 		}
+
 		else if (results.status == "timeout") {
-			const loser = parseInt(results.player);
-			if (loser === this.player1)
-				this.winner = this.player2
-			else
-				this.winner = this.player1
+			const players = results.players
+
+			if (players.length === 2)
+				this.winner = undefined
+			else {
+				const loser = parseInt(players[0]);
+				if (loser === this.player1)
+					this.winner = this.player2
+				else
+					this.winner = this.player1
+			}
 		}
 
 		emitAll(app, this.player1!, "matchEnded", undefined)

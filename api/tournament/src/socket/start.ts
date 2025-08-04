@@ -57,8 +57,6 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 				match.setPlayer2(tournament.getStructure().rounds[i][index * 2 + 1].getWinner())
 			})
 
-			await wait(5000);
-
 			await updateTournamentInfo(app, 0, tournament, true);
 
 			await wait(5000);
@@ -66,6 +64,7 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 		else {
 			console.log("Winner:", round[0].getWinner());
 			tournament.getStructure().winner = round[0].getWinner();
+			await updateTournamentInfo(app, 0, tournament, true);
 
 			await wait(5000);
 
