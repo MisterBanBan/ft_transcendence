@@ -2,6 +2,8 @@ services:
   gateway:
     image: gateway
     container_name: gateway
+    env_file:
+      - .env
     build:
       context: api/gateway
     healthcheck:
@@ -51,6 +53,8 @@ services:
 
   tournament:
     image: tournament
+    env_file:
+      - .env
     container_name: tournament
     build:
       context: api/tournament

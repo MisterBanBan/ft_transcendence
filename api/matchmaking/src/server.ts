@@ -1,22 +1,18 @@
-import fastify, { FastifyInstance } from "fastify";
+import fastify from "fastify";
 import fastifyIO from "fastify-socket.io";
 import autoLoad from "@fastify/autoload";
 import { join } from "path";
-import cors from "@fastify/cors";
 import { io as ClientIO } from "socket.io-client";
-import fs from "fs";
 import { gameUpdate } from "./gamesManager/gameUpdate";
-import { playerInfo } from "./utils/interface";
+import { playerInfo, privateInfo } from "./utils/interface";
 
 async function start() {
 	const dir = __dirname;
 
 	const app = fastify();
 
-	await app.register(cors, { origin: `http://10.13.3.5:8443` , credentials: true }); // peut etre ajouter les adresses des autres docker en cas de prob
 	await app.register(fastifyIO, {
 		path: "/wss/matchmaking",
-		cors: { origin: `http://10.13.3.5:8443`, credentials: true }
 	});
 
 	app.register(autoLoad, { dir: join(dir, "plugins/"), encapsulate: false });
@@ -38,8 +34,11 @@ async function start() {
 	const playerToGame = new Map<string, playerInfo>();
 	app.decorate("playerToGame", playerToGame);
 
-	const privateQueue = new Map<string, string>();
+	const privateQueue = new Map<string, privateInfo>();
 	app.decorate("privateQueue", privateQueue);
+
+	const privateResult = new Map<string, privateInfo>();
+	app.decorate("privateResult", privateResult)
 
 	gameUpdate(app);
 

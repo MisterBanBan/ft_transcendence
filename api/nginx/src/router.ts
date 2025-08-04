@@ -1,16 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   router.ts                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 11:10:24 by afavier           #+#    #+#             */
-/*   Updated: 2025/06/18 10:56:45 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-//import { introduction } from './intro.js'
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
 import { AuthUser } from './type.js';
@@ -20,7 +7,7 @@ class Router {
     private routes: Route[];
     private appDiv: HTMLElement;
     
-    constructor(routes: Route[], private user?: AuthUser) {
+    constructor(routes: Route[]) {
         this.routes = routes;
         /*recupere l'element app dans index.html*/
         const app = document.getElementById("app");
@@ -74,7 +61,7 @@ class Router {
                     }
                 }
                 this.appDiv.innerHTML = content;
-                handleRouteComponents(path, this.user);
+                handleRouteComponents(path);
             } else {
                 this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";
                 return
@@ -87,7 +74,7 @@ class Router {
     }
 }
 
-
+export const router = new Router(routes);
 
 document.addEventListener("DOMContentLoaded", async () => {
     try {
@@ -95,12 +82,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             method: "GET",
         });
 
-        const data: AuthUser | undefined = await response.json();
-        if (data) {
-            setUser(data);
+        if (response.ok) {
+            const data: AuthUser | undefined = await response.json();
+            if (data)
+                setUser(data);
         }
-
-        const router = new Router(routes, getUser());
+        console.warn("Router updatePage");
         await router.updatePage();
     } catch (error) {
         console.error("Wrong init :", error);

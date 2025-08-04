@@ -6,25 +6,26 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 13:56:40 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/21 16:19:32 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 16:03:06 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { viewManager } from "./viewManager.js";
 import { getUser } from "../user-handler.js";
 import { wait } from "../wait.js";
-import { twoFApopUp } from "../menuInsert/twoFApopUp.js";
+import { twoFApopUp } from "../menuInsert/Connexion/twoFApopUp.js";
 import {TFAValidate} from "../auth/2fa-validate.js";
 import { Login } from "../auth/login.js";
-import { loginForm } from "../menuInsert/loginForm.js";
+import { loginForm } from "../menuInsert/Connexion/loginForm.js";
 import { Component } from "../component.js";
+import {router} from "../router.js";
 
 
 export class loginView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
     private handleSubmit = () => this.submit_loginForm();
-    private handleRegister = () => this.viewManager.show('register');
+    private handleRegister = () => router.navigateTo("/game#register");
 
     constructor(container: HTMLElement,  viewManager: viewManager) {
         this.container = container;
@@ -32,6 +33,7 @@ export class loginView implements Component {
     }
 
     public init(): void {
+        this.container.innerHTML = '';
         this.container.innerHTML = loginForm();
         const loginLogic = new Login();
         loginLogic.init();
@@ -65,9 +67,11 @@ export class loginView implements Component {
                 tfaValidate.init();
             }
             else {
-                this.viewManager.show('game');
+                router.navigateTo("/game")
+                // this.viewManager.show('game');
             }
         } else if (attempts >= limit) {
+            if (submitBtn) submitBtn.disabled = false;
             console.error("Login request timed out.");
         }
          

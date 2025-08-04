@@ -13,8 +13,8 @@ export function onlineManager(socket: Socket, app: FastifyInstance, userID: stri
 	} else {
 		const gameId = `game-${waitingPlayer.socket.id}${socket.id}`;
 
-		app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left" });
-		app.playerToGame.set(waitingPlayer.socket.id, { userID: waitingPlayer.userID, gameId: gameId, side: "right" });
+		app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left" , type: "online" });
+		app.playerToGame.set(waitingPlayer.socket.id, { userID: waitingPlayer.userID, gameId: gameId, side: "right", type: "online" });
 
 		gameSocket.emit("create-game", {
 			gameId,
@@ -46,6 +46,18 @@ export function onlineManager(socket: Socket, app: FastifyInstance, userID: stri
 		playerId: socket.id,
 		input: data,
 	});
+	});
+
+	socket.on("abandon", () => {
+		const value = app.playerToGame.get(socket.id);
+		if (!value?.gameId) return;
+
+		
+		gameSocket.emit("abandon", {
+			gameId: value.gameId,
+			playerId: socket.id,
+			side: value.side,
+		});
 	});
 
 	socket.on("disconnect", () => {

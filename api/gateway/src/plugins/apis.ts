@@ -60,34 +60,30 @@ export default async function (server: FastifyInstance, opts: any) {
 		prefix: '/api/auth',
 	})
 
-	// Example for ws://, will be used when merged with tournament
-	//
-	// server.register(fastifyHttpProxy, {
-	// 	upstream: 'ws://tournament:8081/wss/tournament',
-	// 	prefix: '/wss/tournament',
-	// 	websocket: true,
-	// 	wsClientOptions: {
-	// 		queryString(search, reqUrl, request) {
-	// 			let encodedUser = request.headers['x-current-user'];
-	//
-	// 			if (encodedUser && validUser(encodedUser)) {
-	// 				if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];
-	// 				return `user=${encodeURIComponent(encodedUser)}`;                       		To use encoded user (in a microservice, example here worked with fastify-websocket):
-	// 			} else {																								const { user } = request.query as { user?: string };
-	// 				return "";																							if (!user) {
-	// 			}																											socket.send("You are not logged in");
-	// 		}																												socket.close();
-	// 	}																													return;
-	//}) 																												}
-	// 																													request.currentUser = JSON.parse(Buffer.from(user, 'base64').toString());
-
 	server.register(fastifyHttpProxy, {
 		upstream: 'http://matchmaking:8083/wss/matchmaking',
 		prefix: '/wss/matchmaking',
 		websocket: true,
 		wsClientOptions: {
 			queryString(search, reqUrl, request) {
-				const url = new URL(reqUrl, 'http://10.13.3.5');
+				const url = new URL(reqUrl, `http://${process.env.HOSTNAME}`);
+				let encodedUser = request.headers['x-current-user'];
+				if (encodedUser && validUser(encodedUser)) {
+					if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];
+					url.searchParams.set('user', encodedUser);
+				}
+				return url.searchParams.toString();
+			}
+		}
+	})
+
+	server.register(fastifyHttpProxy, {
+		upstream: 'http://tournament:8081/wss/tournament',
+		prefix: '/wss/tournament',
+		websocket: true,
+		wsClientOptions: {
+			queryString(search, reqUrl, request) {
+				const url = new URL(reqUrl, `http://${process.env.HOSTNAME}`);
 				let encodedUser = request.headers['x-current-user'];
 				if (encodedUser && validUser(encodedUser)) {
 					if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];

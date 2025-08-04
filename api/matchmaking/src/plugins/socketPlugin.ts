@@ -8,7 +8,7 @@ import { Socket } from "socket.io";
 
 const socketPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 	app.io.on("connection", (socket: Socket) => {
-		console.log("Client connected:", socket.id);
+		// console.log("Client connected:", socket.id);
 
 		const user: string | undefined | string[] = socket.handshake.query.user;
 		let	userID: string | null = null;
@@ -17,8 +17,8 @@ const socketPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 			try {
 				const jsonStr = Buffer.from(user, 'base64').toString();
 				const obj = JSON.parse(jsonStr);
-				userID = obj.id;
-				console.log(obj);
+				userID = obj.id.toString();
+				// console.log(obj);
 			} catch (e) {
 				console.error('User header could not be parsed:', e);
 			}

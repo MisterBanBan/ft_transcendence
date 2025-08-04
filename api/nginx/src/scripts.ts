@@ -1,16 +1,8 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   scripts.ts                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 11:10:42 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 14:39:18 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { PlayerAnimation } from "./player_animation.js";
+/*   Updated: 2025/08/02 22:49:24 by mtbanban         ###   ########.fr       */
+import {router} from "./router.js";
+
+const pressedKeys: { [key: string]: boolean } = {};
 
 interface IPlayerController {
     destroy(): void;
@@ -31,7 +23,11 @@ class PlayerStats {
 }
 
 function handleKeyPressPlayer(stats: PlayerStats, player: PlayerAnimation, isInTriggerZone: boolean, isDoorOpen: boolean, e: KeyboardEvent) {
-    switch(e.key.toLowerCase()) {
+    const key = e.key.toLowerCase();
+    if (pressedKeys[key]) return;
+    pressedKeys[key] = true;
+
+    switch (key) {
         case ' ':
             if (!stats.isJumping) {
                 stats.velocity.y = stats.jump;
@@ -40,41 +36,38 @@ function handleKeyPressPlayer(stats: PlayerStats, player: PlayerAnimation, isInT
             break;
         case 'arrowleft':
         case 'a':
-            if (!stats.leftKey) {
-                stats.leftKey = true;
-                stats.velocity.x -= stats.speed;
-                player.startAnimation();
-            }
+            stats.leftKey = true;
+            stats.velocity.x -= stats.speed;
+            player.startAnimation();
             break;
         case 'arrowright':
         case 'd':
-            if (!stats.rightKey) {
-                stats.rightKey = true;
-                stats.velocity.x += stats.speed;
-                player.startAnimation();
-            }
+            stats.rightKey = true;
+            stats.velocity.x += stats.speed;
+            player.startAnimation();
             break;
     }
 }
 
 function handleKeyReleasePlayer(stats: PlayerStats, player: PlayerAnimation, e: KeyboardEvent) {
-    switch (e.key.toLowerCase()) {
+    const key = e.key.toLowerCase();
+    pressedKeys[key] = false;
+
+    switch (key) {
         case 'arrowleft':
         case 'a':
-            if (stats.leftKey) {
-                stats.velocity.x += stats.speed;
-                stats.leftKey = false;
-                player.stopAnimation();
-            }
+            stats.velocity.x += stats.speed;
+            stats.leftKey = false;
             break;
         case 'arrowright':
         case 'd':
-            if (stats.rightKey) {
-                stats.velocity.x -= stats.speed;
-                stats.rightKey = false;
-                player.stopAnimation();
-            }
+            stats.velocity.x -= stats.speed;
+            stats.rightKey = false;
             break;
+    }
+
+    if (!stats.leftKey && !stats.rightKey) {
+        player.stopAnimation();
     }
 }
 
@@ -87,6 +80,8 @@ export class PlayerController implements IPlayerController{
     private playerWidth: number;
     private playerHeight: number;
     private playerElement: HTMLElement;
+    private skipButton?: HTMLElement;
+    private worldIs: number = 4;
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
@@ -98,25 +93,49 @@ export class PlayerController implements IPlayerController{
         window.addEventListener('resize', this.handleResize.bind(this));
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
+        this.playerElement = playerElement;
 
-        this.playerElement = playerElement; 
         console.log("PlayerController initialisé !");
         
+        const skipButton = document.getElementById('skipButton');
+        if (skipButton) {
+            this.skipButton = skipButton;
+            this.skipButton.addEventListener('click', () => {
+                window.history.pushState(null, "", "/game");
+                window.dispatchEvent(new PopStateEvent("popstate"));
+            });
+        }
+
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
+        
+        let worldPath: string;
+        this.activateInfoUserOnce();
+        displayTextByLetter("Bienvenue dans le jeu ! Appuyez sur 'E' pour ouvrir la porte.\nvhfrvvbbrevbbvbberuvbibrbvilrbziuvbiulbtrulibvulibrltuibvuil\nbrtubviubrtubviubrtluibvubrtuhbvlubrtubvulrbtubvirbti", "dialogueBox", 50);
         this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.player, this.isDoorOpen, this.isInTriggerZone, e);
         this.boundKeyUpHandler = (e) => {
             handleKeyReleasePlayer(this.stats, this.player, e);
             if (e.key.toLowerCase() === 'e') {
                 if (this.isInTriggerZone && !this.isDoorOpen) {
                     this.isDoorOpen = true;
-                    const doorContainer = document.getElementById("videoDoor");
-                    if (doorContainer) {
-                        window.history.pushState(null, "", "/Tv");
-                        window.dispatchEvent(new PopStateEvent("popstate"));
-                    }
+                    const path = window.location.pathname;
+                        if (path === "/" && this.worldIs === 2)
+                        {
+                            worldPath = "/chalet";
+                        }
+                        else if (path === "/chalet")
+                        {
+                            if (this.worldIs === 1)
+                            {
+                                worldPath = "/";
+                            } else if (this.worldIs === 0)
+                            {
+                                worldPath = "/game";
+                            }
+                        }
+                        router.navigateTo(worldPath);
                 }
             }
         };
@@ -204,11 +223,45 @@ export class PlayerController implements IPlayerController{
     }
 
     private checkTriggers() {
-
-        const door = document.getElementById("videoDoor");
+        const path = window.location.pathname;
         const pressE = document.getElementById("pressE");
+        if (!pressE) return;
 
-        if (!door || !pressE) return;
+        if (path === "/chalet") {
+            const triggerX = 0.6 * window.innerWidth * 2;
+            const triggerY = 0.5 * window.innerHeight;
+
+            const shouldShowPressEBack = this.worldPosX <= triggerY;
+            const shouldShowPressE = this.worldPosX >= triggerX;
+            const img = document.getElementById("img") as HTMLImageElement;
+            if (!img) return;
+
+            if (shouldShowPressE) {
+                img.src = "/img/enter.png";
+                this.worldIs = 0;
+                this.isInTriggerZone = true;
+                pressE.classList.remove("hidden");
+                img.classList.add('left-[80%]');
+                img.classList.remove('left-[10%]');
+            } else if (shouldShowPressEBack) {
+                img.src = "/img/back.png";
+                this.worldIs = 1;
+                this.isInTriggerZone = true;
+                pressE.classList.remove("hidden");
+                img.classList.add('left-[10%]');
+                img.classList.remove('left-[80%]');
+            } else {
+                this.isInTriggerZone = false;
+                pressE.classList.add("hidden");
+                img.classList.remove('left-[10%]', 'left-[80%]');
+            }
+        }
+
+        const door = document.getElementById("trigger");
+        const secondWindow = document.getElementById("secondWindow");
+        if (!door || !pressE || !secondWindow) return;
+
+        
 
         const rect = door.getBoundingClientRect();
         
@@ -218,11 +271,41 @@ export class PlayerController implements IPlayerController{
         //console.log('door: %d, %d, %d',this.worldPosX, doorLeft, doorRight);
         const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
 
-        if (inZone !== this.isInTriggerZone) {
+        if (!inZone) {
+            door.classList.remove("bg-black", "bg-opacity-50");
+            secondWindow.classList.remove("bg-black", "bg-opacity-50");
+            pressE.classList.add("hidden",);
+          }else
+          {
+            this.worldIs = 2;
             this.isInTriggerZone = inZone;
-            pressE.classList.toggle("hidden", !inZone);
+            door.classList.add("bg-black", "bg-opacity-50");
+            secondWindow.classList.add("bg-black", "bg-opacity-50");
+            pressE.classList.remove("hidden");
           }
-        
+
+    }
+
+    private infoUser()
+    {
+        const pageOne = document.getElementById("pageOne");
+        const userInfo = document.getElementById("infoUser");
+        if( !pageOne || !userInfo) return;
+        console.log("infoUser called");
+        pageOne.classList.remove("bg-black/50");
+        userInfo.classList.add("hidden");
+
+    }
+
+
+
+    private activateInfoUserOnce() {
+        const handleKeydown = (event: KeyboardEvent) => {
+            console.log(`Key pressed: ${event.key}`);
+            this.infoUser();
+            document.removeEventListener("keydown", handleKeydown);
+        };
+        document.addEventListener("keydown", handleKeydown);
     }
 
     private gameLoop(timestamp: number) {
@@ -258,6 +341,24 @@ export class PlayerController implements IPlayerController{
     }
 }
 
-export default PlayerController;
+function displayTextByLetter(text: string, elementId: string, speed: number) : void {
+        const element = document.getElementById(elementId);
+        if (!element) {
+            console.error(`Element with id "${elementId}" not found`);
+            return;
+        }
 
-8
+        let index = 0;
+        element.textContent = '';
+        const interval = setInterval(() => {
+            if(index < text.length) {
+                element.textContent += text[index];
+                index++;
+            } else {
+                clearInterval(interval);
+            }
+        }, speed);
+
+}
+
+export default PlayerController;

@@ -1,54 +1,37 @@
 import fastify from "fastify";
 import autoLoad from "@fastify/autoload";
-// import cors from "@fastify/cors";
-import { fileURLToPath } from "node:url";
-import { dirname, join } from "node:path";
-import fs from "fs";
-// import websocket from "@fastify/websocket";
-// import multipart from "@fastify/multipart";
-// import { existsSync } from "node:fs";
+import { join } from "node:path";
+import fastifyIO from "fastify-socket.io";
+import {Tournament} from "./class/Tournament.js";
+
+export const tournaments = new Map<string, Tournament>();
 
 async function startServer() {
 
-    const server = fastify();
+	try {
+		const app = fastify();
 
-    console.log("server started");
+		await app.register(fastifyIO, {
+			path: "/wss/tournament",
+		});
 
-    const filename = fileURLToPath(import.meta.url);
-    const dir = dirname(filename);
+		const dir = __dirname;
+		await app.register(autoLoad, {
+			dir: join(dir, "plugins/"),
+			encapsulate: false
+		});
 
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "routes/")
-        });
-    } catch (err) {
-        console.error(err);
-    }
+		await app.register(autoLoad, {
+			dir: join(dir, "routes/")
+		});
 
-/*    server.register(cors, {
-        origin: "*",
-        methods: ["GET", "POST"]
-    });*/
-
-    /*    server.register(websocket);*/
-    try {
-        server.register(autoLoad, {
-            dir: join(dir, "plugins/"),
-            encapsulate: false
-        });
-    } catch (err) {
-        console.error(err);
-    }
-
-    /*    server.register(multipart);*/
-
-    try {
-        await server.listen({ port: 8081, host: '0.0.0.0' });
-        console.log(`Users service is running on 0.0.0.0:8081`);
-    } catch (err) {
-        server.log.error(err);
-        process.exit(1);
-    }
+		await app.listen({ port: 8081, host: '0.0.0.0' });
+		console.log(`Tournaments service is running on 0.0.0.0:8081`);
+	} catch (err) {
+		//app.log.error(err);
+		console.log(err);
+		process.exit(1);
+	}
 }
 
 startServer();

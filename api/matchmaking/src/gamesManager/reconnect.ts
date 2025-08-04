@@ -5,7 +5,7 @@ import { inputData } from "../utils/interface";
 
 export function reconnect(socket: Socket, app: FastifyInstance, userID: string, oldPlayer: playerInfo)
 {
-	app.playerToGame.set(socket.id, { userID: userID, gameId: oldPlayer.gameId, side: oldPlayer.side });
+	app.playerToGame.set(socket.id, { userID: userID, gameId: oldPlayer.gameId, side: oldPlayer.side, type: oldPlayer.type });
 	socket.emit("game-started", {
 		gameId: oldPlayer.gameId,
 		playerId: socket.id,

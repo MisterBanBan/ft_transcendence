@@ -6,23 +6,24 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 14:23:46 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/20 17:50:50 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/27 11:02:48 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 import { viewManager } from "./viewManager.js";
-import { registerForm } from "../menuInsert/registerForm.js";
+import { registerForm } from "../menuInsert/Connexion/registerForm.js";
 import { getUser } from "../user-handler.js";
 import { wait } from "../wait.js";
 import { Register } from "../auth/register.js";
 import { Component } from "../component.js";
+import {router} from "../router.js";
 
 export class registerView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
     
     private handleSubmit = () => this.submit_registerForm();
-    private handleLogin = () => this.viewManager.show('login');
+    private handleLogin = () =>  router.navigateTo("/game#login");
 
     constructor(container: HTMLElement, private formspicture: HTMLElement, viewManager: viewManager) {
         this.container = container;
@@ -30,6 +31,7 @@ export class registerView implements Component {
     }
 
     public init(): void {
+        this.container.innerHTML = '';
         this.container.innerHTML = registerForm();
         const registerLogic = new Register();
         registerLogic.init();
@@ -50,7 +52,8 @@ export class registerView implements Component {
             attempts++;
         }
         if (getUser()) {
-            this.viewManager.show('game');
+            router.navigateTo("/game")
+            // this.viewManager.show('game');
         }
         this.attachEventListeners(); 
     }

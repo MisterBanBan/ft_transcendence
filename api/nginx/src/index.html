@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mouvement au Clavier</title>
     <link href="/css/tailwind.css" rel="stylesheet">
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
     <link rel="stylesheet" href="/css/output.css">
     <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
     <style>
@@ -17,11 +16,10 @@
       }
   </style>
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
-  <!-- <script type="module" src="/public/launch_game.js"></script> -->
 </head>
-	<body class="overflow-hidden h-screen bg-black">
+	<body class="overflow-hidden h-screen w-screen relative bg-black">
 
-		<div id="app" class="p-0">
+		<div id="app" class="relative h-full w-full">
 		</div>
 		<script type="module" src="/public/router.js"></script>
 	</body>

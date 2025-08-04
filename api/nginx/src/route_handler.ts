@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   route_handler.ts                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 15:06:27 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/02 23:27:40 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,12 @@ import {TFAValidate} from "./auth/2fa-validate.js";
 import {ChangeUsername} from "./auth/change-username.js";
 import {ChangePassword} from "./auth/change-password.js";
 import {Logout} from "./auth/logout.js";
-// import { introduction } from './intro.js';
-// import { menu } from './menu.js';
-// import { Zoom } from './zoom.js';
-// import { proceduralBackground } from './proceduralBackground.js';
-//import { generateTrees } from './generateTrees.js';
 import { introduction } from './intro.js';
-import { menu } from './menu.js';
 import { Zoom } from './zoom.js';
 import { proceduralBackground } from './proceduralBackground.js';
 import { pong } from './pong.js';
-import { AuthUser } from './type.js';
-import {getUser, setUser} from "./user-handler.js";
+import { viewManager } from './views/viewManager.js';
+import { chaletCadre } from './chaletCadre.js';
 
 //permet de gerer la destruction des new
 let activeComponent: Component | null = null;
@@ -54,8 +48,10 @@ const routeComponents: Record<string, Component> = {
 	"/chalet": {
 		init: () => {
 			activeComponent?.destroy?.();
-			const playerIntro = new introduction('player');
+			const playerIntro = new introduction('playerChalet');
 
+			const chalet = new chaletCadre('chalet');
+			chalet.init();
 			playerIntro.init();
 			activeComponent = {
 				init: () => {},
@@ -68,12 +64,13 @@ const routeComponents: Record<string, Component> = {
     "/game": {
         init: () => {
             activeComponent?.destroy?.();
-			const me = new menu('video_main','container_form', 'user', getUser());
+
+			console.log("Init /game");
+			const me = new viewManager('video_main','container_form', 'user');
             me.init();
 			const login = new Login();
-
 			login.init();
-	
+
             activeComponent = {
                 init: () => {},
                 destroy: () => { me.destroy(); login.destroy();  }
@@ -105,6 +102,8 @@ const routeComponents: Record<string, Component> = {
                 'ball',			// ID de la balle
 				'pong',
                 'pong-bg', // ID du conteneur de jeu
+				'score-player1',
+				'score-player2', // ID du conteneur de jeu
                 mode
               );
             pongGame.init();
@@ -149,33 +148,6 @@ const routeComponents: Record<string, Component> = {
 		},
 		destroy: () => {}
 	},
-	// "/2fa/create": {
-	// 	init: () => {
-	// 		activeComponent?.destroy?.();
-
-	// 		const toggle2FA = new Toggle2FA();
-	// 		toggle2FA.init();
-
-	// 		activeComponent = {
-	// 			init: () => {},
-	// 			destroy: () => { toggle2FA.destroy(); },
-	// 		};
-	// 	},
-	// 	destroy: () => {}
-	// },
-	// "/2fa/remove": {
-	// 	init: () => {
-	// 		activeComponent?.destroy?.();
-
-	// 		const toggle2FA = new Toggle2FA();
-	// 		toggle2FA.init();
-	// 		activeComponent = {
-	// 			init: () => {},
-	// 			destroy: () => { toggle2FA.destroy(); },
-	// 		};
-	// 	},
-	// 	destroy: () => {}
-	// },
 	"/auth": {
 		init: () => {
 			activeComponent?.destroy?.();
@@ -193,10 +165,10 @@ const routeComponents: Record<string, Component> = {
 	},
 };
 
-export function handleRouteComponents(path: string, user?: AuthUser) {
+export function handleRouteComponents(path: string) {
 	const component = routeComponents[path];
 	if(component) {
-		setUser(user);
+		console.warn(path, "component init");
 		component.init();
 	}
 }

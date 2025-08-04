@@ -6,17 +6,17 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:09:44 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/16 17:12:25 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/02 22:27:47 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 export class PlayerAnimation{
     private element: HTMLElement;
     private images: string[] = [
-        '../img/kodama_stop.png',
-        '../img/kodama_walk.png',
-        '../img/kodama_walk2.png',
-        '../img/kodama_walk3.png',
+        '../img/kodama_stop1.png',
+        '../img/kodama_walk1.png',
+        '../img/kodama_walk22.png',
+        '../img/kodama_walk33.png',
     ];
     private currentFrame: number = 0;
     private animationInterval: number | null = null;

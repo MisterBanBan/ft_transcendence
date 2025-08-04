@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/22 14:42:58 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/03 15:13:30 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,41 +55,54 @@ export const routes: Route[] = [
 				  
 					</div>
 				
-					<div class="w-screen h-screen relative">
+					<div id="pageOne" class="w-screen h-screen relative bg-black/50">
 						<div class="absolute left-0 bottom-0 w-full h-full z-10">
-							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+							<div class="relative top-0 left-[30%] w-[40%] h-[18%] object-contain">
+								<img id="text" src="/img/text.png" class="w-full h-full"/>
+								<div
+									id="dialogueBox"
+									class="absolute inset-0 flex items-center justify-center text-center px-4 break-words text-white font-omori text-2xl w-full h-full"
+								>
+								</div>
+							</div>
+
+							<img id="infoUser" src="/img/infoUser.png" class="absolute top-[40%] left-[38%]  w-[20%] h-[18%] object-cover pointer-events-none translate-y-2"/>
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2"/>
 			
-							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2"/>
 
 						</div>        
 					</div>
-					<div class="w-screen h-screen relative">
+					<div id="secondWindow" class="w-screen h-screen relative">
 						<div class="absolute left-0 bottom-0 w-full h-full z-10">
-							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2"/>
 		
-							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2"/>
 						</div>      
 					</div>
 
-                  	<div id="videoDoor" class="w-screen h-screen relative z-50">
-                    	<img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain z-50"/>
-						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
-							<video autoplay loop muted class="w-12 h-12">
-							<source src="/img/pressE.mp4" type="video/mp4">
-							</video>
+                  	<div id="trigger" class="w-screen h-screen relative z-50">
+                    	<img src="/img/chalet.png" class="absolute bottom-[2%] left-0 w-[60%] h-[60%] object-contain"/>
+						 <div id="pressE" class="absolute hidden inset-0 z-[999] flex items-center justify-center">
+							<img src="/img/enter.png" class="absolute top-1/2 left-[30%] -translate-x-1/2 -translate-y-1/2 w-24 h-24"/>
 						</div>
 						<div class="absolute left-0 bottom-0 w-full h-full z-10">
-							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2" z-10/>
+							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2"/>
 	
-							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2" z-20/>
+							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2"/>
 						</div>  
                   	</div>
 				      
                 </div>
 			</div>
+			<div id="skip" class="fixed h-[10%] right-0 bottom-0 w-[10%] item-center justify-center text-omori text-white">
+				<button id="skipButton" class="w-full h-full object-contain">
+				<img src="/img/skip.png" class="w-full h-full "/>
+				</button>
+			</div
 							<!-- 3. Joueur par-dessus tout -->
 			<div id="player"
-				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-10">
+				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop1.png')] bg-contain bg-no-repeat z-10">
 			</div>
               
 `;
@@ -112,13 +125,13 @@ export const routes: Route[] = [
               </video>
 
              
-              	<div id="container_form" class="absolute w-full h-full flex items-center justify-center pointer-events-auto ">
+              	<div id="container_form" class=" w-full h-full flex items-center justify-center pointer-events-auto ">
 					<div class="flex flex-col items-center justify-center h-full w-[80%] relative">	    
-						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-black/60 bg-no-repeat bg-center z-20 pointer-events-auto">
+						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-no-repeat bg-center z-20 pointer-events-auto transition-transform duration-200 hover:scale-125">
 								</button>
 						<div id="dynamic-content" class="h-full w-full flex items-center justify-center absolute"></div>
 					</div>
-					<div id="picture" class="h-full w-[20%] flex items-center justify-center relative">
+					<div id="picture" class="h-full w-[20%] flex justify-center relative">
 					</div>
 													
 					
@@ -133,18 +146,27 @@ export const routes: Route[] = [
 		template: async () => {
 			await new Promise(resolve => setTimeout(resolve, 300));
 			return `
-				<div id="chalet" class="fixed inset-0 h-full w-full relative overflow-hidden">
+				<div id="chalet" class="fixed inset-0 h-full w-full overflow-hidden">
 					<div id="pageContainer" class="flex w-[200vw] h-full overflow-x-auto items-center justify-center relative">
-						<img src="/img/chalet_inside.png" class="inset-0 w-full h-[85%] object-fill z-50">
-						<div id="pressE" class="hidden absolute inset-0 z-20 items-center justify-center bg-black bg-opacity-50">
-							<video autoplay loop muted class="w-12 h-12">
-							<source src="/img/pressE.mp4" type="video/mp4">
-							</video>
-						</div>
+						<img src="/img/chalet_inside.png" class="inset-0 w-full h-[75%] object-fill z-50">
+
+					</div>
+				<div class="absolute top-0 left-[30%] w-[40%] h-[18%] z-30">
+						<img id="text" src="/img/text.png" alt="texte" class="w-full h-full object-contain" />
+						<div
+							id="dialogueBox"
+							class="absolute inset-0 flex items-center justify-center text-center px-4 break-words text-white font-omori text-2xl"
+						>
 						</div>
 				</div>
-				<div id="player"
-				class="fixed left-0 w-[30vw] h-[70vh] bg-[url('/img/kodama_stop.png')] bg-contain bg-no-repeat z-50">
+				
+				<div id="pressE"
+					class="hidden absolute inset-0 z-20 bg-black bg-opacity-50">
+							<img src="/img/back.png" id="img" class="absolute top-[30%] w-28 h-28 -translate-x-1/2 -translate-y-1/2"/>
+					
+				</div>
+				<div id="playerChalet"
+				class="fixed left-0 w-[30vw] h-[60vh] bg-[url('/img/kodama_stop1.png')] bg-contain bg-no-repeat z-50">
 			</div>
 			`;
 		}	
@@ -169,7 +191,7 @@ export const routes: Route[] = [
       template: async () => {
         await new Promise(r => setTimeout(r, 300));
         return `
-            <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
+          <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
               <img
                 id="pong-bg"
                 src="/img/pong.png"
@@ -179,7 +201,20 @@ export const routes: Route[] = [
               <img id="ball"  src="/img/ball.png"  class="absolute" />
               <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
               <img id="right-bar" src="/img/bar_left.png" class="absolute" />
-            </div>
+ 
+    		<p id="score-player1"  class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
+   			<p id="score-player2" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
+          </div>
+			<div class="fixed top-[45%] left-[80%] z-10">
+				<button class="p-0 border-none bg-transparent">
+					<img id="backPong" src="/img/backPong.png" class="h-[47%] w-[45%] hover:scale-110 transition-transform duration-300"/>
+				</button>
+			</div>
+			<div class="fixed top-[45%] left-[89%] z-10">
+				<button class="p-0 border-none bg-transparent">
+					<img id="backPong" src="/img/profile.png" class="h-[85%] w-[85%]  hover:scale-110 transition-transform duration-300"/>
+				</button>
+			</div>
 
 
         `;
@@ -289,7 +324,7 @@ export const routes: Route[] = [
 		</div>
 	
 		<!-- Texte explicatif -->
-		<p class="text-gray-600 text-center text-sm">
+		<p class="text-white font-omori text-center text-xl">
 				Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
 		</p>
 	
@@ -460,7 +495,7 @@ export const routes: Route[] = [
 		</div>
 	
 		<!-- Texte explicatif -->
-		<p class="text-gray-600 text-center text-sm">
+		<p class="text-white font-omori text-center text-xl">
 				Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
 		</p>
 	
@@ -522,6 +557,49 @@ export const routes: Route[] = [
 			</div>
 	</div>`;
 
+			}
+		},
+		{
+			path: "/tournament",
+			title: "Tournament",
+			template: async () => {
+				await new Promise(resolve => setTimeout(resolve, 300));
+				return `
+				
+	<div id="tournament-info" class="fixed top-4 right-4 bg-gray-100 p-4 rounded shadow-md w-64">
+	  <h3 class="text-lg font-semibold mb-2">Tournament Info</h3>
+	  <p><strong>Name:</strong> <span id="tournament-name-display">---</span></p>
+	  <div class="mt-2">
+		<strong>Players:</strong>
+		<ul id="players-list" class="list-disc list-inside max-h-40 overflow-auto text-sm text-gray-700"></ul>
+	  </div>
+	  <button id="start-tournament" class="mt-4 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition duration-200">Start</button>
+	  <button id="fake-join-tournament" class="mt-4 w-full bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700 transition duration-200">Fake Join</button>
+	  <button id="leave-tournament" class="mt-4 w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition duration-200">Leave</button>
+	</div>
+
+	<div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+    	<h2 class="text-2xl font-semibold mb-6 text-center">Formulaire</h2>
+    	<form class="space-y-4">
+      <div>
+        <label for="tournament-name" class="block text-sm font-medium text-gray-700">Enter tournament name:</label>
+        <input type="text" id="tournament-name" name="tournament-name" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+      </div>
+      <div>
+        <label for="tournament-size" class="block text-sm font-medium text-gray-700">Choose your tournament size:</label>
+        <select id="tournament-size" name="tournament-size" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <option value="4">4</option>
+          <option value="8">8</option>
+        </select>
+      </div>
+      <div>
+        <button type="submit" id="tournament-submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition duration-200">Create</button>
+      </div>
+     </form>
+  	</div>
+	<div id="tournaments" class="bg-white p-8 rounded shadow-md w-full max-w-sm">
+	</div>`;
+
         }
     },
     {
@@ -531,4 +609,3 @@ export const routes: Route[] = [
             `
     }
 ];
-

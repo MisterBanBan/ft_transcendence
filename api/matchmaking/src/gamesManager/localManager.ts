@@ -5,7 +5,7 @@ export function localManager(socket: Socket, app: FastifyInstance, userID: strin
 	const gameSocket = app.gameSocket;
 	const gameId = `game-${socket.id}`;
 
-	app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "undefined" });
+	app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "undefined", type: "local" });
 
     gameSocket.emit("create-game", {
       gameId,
@@ -28,6 +28,18 @@ export function localManager(socket: Socket, app: FastifyInstance, userID: strin
 		playerId: socket.id,
 		input: data,
 	});
+	});
+
+	socket.on("abandon", () => {
+		const value = app.playerToGame.get(socket.id);
+		if (!value?.gameId) return;
+
+		
+		gameSocket.emit("abandon", {
+			gameId,
+			playerId: socket.id,
+			side: value.side,
+		});
 	});
 
 	socket.on("disconnect", () => {
