@@ -15,9 +15,20 @@
     lg:placeholder:text-4xl placeholder:text-white
     text-white text-center;
   }
+
   .responsive-text {
     @apply font-omori text-sm sm:text-base md:text-2xl
     lg:text-4xl text-white;
+  }
+
+  .responsive-text-42 {
+    @apply font-omori text-sm sm:text-base md:text-2xl
+    lg:text-4xl text-blue-500;
+  }
+
+  .responsive-text-google {
+    @apply font-omori text-sm sm:text-base md:text-2xl
+    lg:text-4xl text-red-500;
   }
 
   .responsive-text-historique {
@@ -36,6 +47,11 @@
 
   .tournament-names-text-8 {
     @apply font-omori text-xl;
+  }
+
+  .responsive-text-profile {
+    @apply font-omori text-sm sm:text-xl md:text-2xl
+    lg:text-4xl text-white;
   }
 
   .responsive-text-parametre {
@@ -115,6 +131,13 @@
     sm:w-[20%] lg:w-[20%] xl:w-[20%] 2xl:w-[20%];
   }
 
+    .responsive-case-submit-42-google {
+    @apply bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-white/80
+    focus:outline-none bg-[length:100%_100%] rounded
+    top-2
+
+  }
+
   .responsive-case-settings {
     @apply bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-white/80 
     focus:outline-none bg-[length:100%_100%] rounded truncate
@@ -173,4 +196,10 @@
   animation: cloud 20s linear infinite;
 }
 
-
+.friend span {
+  display: inline-block;
+  transition: transform 0.8s;
+}
+.friend:hover span {
+  transform: translateX(-30px);
+}

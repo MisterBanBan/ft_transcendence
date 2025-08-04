@@ -57,6 +57,8 @@ export default async function (server: FastifyInstance) {
 
 		const avatar_url = await getAvatar(server.usersDb, decodedToken.username);
 
+		console.log(user);
+
 		request.headers['x-current-user'] = Buffer.from(JSON.stringify({
 			id: user.id!,
 			username: user.username,

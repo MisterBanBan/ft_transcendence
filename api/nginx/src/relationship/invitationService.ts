@@ -2,7 +2,7 @@ import { ApiUtils } from './apiUtils.js';
 import {getUser} from "../user-handler.js";
 
 interface InvitationRequest {
-    addressee_id: string;
+    addressee_username: string;
 }
 
 interface InvitationResponse {
@@ -18,8 +18,19 @@ interface Invitation {
     avatar_url?: string;
 }
 
+interface LoadInvitationResponse {
+    message?: string;
+    error?: string;
+    invitations?: LoadInvitation[];
+}
+
+interface LoadInvitation {
+    requester_id: string;
+    username: string;
+    avatar_url: string;
+}
+
 export class InvitationService {
-    private static readonly BASE_URL = 'https://localhost:8443';
 
     static async sendInvitation(): Promise<void> {
         const currentUser = getUser();
@@ -29,22 +40,21 @@ export class InvitationService {
         }
 
         const addresseeElement = document.getElementById('inviteUserId') as HTMLInputElement;
-        const addresseeId = addresseeElement?.value?.trim();
+        const addresseeUsername = addresseeElement?.value?.trim();
 
-        if (!addresseeId) {
-            ApiUtils.showAlert('Please enter a user ID to invite');
+        if (!addresseeUsername) {
+            ApiUtils.showAlert('Please enter a user username to invite');
             return;
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invite`, {
+            const response = await fetch(`/api/users/${currentUser.id}/invite`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'user-id': currentUser.id.toString()
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    addressee_id: addresseeId
+                    addressee_username: addresseeUsername
                 } as InvitationRequest)
             });
 
@@ -70,18 +80,18 @@ export class InvitationService {
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${currentUser.id}/invitations`, {
-                headers: {
-                    'user-id': currentUser.id.toString()
-                }
-            });
+            const response = await fetch(`/api/users/${currentUser.id}/invitations`);
 
-            const data: InvitationResponse = await response.json();
+            if (!response.ok) {
+                return;
+            }
 
-            if (response.ok && data.invitations) {
+            const data: LoadInvitationResponse = await response.json();
+
+            if (data.invitations && data.invitations.length > 0) {
                 this.displayInvitations(data.invitations);
             } else {
-                ApiUtils.showAlert(data.error || 'Failed to load invitations');
+                console.log('No pending invitations found');
             }
         } catch (error) {
             console.error('Error loading invitations:', error);
@@ -96,41 +106,35 @@ export class InvitationService {
             return false;
         }
 
-        let finalRequesterId = requesterId;
-        if (!finalRequesterId) {
-            const requesterElement = document.getElementById('requesterIdAccept') as HTMLInputElement;
-            finalRequesterId = requesterElement?.value?.trim();
-        }
-
-        if (!finalRequesterId) {
-            ApiUtils.showAlert('Please enter the requester ID');
+        if (!requesterId) {
+            ApiUtils.showAlert('Requester ID missing');
             return false;
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${finalRequesterId}/accept`, {
+            const response = await fetch(`/api/users/invitations/${requesterId}/accept`, {
                 method: 'PUT',
-                headers: {
-                    'user-id': currentUser.id.toString()
-                }
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                ApiUtils.showAlert(errorData.error || `Failed to accept invitation: ${response.status}`);
+                return false;
+            }
 
             const data: InvitationResponse = await response.json();
 
-            if (response.ok) {
-                ApiUtils.showAlert('Invitation accepted successfully');
-                await this.loadInvitations();
-                return true;
-            } else {
-                ApiUtils.showAlert(data.error || 'Failed to accept invitation');
-                return false;
-            }
+            ApiUtils.showAlert(data.message || 'Invitation accepted successfully');
+            await this.loadInvitations();
+            return true;
+
         } catch (error) {
             console.error('Error accepting invitation:', error);
-            ApiUtils.showAlert('Error accepting invitation');
+            ApiUtils.showAlert('Network error: Unable to accept invitation');
             return false;
         }
     }
+
 
     static async declineInvitation(requesterId?: string): Promise<boolean> {
         const currentUser = getUser();
@@ -139,43 +143,36 @@ export class InvitationService {
             return false;
         }
 
-        let finalRequesterId = requesterId;
-        if (!finalRequesterId) {
-            const requesterElement = document.getElementById('requesterIdDecline') as HTMLInputElement;
-            finalRequesterId = requesterElement?.value?.trim();
-        }
-
-        if (!finalRequesterId) {
-            ApiUtils.showAlert('Please enter the requester ID');
+        if (!requesterId) {
+            ApiUtils.showAlert('Requester ID missing');
             return false;
         }
 
         try {
-            const response = await fetch(`${this.BASE_URL}/api/users/${finalRequesterId}/decline`, {
-                method: 'DELETE',
-                headers: {
-                    'user-id': currentUser.id.toString()
-                }
+            const response = await fetch(`/api/users/invitations/${requesterId}/decline`, {
+                method: 'PUT',
             });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                ApiUtils.showAlert(errorData.error || `Failed to decline invitation: ${response.status}`);
+                return false;
+            }
 
             const data: InvitationResponse = await response.json();
 
-            if (response.ok) {
-                ApiUtils.showAlert('Invitation declined successfully');
-                await this.loadInvitations();
-                return true;
-            } else {
-                ApiUtils.showAlert(data.error || 'Failed to decline invitation');
-                return false;
-            }
+            ApiUtils.showAlert(data.message || 'Invitation declined successfully');
+            await this.loadInvitations();
+            return true;
+
         } catch (error) {
-            console.error('Error declining invitation:', error);
-            ApiUtils.showAlert('Error declining invitation');
+            console.error('Error on refusal of invitation:', error);
+            ApiUtils.showAlert('Network error: Unable to decline invitation');
             return false;
         }
     }
 
-    private static displayInvitations(invitations: Invitation[]): void {
+    private static displayInvitations(invitations: LoadInvitation[]): void {
         const invitationsList = document.getElementById('dynamic-popup');
         if (!invitationsList) return;
 
@@ -186,9 +183,10 @@ export class InvitationService {
                     <div class="flex flex-row items-center justify-between responsive-text-historique">
                         <div class="flex flex-row items-center gap-4">
                             <img src="${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
-                            <span class="text-white">${this.escapeHtml(inv.username)}</span>
+                            <span class="responsive-text-historique text-white font-medium">
+                            ${this.escapeHtml(inv.username)}
+                        </span>
                         </div>
-                        <span class="right-0">${this.escapeHtml(inv.status)}</span>
                     </div>
                     <div class="flex flex-row justify-center gap-8 responsive-text-historique">
                         <button onclick="InvitationService.declineInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-red-600">REJECT</button>
@@ -209,3 +207,5 @@ export class InvitationService {
         return div.innerHTML;
     }
 }
+
+(window as any).InvitationService = InvitationService;

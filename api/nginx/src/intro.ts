@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 10:52:39 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/16 17:12:38 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/02 21:01:30 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,14 @@ interface IPlayerController {
 
 export class introduction implements Component{
     private activePlayerController: IPlayerController | null = null;
+    private playerId: string;
 
-
-    constructor(playerId: string) {}
+    constructor(playerId: string) {
+        this.playerId = playerId;
+    }
 
     public init(): void {
-        const playerElement = document.getElementById("player");
+        const playerElement = document.getElementById(this.playerId);
         const pressEElement = document.getElementById("pressE");
         if (playerElement && pressEElement) {
             this.loadPlayerScripts();
@@ -53,7 +55,7 @@ export class introduction implements Component{
     
     private async loadPlayerScripts() {
         try {
-            this.activePlayerController = new PlayerController('player', 'pressE');
+            this.activePlayerController = new PlayerController(this.playerId, 'pressE');
         } catch (error) {
             console.error("Erreur lors du chargement des scripts:", error);
         }

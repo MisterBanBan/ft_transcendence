@@ -1,5 +1,4 @@
 import { Component } from "./component.js"
-import { score } from "./score/score.js";
 
 declare const io: any;
 
@@ -45,6 +44,7 @@ export class pong implements Component {
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
     private backRect!: DOMRect;
+    private backButton!: HTMLElement;
 	private socket = io(`/`, {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
@@ -148,6 +148,14 @@ export class pong implements Component {
 			window.addEventListener('keydown', this.boundKeyDownHandler);
 			window.addEventListener('keyup', this.boundKeyUpHandler);
 			window.addEventListener('resize', this.barResize);
+			const backButton = document.getElementById('backPong');
+            if (backButton) {
+                this.backButton = backButton;
+                this.backButton.addEventListener('click', () => {
+                    window.history.pushState(null, "", "/game");
+                    window.dispatchEvent(new PopStateEvent("popstate"));
+                });
+            }
 
 			this.barResize();
 			this.updateHandler();
@@ -231,30 +239,11 @@ export class pong implements Component {
         this.scorePlayer2.textContent = newScore_player2.toString();
     }
 
-
     private updateHandler() {
         let gameId: string;
         let playerId: string[];
 
         let ball = { x: 0, y: 0 };
-
-        let score_player1 = 0;
-        let score_player2 = 0;
-
-        function updateScore(newScore_player1: number, newScore_player2: number) {
-        	score_player1 = newScore_player1;
-        	score_player2 = newScore_player2;
-        
-        	const scoreElement_player1 = document.getElementById("score-player1");
-        	if (scoreElement_player1) {
-        		scoreElement_player1.textContent = score_player1.toString();
-        	}
-        
-        	const scoreElement_player2 = document.getElementById("score-player2");
-        	if (scoreElement_player2) {
-        		scoreElement_player2.textContent = score_player2.toString();
-        	}
-        }
 
         this.socket.on("connect", () => {
           console.log("Connected with id:", this.socket.id);

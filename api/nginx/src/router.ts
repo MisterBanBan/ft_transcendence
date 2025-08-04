@@ -1,21 +1,7 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   router.ts                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 11:10:24 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/28 16:42:24 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
 import { AuthUser } from './type.js';
 import {getUser, setUser} from "./user-handler.js";
-
-declare const io: any;
 
 class Router {
     private routes: Route[];
@@ -54,8 +40,7 @@ class Router {
             console.error("URL not good : ", url);
             return;
         }
-        history.pushState(null, "", url);
-        console.info("navigateTo", url);
+        history.pushState(null, "",url);
         this.updatePage();
     }
 
@@ -76,7 +61,6 @@ class Router {
                     }
                 }
                 this.appDiv.innerHTML = content;
-                console.info("updatePage");
                 handleRouteComponents(path);
             } else {
                 this.appDiv.innerHTML = "<h1>404 - Page not found</h1>";

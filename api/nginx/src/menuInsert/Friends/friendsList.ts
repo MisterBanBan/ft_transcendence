@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   friendsList.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/06 13:42:52 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/25 17:59:28 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/07/30 14:55:08 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,17 @@ export const friendsList = () => `
             <div id="infos" class="flex flex-col items-center justify-center h-[80%] w-[70%] responsive-text">
                 <div id="first" class="flex flex-row items-center justify-center h-[15%] w-[70%]">
                     <div class="flex flex-row justify-center w-full h-full">
-                        <button id="friends" class="text-white responsive-text-friendsList">Friends</button>
+                        <button id="friends" class="text-white responsive-text-parametre">Friends</button>
                     </div>
                     <div class="flex flex-row  justify-center w-full h-full ">
-                        <button id="invites" class="text-white responsive-text-friendsList">Invites</button>
+                        <button id="invites" class="text-white responsive-text-parametre">Invites</button>
                     </div>
                 </div>
                 <div id="dynamic-popup" class=" h-[70%] w-[70%]">
                     
                 </div>
-                <div class="w-[70%] h-[30%]">
-                    
+                <div class="w-[70%] h-[30%] items-center justify-center flex flex-col">
+                    <button type="button" id="friendReturnBtn" class="text-white responsive-text-parametre ">Return</button>
                 </div>
             </div>
         </div>

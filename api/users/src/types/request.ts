@@ -1,5 +1,5 @@
 export interface InviteBody {
-    addressee_id: string;
+    addressee_username: string;
 }
 
 export interface UserParams {

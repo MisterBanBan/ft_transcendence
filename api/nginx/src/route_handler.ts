@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/27 18:50:12 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/02 23:27:40 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ import { Zoom } from './zoom.js';
 import { proceduralBackground } from './proceduralBackground.js';
 import { pong } from './pong.js';
 import { viewManager } from './views/viewManager.js';
+import { chaletCadre } from './chaletCadre.js';
 
 //permet de gerer la destruction des new
 let activeComponent: Component | null = null;
@@ -47,8 +48,10 @@ const routeComponents: Record<string, Component> = {
 	"/chalet": {
 		init: () => {
 			activeComponent?.destroy?.();
-			const playerIntro = new introduction('player');
+			const playerIntro = new introduction('playerChalet');
 
+			const chalet = new chaletCadre('chalet');
+			chalet.init();
 			playerIntro.init();
 			activeComponent = {
 				init: () => {},

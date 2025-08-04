@@ -7,17 +7,16 @@ import { registerView } from './registerView.js';
 import { Component } from '../component.js';
 import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/Picture/picture.js';
-import { friendsActif } from '../menuInsert/Picture/friendsActif.js';
 import { tournamentView } from './tournamentView.js';
-import { friendActifLog } from '../menuInsert/Picture/friendsActifLog.js';
 import {router} from "../router.js";
 import {tournamentSocket} from "../tournaments.js"
+import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
 
 
 export class viewManager implements Component {
     //private pictureContainer: HTMLElement;
     private activeView : Component | null = null;
-
+    private profilePictureManager: ProfilePictureManager | null = null;
     private videoMain: HTMLVideoElement;
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
@@ -53,9 +52,9 @@ export class viewManager implements Component {
         this.formspicture = formspicture;
         
         this.keydownHandler = this.handleKeydown.bind(this);
-
-        console.info("Constructing")
+        
         this.userLog();
+        this.initializeProfilePictureManager();
     }
 
     public init(): void {
@@ -68,13 +67,19 @@ export class viewManager implements Component {
         this.authBtn.addEventListener('click', this.authBtnHandler);
     }
 
+    private initializeProfilePictureManager(): void {
+        const currentUser = getUser();
+        if (currentUser) {
+            this.profilePictureManager = new ProfilePictureManager(currentUser.id.toString());
+        }
+    }
+
     private userLog()
     {
         if (!getUser())
             this.show("login");
-        else {
+        else
             this.show("game");
-        }
     }
 
     public show(viewName: string) {
@@ -108,24 +113,17 @@ export class viewManager implements Component {
                 this.loadAcceuilVideo();
                 this.formsContainer.innerHTML = game();
                 this.formspicture.innerHTML = picture();
-                const firendDiv = document.getElementById('friendsActif');
-                if (firendDiv) {
-                    firendDiv.innerHTML = friendsActif();
-                }
-                //document.querySelectorAll('#friend').forEach(btn => {
-                 //   btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));          });
-                document.querySelectorAll('#friend').forEach(btn => {
-                    const clone = btn.cloneNode(true);
-                    btn.replaceWith(clone);
-                    clone.addEventListener('click', (e) => this.friendActionLog(e as MouseEvent));
-                });
+                setTimeout(() => {
+                    if (this.profilePictureManager) {
+                        this.profilePictureManager.reinitialize();
+                    }
+                }, 100);
 
-                try {
-                    this.setupGameMenu();
-                } catch (error) {
-                    console.error("Error setting up game menu:", error);
-                }
-
+                    try {
+                        this.setupGameMenu();
+                    } catch (error) {
+                        console.error("Error setting up game menu:", error);
+                    }
                 break;
             case 'login':
                 if (getUser())
@@ -154,7 +152,7 @@ export class viewManager implements Component {
                 newView = new tournamentView(this.formsContainer, this);
                 break;
             case 'parametre':
-                newView = new parameterView(this.formsContainer, this, this.videoMain);
+                newView = new parameterView(this.formsContainer, this, this.formspicture);
                 break;
             case 'friendsList':
                 newView = new friendsView(this.formsContainer, this);
@@ -171,32 +169,24 @@ export class viewManager implements Component {
     public destroyGameListeners(): void {
         document.removeEventListener('keydown', this.keydownHandler);
     }
-    private friendActionLog(e: MouseEvent) {
-        const x = e.clientX;
-        const y = e.clientY;
-        const friendsContainer = document.getElementById('friendsActif');
-        if (!friendsContainer) {
-            console.error('Friends container not found');
-            return;
-        }
-        const existingPopup = document.getElementById('friend-popup');
-        if (existingPopup) {
-            existingPopup.remove();
-            return;
-        }
-        const popupHtml = friendActifLog(x, y);
-        friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
-    }
+
+    // private wordAnimation() {
+    //     const friends = document.querySelectorAll('.friend');
+    //     friends.forEach(div => {
+    //         const word = div.textContent?.trim() || '';
+    //         div.textContent = '';
+    //         word.split('').forEach((letter, idx) => {
+    //         const span = document.createElement('span');
+    //         span.textContent = letter;
+    //         span.style.transitionDelay = `${idx * 0.1}s`;
+    //         div.appendChild(span);
+    //         });
+    //     });
+    // }
     
     private loadAcceuilVideo() {
         this.videoMain.poster = "/img/pong.png";
         this.videoMain.src = '/img/acceuil.mp4';
-        this.videoMain.load();
-    }
-    
-    private loadSettingsVideo() {
-        this.videoMain.poster = "/img/acceuilDraw.png";
-        this.videoMain.src = "/img/acceuilParam.mp4";
         this.videoMain.load();
     }
 
@@ -209,13 +199,6 @@ export class viewManager implements Component {
             // this.show('parametre');
         }
     };
-    
-
-    private loadAcceuil (){
-        this.videoMain.poster = "/img/pong.png";
-        this.videoMain.src = '/img/acceuil.mp4';
-        this.videoMain.load();
-    }
   
        
 
@@ -298,9 +281,13 @@ export class viewManager implements Component {
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);
         document.removeEventListener('keydown', this.keydownHandler);
+        if (this.profilePictureManager) {
+            this.profilePictureManager.destroy();
+            this.profilePictureManager = null;
+        }
         if (this.options) {
             this.options.forEach((opt) => {
-                opt.replaceWith(opt.cloneNode(true)); // retire tous les listeners
+                opt.replaceWith(opt.cloneNode(true));
             });
         }
         if (this.activeView)
