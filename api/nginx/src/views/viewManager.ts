@@ -85,8 +85,7 @@ export class viewManager implements Component {
 
         const hash = window.location.hash;
         if (!hash || (hash && hash !== '#tournament')) {
-            console.log("Hash:", hash, "| link:", window.location);
-            tournamentSocket.emit("leave", "hash");
+            tournamentSocket.emit("leave");
         }
 
         if (hash) {

@@ -35,15 +35,15 @@ export class tournamentView implements Component{
 		leftBox.insertAdjacentHTML('beforeend', createTournamentForm());
 
 		// Leave tournament menu
-		const tournamentButton = document.getElementById('return-button');
-		if (!tournamentButton) {
-			console.error('Tournament page container not found');
-			return;
-		}
+		// const tournamentButton = document.getElementById('return-button');
+		// if (!tournamentButton) {
+		// 	console.error('Tournament page container not found');
+		// 	return;
+		// }
 
-		tournamentButton.addEventListener('click', () => {
-			router.navigateTo('/game')
-		});
+		// tournamentButton.addEventListener('click', () => {
+		// 	router.navigateTo('/game')
+		// });
 
 		const response = fetch('/api/tournament/getTournamentsList')
 		response.then((data) => {

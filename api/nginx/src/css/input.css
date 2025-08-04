@@ -30,6 +30,14 @@
     lg:text-4xl text-white;
   }
 
+  .tournament-names-text-4 {
+    @apply font-omori text-3xl;
+  }
+
+  .tournament-names-text-8 {
+    @apply font-omori text-xl;
+  }
+
   .responsive-text-parametre {
     @apply font-omori text-sm sm:text-base md:text-2xl
     lg:text-4xl text-white hover:text-5xl transition-all duration-200;

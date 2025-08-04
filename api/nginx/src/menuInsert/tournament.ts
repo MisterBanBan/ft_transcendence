@@ -29,9 +29,6 @@ export const tournament = () => `
 					<div id="right-box-infos" class=" h-[80%] w-[80%]">
 						
 					</div>
-					<div class="w-[70%] h-[30%]">
-							<button type="button" id="return-button" class="w-full h-full bg-white/60 rounded-lg text-black responsive-text-friendsList">Return</button>
-					</div>
 				</div>
 			</div>
         </div>

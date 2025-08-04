@@ -96,8 +96,7 @@ function tournamentPage(size: number, started: boolean) {
 		leave.addEventListener("click", async (e) => {
 			e.preventDefault()
 
-			tournamentSocket.emit("leave")
-			router.navigateTo("/game#tournament")
+			router.navigateTo("/game#tournament?leave")
 		})
 
 	if (size == 4) {
