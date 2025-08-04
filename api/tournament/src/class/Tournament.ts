@@ -46,6 +46,10 @@ export class Match {
 		const response = await fetchPromise;
 		const results = await response.json()
 
+		console.log(Date.now(), "Match:", this.player1, "vs", this.player2, "finished | Waiting 5 sec");
+
+		await wait(5000)
+
 		console.log(results)
 		if (results.status === "ok") {
 			this.winner = parseInt(results.result.key);

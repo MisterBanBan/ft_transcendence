@@ -36,6 +36,11 @@ tournamentSocket.on("matchEnded", () =>{
 	router.navigateTo("/game#tournament");
 })
 
+tournamentSocket.on("tournamentEnded", () => {
+	console.warn("Returning to game");
+	router.navigateTo("/game");
+})
+
 interface Match {
 	player1?: number;
 	player2?: number;

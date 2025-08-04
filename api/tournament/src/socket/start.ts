@@ -60,6 +60,8 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 			await wait(5000);
 
 			await updateTournamentInfo(app, 0, tournament, true);
+
+			await wait(5000);
 		}
 		else {
 			console.log("Winner:", round[0].getWinner());
@@ -67,10 +69,8 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 
 			await wait(5000);
 
-			tournament.getPlayers().forEach((name: string, id: number) => {
-				leave(app, id, tournament);
-			})
-
+			emitAll(app, 0, "tournamentEnded", tournament.getName());
+			app.io.socketsLeave(tournament.getName());
 			tournaments.delete(tournament.getName());
 		}
 	}

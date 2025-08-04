@@ -43,22 +43,28 @@ export default async function (server: FastifyInstance) {
         });
 
         try {
-            const result = await waitForResult([client1, client2]);
+            const result: any = await waitForResult([client1, client2]);
+			server.privateResult.delete(result.key)
             reply.code(200).send({ status: 'ok', result: result });
         } catch (e) {
-			let player: string | null = null;
+			let players: string[] = [];
 
 			console.log(server.privateQueue)
 
 			if (server.privateQueue.has(client1)) {
-				player = client1;
+				players.push(client1)
 			}
 
 			if (server.privateQueue.has(client2)) {
-				player = client2;
+				players.push(client2)
 			}
 
-            reply.code(504).send({ status: 'timeout', player: player });
+			if (server.privateQueue.has(client1) && server.privateQueue.get(client1)!.type === type)
+				server.privateQueue.delete(client1);
+			if (server.privateQueue.has(client2) && server.privateQueue.get(client2)!.type === type)
+				server.privateQueue.delete(client2);
+
+            reply.code(504).send({ status: 'timeout', players: players });
         }
     });
 }
