@@ -44,21 +44,21 @@ export default async function (server: FastifyInstance) {
 
         try {
             const result = await waitForResult([client1, client2]);
-            reply.code(200).send({ status: 'ok', result });
+            reply.code(200).send({ status: 'ok', result: result });
         } catch (e) {
-			let player: string[] | null = null;
-			if (server.playerToGame.has(client1)) {
-				if (player === null)
-					player = [];
-				player.push(client1);
-			}
-			if (server.playerToGame.has(client2)) {
-				if (player === null)
-					player = [];
-				player.push(client2);
+			let player: string | null = null;
+
+			console.log(server.privateQueue)
+
+			if (server.privateQueue.has(client1)) {
+				player = client1;
 			}
 
-            reply.code(504).send({ status: 'timeout', player });
+			if (server.privateQueue.has(client2)) {
+				player = client2;
+			}
+
+            reply.code(504).send({ status: 'timeout', player: player });
         }
     });
 }

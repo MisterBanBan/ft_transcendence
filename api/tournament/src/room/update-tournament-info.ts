@@ -15,8 +15,6 @@ export async function updateTournamentInfo(app: FastifyInstance, userId: number,
 		"structure": createStructure(tournament)
 	}
 
-	console.log(infos);
-
 	if (room)
 		emitAll(app, userId, "updateTournamentInfos", tournament.getName(), infos);
 	else

@@ -10,8 +10,11 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 	let opponent: string | null = null;
 	let type: string = "private";
 	for (const [player, info] of app.privateQueue.entries()) {
+		console.log("Player:", player, "| To delete:", userID);
+		console.log("Player:", typeof player, "| To delete:", typeof userID);
 		if (userID === player)
 		{
+			console.log("Deleting userID", userID)
 			opponent = info.opponent;
 			type = info.type;
 			app.privateQueue.delete(userID);

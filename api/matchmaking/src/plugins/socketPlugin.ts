@@ -17,7 +17,7 @@ const socketPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 			try {
 				const jsonStr = Buffer.from(user, 'base64').toString();
 				const obj = JSON.parse(jsonStr);
-				userID = obj.id;
+				userID = obj.id.toString();
 				// console.log(obj);
 			} catch (e) {
 				console.error('User header could not be parsed:', e);

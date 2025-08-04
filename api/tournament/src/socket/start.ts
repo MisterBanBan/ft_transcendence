@@ -2,6 +2,8 @@ import {FastifyInstance} from "fastify";
 import {Match, Tournament} from "../class/Tournament.js";
 import {emitAll} from "../utils/emit-all.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
+import {leave} from "./leave.js";
+import {tournaments} from "../server.js";
 
 function shuffleMap<K, V>(map: Map<K, V>): Map<K, V> {
 	const entries = Array.from(map.entries());
@@ -20,21 +22,9 @@ export function wait(ms: number): Promise<void> {
 
 export async function start(app: FastifyInstance, tournament: Tournament) {
 
-	if (tournament.isFull())
-	{
-		console.log("Tournois complet")
-		console.log(tournament.getPlayers())
-		console.log("----------------------")
-	}
-
 	const players = shuffleMap(tournament.getPlayers())
 
-	console.log(players)
-	console.log("----------------------")
-
 	const round1 = tournament.getStructure().rounds[0];
-
-	console.log(round1);
 
 	let iteration = 0
 	let index = 0
@@ -53,15 +43,13 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 
 		const round = tournament.getStructure().rounds[i];
 
+		console.log(round);
+
 		let matchPromises = round.map((match: Match) => {
 			return match.startMatch(app, tournament);
 		});
 
 		await Promise.all(matchPromises);
-
-		tournament.getStructure().rounds[i].forEach(( match: Match, index: number ) => {
-			console.log(index, match);
-		})
 
 		if (i + 1 < length) {
 			tournament.getStructure().rounds[i + 1].forEach((match: Match, index: number) => {
@@ -70,14 +58,20 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 			})
 
 			await wait(5000);
+
+			await updateTournamentInfo(app, 0, tournament, true);
 		}
 		else {
 			console.log("Winner:", round[0].getWinner());
 			tournament.getStructure().winner = round[0].getWinner();
 
 			await wait(5000);
-		}
 
-		await updateTournamentInfo(app, 0, tournament, true);
+			tournament.getPlayers().forEach((name: string, id: number) => {
+				leave(app, id, tournament);
+			})
+
+			tournaments.delete(tournament.getName());
+		}
 	}
 }

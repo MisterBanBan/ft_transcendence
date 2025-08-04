@@ -30,29 +30,33 @@ export class Match {
 			return Promise.resolve()
 		}
 
-		// const body = { client1: this.player1!.toString(), client2: this.player2!.toString() } as { client1: string, client2: string }
-		// const fetchPromise = fetch('http://matchmaking:8083/api/matchmaking/private', {
-		// 	method: 'POST',
-		// 	body: JSON.stringify(body),
-		// 	headers: {
-		// 		'Content-Type': 'application/json'
-		// 	}
-		// })
+		const body = { client1: this.player1!.toString(), client2: this.player2!.toString() } as { client1: string, client2: string }
+		const fetchPromise = fetch('http://matchmaking:8083/api/matchmaking/private', {
+			method: 'POST',
+			body: JSON.stringify(body),
+			headers: {
+				'Content-Type': 'application/json',
+				'Origin': 'tournament'
+			}
+		})
 
 		emitAll(app, this.player1!, "newMatch", undefined);
 		emitAll(app, this.player2!, "newMatch", undefined);
 
-		// const response = await fetchPromise;
-		// const results = await response.json()
+		const response = await fetchPromise;
+		const results = await response.json()
 
-		await wait(5000);
-
-		const results = Math.random() < 0.5 ? this.player1! : this.player2!
-
-		console.log(Date.now(), results);
-
-		// Handle status: 'timeout'
-		this.winner = results;
+		console.log(results)
+		if (results.status === "ok") {
+			this.winner = parseInt(results.result.key);
+		}
+		else if (results.status == "timeout") {
+			const loser = parseInt(results.player);
+			if (loser === this.player1)
+				this.winner = this.player2
+			else
+				this.winner = this.player1
+		}
 
 		emitAll(app, this.player1!, "matchEnded", undefined)
 		emitAll(app, this.player2!, "matchEnded", undefined)
