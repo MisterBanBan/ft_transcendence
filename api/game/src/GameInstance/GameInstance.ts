@@ -198,9 +198,13 @@ export class GameInstance {
 		else
 			this.state.score.playerLeft += 1;
 		
-		if (this.state.score.playerRight == 10 || this.state.score.playerLeft == 10)
+		if (this.state.score.playerRight >= 10 || this.state.score.playerLeft >= 10)
 		{
 			this.stop();
+			if (this.state.score.playerLeft > 10)
+				this.state.score.playerLeft = 10;
+			if (this.state.score.playerRight > 10)
+				this.state.score.playerRight = 10;
 			const matchmakingSocket = this.getMatchmakingSocket();
 			if (matchmakingSocket) {
 				matchmakingSocket.emit("game-end", {
@@ -239,6 +243,15 @@ export class GameInstance {
 			if (input.direction == "down")
 				this.intern.bar.right.Down = input.state;
 		}
+	}
+
+	public handleAbandon(side: string) {
+		if (side === "right") {
+			this.state.score.playerLeft = 10;
+		} else if (side === "left") {
+			this.state.score.playerRight = 10;
+		}
+		this.updateScore();
 	}
   
 	private stop() {

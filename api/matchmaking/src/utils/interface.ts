@@ -17,3 +17,8 @@ export interface inputData {
 	state: boolean;
 	player: string;
 }
+
+export interface privateInfo {
+	opponent: string;
+	type: string;
+}

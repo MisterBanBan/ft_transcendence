@@ -46,7 +46,19 @@ export function aiManager(socket: Socket, app: FastifyInstance, userID: string) 
 		});
 	});
 	
+	socket.on("abandon", () => {
+		const value = app.playerToGame.get(socket.id);
+		if (!value?.gameId) return;
+
+		
+		gameSocket.emit("abandon", {
+			gameId,
+			playerId: socket.id,
+			side: value.side,
+		});
+	});
+
 	socket.on("disconnect", () => {
-	console.log("Client disconnected:", socket.id);
-  });
+		console.log("Client disconnected:", socket.id);
+  	});
 }

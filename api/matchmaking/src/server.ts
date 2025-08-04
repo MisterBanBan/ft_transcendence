@@ -4,7 +4,7 @@ import autoLoad from "@fastify/autoload";
 import { join } from "path";
 import { io as ClientIO } from "socket.io-client";
 import { gameUpdate } from "./gamesManager/gameUpdate";
-import { playerInfo } from "./utils/interface";
+import { playerInfo, privateInfo } from "./utils/interface";
 
 async function start() {
 	const dir = __dirname;
@@ -34,10 +34,10 @@ async function start() {
 	const playerToGame = new Map<string, playerInfo>();
 	app.decorate("playerToGame", playerToGame);
 
-	const privateQueue = new Map<string, string>();
+	const privateQueue = new Map<string, privateInfo>();
 	app.decorate("privateQueue", privateQueue);
 
-	const privateResult = new Map<string, string>();
+	const privateResult = new Map<string, privateInfo>();
 	app.decorate("privateResult", privateResult)
 
 	gameUpdate(app);

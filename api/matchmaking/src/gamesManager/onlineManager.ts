@@ -48,6 +48,18 @@ export function onlineManager(socket: Socket, app: FastifyInstance, userID: stri
 	});
 	});
 
+	socket.on("abandon", () => {
+		const value = app.playerToGame.get(socket.id);
+		if (!value?.gameId) return;
+
+		
+		gameSocket.emit("abandon", {
+			gameId: value.gameId,
+			playerId: socket.id,
+			side: value.side,
+		});
+	});
+
 	socket.on("disconnect", () => {
 		console.log("Client disconnected:", socket.id);
 

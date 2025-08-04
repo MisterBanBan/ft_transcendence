@@ -21,11 +21,19 @@ export function registerSocketHandlers(socket: Socket, app: FastifyInstance) {
     gameInstances.set(gameId, instance);
   });
 
-  socket.on("player-input", (data) => {
+  socket.on("player-input", (data: { gameId: string; input: any }) => {
     const { gameId, input } = data;
     const instance = gameInstances.get(gameId);
     if (instance) {
       instance.handleInput(input);
+    }
+  });
+
+  socket.on("abandon", (data: { gameId: string; side: string }) => {
+    const { gameId, side } = data;
+    const instance = gameInstances.get(gameId);
+    if (instance) {
+      instance.handleAbandon(side);
     }
   });
 }

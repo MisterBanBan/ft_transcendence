@@ -4,7 +4,7 @@ import {showTournaments} from "./tournament/show-tournaments.js";
 import {leftTournamentInfos} from "./menuInsert/leftTournamentInfos.js";
 import {router} from "./router.js";
 
-console.log("init coucou");
+declare const io: any;
 
 export const tournamentSocket: any = io(`/`, {
 	transports: ["websocket", "polling"],

@@ -89,7 +89,6 @@ export default async function (server: FastifyInstance, opts: any) {
 					if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];
 					url.searchParams.set('user', encodedUser);
 				}
-
 				return url.searchParams.toString();
 			}
 		}

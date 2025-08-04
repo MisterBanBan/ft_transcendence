@@ -1,6 +1,6 @@
 import { Socket } from "socket.io";
 import { FastifyInstance } from "fastify";
-import { inputData } from "../utils/interface";
+import { inputData, privateInfo } from "../utils/interface";
 
 let privateWaiting = new Map<string, Socket>();
 
@@ -8,10 +8,13 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 	const gameSocket = app.gameSocket;
 
 	let opponent: string | null = null;
-	for (const [player, opp] of app.privateQueue.entries()) {
+	let type: string = "private";
+	for (const [player, info] of app.privateQueue.entries()) {
 		if (userID === player)
 		{
-			opponent = opp;
+			opponent = info.opponent;
+			type = info.type;
+			app.privateQueue.delete(userID);
 			break ;
 		}
 	}
@@ -26,8 +29,8 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 			findOpp = true;
 
 			const gameId = `game-${oppSocket.id}${socket.id}`;
-			app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left", type: "private" });
-			app.playerToGame.set(oppSocket.id, { userID: oppID, gameId: gameId, side: "right", type: "private" });
+			app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left", type});
+			app.playerToGame.set(oppSocket.id, { userID: oppID, gameId: gameId, side: "right", type});
 
 			gameSocket.emit("create-game", {
 				gameId,
@@ -64,6 +67,18 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 		playerId: socket.id,
 		input: data,
 	});
+	});
+
+	socket.on("abandon", () => {
+		const value = app.playerToGame.get(socket.id);
+		if (!value?.gameId) return;
+
+		
+		gameSocket.emit("abandon", {
+			gameId: value.gameId,
+			playerId: socket.id,
+			side: value.side,
+		});
 	});
 
 	socket.on("disconnect", () => {
