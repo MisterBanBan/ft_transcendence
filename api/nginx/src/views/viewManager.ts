@@ -98,9 +98,19 @@ export class viewManager implements Component {
         }
 
         if (viewName !== "login" && viewName !== "register")
+        {
             if (!getUser())
                 router.navigateTo("/game#login")
-
+            else
+            {
+                this.formspicture.innerHTML = picture();
+                setTimeout(() => {
+                    if (this.profilePictureManager) {
+                        this.profilePictureManager.reinitialize();
+                    }
+                }, 100);
+            }
+        }
         console.info(`Redirecting to ${viewName}`)
 
         this.formsContainer.innerHTML = '';
@@ -112,12 +122,7 @@ export class viewManager implements Component {
             case 'game':
                 this.loadAcceuilVideo();
                 this.formsContainer.innerHTML = game();
-                this.formspicture.innerHTML = picture();
-                setTimeout(() => {
-                    if (this.profilePictureManager) {
-                        this.profilePictureManager.reinitialize();
-                    }
-                }, 100);
+                
 
                     try {
                         this.setupGameMenu();

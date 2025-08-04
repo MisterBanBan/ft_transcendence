@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/16 16:56:56 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/24 18:08:43 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:43:01 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,12 @@ export function setUser(newUser: AuthUser | undefined): void {
 
 export function getUser(): AuthUser | undefined {
     return user;
+}
+
+export function setAvatarUrl(avatarUrl: string): void {
+    if (user) {
+        user.avatar_url = avatarUrl;
+    }
 }
 
 export function set2faPlaceholder(token: string): void {

@@ -36,23 +36,11 @@
     lg:text-2xl text-white;
   }
 
-  .responsive-text-players-list {
-    @apply font-omori text-sm sm:text-base md:text-xl
-    lg:text-4xl text-white;
-  }
-
-  .tournament-names-text-4 {
-    @apply font-omori text-3xl;
-  }
-
-  .tournament-names-text-8 {
-    @apply font-omori text-xl;
-  }
-
   .responsive-text-profile {
     @apply font-omori text-sm sm:text-xl md:text-2xl
     lg:text-4xl text-white;
   }
+
 
   .responsive-text-parametre {
     @apply font-omori text-sm sm:text-base md:text-2xl
@@ -131,11 +119,18 @@
     sm:w-[20%] lg:w-[20%] xl:w-[20%] 2xl:w-[20%];
   }
 
-    .responsive-case-submit-42-google {
-    @apply bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-white/80
+    .responsive-case-submit-google {
+    @apply bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-red-500/80 
     focus:outline-none bg-[length:100%_100%] rounded
     top-2
+    
+  }
 
+  .responsive-case-submit-42 {
+    @apply bg-[url('/img/case.png')] bg-no-repeat bg-center px-3 bg-blue-500/80 
+    focus:outline-none bg-[length:100%_100%] rounded
+    top-2
+    
   }
 
   .responsive-case-settings {
@@ -203,3 +198,51 @@
 .friend:hover span {
   transform: translateX(-30px);
 }
+
+@keyframes tvOn {
+  from {
+    transform: scaleY(0.05) scaleX(0.8);
+    opacity: 0.7;
+    filter: brightness(0.8) blur(1px);
+  }
+  60% {
+    transform: scaleY(1.1) scaleX(0.95);
+    opacity: 1;
+    filter: brightness(1);
+  }
+  to {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+    filter: none;
+  }
+}
+
+@keyframes tvOff {
+  from {
+    transform: scaleY(1) scaleX(1);
+    opacity: 1;
+    filter: none;
+  }
+  60% {
+    transform: scaleY(1.1) scaleX(0.95);
+    opacity: 1;
+    filter: brightness(1.1);
+  }
+  to {
+    transform: scaleY(0.05) scaleX(0.8);
+    opacity: 0.7;
+    filter: brightness(0.8) blur(1px);
+  }
+}
+
+.tv-effect {
+  animation: tvOn 0.7s cubic-bezier(0.45,0,0.55,1) 1;
+  transform-origin: center;
+  /* adapte la taille, arrondi selon ton design */
+  overflow: hidden;
+  border-radius: 1rem;
+}
+.tv-effect.off {
+  animation: tvOff 0.7s cubic-bezier(0.45,0,0.55,1) 1 forwards;
+}
+

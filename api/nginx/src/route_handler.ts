@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/08/02 23:27:40 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/04 21:35:38 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,10 @@ const routeComponents: Record<string, Component> = {
 			console.log("Init /game");
 			const me = new viewManager('video_main','container_form', 'user');
             me.init();
-			const login = new Login();
-			login.init();
 
             activeComponent = {
                 init: () => {},
-                destroy: () => { me.destroy(); login.destroy();  }
+                destroy: () => { me.destroy(); }
             };
         },
         destroy: () => {}

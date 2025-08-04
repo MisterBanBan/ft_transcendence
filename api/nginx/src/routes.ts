@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routes.ts                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 11:10:33 by afavier           #+#    #+#             */
-/*   Updated: 2025/08/03 15:13:30 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/04 21:09:32 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,7 +125,7 @@ export const routes: Route[] = [
               </video>
 
              
-              	<div id="container_form" class=" w-full h-full flex items-center justify-center pointer-events-auto ">
+              	<div id="container_form" class="tv-effect w-full h-full flex items-center justify-center pointer-events-auto ">
 					<div class="flex flex-col items-center justify-center h-full w-[80%] relative">	    
 						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-no-repeat bg-center z-20 pointer-events-auto transition-transform duration-200 hover:scale-125">
 								</button>
