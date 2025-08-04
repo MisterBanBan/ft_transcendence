@@ -21,11 +21,12 @@ import { InvitationService } from "../relationship/invitationService.js";
 
 import { viewManager } from "./viewManager.js";
 import { friendsList } from "../menuInsert/Friends/friendsList.js";
+import {router} from "../router.js";
 
 export class friendsView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
-    private handleReturn = () => this.viewManager.show('parametre');
+    private handleReturn = () => router.navigateTo("/game#parametre");
     private handleFriends = () => this.friends();
     private handleInvites = () => this.invites();
 

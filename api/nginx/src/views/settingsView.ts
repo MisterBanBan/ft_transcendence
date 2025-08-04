@@ -22,6 +22,7 @@ import { removeTwoFa } from "../menuInsert/Settings/removeTwoFa.js";
 import { getUser } from "../user-handler.js";
 import { viewManager } from "./viewManager.js";
 import { Component } from "../component.js";
+import {router} from "../router.js";
 
 export class SettingsView implements Component {
     private container: HTMLElement;
@@ -30,9 +31,9 @@ export class SettingsView implements Component {
     private handleNewPseudo = () => this.newPseudo();
     private handleNewPassword = () => this.newPassword();
     private handleToggle2FA = () => this.toggle2FA();
-    private handleSettings = () => this.viewManager.show('settings');
-    private handleSettingsReturn = () => this.viewManager.show('parametre');
-    private handlePseudoReturn = () => this.viewManager.show('settings');
+    private handleSettings = () => router.navigateTo("/game#settings");
+    private handleSettingsReturn = () => router.navigateTo("/game#parametre");
+    private handlePseudoReturn = () => router.navigateTo("/game#settings");
 
     constructor(containerId: HTMLElement, viewManager: viewManager) {
         this.container = containerId;

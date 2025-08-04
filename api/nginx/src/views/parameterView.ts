@@ -16,18 +16,19 @@ import { viewManager } from "./viewManager.js";
 import { profile } from "../menuInsert/Profile/profile.js";
 import { Logout } from "../auth/logout.js";
 import { Component } from "../component.js";
+import {router} from "../router.js";
 
 export class parameterView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
     //private videoMain: HTMLVideoElement;
 
-    private handleReturn = () => {console.log('clicked');this.viewManager.show('game');};
+    private handleReturn = () => {console.log('clicked'); router.navigateTo("/game")};
     private handleScore = () => this.loadScore();
     private handleProfile = () => this.loadProfile();
-    private handleFriendsList = () => this.viewManager.show('friendsList');
-    private handleSettings = () => this.viewManager.show('settings');
-    private handleLogout = () => this.viewManager.show('login');
+    private handleFriendsList = () => router.navigateTo("/game#friendsList");
+    private handleSettings = () => router.navigateTo("/game#settings");
+    private handleLogout = () => router.navigateTo("/game#login");
     
     
 

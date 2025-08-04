@@ -73,7 +73,6 @@ export class viewManager implements Component {
         if (!getUser())
             this.show("login");
         else {
-            console.log("ASPODIJASOD")
             this.show("game");
         }
     }
@@ -93,6 +92,10 @@ export class viewManager implements Component {
         if (hash) {
             viewName = hash.replace('#', '')
         }
+
+        if (viewName !== "login" && viewName !== "register")
+            if (!getUser())
+                router.navigateTo("/game#login")
 
         console.info(`Redirecting to ${viewName}`)
 
@@ -126,10 +129,16 @@ export class viewManager implements Component {
 
                 break;
             case 'login':
-                newView = new loginView(this.formsContainer, this);
+                if (getUser())
+                    router.navigateTo("/game")
+                else
+                    newView = new loginView(this.formsContainer, this);
                 break;
             case 'register':
-                newView = new registerView(this.formsContainer, this.formspicture, this);
+                if (getUser())
+                    router.navigateTo("/game")
+                else
+                    newView = new registerView(this.formsContainer, this.formspicture, this);
                 break;
             case 'settings':
                 const currentUser = getUser();
@@ -194,9 +203,11 @@ export class viewManager implements Component {
 
     private authBtnHandler = () => {
         if (!getUser()) {
-            this.show('login');
+            router.navigateTo("/game#login")
+            // this.show('login');
         } else {
-            this.show('parametre');
+            router.navigateTo("/game#parametre")
+            // this.show('parametre');
         }
     };
     
@@ -235,7 +246,8 @@ export class viewManager implements Component {
             router.navigateTo("/Pong?mode=ai");
         }
         if (selected.id === 'Tournament') {
-            this.show('tournament');
+            router.navigateTo("/game#tournament")
+            // this.show('tournament');
         }
     }
     
