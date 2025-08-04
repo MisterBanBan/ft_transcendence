@@ -149,8 +149,9 @@ export class ProfilePictureManager {
             console.error('Avatar URL is not a string:', avatarUrl);
             return;
         }
+        const uniqueUrl = `${avatarUrl}?t=${Date.now()}`;
 
-        this.pictureElement.style.backgroundImage = `url('${avatarUrl}')`;
+        this.pictureElement.style.backgroundImage = `url('${uniqueUrl}')`;
         this.pictureElement.style.backgroundSize = '100% 100%';
         this.pictureElement.style.backgroundRepeat = 'no-repeat';
         this.pictureElement.style.backgroundPosition = 'center';

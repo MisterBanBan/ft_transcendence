@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   viewManager.ts                                     :+:      :+:    :+:   */
+/*   ViewManager.ts                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/17 18:58:58 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 17:11:29 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/04 13:09:09 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,6 @@ export class viewManager implements Component {
                 this.loadAcceuilVideo();
                 this.formsContainer.innerHTML = game();
                 this.formspicture.innerHTML = picture();
-
                 setTimeout(() => {
                     if (this.profilePictureManager) {
                         this.profilePictureManager.reinitialize();
