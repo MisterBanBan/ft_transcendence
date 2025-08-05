@@ -101,8 +101,7 @@ export class PlayerController implements IPlayerController{
         if (skipButton) {
             this.skipButton = skipButton;
             this.skipButton.addEventListener('click', () => {
-                window.history.pushState(null, "", "/game");
-                window.dispatchEvent(new PopStateEvent("popstate"));
+                router.navigateTo("/game");
             });
         }
 

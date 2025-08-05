@@ -51,9 +51,10 @@ export default async function (server: FastifyInstance) {
 			await createOAuthEntry(token, user.username, "create2FA");
 
 			if (user.provider == "google") {
+				const redirectUri = encodeURIComponent(`https://redirectmeto.com/http://${process.env.HOSTNAME}:8080/api/auth/callback/google`);
 				return reply.status(202).header('Location', "https://accounts.google.com/o/oauth2/v2/auth?" +
 					"client_id=570055045570-c95opdokftohj6c4l7u9t7b46bpmnrkl.apps.googleusercontent.com&" +
-					"redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2Fgoogle&" +
+					`redirect_uri=${redirectUri}&` +
 					"response_type=code&scope=profile%20email&" +
 					"access_type=offline&" +
 					"include_granted_scopes=true&" +
@@ -61,9 +62,10 @@ export default async function (server: FastifyInstance) {
 					"max_age=0&" +
 					`state=relogin_${token}`).send({});
 			} else if (user.provider == "42") {
+				const redirectUri = encodeURIComponent(`https://redirectmeto.com/http://${process.env.HOSTNAME}:8080/api/auth/callback/42`);
 				return reply.status(202).header('Location', "https://api.intra.42.fr/oauth/authorize?" +
 					"client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&" +
-					"redirect_uri=https%3A%2F%2Flocalhost%3A8443%2Fapi%2Fauth%2Fcallback%2F42&" +
+					`redirect_uri=${redirectUri}&` +
 					"response_type=code&" +
 					`state=relogin_${token}`).send({});
 			}

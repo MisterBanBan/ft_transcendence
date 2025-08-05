@@ -10,12 +10,12 @@ export class parameterView implements Component {
     private viewManager: viewManager;
     private picture: HTMLElement;
 
-    private handleReturn = () => {console.log('clicked');router.navigateTo('/game');};
+    private handleReturn = () => {console.log('clicked');router.navigateTo('/game', this.viewManager);};
     private handleProfile = () => this.loadProfile();
-	private handleParametre = () => router.navigateTo("/game#parametre");
-    private handleFriendsList = () => router.navigateTo("/game#friendsList");
-    private handleSettings = () => router.navigateTo("/game#settings");
-    private handleLogout = () => router.navigateTo("/game#login");
+	private handleParametre = () => router.navigateTo("/game#parametre", this.viewManager);
+    private handleFriendsList = () => router.navigateTo("/game#friendsList", this.viewManager);
+    private handleSettings = () => router.navigateTo("/game#settings", this.viewManager);
+    private handleLogout = () => router.navigateTo("/game#login", this.viewManager);
 
     
 

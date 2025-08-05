@@ -38,7 +38,7 @@ export class AIInstance {
 			},
 			width: 40.96,
 			height: 342.8,
-			speed: (this.limit.map.bot - this.limit.map.top) / 80
+			speed: (this.limit.map.bot - this.limit.map.top) / 60
 		};
 		this.ball = {
 			x: (this.limit.map.right - this.limit.map.left) / 2,

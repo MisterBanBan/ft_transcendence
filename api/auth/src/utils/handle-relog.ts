@@ -24,8 +24,8 @@ export async function handleRelog(state: string, reply: FastifyReply) {
 		let key;
 		let redirectUrl;
 		switch (oauthSession.type) {
-			case "create2FA": key = create2FASessions.get(oauthSession.username); redirectUrl = "/2fa/create"; break;
-			case "remove2FA": key = remove2FASessions.get(oauthSession.username); redirectUrl = "/2fa/remove"; break;
+			case "create2FA": key = create2FASessions.get(oauthSession.username); redirectUrl = "/game?setting=toggle-2fa#settings"; break;
+			case "remove2FA": key = remove2FASessions.get(oauthSession.username); redirectUrl = "/game?setting=toggle-2fa#settings"; break;
 			default: return reply.status(400).send({ error: "Invalid OAuth Relog request" });
 		}
 

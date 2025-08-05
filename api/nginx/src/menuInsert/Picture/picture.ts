@@ -40,9 +40,14 @@ export const picture = () => {
             <button
                 type="button"
                 id="picture-profile"
-                class="w-[65%] h-[68%] mt-4 mr-4 bg-[url(/uploads/${avatarUrl})] bg-[length:100%_100%] bg-white/60 bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
+                class="w-[65%] h-[68%] mt-4 mr-4 bg-[url(/uploads/${avatarUrl})] bg-[length:100%_100%] bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
                 title="Click to change profile picture"
             ></button>
+        </div>
+        <div class="w-full h-[54%] flex  relative">
+            <button type="button" id="power"
+             class="absolute top-[54%] left-[30%] w-[30%] h-[30%] bg-[url('/img/powerOf.png')] bg-contain bg-no-repeat">
+        </button>
         </div>
 
     </div>

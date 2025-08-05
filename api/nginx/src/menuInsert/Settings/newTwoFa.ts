@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   newTwoFa.ts                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/06 18:52:33 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 15:13:20 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 export const newTwoFa = () => `
 <div id="toggle-2fa-popup" class="flex responsive-form-login flex-col items-center justify-center">
 <div class="flex justify-center">

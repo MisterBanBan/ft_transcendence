@@ -36,7 +36,6 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			console.error('No valid user in handshake')
 			return;
 		}
-		console.log("Client connected:", socket.id, user.username);
 
 		const hasSockets = usersSockets.has(user.id);
 		if (!hasSockets)
@@ -50,8 +49,6 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				await updateTournamentInfo(app, user.id, tournament, false);
 			}
 		}
-
-		console.log("Sockets id for", user.username, ":", usersSockets.get(user.id));
 
 		await updateTournamentsList(app, socket);
 
@@ -93,6 +90,11 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			const tournament = tournaments.get(name);
 			if (!tournament) {
 				console.log("Tournament", name, "not found");
+				return
+			}
+
+			if (tournament.isFull()) {
+				console.log("Tournament", tournament.getName(), "is full")
 				return
 			}
 
@@ -181,7 +183,6 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 					socket.leave(tournament.getName())
 				userSockets.delete(socket.id);
 
-				console.log("Sockets id for", user.username, ":", usersSockets.get(user.id));
 				return;
 			}
 

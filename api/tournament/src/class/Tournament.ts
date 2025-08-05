@@ -68,6 +68,8 @@ export class Match {
 		emitAll(app, this.player1!, "matchEnded", undefined)
 		emitAll(app, this.player2!, "matchEnded", undefined)
 
+		await wait(2000)
+
 		return Promise.resolve()
 	}
 

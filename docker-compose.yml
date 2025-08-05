@@ -130,6 +130,8 @@ services:
   auth:
     image: auth
     container_name: auth
+    env_file:
+      - .env
     build:
       context: api/auth
     healthcheck:
@@ -158,6 +160,7 @@ services:
       - ./certs:/etc/nginx/ssl
     ports:
       - "8443:443"
+      - "8080:80"
     depends_on:
       gateway:
         condition: service_healthy

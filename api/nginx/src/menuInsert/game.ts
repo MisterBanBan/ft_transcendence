@@ -2,16 +2,19 @@ export const game = () => `
 <div id="game" class="flex responsive-form-login flex-col items-center  justify-center">
 
   <div id="game-options" class="flex flex-col items-center justify-center mt-4 responsive-game-gap relative w-[40%] ">
-    <div id="Offline" class="menu-option  text-white responsive-text font-omori cursor-pointer">Offline</div>
-    <div id="Online" class="menu-option  text-white responsive-text font-omori cursor-pointer">Online</div>
-    <div id="IA" class="menu-option  text-white responsive-text font-omori cursor-pointer">AI</div>
-    <div id="Tournament" class="menu-option  text-white responsive-text font-omori cursor-pointer">Tournament</div>
+    <div id="Offline" class="menu-option  text-white responsive-text-parametre font-omori cursor-pointer">Offline</div>
+    <div id="Online" class="menu-option  text-white responsive-text-parametre font-omori cursor-pointer">Online</div>
+    <div id="IA" class="menu-option  text-white responsive-text-parametre font-omori cursor-pointer">AI</div>
+    <div id="Tournament" class="menu-option  text-white responsive-text-parametre font-omori mb-4 cursor-pointer">Tournament</div>
 
-    <video id="cursor-video" src="/img/select_game.mp4"
-           autoplay loop muted
-           class="absolute left-[-10px] top-0 responsive-video-game pointer-events-none z-10;">
-    </video>
+    <div id="cursor-video" 
+           class="absolute right-[55%] top-0 bg-[url('/img/kodama_stop1.png')] responsive-video-game pointer-events-none bg-contain bg-no-repeat z-10;">
+    </div>
   </div>
 </div>
 
 `
+/*
+<div id="player"
+				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop1.png')] bg-contain bg-no-repeat z-10">
+			</div>*/

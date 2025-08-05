@@ -15,7 +15,7 @@ export class GameInstance {
 	) {
 		this.limit = {
 			map: {left: 164, top: 123, right: 3146, bot: 1590},
-			speed: (3146 - 164) / 15,
+			speed: (3146 - 164) / 25,
 		};	// Effectivement nous sommes sur du code tres developpe et tres important afin de realiser le magnifique projet de merde qu'est transcendence
 		this.state = {
 			bar: {
@@ -37,7 +37,7 @@ export class GameInstance {
 			ball: {
 				width: 85.7,
 				height: 85.7,
-				speed: (this.limit.map.right - this.limit.map.left) / 300
+				speed: (this.limit.map.right - this.limit.map.left) / 200
 			},
 			bar: {
 				left: {
@@ -52,7 +52,7 @@ export class GameInstance {
 				},
 				width: 40.96,
 				height: 342.8,
-				speed: (this.limit.map.bot - this.limit.map.top) / 80
+				speed: (this.limit.map.bot - this.limit.map.top) / 60
 			}
 		};
 		this.pause = {
@@ -112,7 +112,7 @@ export class GameInstance {
 
 		if (this.state.ball.y <= top || this.state.ball.y >= bot) {
 			if (this.intern.ball.speed < this.limit.speed)
-				this.intern.ball.speed += this.intern.ball.speed / 10;
+				this.intern.ball.speed += this.intern.ball.speed / 20;
 
 			this.state.ball.vy *= -1;
 
@@ -158,7 +158,7 @@ export class GameInstance {
 				this.state.ball.vx = Math.cos(new_angle);
 				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
-					this.intern.ball.speed += this.intern.ball.speed / 10;
+					this.intern.ball.speed += this.intern.ball.speed / 20;
 			}
 		}
 		if (this.state.ball.x + this.intern.ball.width / 2 >= this.limit.map.right - defenseArea)
@@ -184,7 +184,7 @@ export class GameInstance {
 				this.state.ball.vx = Math.cos(new_angle);
 				this.state.ball.vy = Math.sin(new_angle);
 				if (this.intern.ball.speed < this.limit.speed)
-					this.intern.ball.speed +=  this.intern.ball.speed / 10;
+					this.intern.ball.speed +=  this.intern.ball.speed / 20;
 			}
 		}
 	}
@@ -225,7 +225,7 @@ export class GameInstance {
 			new_angle += Math.PI * 0.5;
 		this.state.ball.vx = Math.cos(new_angle);
 		this.state.ball.vy = Math.sin(new_angle);
-		this.intern.ball.speed = (this.limit.map.right - this.limit.map.left) / 300;
+		this.intern.ball.speed = (this.limit.map.right - this.limit.map.left) / 250;
 	}
   
 	public handleInput(input: { direction: string, state: boolean, player: string}) {
