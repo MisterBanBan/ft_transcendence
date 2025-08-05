@@ -110,7 +110,8 @@ export default async function (server: FastifyInstance) {
 					await setCookie(reply, signedToken);
 					return reply.status(302).redirect("/game");
 				} else {
-					return reply.status(302).redirect(`/2fa?token=${await createToken(user.username, signedToken)}`);
+					// /game?need-2fa=true#login
+					return reply.status(302).redirect(`/game?token=${await createToken(user.username, signedToken)}#login`);
 				}
 			} catch (error) {
 				if (error instanceof Error)

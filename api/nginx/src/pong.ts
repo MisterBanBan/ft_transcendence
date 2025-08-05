@@ -1,4 +1,5 @@
 import { Component } from "./component.js"
+import {router} from "./router.js";
 
 declare const io: any;
 
@@ -152,8 +153,7 @@ export class pong implements Component {
             if (backButton) {
                 this.backButton = backButton;
                 this.backButton.addEventListener('click', () => {
-                    window.history.pushState(null, "", "/game");
-                    window.dispatchEvent(new PopStateEvent("popstate"));
+					router.navigateTo("/game");
                 });
             }
 

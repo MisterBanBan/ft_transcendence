@@ -43,7 +43,6 @@ class Router {
         }
 
         const gameFromGame = (window.location.pathname === "/game" && url.split("#")[0] === "/game")
-        console.log(gameFromGame, window.location.pathname, url.split("#")[0], viewManager);
         history.pushState(null, "",url);
 
         if (gameFromGame) {

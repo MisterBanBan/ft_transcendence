@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   settingsView.ts                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/16 20:22:54 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 18:06:11 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { settings } from "../menuInsert/Settings/settings.js";
 import { newPseudo } from "../menuInsert/Settings/newPseudo.js";
 import { newPass } from "../menuInsert/Settings/newPass.js";
@@ -45,6 +33,12 @@ export class SettingsView implements Component {
         this.container.innerHTML = '';
         this.container.innerHTML = settings();
         this.attachEventListeners();
+
+        if (getUser()?.tfa) {
+            const checkbox = document.getElementById('toggle-2fa') as HTMLInputElement | null
+            if (checkbox)
+                checkbox.checked = true
+        }
     }
 
     private attachEventListeners() {

@@ -129,8 +129,10 @@ export class viewManager implements Component {
             case 'login':
                 if (getUser())
                     router.navigateTo("/game", this)
-                else
-                    newView = new loginView(this.formsContainer, this);
+                else {
+                    const token = params.get("token")
+                    newView = new loginView(this.formsContainer, this, token);
+                }
                 break;
             case 'register':
                 if (getUser())
