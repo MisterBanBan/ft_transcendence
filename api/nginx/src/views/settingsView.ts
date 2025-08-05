@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   settingsView.ts                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/16 20:22:54 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/28 18:06:11 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { settings } from "../menuInsert/Settings/settings.js";
 import { newPseudo } from "../menuInsert/Settings/newPseudo.js";
 import { newPass } from "../menuInsert/Settings/newPass.js";

@@ -4,6 +4,8 @@ import { profile } from "../menuInsert/Profile/profile.js";
 import { Logout } from "../auth/logout.js";
 import { Component } from "../component.js";
 import {router} from "../router.js";
+import {getUser} from "../user-handler.js";
+import {fetchUserProfileData} from "../menuInsert/Profile/userProfilData.js";
 
 export class parameterView implements Component {
     private container: HTMLElement;
@@ -41,11 +43,31 @@ export class parameterView implements Component {
         document.getElementById('logout')?.addEventListener('click', this.handleLogout);
        document.getElementById('parametreReturnBtn')?.addEventListener('click', this.handleReturn);
     }
-    
-    private loadProfile() {
-        this.container.innerHTML = '';
-        this.container.innerHTML = profile();
-        document.getElementById('profileReturnBtn')?.addEventListener('click', this.handleParametre);
+
+    private async loadProfile() {
+        try {
+            this.container.innerHTML = '<div class="h-full w-full flex items-center justify-center"><p class="text-white">Loading profile...</p></div>';
+
+            const currentUser = await getUser();
+
+            if (!currentUser || !currentUser.id) {
+                throw new Error('User not logged in or user ID missing');
+            }
+
+            const userId = String(currentUser.id);
+            const userData = await fetchUserProfileData(userId);
+            console.log(userData);
+
+            if (userData) {
+                this.container.innerHTML = profile(userData.profile, userData.matches);
+                document.getElementById('profileReturnBtn')?.addEventListener('click', this.handleParametre);
+            } else {
+                this.container.innerHTML = '<div class="h-full w-full flex items-center justify-center"><p class="text-white text-red-500">Error loading profile</p></div>';
+            }
+        } catch (error) {
+            console.error('Error loading profile:', error);
+            this.container.innerHTML = '<div class="h-full w-full flex items-center justify-center"><p class="text-white text-red-500">Error loading profile</p></div>';
+        }
     }
 
     public destroy(): void {

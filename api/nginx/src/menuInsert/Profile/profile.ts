@@ -1,4 +1,22 @@
-export const profile = (userProfile, matchHistory) => `
+interface UserProfile {
+    username: string;
+    status: 'online' | 'offline' | 'in_game';
+    totalGames?: number;
+    wins?: number;
+    losses?: number;
+    winrate?: string;
+}
+
+interface Match {
+    player1: string;
+    player2: string;
+    score1: number;
+    score2: number;
+    date: string;
+    gameType?: string;
+}
+
+export const profile = (userProfile: UserProfile, matchHistory: Match[]): string => `
     <div id="profil" class="h-full w-full flex items-center justify-center">
     <div class="h-[85%] w-[90%] flex flex-col items-center justify-center bg-black/60">
         <div class="flex flex-row items-center justify-center  h-full w-full">
@@ -37,7 +55,7 @@ export const profile = (userProfile, matchHistory) => `
                             <p class="responsive-text-profile">Game Type</p>
                         </div>
                         <div class="h-full w-full overflow-y-auto ">
-                            ${matchHistory.slice(0, 10).map(match => `
+                            ${matchHistory.slice(0, 10).map((match: Match) => `
                             <div class="flex flex-row justify-between items-center responsive-text-historique ">
                                 <span class="">${match.player1}</span>
                                 <span class="">${match.player2}</span>
