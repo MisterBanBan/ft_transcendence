@@ -180,30 +180,36 @@ export const routes: Route[] = [
         await new Promise(r => setTimeout(r, 300));
         return `
           <div id="pong" class="relative w-screen h-screen bg-black overflow-hidden flex items-center justify-center">
-              <img
+            <img
                 id="pong-bg"
                 src="/img/pong.png"
                 alt="Pong background"
                 class="block max-w-full max-h-full object-contain"
-              />
-              <img id="ball"  src="/img/ball.png"  class="absolute" />
-              <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
-              <img id="right-bar" src="/img/bar_left.png" class="absolute" />
+            />
+            <img id="ball"  src="/img/ball.png"  class="absolute" />
+            <img id="left-bar"  src="/img/bar_left.png"  class="absolute" />
+            <img id="right-bar" src="/img/bar_left.png" class="absolute" />
  
     		<p id="score-player1"  class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
    			<p id="score-player2" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
-          </div>
-			<div class="fixed top-[45%] left-[80%] z-10">
-				<button class="p-0 border-none bg-transparent">
-					<img id="backPong" src="/img/backPong.png" class="h-[47%] w-[45%] hover:scale-110 transition-transform duration-300"/>
-				</button>
-			</div>
-			<div class="fixed top-[45%] left-[89%] z-10">
-				<button class="p-0 border-none bg-transparent">
-					<img id="backPong" src="/img/profile.png" class="h-[85%] w-[85%]  hover:scale-110 transition-transform duration-300"/>
-				</button>
-			</div>
 
+			<button id="backPong" class="absolute p-0 border-none bg-transparent">
+				<img src="/img/backPong.png" class="hover:scale-110 transition-transform duration-300"/>
+			</button>
+			<button id="quitPong" class="absolute p-0 border-none bg-transparent">
+				<img src="/img/quitGame.png" class="hover:scale-110 transition-transform duration-300"/>
+			</button>
+
+			<video autoplay loop muted id="loading" class="absolute object-contain">
+				<source src="/img/loading.mp4" type="video/mp4">
+			</video>
+
+			<img id="win"  src="/img/youWin.png"  class="absolute" />
+			<img id="lose"  src="/img/youLoose.png"  class="absolute" />
+
+			<p id="end"  class="absolute text-white text-[calc(20vw)] font-omori z-0 drop-shadow"></p>
+		</div>
+				
 
         `;
       }

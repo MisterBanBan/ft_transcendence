@@ -10,7 +10,7 @@ export function onlineManager(socket: Socket, app: FastifyInstance, userID: stri
 
 	if (!waitingPlayer) {
 		waitingPlayer = {socket, userID};
-	} else {
+	} else if (waitingPlayer.userID !== userID) {
 		const gameId = `game-${waitingPlayer.socket.id}${socket.id}`;
 
 		app.playerToGame.set(socket.id, { userID: userID, gameId: gameId, side: "left" , type: "online" });
@@ -23,12 +23,12 @@ export function onlineManager(socket: Socket, app: FastifyInstance, userID: stri
 
 		waitingPlayer.socket.emit("game-started", {
 			gameId,
-			playerId: waitingPlayer.socket.id,
+			side: "right"
 		});
 
 		socket.emit("game-started", {
 			gameId,
-			playerId: socket.id,
+			side: "left",
 		});
 
 		console.log(gameId, "started");

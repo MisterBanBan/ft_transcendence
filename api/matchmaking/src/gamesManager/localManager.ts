@@ -14,7 +14,7 @@ export function localManager(socket: Socket, app: FastifyInstance, userID: strin
 
     socket.emit("game-started", {
       gameId,
-      playerId: socket.id,
+      side: "undefined",
     });
 
 	console.log(gameId, "started");

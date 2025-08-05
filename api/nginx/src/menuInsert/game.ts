@@ -3,7 +3,7 @@ export const game = () => `
 
   <div id="game-options" class="flex flex-col items-center justify-center mt-4 responsive-game-gap relative w-[40%] ">
     <div id="Offline" class="menu-option  text-white responsive-text-parametre font-omori cursor-pointer">Offline</div>
-    <div id="online" class="menu-option  text-white responsive-text-parametre font-omori cursor-pointer">Online</div>
+    <div id="Online" class="menu-option  text-white responsive-text-parametre font-omori cursor-pointer">Online</div>
     <div id="IA" class="menu-option  text-white responsive-text-parametre font-omori cursor-pointer">AI</div>
     <div id="Tournament" class="menu-option  text-white responsive-text-parametre font-omori mb-4 cursor-pointer">Tournament</div>
 

@@ -39,12 +39,12 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 
 			oppSocket.emit("game-started", {
 				gameId,
-				playerId: oppSocket.id,
+				side: "right",
 			});
 
 			socket.emit("game-started", {
 				gameId,
-				playerId: socket.id,
+				side: "left",
 			});
 
 			privateWaiting.delete(oppID);
