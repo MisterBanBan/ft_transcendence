@@ -89,10 +89,6 @@ export class viewManager implements Component {
         this.activeView?.destroy();
 
         const hash = window.location.hash;
-        if (!hash || (hash && hash !== '#tournament')) {
-            tournamentSocket.emit("leave");
-        }
-
         if (hash) {
             viewName = hash.replace('#', '')
         }
@@ -100,6 +96,11 @@ export class viewManager implements Component {
         if (viewName !== "login" && viewName !== "register")
             if (!getUser())
                 router.navigateTo("/game#login", this)
+
+        const params = new URLSearchParams(window.location.search);
+        const leave = params.get("leave");
+        if (leave && leave === "true")
+            tournamentSocket.emit("leave");
 
         console.info(`Redirecting to ${viewName}`)
 
@@ -139,8 +140,9 @@ export class viewManager implements Component {
                 break;
             case 'settings':
                 const currentUser = getUser();
+                const setting = params.get("setting")
                 if (currentUser) {
-                    newView = new SettingsView(this.formsContainer,  this);
+                    newView = new SettingsView(this.formsContainer, this, setting);
                 } else {
                     console.error("No user is currently authenticated.");
                 }
