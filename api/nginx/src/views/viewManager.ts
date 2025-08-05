@@ -11,6 +11,7 @@ import { tournamentView } from './tournamentView.js';
 import {router} from "../router.js";
 import {tournamentSocket} from "../tournaments.js"
 import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
+import { selectAnimation } from '../selectAnimat.js';
 
 
 export class viewManager implements Component {
@@ -25,6 +26,7 @@ export class viewManager implements Component {
     private options!: HTMLElement[];
     private cursor!: HTMLVideoElement;
     private selectedIdx: number = 0;
+    private select?: selectAnimation;
     private activeViewName: string | null = null;
     private keydownHandler: (e: KeyboardEvent) => void;
 
@@ -50,7 +52,7 @@ export class viewManager implements Component {
         const formspicture = document.getElementById('picture');
         if (!formspicture) throw new Error('Form wrapper not found');
         this.formspicture = formspicture;
-        
+
         this.keydownHandler = this.handleKeydown.bind(this);
         
         this.userLog();
@@ -104,6 +106,19 @@ export class viewManager implements Component {
             else
             {
                 this.formspicture.innerHTML = picture();
+                const powerOf = document.getElementById('power');
+                if(powerOf)
+                    powerOf.addEventListener('click',  () => {
+                    const onAnimEnd = (e: AnimationEvent) => {
+                        if (e.animationName === 'tvOff') {
+                            this.containerForm.removeEventListener('animationend', onAnimEnd);
+                            router.navigateTo('/chalet');
+                        }
+                        
+    };
+                        this.containerForm.addEventListener('animationend', onAnimEnd);
+                        this.containerForm.classList.add('tv-effect', 'off');
+                });
                 setTimeout(() => {
                     if (this.profilePictureManager) {
                         this.profilePictureManager.reinitialize();
@@ -120,9 +135,9 @@ export class viewManager implements Component {
 
         switch (viewName) {
             case 'game':
-                this.loadAcceuilVideo();
                 this.formsContainer.innerHTML = game();
-                
+                this.select = new selectAnimation('cursor-video');
+                this.select.startAnimation(); 
 
                     try {
                         this.setupGameMenu();
@@ -150,9 +165,6 @@ export class viewManager implements Component {
                     console.error("No user is currently authenticated.");
                 }
                 break;
-            case 'acceuil':
-                this.loadAcceuilVideo();
-                break;
             case 'tournament':
                 newView = new tournamentView(this.formsContainer, this);
                 break;
@@ -173,6 +185,7 @@ export class viewManager implements Component {
     }
     public destroyGameListeners(): void {
         document.removeEventListener('keydown', this.keydownHandler);
+        this.select?.stopAnimation();
     }
 
     // private wordAnimation() {
@@ -189,11 +202,6 @@ export class viewManager implements Component {
     //     });
     // }
     
-    private loadAcceuilVideo() {
-        this.videoMain.poster = "/img/pong.png";
-        this.videoMain.src = '/img/acceuil.mp4';
-        this.videoMain.load();
-    }
 
     private authBtnHandler = () => {
         if (!getUser()) {
