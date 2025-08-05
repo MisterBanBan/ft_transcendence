@@ -108,6 +108,7 @@ const routeComponents: Record<string, Component> = {
 				'loading',
 				'win',
 				'lose',
+				'end',
                 mode
               );
             pongGame.init();

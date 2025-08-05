@@ -205,11 +205,11 @@ export const routes: Route[] = [
     		<p id="score-player1"  class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
    			<p id="score-player2" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
 
-			<button id="backPong" class="p-0 border-none bg-transparent">
-				<img src="/img/backPong.png" hover:scale-110 transition-transform duration-300"/>
+			<button id="backPong" class="absolute p-0 border-none bg-transparent">
+				<img src="/img/backPong.png" class="hover:scale-110 transition-transform duration-300"/>
 			</button>
-			<button id="quitPong" class="p-0 border-none bg-transparent">
-				<img src="/img/quitPong.png"  hover:scale-110 transition-transform duration-300"/>
+			<button id="quitPong" class="absolute p-0 border-none bg-transparent">
+				<img src="/img/quitGame.png" class="hover:scale-110 transition-transform duration-300"/>
 			</button>
 
 			<video autoplay loop muted id="loading" class="absolute object-contain">
@@ -218,6 +218,8 @@ export const routes: Route[] = [
 
 			<img id="win"  src="/img/youWin.png"  class="absolute" />
 			<img id="lose"  src="/img/youLoose.png"  class="absolute" />
+
+			<p id="end"  class="absolute text-white text-[calc(20vw)] font-omori z-0 drop-shadow"></p>
 		</div>
 				
 

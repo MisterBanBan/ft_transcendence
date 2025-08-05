@@ -15,12 +15,12 @@ export function aiManager(socket: Socket, app: FastifyInstance, userID: string) 
 
 	app.aiSocket.emit("game-started", {
 		gameId,
-		playerId: app.aiSocket.id,
+		side: "right",
     });
 
 	socket.emit("game-started", {
 		gameId,
-		playerId: socket.id,
+		side: "left",
 	});
 
 	console.log(gameId, "started");

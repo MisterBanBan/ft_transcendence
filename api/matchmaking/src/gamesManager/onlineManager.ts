@@ -23,12 +23,12 @@ export function onlineManager(socket: Socket, app: FastifyInstance, userID: stri
 
 		waitingPlayer.socket.emit("game-started", {
 			gameId,
-			playerId: waitingPlayer.socket.id,
+			side: "right"
 		});
 
 		socket.emit("game-started", {
 			gameId,
-			playerId: socket.id,
+			side: "left",
 		});
 
 		console.log(gameId, "started");

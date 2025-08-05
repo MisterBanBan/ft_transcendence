@@ -8,7 +8,7 @@ export function reconnect(socket: Socket, app: FastifyInstance, userID: string, 
 	app.playerToGame.set(socket.id, { userID: userID, gameId: oldPlayer.gameId, side: oldPlayer.side, type: oldPlayer.type });
 	socket.emit("game-started", {
 		gameId: oldPlayer.gameId,
-		playerId: socket.id,
+		side: oldPlayer.side,
 	});
 
 	const gameSocket = app.gameSocket;
@@ -24,5 +24,17 @@ export function reconnect(socket: Socket, app: FastifyInstance, userID: string, 
 		playerId: socket.id,
 		input: data,
 	});
+	});
+
+	socket.on("abandon", () => {
+		const value = app.playerToGame.get(socket.id);
+		if (!value?.gameId) return;
+
+		
+		gameSocket.emit("abandon", {
+			gameId: value.gameId,
+			playerId: socket.id,
+			side: value.side,
+		});
 	});
 }
