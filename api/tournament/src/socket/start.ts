@@ -43,13 +43,20 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 
 		const round = tournament.getStructure().rounds[i];
 
-		console.log(round);
+		console.log("Starting round", i + 1);
 
-		let matchPromises = round.map((match: Match) => {
+		let matchPromises = round.map((match: Match, index: number) => {
+			console.log("Starting match", index + 1);
 			return match.startMatch(app, tournament);
 		});
 
 		await Promise.all(matchPromises);
+
+		console.log("-------- Results --------");
+		tournament.getStructure().rounds[i].forEach(( match: Match, index: number ) => {
+			console.log(index, match);
+		})
+		console.log("-------------------------");
 
 		if (i + 1 < length) {
 			tournament.getStructure().rounds[i + 1].forEach((match: Match, index: number) => {

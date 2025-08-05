@@ -310,49 +310,30 @@ export const routes: Route[] = [
         template: async () => {
             await new Promise(resolve => setTimeout(resolve, 300));
             return `
-			<!-- 2FA Toggle -->
-	<div id="toggle-2fa-popup" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center hidden z-50">
-	  <div class="bg-white shadow-lg rounded-lg p-8 max-w-md w-full space-y-6">
-		<!-- Titre -->
-		<h2 class="text-2xl font-semibold text-center text-gray-800">Vérification en 2 étapes</h2>
-	
-		<!-- Boîte pour l'image -->
-		<div class="flex justify-center">
+			<div id="toggle-2fa-popup" class="flex responsive-form-login flex-col items-center justify-center">
+<div class="flex justify-center">
 				<div class="w-32 h-32 bg-gray-200 rounded flex items-center justify-center">
 			<img id="qrCodeImage" src="" alt="QR Code" />
 				</div>
 		</div>
-	
-		<!-- Texte explicatif -->
-		<p class="text-white font-omori text-center text-xl">
+    <p class="text-white font-omori text-center text-xl">
 				Scannez le QR code avec votre application d’authentification, ou entrez le code manuellement si vous l’avez déjà configurée.
-		</p>
-	
-		<!-- Zone de texte pour le code -->
-		<input
-				id="2fa-code"
-				type="text"
-				placeholder="Entrez le code 2FA"
-				class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-		/>
-		
-		<input
-				id="2fa-password"
-				type="password"
-				placeholder="Mot de passe (non requis si vous n'utilisez pas transcendence pour la connexion)"
-				class="w-full px-4 py-2 border text-sm border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-		/>
-		
-		<!-- Bouton de validation -->
-		<button
-				id="2fa-submit"
-				type="submit"
-				class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-		>
-				Vérifier
-		</button>
-			</div>
-	</div>`;
+		</p>                 
+                  <input
+                    id="2fa-code"
+                    type="text"
+                    placeholder="Enter 2FA code"
+                    class="responsive-placeholder responsive-case-login responsive-case responsive-text"
+                  />
+                  <input
+                    id="2fa-password"
+                    type="text"
+                    placeholder="Enter Password"
+                    class="responsive-placeholder responsive-case-login responsive-case responsive-text"
+                  />
+                  <button type="submit" id="2fa-submit" class="responsive-text responsive-case-submit text-black">Valider</button>
+                  <button type="button" id="2faReturnBtn" class="responsive-text-profile">Return</button>
+                  </div>`;
         }
     },
     {

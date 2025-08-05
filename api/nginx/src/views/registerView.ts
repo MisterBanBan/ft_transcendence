@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 import { viewManager } from "./viewManager.js";
-import { registerForm } from "../menuInsert/Connexion/registerForm.js";
+import { registerForm } from "../menuInsert/Connection/registerForm.js";
 import { getUser } from "../user-handler.js";
 import { wait } from "../wait.js";
 import { Register } from "../auth/register.js";

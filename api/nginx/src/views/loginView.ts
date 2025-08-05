@@ -13,10 +13,10 @@
 import { viewManager } from "./viewManager.js";
 import { getUser } from "../user-handler.js";
 import { wait } from "../wait.js";
-import { twoFApopUp } from "../menuInsert/Connexion/twoFApopUp.js";
+import { twoFApopUp } from "../menuInsert/Connection/twoFApopUp.js";
 import {TFAValidate} from "../auth/2fa-validate.js";
 import { Login } from "../auth/login.js";
-import { loginForm } from "../menuInsert/Connexion/loginForm.js";
+import { loginForm } from "../menuInsert/Connection/loginForm.js";
 import { Component } from "../component.js";
 import {router} from "../router.js";
 
