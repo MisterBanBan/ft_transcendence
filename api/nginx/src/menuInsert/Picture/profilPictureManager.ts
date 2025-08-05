@@ -1,4 +1,4 @@
-import { getUser } from '../../user-handler.js';
+import { getUser, setAvatarUrl } from '../../user-handler.js';
 
 interface UserWithAvatar {
     avatar_url?: string | { avatar_url: string };
@@ -149,6 +149,7 @@ export class ProfilePictureManager {
             console.error('Avatar URL is not a string:', avatarUrl);
             return;
         }
+        setAvatarUrl(avatarUrl);
         const uniqueUrl = `${avatarUrl}?t=${Date.now()}`;
 
         this.pictureElement.style.backgroundImage = `url('${uniqueUrl}')`;

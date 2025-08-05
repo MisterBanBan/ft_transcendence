@@ -12,7 +12,6 @@ import { pong } from './pong.js';
 import { viewManager } from './views/viewManager.js';
 import { chaletCadre } from './chaletCadre.js';
 
-//permet de gerer la destruction des new
 let activeComponent: Component | null = null;
 
 const routeComponents: Record<string, Component> = {
@@ -56,12 +55,10 @@ const routeComponents: Record<string, Component> = {
 			console.log("Init /game");
 			const me = new viewManager('video_main','container_form', 'user');
             me.init();
-			const login = new Login();
-			login.init();
 
             activeComponent = {
                 init: () => {},
-                destroy: () => { me.destroy(); login.destroy();  }
+                destroy: () => { me.destroy(); }
             };
         },
         destroy: () => {}
@@ -102,55 +99,6 @@ const routeComponents: Record<string, Component> = {
         },
         destroy: () => {}
     },
-	"/settings": {
-		init: () => {
-			activeComponent?.destroy?.();
-
-			const changeUsername = new ChangeUsername();
-			const changePassword = new ChangePassword();
-			// const toggle2FA = new Toggle2FA();
-			const logout = new Logout();
-			changeUsername.init();
-			changePassword.init();
-			// toggle2FA.init();
-			logout.init();
-
-			activeComponent = {
-				init: () => {},
-				destroy: () => { changeUsername.destroy(); changePassword.destroy(); logout.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
-	"/2fa": {
-		init: () => {
-			activeComponent?.destroy?.();
-
-			const tfa = new TFAValidate();
-			tfa.init();
-
-			activeComponent = {
-				init: () => {},
-				destroy: () => { tfa.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
-	"/auth": {
-		init: () => {
-			activeComponent?.destroy?.();
-
-			const login = new Login();
-			const register = new Register();
-			login.init();
-			register.init();
-			activeComponent = {
-				init: () => {},
-				destroy: () => { login.destroy(); register.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
 };
 
 export function handleRouteComponents(path: string) {
