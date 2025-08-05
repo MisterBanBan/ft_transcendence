@@ -68,23 +68,24 @@ export class friendsView implements Component {
             console.log('test');
         });*/
         console.log('Invites loaded');
-            console.log('DOMContentLoaded event fired');
-            const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
-            const shareInviteButton = document.getElementById('Share Invite');
-            console.log('Invite input:', inviteInput);
-            if (shareInviteButton && inviteInput) {
-                shareInviteButton.addEventListener('click', () => {
-                    const inviteValue = inviteInput.value.trim();
-        
-                    if (!inviteValue) {
-                        console.log('Input is empty');
-                        return;
-                    }
-        
-                    console.log(`Sending invite to: ${inviteValue}`);
-                    InvitationService.sendInvitation();
-                });
-            }
+        console.log('DOMContentLoaded event fired');
+        const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
+        const shareInviteButton = document.getElementById('Share Invite');
+        console.log('Invite input:', inviteInput);
+        if (shareInviteButton && inviteInput) {
+            shareInviteButton.addEventListener('click', () => {
+                const inviteValue = inviteInput.value.trim();
+
+                if (!inviteValue) {
+                    console.log('Input is empty');
+                    return;
+                }
+
+                console.log(`Sending invite to: ${inviteValue}`);
+                InvitationService.sendInvitation();
+            });
+        }
+
         //this.eventFriendsListener();
         //this.eventFormListeners();
     }

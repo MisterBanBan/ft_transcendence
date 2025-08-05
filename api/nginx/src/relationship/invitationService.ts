@@ -35,7 +35,6 @@ export class InvitationService {
     static async sendInvitation(): Promise<void> {
         const currentUser = getUser();
         if (!currentUser) {
-            ApiUtils.showAlert('User not authenticated');
             return;
         }
 
@@ -43,7 +42,6 @@ export class InvitationService {
         const addresseeUsername = addresseeElement?.value?.trim();
 
         if (!addresseeUsername) {
-            ApiUtils.showAlert('Please enter a user username to invite');
             return;
         }
 
@@ -62,20 +60,16 @@ export class InvitationService {
 
             if (response.ok) {
                 addresseeElement.value = '';
-                ApiUtils.showAlert(data.message || 'Invitation sent successfully');
             } else {
-                ApiUtils.showAlert(data.error || 'Failed to send invitation');
             }
         } catch (error) {
             console.error('Error sending invitation:', error);
-            ApiUtils.showAlert('Error sending invitation');
         }
     }
 
     static async loadInvitations(): Promise<void> {
         const currentUser = getUser();
         if (!currentUser) {
-            ApiUtils.showAlert('User not authenticated');
             return;
         }
 
@@ -91,23 +85,21 @@ export class InvitationService {
             if (data.invitations && data.invitations.length > 0) {
                 this.displayInvitations(data.invitations);
             } else {
+                this.displayInvitations([]);
                 console.log('No pending invitations found');
             }
         } catch (error) {
             console.error('Error loading invitations:', error);
-            ApiUtils.showAlert('Error loading invitations');
         }
     }
 
     static async acceptInvitation(requesterId?: string): Promise<boolean> {
         const currentUser = getUser();
         if (!currentUser) {
-            ApiUtils.showAlert('User not authenticated');
             return false;
         }
 
         if (!requesterId) {
-            ApiUtils.showAlert('Requester ID missing');
             return false;
         }
 
@@ -118,19 +110,16 @@ export class InvitationService {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                ApiUtils.showAlert(errorData.error || `Failed to accept invitation: ${response.status}`);
                 return false;
             }
 
             const data: InvitationResponse = await response.json();
 
-            ApiUtils.showAlert(data.message || 'Invitation accepted successfully');
             await this.loadInvitations();
             return true;
 
         } catch (error) {
             console.error('Error accepting invitation:', error);
-            ApiUtils.showAlert('Network error: Unable to accept invitation');
             return false;
         }
     }
@@ -139,12 +128,10 @@ export class InvitationService {
     static async declineInvitation(requesterId?: string): Promise<boolean> {
         const currentUser = getUser();
         if (!currentUser) {
-            ApiUtils.showAlert('User not authenticated');
             return false;
         }
 
         if (!requesterId) {
-            ApiUtils.showAlert('Requester ID missing');
             return false;
         }
 
@@ -155,19 +142,16 @@ export class InvitationService {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                ApiUtils.showAlert(errorData.error || `Failed to decline invitation: ${response.status}`);
                 return false;
             }
 
             const data: InvitationResponse = await response.json();
 
-            ApiUtils.showAlert(data.message || 'Invitation declined successfully');
             await this.loadInvitations();
             return true;
 
         } catch (error) {
             console.error('Error on refusal of invitation:', error);
-            ApiUtils.showAlert('Network error: Unable to decline invitation');
             return false;
         }
     }
@@ -189,14 +173,14 @@ export class InvitationService {
                         </div>
                     </div>
                     <div class="flex flex-row justify-center gap-8 responsive-text-historique">
-                        <button onclick="InvitationService.declineInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-red-600">REJECT</button>
-                        <button onclick="InvitationService.acceptInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-green-600">ACCEPT</button>
+                        <button id="Response invitation reject" onclick="InvitationService.declineInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-red-600">REJECT</button>
+                        <button id="Response invitation accept" onclick="InvitationService.acceptInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-green-600">ACCEPT</button>
                     </div>
                 `).join('')}
             </div>
         `;
         } else {
-            invitationsList.innerHTML = '<p class="text-gray-400">Aucune invitation en attente</p>';
+            invitationsList.innerHTML = '<p class="text-gray-400 flex flex-row justify-center item-center gap-8">Aucune invitation en attente</p>';
         }
     }
 
