@@ -99,7 +99,7 @@ export class viewManager implements Component {
 
         if (viewName !== "login" && viewName !== "register")
             if (!getUser())
-                router.navigateTo("/game#login")
+                router.navigateTo("/game#login", this)
 
         console.info(`Redirecting to ${viewName}`)
 
@@ -127,13 +127,13 @@ export class viewManager implements Component {
                 break;
             case 'login':
                 if (getUser())
-                    router.navigateTo("/game")
+                    router.navigateTo("/game", this)
                 else
                     newView = new loginView(this.formsContainer, this);
                 break;
             case 'register':
                 if (getUser())
-                    router.navigateTo("/game")
+                    router.navigateTo("/game", this)
                 else
                     newView = new registerView(this.formsContainer, this.formspicture, this);
                 break;
@@ -192,10 +192,10 @@ export class viewManager implements Component {
 
     private authBtnHandler = () => {
         if (!getUser()) {
-            router.navigateTo("/game#login")
+            router.navigateTo("/game#login", this)
             // this.show('login');
         } else {
-            router.navigateTo("/game#parametre")
+            router.navigateTo("/game#parametre", this)
             // this.show('parametre');
         }
     };
@@ -228,7 +228,7 @@ export class viewManager implements Component {
             router.navigateTo("/Pong?mode=ai");
         }
         if (selected.id === 'Tournament') {
-            router.navigateTo("/game#tournament")
+            router.navigateTo("/game#tournament", this)
             // this.show('tournament');
         }
     }

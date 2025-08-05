@@ -31,9 +31,9 @@ export class SettingsView implements Component {
     private handleNewPseudo = () => this.newPseudo();
     private handleNewPassword = () => this.newPassword();
     private handleToggle2FA = () => this.toggle2FA();
-    private handleSettings = () => router.navigateTo("/game#settings");
-    private handleSettingsReturn = () => router.navigateTo("/game#parametre");
-    private handlePseudoReturn = () => router.navigateTo("/game#settings");
+    private handleSettings = () => router.navigateTo("/game#settings", this.viewManager);
+    private handleSettingsReturn = () => router.navigateTo("/game#parametre", this.viewManager);
+    private handlePseudoReturn = () => router.navigateTo("/game#settings", this.viewManager);
 
     constructor(containerId: HTMLElement, viewManager: viewManager) {
         this.container = containerId;

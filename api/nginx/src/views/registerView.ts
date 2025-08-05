@@ -23,7 +23,7 @@ export class registerView implements Component {
     private viewManager: viewManager;
     
     private handleSubmit = () => this.submit_registerForm();
-    private handleLogin = () =>  router.navigateTo("/game#login");
+    private handleLogin = () =>  router.navigateTo("/game#login", this.viewManager);
 
     constructor(container: HTMLElement, private formspicture: HTMLElement, viewManager: viewManager) {
         this.container = container;
@@ -52,7 +52,7 @@ export class registerView implements Component {
             attempts++;
         }
         if (getUser()) {
-            router.navigateTo("/game")
+            router.navigateTo("/game", this.viewManager)
             // this.viewManager.show('game');
         }
         this.attachEventListeners(); 

@@ -11,12 +11,16 @@
 /* ************************************************************************** */
 
 //a tester avec un gap-4 pour que le bouton register soit au meme niveau que le bouton login
+
+const hostname = window.location.hostname
+
+let redirectUri = encodeURIComponent(`https://redirectmeto.com/http://${hostname}:8080/api/auth/callback/42`);
 const ft_url = "https://api.intra.42.fr/oauth/authorize?" +
 	"client_id=u-s4t2ud-04dc53dfa151b3c595dfa8d2ad750d48dfda6fffd8848b0e4b1d438b00306b10&" +
-	"redirect_uri=https%3A%2F%2Fredirectmeto.com%2Fhttp%3A%2F%2Fz3r4p1%3A8080%2Fapi%2Fauth%2Fcallback%2F42&" +
+	`redirect_uri=${redirectUri}&` +
 	"response_type=code"
 
-const redirectUri = encodeURIComponent("https://redirectmeto.com/http://z3r4p1:8080/api/auth/callback/google");
+redirectUri = encodeURIComponent(`https://redirectmeto.com/http://${hostname}:8080/api/auth/callback/google`);
 const google_url = "https://accounts.google.com/o/oauth2/v2/auth?" +
 	"client_id=570055045570-c95opdokftohj6c4l7u9t7b46bpmnrkl.apps.googleusercontent.com&" +
 	`redirect_uri=${redirectUri}&` +

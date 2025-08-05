@@ -25,7 +25,7 @@ export class loginView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
     private handleSubmit = () => this.submit_loginForm();
-    private handleRegister = () => router.navigateTo("/game#register");
+    private handleRegister = () => router.navigateTo("/game#register", this.viewManager);
 
     constructor(container: HTMLElement,  viewManager: viewManager) {
         this.container = container;
@@ -67,7 +67,7 @@ export class loginView implements Component {
                 tfaValidate.init();
             }
             else {
-                router.navigateTo("/game")
+                router.navigateTo("/game", this.viewManager)
                 // this.viewManager.show('game');
             }
         } else if (attempts >= limit) {
