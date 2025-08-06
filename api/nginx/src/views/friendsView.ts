@@ -1,20 +1,9 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   friendsView.ts                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 23:50:50 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
 //import { Component } from "./component.js";
 //import { invites } from "../menuInsert/Friends/invites.js";
 import { searchMate } from "../menuInsert/Friends/searchMate.js";
 import { playerPerso } from "../menuInsert/Profile/playerPerso.js";
-import { friendAction } from "../menuInsert/Friends/friendAction.js";
+import { friendActionTemplate } from "../menuInsert/Friends/friendAction.js";
 import { Component } from "../component.js";
 import { InvitationService } from "../relationship/invitationService.js";
 import { FriendService } from "../relationship/friendsService.js";
@@ -145,9 +134,25 @@ export class friendsView implements Component {
             return;
         }
 
-        const popupHtml = friendAction(x, y);
+        const popupHtml = friendActionTemplate(x, y);
         friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
+        
+        const popup = document.getElementById('friend-popup');
+        if (!popup)
+            { console.log('fdfd'); return; }
 
+         const closeOnClickOutside = (evt: MouseEvent) => {
+         if (!popup.contains(evt.target as Node)) {
+             popup.remove();
+             document.removeEventListener('click', closeOnClickOutside);
+             return;
+             }
+         };
+         setTimeout(() => {
+            document.addEventListener('click', closeOnClickOutside);
+            }, 0);
+
+        
         document.getElementById('removeFriend')?.addEventListener('click', async () => {
             try {
                 console.log('Attempting to remove friend with ID:', friendId);
