@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   tournament.ts                                      :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/25 17:36:29 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/30 11:01:13 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 export const tournament = () => `
     <div id="tournament" class="h-full w-full flex items-center justify-center">
 		<div class="h-[85%] w-[90%] flex flex-col items-center justify-center bg-black/60">

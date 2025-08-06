@@ -9,7 +9,7 @@ import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/Picture/picture.js';
 import { tournamentView } from './tournamentView.js';
 import {router} from "../router.js";
-import {tournamentSocket} from "../tournaments.js"
+import {clearTournamentSocket, initTournamentSocket} from "../tournamentsHandler.js"
 import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
 import { selectAnimation } from '../selectAnimat.js';
 
@@ -54,7 +54,7 @@ export class viewManager implements Component {
         this.formspicture = formspicture;
 
         this.keydownHandler = this.handleKeydown.bind(this);
-        
+
         this.userLog();
         this.initializeProfilePictureManager();
     }
@@ -105,16 +105,15 @@ export class viewManager implements Component {
                 const powerOf = document.getElementById('power');
                 if(powerOf)
                     powerOf.addEventListener('click',  () => {
-                    const onAnimEnd = (e: AnimationEvent) => {
-                        if (e.animationName === 'tvOff') {
-                            this.containerForm.removeEventListener('animationend', onAnimEnd);
-                            router.navigateTo('/chalet');
-                        }
-
-    };
+                        const onAnimEnd = (e: AnimationEvent) => {
+                            if (e.animationName === 'tvOff') {
+                                this.containerForm.removeEventListener('animationend', onAnimEnd);
+                                router.navigateTo('/chalet');
+                            }
+                        };
                         this.containerForm.addEventListener('animationend', onAnimEnd);
                         this.containerForm.classList.add('tv-effect', 'off');
-                });
+                    });
                 setTimeout(() => {
                     if (this.profilePictureManager) {
                         this.profilePictureManager.reinitialize();
@@ -123,10 +122,8 @@ export class viewManager implements Component {
             }
         }
 
-        const params = new URLSearchParams(window.location.search);
-        const leave = params.get("leave");
-        if (leave && leave === "true")
-            tournamentSocket.emit("leave");
+        if (viewName !== "tournament")
+            clearTournamentSocket();
 
         console.info(`Redirecting to ${viewName}`)
 
@@ -134,6 +131,8 @@ export class viewManager implements Component {
         //this.pictureContainer.innerHTML = '';
 
         let newView: Component | null = null;
+
+        const params = new URLSearchParams(window.location.search)
 
         switch (viewName) {
             case 'game':
@@ -171,6 +170,7 @@ export class viewManager implements Component {
                 }
                 break;
             case 'tournament':
+                initTournamentSocket()
                 newView = new tournamentView(this.formsContainer, this);
                 break;
             case 'parametre':
@@ -217,8 +217,8 @@ export class viewManager implements Component {
             // this.show('parametre');
         }
     };
-  
-       
+
+
 
     private updateCursor() {
         if (!this.options.length) return;
@@ -226,13 +226,13 @@ export class viewManager implements Component {
         const selected = this.options[this.selectedIdx];
         const offset = selected.offsetTop - firstOption.offsetTop;
         this.cursor.style.top = offset + "px";
-        
+
 
         this.options.forEach((opt, i) => {
             opt.classList.toggle('selected', i === this.selectedIdx);
         });
     }
-    
+
     private selectOption() {
         if (!this.options.length) return;
         const selected = this.options[this.selectedIdx];
@@ -250,7 +250,7 @@ export class viewManager implements Component {
             // this.show('tournament');
         }
     }
-    
+
     private handleKeydown(e: KeyboardEvent) {
         console.log(e.key)
         if (!this.options.length) return;
@@ -281,10 +281,10 @@ export class viewManager implements Component {
         document.removeEventListener('keydown', this.keydownHandler);
         document.addEventListener('keydown', this.keydownHandler);
     }
-    
+
     private resize = () => {
         const rect = this.videoMain.getBoundingClientRect();
-            
+
         this.containerForm.style.left = `${(rect.left )}px`;
         this.containerForm.style.top = `${(rect.top )}px`;
         this.containerForm.style.width = `${rect.width }px`;

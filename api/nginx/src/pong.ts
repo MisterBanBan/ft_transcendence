@@ -35,15 +35,15 @@ export class pong implements Component {
     private boundKeyUpHandler!: (e: KeyboardEvent) => void;
 	private inGame: number = 0;
     private side: string | null = null;
-    private mode: string | null;
+    private readonly mode: string | null;
     private leftBar!: Bar;
     private rightBar!: Bar;
     private ball!: Ball;
     private rafId = 0;
     private imgPong: HTMLImageElement;
-    private leftBEle: HTMLElement;
-    private rightBEle: HTMLElement;
-    private ballEle: HTMLElement;
+    private readonly leftBEle: HTMLElement;
+    private readonly rightBEle: HTMLElement;
+    private readonly ballEle: HTMLElement;
     private scorePlayer1: HTMLElement;
     private scorePlayer2: HTMLElement;
     private loadingEle: HTMLElement;
@@ -424,7 +424,8 @@ export class pong implements Component {
                 else {
                     this.endEle.textContent = "Player Right wins!";
                 }
-                this.endEle.style.display = "inline";
+				if (score.playerLeft !== score.playerRight)
+					this.endEle.style.display = "inline";
             }
             else {
                 this.loseEle.style.display = "inline";

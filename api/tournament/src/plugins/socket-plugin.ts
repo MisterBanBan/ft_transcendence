@@ -179,10 +179,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			const tournament = await inTournament(user.id);
 
 			if (userSockets && userSockets.size - 1 !== 0) {
-				if (tournament)
-					socket.leave(tournament.getName())
 				userSockets.delete(socket.id);
-
 				return;
 			}
 

@@ -1,9 +1,8 @@
 import { Component } from "../component.js";
 import { viewManager } from "./viewManager.js";
 import { tournament } from "../menuInsert/Tournaments/tournament.js";
-import {tournamentSocket, updateTournamentInfos} from "../tournaments.js";
+import {emitTournamentSocket, updateTournamentInfos} from "../tournamentsHandler.js";
 import {createTournamentForm} from "../menuInsert/Tournaments/createTournamentForm.js";
-import {router} from "../router.js";
 import {showTournaments} from "../tournament/show-tournaments.js";
 
 export class tournamentView implements Component{
@@ -49,7 +48,7 @@ export class tournamentView implements Component{
 		response.then((data) => {
 			data.json().then((json) => {
 				if (json.event === "updateTournamentsList")
-					showTournaments(tournamentSocket, json.data);
+					showTournaments(json.data);
 				else if (json.event === "updateTournamentInfos") {
 					updateTournamentInfos(json.data)
 				}
@@ -79,7 +78,8 @@ export class tournamentView implements Component{
 		const name = nameInput.value;
 		const size = sizeInput.value;
 
-		tournamentSocket.emit("create", name, parseInt(size));
+		emitTournamentSocket("create", name, parseInt(size));
+		// tournamentSocket.emit("create", name, parseInt(size));
 	}
 
 	public destroy(): void {
