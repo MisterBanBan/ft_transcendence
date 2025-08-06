@@ -1,6 +1,6 @@
 import { Component } from "../component.js";
 import { AuthUser } from "../type.js";
-import { setUser } from "../user-handler.js";
+import {getUser, setUser} from "../user-handler.js";
 
 interface Payload {
 	username: string;
@@ -76,6 +76,8 @@ export class Register implements Component{
 				updatedAt: data.user.updatedAt
 			}
 			setUser(user);
+
+			console.log(getUser());
 			
 		} catch (err) {
 			console.error(err);

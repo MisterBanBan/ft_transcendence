@@ -41,6 +41,7 @@ export const picture = () => {
                 type="button"
                 id="picture-profile"
                 class="w-[65%] h-[68%] mt-4 mr-4 bg-[url(/uploads/${avatarUrl})] bg-[length:100%_100%] bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
+                style='background-image: url("/uploads/${avatarUrl}?t=${Date.now()}"); background-size: 100% 100%; background-repeat: no-repeat; background-position: center center;'
                 title="Click to change profile picture"
             ></button>
         </div>

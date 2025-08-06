@@ -73,6 +73,8 @@ export class viewManager implements Component {
         const currentUser = getUser();
         if (currentUser) {
             this.profilePictureManager = new ProfilePictureManager(currentUser.id.toString());
+
+            this.profilePictureManager.reinitialize()
         }
     }
 

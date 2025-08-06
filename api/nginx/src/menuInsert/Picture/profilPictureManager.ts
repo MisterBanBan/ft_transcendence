@@ -40,6 +40,9 @@ export class ProfilePictureManager {
 
     public reinitialize(): void {
         this.isInitialized = false;
+        const user = getUser()
+        if (user)
+            this.userId = user.id.toString()
         this.init();
     }
 
