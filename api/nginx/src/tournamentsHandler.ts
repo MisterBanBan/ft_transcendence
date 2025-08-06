@@ -198,6 +198,12 @@ export function updateTournamentInfos(tournamentInfos: any) {
 
 			playersList.appendChild(li);
 		}
+		else {
+			if (infos.ownerId === id)
+				playerLi.className = "text-yellow-400 responsive-text-players-list"
+			else
+				playerLi.className = "responsive-text-players-list"
+		}
 	})
 
 	if (infos.started) {
@@ -217,7 +223,7 @@ export function updateTournamentInfos(tournamentInfos: any) {
 							if (match.player1)
 								player1Div.textContent = map[match.player1]
 							else
-								player1Div.textContent = "Not defined"
+								player1Div.textContent = "Undefined"
 						}
 
 						if (player2Div) {
@@ -225,7 +231,7 @@ export function updateTournamentInfos(tournamentInfos: any) {
 							if (match.player2)
 								player2Div.textContent = map[match.player2]
 							else
-								player2Div.textContent = "Not defined"
+								player2Div.textContent = "Undefined"
 						}
 					}
 				})
@@ -243,5 +249,5 @@ export function updateTournamentInfos(tournamentInfos: any) {
 	if (infos.structure.winner)
 		winnerDiv.innerText = map[infos.structure.winner]
 	else
-		winnerDiv.innerText = "Not defined"
+		winnerDiv.innerText = "Undefined"
 }

@@ -102,8 +102,8 @@ export interface TournamentStructure {
 export class Tournament {
 
 	private readonly name: string;
-	private readonly owner: number;
 	private readonly size: number;
+	private owner: number;
 	private players: Map<number, string> = new Map();
 	private structure: TournamentStructure = { rounds: [], winner: undefined};
 	private started: boolean = false;
@@ -112,6 +112,10 @@ export class Tournament {
 		this.name = name;
 		this.owner = owner;
 		this.size = size;
+	}
+
+	public setOwner(owner: number) {
+		this.owner = owner;
 	}
 
 	public getName(): string {

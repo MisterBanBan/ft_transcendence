@@ -7,6 +7,13 @@ import {updateTournamentInfo} from "../room/update-tournament-info.js";
 
 export async function leave(app: FastifyInstance, playerId: number, tournament: Tournament) {
 
+	if (tournament.getOwner() === playerId) {
+		const newOwner = Array.from(tournament.getPlayers())[1][0];
+		if (newOwner) {
+			tournament.setOwner(newOwner);
+		}
+	}
+
 	tournament.removePlayer(playerId);
 	allLeaveRoom(app, playerId, tournament.getName());
 
