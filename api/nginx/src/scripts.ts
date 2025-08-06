@@ -34,15 +34,15 @@ function handleKeyPressPlayer(stats: PlayerStats, player: PlayerAnimation, isInT
             }
             break;
         case 'arrowleft':
-        case 'a':
             stats.leftKey = true;
             stats.velocity.x -= stats.speed;
+            player.setDirection(true);
             player.startAnimation();
             break;
         case 'arrowright':
-        case 'd':
             stats.rightKey = true;
             stats.velocity.x += stats.speed;
+            player.setDirection(false);
             player.startAnimation();
             break;
     }
@@ -54,12 +54,10 @@ function handleKeyReleasePlayer(stats: PlayerStats, player: PlayerAnimation, e: 
 
     switch (key) {
         case 'arrowleft':
-        case 'a':
             stats.velocity.x += stats.speed;
             stats.leftKey = false;
             break;
         case 'arrowright':
-        case 'd':
             stats.velocity.x -= stats.speed;
             stats.rightKey = false;
             break;
@@ -89,6 +87,7 @@ export class PlayerController implements IPlayerController{
     private isDoorOpen: boolean = false;
 
     constructor(playerId: string, door: string) {
+        
         window.addEventListener('resize', this.handleResize.bind(this));
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
@@ -103,17 +102,20 @@ export class PlayerController implements IPlayerController{
                 router.navigateTo("/game");
             });
         }
+        window.addEventListener('blur', this.handleWindowBlur.bind(this));
+        document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
 
         this.player = new PlayerAnimation(playerId);
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
-        
+        this.player.setDirection(false);
         let worldPath: string;
         this.activateInfoUserOnce();
         displayTextByLetter("Bienvenue dans le jeu ! Appuyez sur 'E' pour ouvrir la porte.\nvhfrvvbbrevbbvbberuvbibrbvilrbziuvbiulbtrulibvulibrltuibvuil\nbrtubviubrtubviubrtluibvubrtuhbvlubrtubvulrbtubvirbti", "dialogueBox", 50);
-        this.boundKeyDownHandler = (e) => handleKeyPressPlayer(this.stats, this.player, this.isDoorOpen, this.isInTriggerZone, e);
+        this.boundKeyDownHandler = (e) => {console.log("Key Down"); handleKeyPressPlayer(this.stats, this.player, this.isDoorOpen, this.isInTriggerZone, e)};
         this.boundKeyUpHandler = (e) => {
+            console.log("Key up")
             handleKeyReleasePlayer(this.stats, this.player, e);
             if (e.key.toLowerCase() === 'e') {
                 if (this.isInTriggerZone && !this.isDoorOpen) {
@@ -143,11 +145,29 @@ export class PlayerController implements IPlayerController{
 
         this.updatePosition();
         this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
-
     }
+    private handleVisibilityChange() {
+        if (document.hidden) {
+            this.handleWindowBlur();
+        }
+    }
+
+    private handleWindowBlur() {
+    // Remet tous les flags à zéro
+    for (const key in pressedKeys) pressedKeys[key] = false;
+
+    this.stats.leftKey = false;
+    this.stats.rightKey = false;
+    this.stats.velocity.x = 0;
+    this.player.setDirection(false);
+    this.player.stopAnimation();
+
+}
+
+
     private handleResize() {
         const viewportHeight = window.innerHeight;
-        console.log("Viewport height:", viewportHeight);
+        // console.log("Viewport height:", viewportHeight);
         const playerBottom = this.pos.y + this.playerHeight;
         
         if (playerBottom > viewportHeight) {
@@ -155,17 +175,7 @@ export class PlayerController implements IPlayerController{
             this.updatePosition();
         }
     }
-    public destroy(): void {
-        this.player.stopAnimation();
-        
-        window.removeEventListener('keydown', this.boundKeyDownHandler);
-        window.removeEventListener('keyup', this.boundKeyUpHandler);
-        
-        if (this.animationFrameId !== null) {
-            cancelAnimationFrame(this.animationFrameId);
-        }
-        console.log("PlayerController destroy");
-    }
+
 
     private worldPosX:number = 0;
     private cameraX:number = 0;
@@ -179,6 +189,7 @@ export class PlayerController implements IPlayerController{
     private updatePhysics(dt: number, worldWidth: number, viewportHeight: number) {
         
         const gravity = 1500; 
+        // console.log(this.stats.velocity.x)
         this.worldPosX = this.worldPosX || this.pos.x;
         this.worldPosX += this.stats.velocity.x * dt;
         this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
@@ -196,7 +207,7 @@ export class PlayerController implements IPlayerController{
             this.pos.y = viewportHeight - this.playerHeight;
             this.stats.isJumping = false;
         }
-        console.log(this.pos.y, viewportHeight, this.playerHeight);
+        // console.log(this.pos.y, viewportHeight, this.playerHeight);
         this.pos.x = this.worldPosX - this.cameraX;
     }
 
@@ -335,26 +346,39 @@ export class PlayerController implements IPlayerController{
     private updatePosition() {
         this.player.updatePosition(this.pos.x, this.pos.y);
     }
-}
-
-function displayTextByLetter(text: string, elementId: string, speed: number) : void {
-        const element = document.getElementById(elementId);
-        if (!element) {
-            console.error(`Element with id "${elementId}" not found`);
-            return;
+    public destroy(): void {
+        this.player.stopAnimation();
+        
+        window.removeEventListener('keydown', this.boundKeyDownHandler);
+        window.removeEventListener('keyup', this.boundKeyUpHandler);
+        window.removeEventListener('blur', this.handleWindowBlur.bind(this));
+        document.removeEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+        if (this.animationFrameId !== null) {
+            cancelAnimationFrame(this.animationFrameId);
         }
-
-        let index = 0;
-        element.textContent = '';
-        const interval = setInterval(() => {
-            if(index < text.length) {
-                element.textContent += text[index];
-                index++;
-            } else {
-                clearInterval(interval);
-            }
-        }, speed);
+        console.log("PlayerController destroy");
+    }
 
 }
+
+    function displayTextByLetter(text: string, elementId: string, speed: number) : void {
+            const element = document.getElementById(elementId);
+            if (!element) {
+                console.error(`Element with id "${elementId}" not found`);
+                return;
+            }
+
+            let index = 0;
+            element.textContent = '';
+            const interval = setInterval(() => {
+                if(index < text.length) {
+                    element.textContent += text[index];
+                    index++;
+                } else {
+                    clearInterval(interval);
+                }
+            }, speed);
+
+    }
 
 export default PlayerController;

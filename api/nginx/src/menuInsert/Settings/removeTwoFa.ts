@@ -8,7 +8,7 @@ export const removeTwoFa = () => `
                   />
                   <input
                     id="2fa-password-remove"
-                    type="text"
+                    type="password"
                     placeholder="Enter Password"
                     class="responsive-placeholder responsive-case-login responsive-case responsive-text"
                   />
