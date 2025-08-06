@@ -26,7 +26,7 @@ import {router} from "../router.js";
 export class friendsView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
-    private handleReturn = () => router.navigateTo("/game#parametre");
+    private handleReturn = () => router.navigateTo("/game#parametre", this.viewManager);
     private handleFriends = () => this.friends();
     private handleInvites = () => this.invites();
 

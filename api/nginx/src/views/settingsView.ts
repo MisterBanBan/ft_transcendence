@@ -15,31 +15,50 @@ import {router} from "../router.js";
 export class SettingsView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
+    private setting: string | null;
     
     private handleNewPseudo = () => this.newPseudo();
     private handleNewPassword = () => this.newPassword();
     private handleToggle2FA = () => this.toggle2FA();
-    private handleSettings = () => router.navigateTo("/game#settings");
-    private handleSettingsReturn = () => router.navigateTo("/game#parametre");
-    private handlePseudoReturn = () => router.navigateTo("/game#settings");
+    private handleParametreReturn = () => router.navigateTo("/game#parametre", this.viewManager);
+    private handleSettingsReturn = () => router.navigateTo("/game#settings", this.viewManager);
 
-    constructor(containerId: HTMLElement, viewManager: viewManager) {
+    constructor(containerId: HTMLElement, viewManager: viewManager, setting: string | null) {
         this.container = containerId;
         this.viewManager = viewManager;
+        this.setting = setting;
     }
 
     public init(): void{
         this.container.innerHTML = '';
         this.container.innerHTML = settings();
         this.attachEventListeners();
+
+        if (getUser()?.tfa) {
+            const checkbox = document.getElementById('toggle-2fa') as HTMLInputElement | null
+            if (checkbox)
+                checkbox.checked = true
+        }
     }
 
     private attachEventListeners() {
+        if (this.setting) {
+            switch (this.setting) {
+                case "change-name":
+                    this.handleNewPseudo();
+                    return;
+                case "change-password":
+                    this.handleNewPassword();
+                    return;
+                case "toggle-2fa":
+                    this.handleToggle2FA();
+                    return;
+            }
+        }
         document.getElementById('newPseudo')?.addEventListener('click', this.handleNewPseudo);
         document.getElementById('newPass')?.addEventListener('click', this.handleNewPassword);
         document.getElementById('toggle-2fa')?.addEventListener('change', this.handleToggle2FA);
-        document.getElementById('settings')?.addEventListener('click', this.handleSettings);
-        document.getElementById('settingsReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
+        document.getElementById('settingsReturnBtn')?.addEventListener('click', this.handleParametreReturn);
     }
 
     private newPseudo() {
@@ -47,7 +66,7 @@ export class SettingsView implements Component {
         this.container.insertAdjacentHTML('beforeend', newPseudo());
         const changeUsername = new ChangeUsername();
         changeUsername.init();
-        document.getElementById('pseudoReturnBtn')?.addEventListener('click', this.handlePseudoReturn);
+        document.getElementById('pseudoReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
     }
 
     private newPassword(){
@@ -55,7 +74,7 @@ export class SettingsView implements Component {
         this.container.insertAdjacentHTML('beforeend', newPass());
         const changePassword = new ChangePassword();
         changePassword.init();
-        document.getElementById('passReturnBtn')?.addEventListener('click', this.handlePseudoReturn);
+        document.getElementById('passReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
 
     }
 
@@ -75,7 +94,7 @@ export class SettingsView implements Component {
         this.container.insertAdjacentHTML('beforeend', newTwoFa());
         const add2FA = new Add2FA();
         add2FA.init();
-        document.getElementById('2faReturnBtn')?.addEventListener('click', this.handlePseudoReturn);
+        document.getElementById('2faReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
 
     }
 
@@ -84,7 +103,7 @@ export class SettingsView implements Component {
         this.container.insertAdjacentHTML('beforeend', removeTwoFa());
         const remove2FA = new Remove2FA();
         remove2FA.init();
-        document.getElementById('2faReturnBtn')?.addEventListener('click', this.handlePseudoReturn);
+        document.getElementById('2faReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
 
     }
 
@@ -92,8 +111,9 @@ export class SettingsView implements Component {
         document.getElementById('newPseudo')?.removeEventListener('click', this.handleNewPseudo);
         document.getElementById('newPass')?.removeEventListener('click', this.handleNewPassword);
         document.getElementById('toggle-2fa')?.removeEventListener('change', this.handleToggle2FA);
-        document.getElementById('settingsReturnBtn')?.removeEventListener('click', this.handleSettingsReturn);
-        document.getElementById('settings')?.removeEventListener('click', this.handleSettings);
-        document.getElementById('pseudoReturnBtn')?.removeEventListener('click', this.handlePseudoReturn);
+        document.getElementById('settingsReturnBtn')?.removeEventListener('click', this.handleParametreReturn);
+        document.getElementById('pseudoReturnBtn')?.removeEventListener('click', this.handleSettingsReturn);
+        document.getElementById('passReturnBtn')?.removeEventListener('click', this.handleSettingsReturn);
+        document.getElementById('2faReturnBtn')?.removeEventListener('click', this.handleSettingsReturn);
     }
 }

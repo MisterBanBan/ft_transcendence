@@ -1,4 +1,5 @@
 import {Component} from "../component.js";
+import {router} from "../router.js";
 
 interface Payload {
 	code: string;
@@ -55,7 +56,7 @@ async function handleSubmit(event: Event, toggle: boolean): Promise<void> {
 			return;
 		}
 
-		window.location.href = "/settings";
+		router.navigateTo("/game#settings");
 
 	} catch (err) {
 		console.error(err);

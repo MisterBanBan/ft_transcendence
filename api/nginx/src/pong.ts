@@ -1,4 +1,5 @@
 import { Component } from "./component.js"
+import { router } from "./router.js";
 
 declare const io: any;
 
@@ -32,9 +33,9 @@ class Bar {
 export class pong implements Component {
     private boundKeyDownHandler!: (e: KeyboardEvent) => void;
     private boundKeyUpHandler!: (e: KeyboardEvent) => void;
+	private inGame: number = 0;
+    private side: string | null = null;
     private mode: string | null;
-    private scorePlayer1: HTMLElement;
-    private scorePlayer2: HTMLElement;
     private leftBar!: Bar;
     private rightBar!: Bar;
     private ball!: Ball;
@@ -43,15 +44,24 @@ export class pong implements Component {
     private leftBEle: HTMLElement;
     private rightBEle: HTMLElement;
     private ballEle: HTMLElement;
+    private scorePlayer1: HTMLElement;
+    private scorePlayer2: HTMLElement;
+    private loadingEle: HTMLElement;
+    private winEle: HTMLElement;
+    private loseEle: HTMLElement;
+    private backPongEle: HTMLElement;
+    private quitPongEle: HTMLElement;
+    private endEle: HTMLElement;
     private backRect!: DOMRect;
-    private backButton!: HTMLElement;
+
 	private socket = io(`/`, {
 		transports: ["websocket", "polling"],
 		withCredentials: true,
         path: "/wss/matchmaking"
 	});
     
-    constructor(leftBarId: string, rightBarId: string, ballId: string, imgPongId: string,containerId: string, scorePlayer1: string, scorePlayer2: string, mode: string | null) {
+    constructor(leftBarId: string, rightBarId: string, ballId: string,containerId: string, scorePlayer1: string, scorePlayer2: string,
+            backPong: string, quitPong: string, loading: string, win: string, lose: string, end: string, mode: string | null) {
         const leftBarElement = document.getElementById(leftBarId);
         if(!leftBarElement) {
             throw new Error('Left bar not found');
@@ -71,21 +81,66 @@ export class pong implements Component {
         if(!score_player1) {
             throw new Error('Score Player 1 not found');
         }
-        this.scorePlayer1 = score_player1;
 
         const score_player2 = document.getElementById(scorePlayer2);
         if(!score_player2) {
             throw new Error('Score Player 2 not found');
         }
-        this.scorePlayer2 = score_player2;
+
+		const loadingElement = document.getElementById(loading);
+		if(!loadingElement) {
+			throw new Error('Loading element not found');
+		}
+
+		const winElement = document.getElementById(win);
+		if(!winElement) {
+			throw new Error('Win element not found');
+		}
+
+		const loseElement = document.getElementById(lose);
+		if(!loseElement) {
+			throw new Error('Lose element not found');
+		}
+
+		const backPongElement = document.getElementById(backPong);
+		if(!backPongElement) {
+			throw new Error('Back Pong element not found');
+		}
+
+		const quitPongElement = document.getElementById(quitPong);
+		if(!quitPongElement) {
+			throw new Error('Quit Pong element not found');
+		}
+
+        const endElement = document.getElementById(end);
+        if(!endElement) {
+            throw new Error('End element not found');
+        }
 
         this.leftBEle = leftBarElement;
         this.rightBEle = rightBarElement;
         this.ballEle = ballElement;
+        this.scorePlayer1 = score_player1;
+        this.scorePlayer2 = score_player2;
+		this.loadingEle = loadingElement;
+		this.winEle = winElement;
+		this.loseEle = loseElement;
+		this.backPongEle = backPongElement;
+		this.quitPongEle = quitPongElement;
+        this.endEle = endElement;
         this.imgPong = document.getElementById(containerId) as HTMLImageElement;
 
         this.mode = mode;
 
+		this.backPongEle.addEventListener('click', () => {
+			this.socket.emit("abandon");
+            router.navigateTo("/Pong?mode=" + this.mode);
+        });
+
+		this.quitPongEle.addEventListener('click', () => {
+			this.socket.emit("abandon");
+			router.navigateTo("/game");
+        });
     }
     
     private barResize = () => {
@@ -124,6 +179,62 @@ export class pong implements Component {
 
     }
 
+	private loadingScreen = () => {
+		const imgRect = this.imgPong.getBoundingClientRect();
+
+		const width = imgRect.width * 0.5;
+		const height = imgRect.height * 0.5;
+
+		this.loadingEle.style.width = `${width}px`;
+		this.loadingEle.style.height = `${height}px`;
+		this.loadingEle.style.top = `${imgRect.top + imgRect.height * 0.499416569 - height / 2}px`;
+		this.loadingEle.style.left = `${imgRect.left + imgRect.width * 0.404052734 - width / 2}px`;
+
+		if (this.inGame == 0) {
+			this.loadingEle.style.display = "inline";
+			this.hidePong();
+		}
+	}
+
+
+    private endScreen = () => {
+        const imgRect = this.imgPong.getBoundingClientRect();
+
+		const width = imgRect.width * 0.5;
+		const height = imgRect.height * 0.5;
+
+		this.winEle.style.width = `${width}px`;
+		this.winEle.style.height = `${height}px`;
+		this.winEle.style.top = `${imgRect.top + imgRect.height * 0.499416569 - height / 2}px`;
+		this.winEle.style.left = `${imgRect.left + imgRect.width * 0.404052734 - width / 2}px`;
+
+        this.loseEle.style.width = `${width}px`;
+		this.loseEle.style.height = `${height}px`;
+		this.loseEle.style.top = `${imgRect.top + imgRect.height * 0.499416569 - height / 2}px`;
+		this.loseEle.style.left = `${imgRect.left + imgRect.width * 0.404052734 - width / 2}px`;
+
+        this.endEle.style.fontSize = `${width * 0.2}px`;
+        this.endEle.style.top = `${imgRect.top + imgRect.height * 0.3}px`;
+        this.endEle.style.left = `${imgRect.left + imgRect.width * 0.12}px`;
+    }
+
+	private buttonResize = () => {
+		const imgRect = this.imgPong.getBoundingClientRect();
+
+		const width = imgRect.width * 0.073242188;
+		const height = imgRect.height * 0.175029172;
+
+		this.backPongEle.style.width = `${width}px`;
+		this.backPongEle.style.height = `${height}px`;
+		this.backPongEle.style.top = `${imgRect.top + imgRect.height * 0.55 - height / 2}px`;
+		this.backPongEle.style.left = `${imgRect.left + imgRect.width * 0.844726563 - width / 2}px`;
+
+		this.quitPongEle.style.width = `${width}px`;
+		this.quitPongEle.style.height = `${height}px`;
+		this.quitPongEle.style.top = `${imgRect.top + imgRect.height * 0.55 - height / 2}px`;
+		this.quitPongEle.style.left = `${imgRect.left + imgRect.width * 0.937 - width / 2}px`;
+	}
+
 
     public init(): void{
         if (this.mode)
@@ -132,6 +243,9 @@ export class pong implements Component {
             this.socket.emit("error");
 
 		this.imgPong.onload = () => {
+			this.winEle.style.display = "none";
+			this.loseEle.style.display = "none";
+            this.endEle.style.display = "none";
 			this.leftBar = new Bar(this.leftBEle);
 			this.rightBar = new Bar(this.rightBEle);
 			this.ball = new Ball(this.ballEle);
@@ -148,16 +262,14 @@ export class pong implements Component {
 			window.addEventListener('keydown', this.boundKeyDownHandler);
 			window.addEventListener('keyup', this.boundKeyUpHandler);
 			window.addEventListener('resize', this.barResize);
-			const backButton = document.getElementById('backPong');
-            if (backButton) {
-                this.backButton = backButton;
-                this.backButton.addEventListener('click', () => {
-                    window.history.pushState(null, "", "/game");
-                    window.dispatchEvent(new PopStateEvent("popstate"));
-                });
-            }
+			window.addEventListener('resize', this.loadingScreen);
+            window.addEventListener('resize', this.endScreen.bind);
+			window.addEventListener('resize', this.buttonResize);
 
 			this.barResize();
+			this.loadingScreen();
+            this.endScreen();
+			this.buttonResize();
 			this.updateHandler();
 		};
 
@@ -165,6 +277,7 @@ export class pong implements Component {
 			this.imgPong.onload(new Event("load"));
 		}
     }
+
     private onKeyDown = (e: KeyboardEvent) => {
 		const k = e.key.toLowerCase();
 		if (k === "w".toLowerCase() && !this.leftBar.upKeyPress) {
@@ -206,7 +319,23 @@ export class pong implements Component {
 			this.socket.emit("player-input", { direction: "down", state: false, player: "right"} );
 		}
     };
-    
+
+    private hidePong = () => {
+        this.leftBEle.style.display = "none";
+        this.rightBEle.style.display = "none";
+        this.ballEle.style.display = "none";
+        this.scorePlayer1.style.display = "none";
+        this.scorePlayer2.style.display = "none";
+    }
+
+    private showPong = () => {
+        this.leftBEle.style.display = "block";
+        this.rightBEle.style.display = "block";
+        this.ballEle.style.display = "block";
+        this.scorePlayer1.style.display = "block";
+        this.scorePlayer2.style.display = "block";
+    }
+
     private gameLoop = () => {
     
         // Mesure la position réelle de l'image
@@ -241,7 +370,6 @@ export class pong implements Component {
 
     private updateHandler() {
         let gameId: string;
-        let playerId: string[];
 
         let ball = { x: 0, y: 0 };
 
@@ -249,10 +377,13 @@ export class pong implements Component {
           console.log("Connected with id:", this.socket.id);
         });
 
-        this.socket.on("game-started", (data: { gameId: string, playerId: string[]}) => {
+        this.socket.on("game-started", (data: { gameId: string, side: string}) => {
           gameId = data.gameId;
-          playerId = data.playerId;
-          console.log("Game started! Game ID:", gameId, "Player ID:", playerId);
+          this.side = data.side;
+          console.log("Game started! Game ID:", gameId);
+          this.inGame = 1;
+		  this.showPong();
+		  this.loadingEle.style.display = "none";
         });
 
         this.socket.on("game-update", (data: { gameId: string, state: {
@@ -281,6 +412,25 @@ export class pong implements Component {
 
         this.socket.on("game-end", (score: {playerLeft: number, playerRight: number}) => {
             console.log("Game end with a score of ", score.playerLeft, ":", score.playerRight);
+			this.inGame = 2;
+            if (this.side === "left" && score.playerLeft > score.playerRight ||
+                this.side === "right" && score.playerLeft < score.playerRight) {
+                this.winEle.style.display = "inline";
+                this.endScreen();
+            } else if (this.side === "undefined" || this.side === null) {
+                if (score.playerLeft > score.playerRight) {
+                    this.endEle.textContent = "Player Left wins!";
+                }
+                else {
+                    this.endEle.textContent = "Player Right wins!";
+                }
+                this.endEle.style.display = "inline";
+            }
+            else {
+                this.loseEle.style.display = "inline";
+                this.endScreen();
+            }
+            this.hidePong();
         })
     }
     

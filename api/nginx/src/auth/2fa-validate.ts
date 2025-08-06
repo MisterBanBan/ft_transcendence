@@ -1,9 +1,15 @@
 import {Component} from "../component";
+import {router} from "../router.js";
+import {AuthUser} from "../type.js";
+import {setUser} from "../user-handler.js";
 
 export class TFAValidate implements Component {
 
 	private readonly handleSubmitBound: (event: Event) => void;
-	private submitButton = document.getElementById("submit-2fa") as HTMLInputElement | null;
+
+	private handleReturn = () => router.navigateTo("/game#login");
+
+	private submitButton = document.getElementById("submit-2fa") as HTMLButtonElement | null;
 	private token: string | null = null;
 
 	constructor(token: string | null = null) {
@@ -13,8 +19,10 @@ export class TFAValidate implements Component {
 
 	destroy(): void {
 		if (this.submitButton) {
-			this.submitButton.removeEventListener("click", async (event) => {});
+			this.submitButton.removeEventListener("click", this.handleSubmitBound);
 		}
+
+		document.getElementById('2faReturnBtn')?.removeEventListener('click', this.handleReturn);
 	}
 
 	init(): void {
@@ -23,6 +31,8 @@ export class TFAValidate implements Component {
 		} else {
 			console.error("Submit button not found!");
 		}
+
+		document.getElementById('2faReturnBtn')?.addEventListener('click', this.handleReturn);
 	}
 
 	private async handleSubmit(event: Event) {
@@ -44,7 +54,7 @@ export class TFAValidate implements Component {
 		} as { token: string, code: string };
 
 		try {
-			const response = await fetch("/api/auth/2fa/validate", {
+			let response = await fetch("/api/auth/2fa/validate", {
 				method: "POST",
 				headers: {"Content-Type": "application/json"},
 				body: JSON.stringify(payload),
@@ -62,6 +72,18 @@ export class TFAValidate implements Component {
 				error.textContent = data.message;
 				return;
 			}
+
+			response = await fetch("/api/auth/verify", {
+				method: "GET",
+			});
+
+			if (response.ok) {
+				const data: AuthUser | undefined = await response.json();
+				if (data)
+					setUser(data);
+			}
+
+			router.navigateTo("/game");
 			
 			return;
 

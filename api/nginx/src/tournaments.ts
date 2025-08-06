@@ -1,7 +1,7 @@
-import { tournamentPage8 } from "./menuInsert/tournamentPage8.js";
-import {tournamentPage4} from "./menuInsert/tournamentPage4.js";
+import { tournamentPage8 } from "./menuInsert/Tournaments/tournamentPage8.js";
+import {tournamentPage4} from "./menuInsert/Tournaments/tournamentPage4.js";
 import {showTournaments} from "./tournament/show-tournaments.js";
-import {leftTournamentInfos} from "./menuInsert/leftTournamentInfos.js";
+import {leftTournamentInfos} from "./menuInsert/Tournaments/leftTournamentInfos.js";
 import {router} from "./router.js";
 
 declare const io: any;
@@ -96,7 +96,8 @@ function tournamentPage(size: number, started: boolean) {
 		leave.addEventListener("click", async (e) => {
 			e.preventDefault()
 
-			router.navigateTo("/game#tournament?leave")
+			tournamentSocket.emit("leave")
+			router.navigateTo("/game#tournament")
 		})
 
 	if (size == 4) {

@@ -52,8 +52,6 @@ export class Login implements Component{
 
 			let data = await response.json();
 
-			console.log("Request login:", data.status);
-
 			if (data.status === "2FA-REQUIRED") {
 
 				set2faPlaceholder(data.token);

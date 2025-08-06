@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   route_handler.ts                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 11:10:15 by afavier           #+#    #+#             */
-/*   Updated: 2025/08/02 23:27:40 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { Component } from './component.js';
 import { Login } from "./auth/login.js";
 import { Register } from "./auth/register.js";
@@ -24,7 +12,6 @@ import { pong } from './pong.js';
 import { viewManager } from './views/viewManager.js';
 import { chaletCadre } from './chaletCadre.js';
 
-//permet de gerer la destruction des new
 let activeComponent: Component | null = null;
 
 const routeComponents: Record<string, Component> = {
@@ -68,12 +55,10 @@ const routeComponents: Record<string, Component> = {
 			console.log("Init /game");
 			const me = new viewManager('video_main','container_form', 'user');
             me.init();
-			const login = new Login();
-			login.init();
 
             activeComponent = {
                 init: () => {},
-                destroy: () => { me.destroy(); login.destroy();  }
+                destroy: () => { me.destroy(); }
             };
         },
         destroy: () => {}
@@ -97,13 +82,18 @@ const routeComponents: Record<string, Component> = {
 
             activeComponent?.destroy?.();
             const pongGame = new pong(
-                'left-bar',      // ID de la barre gauche
-                'right-bar',	// ID de la barre droite
-                'ball',			// ID de la balle
-				'pong',
-                'pong-bg', // ID du conteneur de jeu
+                'left-bar',
+                'right-bar',
+                'ball',
+                'pong-bg',
 				'score-player1',
-				'score-player2', // ID du conteneur de jeu
+				'score-player2',
+				'backPong',
+				'quitPong',
+				'loading',
+				'win',
+				'lose',
+				'end',
                 mode
               );
             pongGame.init();
@@ -114,55 +104,6 @@ const routeComponents: Record<string, Component> = {
         },
         destroy: () => {}
     },
-	"/settings": {
-		init: () => {
-			activeComponent?.destroy?.();
-
-			const changeUsername = new ChangeUsername();
-			const changePassword = new ChangePassword();
-			// const toggle2FA = new Toggle2FA();
-			const logout = new Logout();
-			changeUsername.init();
-			changePassword.init();
-			// toggle2FA.init();
-			logout.init();
-
-			activeComponent = {
-				init: () => {},
-				destroy: () => { changeUsername.destroy(); changePassword.destroy(); logout.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
-	"/2fa": {
-		init: () => {
-			activeComponent?.destroy?.();
-
-			const tfa = new TFAValidate();
-			tfa.init();
-
-			activeComponent = {
-				init: () => {},
-				destroy: () => { tfa.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
-	"/auth": {
-		init: () => {
-			activeComponent?.destroy?.();
-
-			const login = new Login();
-			const register = new Register();
-			login.init();
-			register.init();
-			activeComponent = {
-				init: () => {},
-				destroy: () => { login.destroy(); register.destroy(); },
-			};
-		},
-		destroy: () => {}
-	},
 };
 
 export function handleRouteComponents(path: string) {

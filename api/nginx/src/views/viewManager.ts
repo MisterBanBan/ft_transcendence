@@ -11,6 +11,7 @@ import { tournamentView } from './tournamentView.js';
 import {router} from "../router.js";
 import {tournamentSocket} from "../tournaments.js"
 import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
+import { selectAnimation } from '../selectAnimat.js';
 
 
 export class viewManager implements Component {
@@ -25,6 +26,7 @@ export class viewManager implements Component {
     private options!: HTMLElement[];
     private cursor!: HTMLVideoElement;
     private selectedIdx: number = 0;
+    private select?: selectAnimation;
     private activeViewName: string | null = null;
     private keydownHandler: (e: KeyboardEvent) => void;
 
@@ -50,7 +52,7 @@ export class viewManager implements Component {
         const formspicture = document.getElementById('picture');
         if (!formspicture) throw new Error('Form wrapper not found');
         this.formspicture = formspicture;
-        
+
         this.keydownHandler = this.handleKeydown.bind(this);
         
         this.userLog();
@@ -89,17 +91,42 @@ export class viewManager implements Component {
         this.activeView?.destroy();
 
         const hash = window.location.hash;
-        if (!hash || (hash && hash !== '#tournament')) {
-            tournamentSocket.emit("leave");
-        }
-
         if (hash) {
             viewName = hash.replace('#', '')
         }
 
         if (viewName !== "login" && viewName !== "register")
+        {
             if (!getUser())
                 router.navigateTo("/game#login")
+            else
+            {
+                this.formspicture.innerHTML = picture();
+                const powerOf = document.getElementById('power');
+                if(powerOf)
+                    powerOf.addEventListener('click',  () => {
+                    const onAnimEnd = (e: AnimationEvent) => {
+                        if (e.animationName === 'tvOff') {
+                            this.containerForm.removeEventListener('animationend', onAnimEnd);
+                            router.navigateTo('/chalet');
+                        }
+
+    };
+                        this.containerForm.addEventListener('animationend', onAnimEnd);
+                        this.containerForm.classList.add('tv-effect', 'off');
+                });
+                setTimeout(() => {
+                    if (this.profilePictureManager) {
+                        this.profilePictureManager.reinitialize();
+                    }
+                }, 100);
+            }
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const leave = params.get("leave");
+        if (leave && leave === "true")
+            tournamentSocket.emit("leave");
 
         console.info(`Redirecting to ${viewName}`)
 
@@ -110,14 +137,9 @@ export class viewManager implements Component {
 
         switch (viewName) {
             case 'game':
-                this.loadAcceuilVideo();
                 this.formsContainer.innerHTML = game();
-                this.formspicture.innerHTML = picture();
-                setTimeout(() => {
-                    if (this.profilePictureManager) {
-                        this.profilePictureManager.reinitialize();
-                    }
-                }, 100);
+                this.select = new selectAnimation('cursor-video');
+                this.select.startAnimation();
 
                     try {
                         this.setupGameMenu();
@@ -127,26 +149,26 @@ export class viewManager implements Component {
                 break;
             case 'login':
                 if (getUser())
-                    router.navigateTo("/game")
-                else
-                    newView = new loginView(this.formsContainer, this);
+                    router.navigateTo("/game", this)
+                else {
+                    const token = params.get("token")
+                    newView = new loginView(this.formsContainer, this, token);
+                }
                 break;
             case 'register':
                 if (getUser())
-                    router.navigateTo("/game")
+                    router.navigateTo("/game", this)
                 else
                     newView = new registerView(this.formsContainer, this.formspicture, this);
                 break;
             case 'settings':
                 const currentUser = getUser();
+                const setting = params.get("setting")
                 if (currentUser) {
-                    newView = new SettingsView(this.formsContainer,  this);
+                    newView = new SettingsView(this.formsContainer, this, setting);
                 } else {
                     console.error("No user is currently authenticated.");
                 }
-                break;
-            case 'acceuil':
-                this.loadAcceuilVideo();
                 break;
             case 'tournament':
                 newView = new tournamentView(this.formsContainer, this);
@@ -168,6 +190,7 @@ export class viewManager implements Component {
     }
     public destroyGameListeners(): void {
         document.removeEventListener('keydown', this.keydownHandler);
+        this.select?.stopAnimation();
     }
 
     // private wordAnimation() {
@@ -183,19 +206,14 @@ export class viewManager implements Component {
     //         });
     //     });
     // }
-    
-    private loadAcceuilVideo() {
-        this.videoMain.poster = "/img/pong.png";
-        this.videoMain.src = '/img/acceuil.mp4';
-        this.videoMain.load();
-    }
+
 
     private authBtnHandler = () => {
         if (!getUser()) {
-            router.navigateTo("/game#login")
+            router.navigateTo("/game#login", this)
             // this.show('login');
         } else {
-            router.navigateTo("/game#parametre")
+            router.navigateTo("/game#parametre", this)
             // this.show('parametre');
         }
     };
@@ -228,7 +246,7 @@ export class viewManager implements Component {
             router.navigateTo("/Pong?mode=ai");
         }
         if (selected.id === 'Tournament') {
-            router.navigateTo("/game#tournament")
+            router.navigateTo("/game#tournament", this)
             // this.show('tournament');
         }
     }

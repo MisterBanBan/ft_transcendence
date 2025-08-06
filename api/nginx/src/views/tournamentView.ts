@@ -1,8 +1,8 @@
 import { Component } from "../component.js";
 import { viewManager } from "./viewManager.js";
-import { tournament } from "../menuInsert/tournament.js";
+import { tournament } from "../menuInsert/Tournaments/tournament.js";
 import {tournamentSocket, updateTournamentInfos} from "../tournaments.js";
-import {createTournamentForm} from "../menuInsert/createTournamentForm.js";
+import {createTournamentForm} from "../menuInsert/Tournaments/createTournamentForm.js";
 import {router} from "../router.js";
 import {showTournaments} from "../tournament/show-tournaments.js";
 

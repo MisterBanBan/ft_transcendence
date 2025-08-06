@@ -108,13 +108,15 @@ export default async function (server: FastifyInstance) {
 
 				if (!user.tfa) {
 					await setCookie(reply, signedToken);
-					return reply.status(302).redirect("/");
+					return reply.status(302).redirect("/game");
 				} else {
-					return reply.status(302).redirect(`/2fa?token=${await createToken(user.username, signedToken)}`);
+					// /game?need-2fa=true#login
+					return reply.status(302).redirect(`/game?token=${await createToken(user.username, signedToken)}#login`);
 				}
 			} catch (error) {
 				if (error instanceof Error)
 					console.error(error.message);
+				return reply.status(302).redirect("/game#login");
 			}
 		});
 	}
@@ -125,7 +127,7 @@ async function exchangeToken(config: ProviderConfig, code: string): Promise<stri
 	params.append('code', code);
 	params.append('client_id', config.clientId);
 	params.append('client_secret', config.clientSecret);
-	params.append('redirect_uri', `https://localhost:8443${config.callbackPath}`);
+	params.append('redirect_uri', `https://redirectmeto.com/http://${process.env.HOSTNAME}:8080${config.callbackPath}`);
 	params.append('grant_type', 'authorization_code');
 
 	const response = await fetch(config.tokenUrl, {
