@@ -3,7 +3,6 @@ import { viewManager } from "./viewManager.js";
 import { tournament } from "../menuInsert/Tournaments/tournament.js";
 import {tournamentSocket, updateTournamentInfos} from "../tournaments.js";
 import {createTournamentForm} from "../menuInsert/Tournaments/createTournamentForm.js";
-import {router} from "../router.js";
 import {showTournaments} from "../tournament/show-tournaments.js";
 
 export class tournamentView implements Component{
@@ -34,17 +33,6 @@ export class tournamentView implements Component{
 		leftBox.innerHTML = '';
 		leftBox.insertAdjacentHTML('beforeend', createTournamentForm());
 
-		// Leave tournament menu
-		// const tournamentButton = document.getElementById('return-button');
-		// if (!tournamentButton) {
-		// 	console.error('Tournament page container not found');
-		// 	return;
-		// }
-
-		// tournamentButton.addEventListener('click', () => {
-		// 	router.navigateTo('/game')
-		// });
-
 		const response = fetch('/api/tournament/getTournamentsList')
 		response.then((data) => {
 			data.json().then((json) => {
@@ -55,8 +43,6 @@ export class tournamentView implements Component{
 				}
 			})
 		})
-
-		// See a tournament
 
 		const createTournamentSubmit = document.getElementById('create-tournament-submit');
 		if (!createTournamentSubmit) {

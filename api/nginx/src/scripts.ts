@@ -1,5 +1,4 @@
 import { PlayerAnimation } from "./player_animation.js";
-/*   Updated: 2025/08/02 22:49:24 by mtbanban         ###   ########.fr       */
 import {router} from "./router.js";
 
 const pressedKeys: { [key: string]: boolean } = {};
@@ -265,9 +264,7 @@ export class PlayerController implements IPlayerController{
         const rect = door.getBoundingClientRect();
         
         const doorLeft = this.cameraX + rect.left + this.playerWidth;
-        // faudrait mettre une box pour la door 
         const doorRight = doorLeft + rect.width / 3;
-        //console.log('door: %d, %d, %d',this.worldPosX, doorLeft, doorRight);
         const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
 
         if (!inZone) {

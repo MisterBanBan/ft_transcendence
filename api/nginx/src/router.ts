@@ -1,7 +1,7 @@
 import { routes, Route } from './routes.js';
 import { handleRouteComponents } from './route_handler.js';
 import { AuthUser } from './type.js';
-import {getUser, setUser} from "./user-handler.js";
+import { setUser} from "./user-handler.js";
 import {viewManager} from "./views/viewManager.js";
 
 class Router {

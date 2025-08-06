@@ -160,19 +160,6 @@ export const routes: Route[] = [
 		}	
 	},
     {
-        path: "/Tv",
-        title: "Tv",
-        template: async () => {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            return `<div id="zoom" class="w-screen h-screen relative">
-                        <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-            <source src="/img/Tv.mp4" type="video/mp4">
-                </video>
-                </div>
-            `;
-        }
-    },
-    {
 
       path: "/Pong",
       title: "Pong",

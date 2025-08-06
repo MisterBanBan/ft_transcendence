@@ -1,6 +1,3 @@
-
-//import { Component } from "./component.js";
-//import { invites } from "../menuInsert/Friends/invites.js";
 import { searchMate } from "../menuInsert/Friends/searchMate.js";
 import { playerPerso } from "../menuInsert/Profile/playerPerso.js";
 import { friendActionTemplate } from "../menuInsert/Friends/friendAction.js";
@@ -52,12 +49,7 @@ export class friendsView implements Component {
         leftFriends.insertAdjacentHTML('beforeend', searchMate());
         invitesContainer.innerHTML = '';
         InvitationService.loadInvitations();
- /*       document.addEventListener('DOMContentLoaded', () => {
-            InvitationService.loadInvitations();
-            console.log('test');
-        });*/
-        console.log('Invites loaded');
-            console.log('DOMContentLoaded event fired');
+
             const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
             const shareInviteButton = document.getElementById('Share Invite');
             console.log('Invite input:', inviteInput);
@@ -74,8 +66,6 @@ export class friendsView implements Component {
                     InvitationService.sendInvitation();
                 });
             }
-        //this.eventFriendsListener();
-        //this.eventFormListeners();
     }
 
     private async friends() {

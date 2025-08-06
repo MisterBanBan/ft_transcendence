@@ -23,7 +23,6 @@ export class parameterView implements Component {
         this.container = container;
         this.viewManager = viewManager;
         this.picture = picture;
-        //this.videoMain = videoMain;
     }
 
     public init(): void {

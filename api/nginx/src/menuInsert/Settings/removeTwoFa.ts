@@ -1,16 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   removeTwoFa.ts                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/13 18:24:42 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/30 19:05:04 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
 export const removeTwoFa = () => `
 <div id="popup2fa" class="flex responsive-form-login flex-col items-center justify-center">
                   <input

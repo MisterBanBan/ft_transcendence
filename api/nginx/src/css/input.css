@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Classes personnalisées */
 @layer components {
   .key-prompt {
     @apply absolute bg-contain bg-no-repeat bg-center z-20;
