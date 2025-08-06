@@ -1,3 +1,4 @@
+/*
 import {FastifyInstance} from "fastify";
 
 export default async function (server: FastifyInstance) {
@@ -26,4 +27,4 @@ export default async function (server: FastifyInstance) {
             return reply.code(500).send({error: 'Internal server error'});
         }
     });
-}
+}*/

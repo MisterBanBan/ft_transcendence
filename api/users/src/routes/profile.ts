@@ -8,7 +8,7 @@ export default async function (server: FastifyInstance) {
 
     server.get<{
         Params: ProfileParams
-    }>('/api/user/:userId/profile', {
+    }>('/api/users/:userId/userProfile', {
         schema: {
             response: {
                 200: {
@@ -100,7 +100,7 @@ export default async function (server: FastifyInstance) {
     server.get<{
         Params: ProfileParams;
         Querystring: { page?: number; limit?: number }
-    }>('/api/user/:userId/matches', {
+    }>('/api/users/:userId/matches', {
         schema: {
             response: {
                 200: {
@@ -202,7 +202,7 @@ export default async function (server: FastifyInstance) {
     server.post<{
         Params: ProfileParams;
         Body: { status: 'offline' | 'online' | 'in_game' }
-    }>('/api/user/:userId/status', {
+    }>('/api/users/:userId/status', {
         schema: {
             body: {
                 type: 'object',
@@ -278,7 +278,7 @@ export default async function (server: FastifyInstance) {
 
     server.get<{
         Params: ProfileParams
-    }>('/api/user/:userId', {
+    }>('/api/users/:userId', {
         schema: {
             response: {
                 200: {

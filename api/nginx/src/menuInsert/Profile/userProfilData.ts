@@ -33,7 +33,7 @@ interface MatchesResponse {
 
 export async function fetchUserProfileData(userId: string): Promise<{profile: UserProfile, matches: Match[]} | null> {
     try {
-        const profileResponse = await fetch(`/api/user/${userId}/profile`);
+        const profileResponse = await fetch(`/api/users/${userId}/userProfile`);
 
         if (!profileResponse.ok) {
             console.error(`Profile request failed with status: ${profileResponse.status}`);
@@ -51,7 +51,7 @@ export async function fetchUserProfileData(userId: string): Promise<{profile: Us
 
         const profileData: ApiResponse<UserProfile> = await profileResponse.json();
 
-        const matchesResponse = await fetch(`/api/user/${userId}/matches`);
+        const matchesResponse = await fetch(`/api/users/${userId}/matches`);
 
         if (!matchesResponse.ok) {
             console.error(`Matches request failed with status: ${matchesResponse.status}`);
