@@ -76,8 +76,6 @@ export class Register implements Component{
 				updatedAt: data.user.updatedAt
 			}
 			setUser(user);
-
-			console.log(getUser());
 			
 		} catch (err) {
 			console.error(err);

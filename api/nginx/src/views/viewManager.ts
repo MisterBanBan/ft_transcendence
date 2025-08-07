@@ -172,7 +172,6 @@ export class viewManager implements Component {
                 }
                 break;
             case 'tournament':
-                initTournamentSocket()
                 newView = new tournamentView(this.formsContainer, this);
                 break;
             case 'parametre':
@@ -254,7 +253,6 @@ export class viewManager implements Component {
     }
 
     private handleKeydown(e: KeyboardEvent) {
-        console.log(e.key)
         if (!this.options.length) return;
         if (e.key === "ArrowDown") {
             this.selectedIdx = (this.selectedIdx + 1) % this.options.length;
@@ -295,8 +293,6 @@ export class viewManager implements Component {
     }
 
     public destroy(): void {
-
-        console.log("Destroying ViewManager")
 
         window.removeEventListener('resize', this.resize);
         this.authBtn.removeEventListener('click', this.authBtnHandler);

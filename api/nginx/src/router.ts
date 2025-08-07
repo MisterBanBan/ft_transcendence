@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (data)
                 setUser(data);
         }
-        console.warn("Router updatePage");
         await router.updatePage();
     } catch (error) {
         console.error("Wrong init :", error);

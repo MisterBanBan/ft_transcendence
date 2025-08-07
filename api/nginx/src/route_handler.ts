@@ -52,7 +52,6 @@ const routeComponents: Record<string, Component> = {
         init: () => {
             activeComponent?.destroy?.();
 
-			console.log("Init /game");
 			const me = new viewManager('video_main','container_form', 'user');
             me.init();
 
@@ -109,7 +108,6 @@ const routeComponents: Record<string, Component> = {
 export function handleRouteComponents(path: string) {
 	const component = routeComponents[path];
 	if(component) {
-		console.warn(path, "component init");
 		component.init();
 	}
 }

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   generateBirds.ts                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 18:07:38 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/02 14:19:05 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 export function generateBirds(containerId: string, count:number = 15): HTMLElement[] {
     const container = document.getElementById(containerId);
     if (!container) {

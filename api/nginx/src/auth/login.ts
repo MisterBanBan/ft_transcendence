@@ -59,7 +59,6 @@ export class Login implements Component{
 			}
 
 			if (data.status === "LOGGED-IN") {
-				console.log("User logged in successfully.");
 				const user: AuthUser = {
 					id: data.user.id,
 					username: data.user.username,

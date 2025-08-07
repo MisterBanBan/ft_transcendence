@@ -16,8 +16,6 @@ export class Logout implements Component{
 	public init(): void {
 		this.submitButton = document.getElementById("logout");
 
-		console.log("Logout button:", this.submitButton);
-
 		if (!this.submitButton) {
 			console.error("Logout button not found!");
 			return;

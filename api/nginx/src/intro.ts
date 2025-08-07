@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   intro.ts                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/28 10:52:39 by afavier           #+#    #+#             */
-/*   Updated: 2025/08/02 21:01:30 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import PlayerController from "./scripts.js";
 import { Component } from "./component.js";
 import { Zoom } from './zoom.js'

@@ -1,9 +1,10 @@
 import { Component } from "../component.js";
 import { viewManager } from "./viewManager.js";
 import { tournament } from "../menuInsert/Tournaments/tournament.js";
-import {emitTournamentSocket, updateTournamentInfos} from "../tournamentsHandler.js";
+import {emitTournamentSocket, initTournamentSocket, updateTournamentInfos} from "../tournamentsHandler.js";
 import {createTournamentForm} from "../menuInsert/Tournaments/createTournamentForm.js";
 import {showTournaments} from "../tournament/show-tournaments.js";
+import {tournamentsList} from "../menuInsert/Tournaments/tournamentsList.js";
 
 export class tournamentView implements Component{
 
@@ -22,7 +23,22 @@ export class tournamentView implements Component{
 		this.listTournament();
 	}
 
-	private listTournament() {
+	private async listTournament() {
+
+		console.log(document.body.innerHTML)
+
+		await initTournamentSocket();
+
+		const mainDiv = document.getElementById('tournament');
+		if (!mainDiv) {
+			console.error('Missing main tournament div');
+			return
+		}
+
+		mainDiv.innerHTML = '';
+		mainDiv.insertAdjacentHTML('beforeend', tournamentsList())
+
+		console.log(document.body.innerHTML)
 
 		const leftBox = document.getElementById('left-box');
 		if (!leftBox) {
@@ -32,17 +48,6 @@ export class tournamentView implements Component{
 
 		leftBox.innerHTML = '';
 		leftBox.insertAdjacentHTML('beforeend', createTournamentForm());
-
-		// Leave tournament menu
-		// const tournamentButton = document.getElementById('return-button');
-		// if (!tournamentButton) {
-		// 	console.error('Tournament page container not found');
-		// 	return;
-		// }
-
-		// tournamentButton.addEventListener('click', () => {
-		// 	router.navigateTo('/game')
-		// });
 
 		const response = fetch('/api/tournament/getTournamentsList')
 		response.then((data) => {
@@ -54,8 +59,6 @@ export class tournamentView implements Component{
 				}
 			})
 		})
-
-		// See a tournament
 
 		const createTournamentSubmit = document.getElementById('create-tournament-submit');
 		if (!createTournamentSubmit) {

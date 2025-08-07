@@ -7,51 +7,54 @@ import {getUser} from "./user-handler.js";
 
 declare const io: any;
 
-let tournamentSocket: any;
+let tournamentSocket: any = null;
+let connectionPromise: Promise<void> | null = null;
 
-export function initTournamentSocket() {
-	if (tournamentSocket)
+export async function initTournamentSocket() {
+	if (tournamentSocket?.connected)
 		return
 
-	tournamentSocket = io(`/`, {
-		transports: ["websocket", "polling"],
-		withCredentials: true,
-		path: "/wss/tournament"
+	if (connectionPromise)
+		return connectionPromise;
+
+	connectionPromise = new Promise<void>((resolve) => {
+		tournamentSocket = io(`/`, {
+			transports: ["websocket", "polling"],
+			withCredentials: true,
+			path: "/wss/tournament"
+		});
+
+		tournamentSocket.on("connect", () => {
+			console.log("Connected:", tournamentSocket.id);
+			resolve();
+		});
+
+		tournamentSocket.on("updateTournamentsList", (tournamentsList: any) => {
+			showTournaments(tournamentsList);
+		});
+
+		tournamentSocket.on("updateTournamentInfos", (tournamentInfos: any) => {
+			updateTournamentInfos(tournamentInfos);
+		});
+
+		tournamentSocket.on("newMatch", () => {
+			router.navigateTo("/Pong?mode=private");
+		});
+
+		tournamentSocket.on("leftTournament", () => {
+			router.navigateTo("/game#tournament");
+		});
+
+		tournamentSocket.on("matchEnded", () => {
+			router.navigateTo("/game#tournament");
+		});
+
+		tournamentSocket.on("tournamentEnded", () => {
+			router.navigateTo("/game");
+		});
 	});
 
-	tournamentSocket.on("connect", () => {
-		console.log("Connected:", tournamentSocket.id)
-	});
-
-	tournamentSocket.on("updateTournamentsList", (tournamentsList: any) => {
-		console.warn("updateTournamentsList")
-		showTournaments(tournamentsList);
-	})
-
-	tournamentSocket.on("updateTournamentInfos", (tournamentInfos: any) => {
-		console.warn("updateTournamentInfos")
-		updateTournamentInfos(tournamentInfos)
-	})
-
-	tournamentSocket.on("newMatch", () => {
-		console.log("New Match")
-		router.navigateTo("/Pong?mode=private");
-	})
-
-	tournamentSocket.on("leftTournament", () =>{
-		console.warn("Left tournament");
-		router.navigateTo("/game#tournament");
-	})
-
-	tournamentSocket.on("matchEnded", () =>{
-		console.warn("Returning to tournament");
-		router.navigateTo("/game#tournament");
-	})
-
-	tournamentSocket.on("tournamentEnded", () => {
-		console.warn("Returning to game");
-		router.navigateTo("/game");
-	})
+	return connectionPromise;
 }
 
 export function clearTournamentSocket() {
@@ -106,7 +109,6 @@ function tournamentPage(size: number, ownerId: number, started: boolean) {
 
 		if (start) {
 			if (getUser()?.id !== ownerId) {
-				console.log("Start remove")
 				start.remove();
 			}
 			else
@@ -119,7 +121,6 @@ function tournamentPage(size: number, ownerId: number, started: boolean) {
 
 		if (fakeJoin) {
 			if (getUser()?.id !== ownerId) {
-				console.log("Fake join remove")
 				fakeJoin.remove();
 			}
 			else
@@ -193,7 +194,11 @@ export function updateTournamentInfos(tournamentInfos: any) {
 				li.className = "text-yellow-400 responsive-text-players-list"
 			else
 				li.className = "responsive-text-players-list"
+
 			li.innerText = `- ${name}`;
+			if (id === getUser()?.id)
+				li.innerText += ' (You)';
+
 			li.id = `player-${name}`;
 
 			playersList.appendChild(li);
