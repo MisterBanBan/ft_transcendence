@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
+/* import { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 const cleanupPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     let cleanupInterval: NodeJS.Timeout;
@@ -37,3 +37,4 @@ const cleanupPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 };
 
 export default cleanupPlugin;
+ */

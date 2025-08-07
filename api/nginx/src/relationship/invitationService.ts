@@ -61,6 +61,7 @@ export class InvitationService {
             if (response.ok) {
                 addresseeElement.value = '';
             } else {
+                ApiUtils.showAlert(data.error as string);
             }
         } catch (error) {
             console.error('Error sending invitation:', error);

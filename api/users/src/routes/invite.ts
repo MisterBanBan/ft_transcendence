@@ -109,7 +109,6 @@ export default async function (server: FastifyInstance) {
             });
 
         } catch (error) {
-            server.log.error('Error in invite endpoint:', error);
             return reply.status(500).send({ error: 'Internal server error' });
         }
     });
