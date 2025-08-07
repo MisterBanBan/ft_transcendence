@@ -132,6 +132,10 @@ export async function initTournamentSocket() {
 
 			router.navigateTo("/game");
 		});
+
+		tournamentSocket.on("error", (message: string) => {
+			alert(message);
+		})
 	});
 
 	return connectionPromise;

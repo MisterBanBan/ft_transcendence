@@ -58,7 +58,6 @@ export class Match {
 		const results = await response.json()
 
 		if (results.status === "ok") {
-			console.log(results.result);
 			this.winner = parseInt(results.result.key);
 		}
 

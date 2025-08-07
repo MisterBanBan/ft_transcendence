@@ -65,7 +65,6 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 			await wait(5000);
 		}
 		else {
-			console.log("Winner:", round[0].getWinner());
 			const winner = round[0].getWinner()
 			tournament.getStructure().winner = winner;
 

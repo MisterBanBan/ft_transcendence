@@ -5,9 +5,11 @@ import {emitTournamentSocket, initTournamentSocket, updateTournamentInfos} from 
 import {createTournamentForm} from "../menuInsert/Tournaments/createTournamentForm.js";
 import {showTournaments} from "../tournament/show-tournaments.js";
 import {tournamentsList} from "../menuInsert/Tournaments/tournamentsList.js";
+import {router} from "../router.js";
 
 export class tournamentView implements Component{
 
+	private handleReturn = () => router.navigateTo("/game#login");
 	private container: HTMLElement;
 	private viewManager: viewManager;
 
@@ -56,13 +58,15 @@ export class tournamentView implements Component{
 			})
 		})
 
+		document.getElementById("leave-tournament-menu")?.addEventListener("click", this.handleReturn)
+
 		const createTournamentSubmit = document.getElementById('create-tournament-submit');
 		if (!createTournamentSubmit) {
 			console.error('Create tournament button not found');
 			return;
 		}
 
-		createTournamentSubmit.addEventListener('click', () => this.createTournament())
+		createTournamentSubmit.addEventListener('click', this.createTournament)
 	}
 
 	private createTournament() {
@@ -78,10 +82,12 @@ export class tournamentView implements Component{
 		const size = sizeInput.value;
 
 		emitTournamentSocket("create", name, parseInt(size));
-		// tournamentSocket.emit("create", name, parseInt(size));
 	}
 
 	public destroy(): void {
 		this.container.innerHTML = '';
+
+		document.getElementById('create-tournament-submit')?.removeEventListener("click", this.createTournament)
+		document.getElementById('leave-tournament-menu')?.removeEventListener("click", this.handleReturn)
 	}
 }

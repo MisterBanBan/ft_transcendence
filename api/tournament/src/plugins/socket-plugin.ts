@@ -9,6 +9,7 @@ import {inTournament} from "../utils/in-tournament.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
 import {start} from "../socket/start.js";
 import {toUnicode} from "node:punycode";
+import {emitAll} from "../utils/emit-all.js";
 
 export const usersSockets = new Map<number, Set<string>>()
 
@@ -58,22 +59,22 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			}
 
 			if (name.trim().length <= 0) {
-				console.log("Tournament name can't be empty,");
+				socket.emit("error", "Tournament name can't be empty")
 				return;
 			}
 
 			if (name.length > 20) {
-				console.log("Tournament name needs to be below 20 characters");
+				socket.emit("error", "Tournament name needs to be below 20 characters")
 				return;
 			}
 
 			if (tournaments.has(name)) {
-				console.log("Tournament with name", name, "already exists");
+				socket.emit("error", `Tournament with name ${name} already exists`);
 				return
 			}
 
 			if (![4, 8].includes(size)) {
-				console.log("Tournament size needs to be 4 or 8, not", size.toString());
+				socket.emit("error", `Tournament size needs to be 4 or 8, not ${size.toString()}`);
 				return
 			}
 
@@ -88,22 +89,22 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 
 			const tournament = tournaments.get(name);
 			if (!tournament) {
-				console.log("Tournament", name, "not found");
+				socket.emit("error", `Tournament ${name} not found`);
 				return
 			}
 
 			if (tournament.isFull()) {
-				console.log("Tournament", tournament.getName(), "is full")
+				socket.emit("error", `Tournament ${tournament.getName()} is full`)
 				return
 			}
 
 			if (tournament.hasStarted()) {
-				console.log("Tournament", name, "already started")
+				socket.emit("error", `Tournament ${name} already started`)
 				return
 			}
 
 			if (tournament.hasPlayer(user.id)) {
-				console.log(user.username, `(${user.id})`, 'is already in the tournament', tournament.getName())
+				socket.emit("error", `You are already in the tournament ${tournament.getName()}`)
 				return
 			}
 
@@ -116,22 +117,22 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 
 			const tournament = await inTournament(user.id);
 			if (!tournament) {
-				console.log(`${user.username} is not in a tournament`);
+				socket.emit("error", `${user.username} is not in a tournament`);
 				return
 			}
 
 			if (!tournament.hasOwnership(user.id)) {
-				console.log(`${user.username} (${user.id}) is not the owner of the tournament` )
+				socket.emit("error", `You are not the owner of the tournament ${tournament.getName()}`)
 				return
 			}
 
 			if (tournament.hasStarted()) {
-				console.log("Tournament", tournament.getName(), "already started")
+				socket.emit("error", `Tournament ${tournament.getName()} already started`)
 				return
 			}
 
 			if (!tournament.isFull()) {
-				console.log(`Tournament ${tournament.getName()} is not full` )
+				socket.emit("error", `Tournament ${tournament.getName()} is not full` )
 				return
 			}
 
@@ -144,7 +145,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 
 			const tournament = await inTournament(user.id);
 			if (!tournament) {
-				console.log(`${user.username} is not in a tournament`);
+				socket.emit("error", `You are not in a tournament`);
 				return
 			}
 
@@ -156,12 +157,12 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 
 			const tournament = await inTournament(user.id);
 			if (!tournament) {
-				console.log(`${user.username} is not in a tournament`);
+				socket.emit("error", `You are not in a tournament`);
 				return
 			}
 
 			if (!tournament.hasOwnership(user.id)) {
-				console.log(`${user.username} is not the owner of the tournament ${tournament.getName()}`);
+				socket.emit("error", `You are not the owner of the tournament ${tournament.getName()}`)
 				return
 			}
 
