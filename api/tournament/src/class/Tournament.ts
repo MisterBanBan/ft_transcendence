@@ -1,6 +1,7 @@
 import {emitAll} from "../utils/emit-all.js";
 import {FastifyInstance} from "fastify";
-import {wait} from "../socket/start.js";
+import {wait} from "../utils/wait.js";
+import {usersSockets} from "../plugins/socket-plugin.js";
 
 export class Match {
 	private player1?: number;
@@ -13,22 +14,22 @@ export class Match {
 		this.winner = undefined
 	}
 
-	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
+	public async startMatch(app: FastifyInstance): Promise<void> {
 
 		if ((this.player1 === undefined && this.player2 === undefined) ||
-			((this.player1 && !tournament.getPlaying().has(this.player1)) && (this.player2 && !tournament.getPlaying().has(this.player2)))) {
+			((this.player1 && !usersSockets.has(this.player1)) && ((this.player2 && !usersSockets.has(this.player2))))) {
 			this.winner = undefined
 			return Promise.resolve()
 		}
 
 		if ((this.player1 !== undefined && this.player2 === undefined) ||
-			((this.player1 && tournament.getPlaying().has(this.player1)) && (this.player2 && !tournament.getPlaying().has(this.player2)))) {
+			((this.player1 && usersSockets.has(this.player1)) && (this.player2 && !usersSockets.has(this.player2)))) {
 			this.winner = this.player1
 			return Promise.resolve()
 		}
 
 		if ((this.player1 === undefined && this.player2 !== undefined) ||
-			((this.player2 && tournament.getPlaying().has(this.player2)) && (this.player1 && !tournament.getPlaying().has(this.player1)))) {
+			((this.player2 && usersSockets.has(this.player2)) && (this.player1 && !usersSockets.has(this.player1)))) {
 			this.winner = this.player2
 			return Promise.resolve()
 		}
@@ -108,7 +109,6 @@ export class Tournament {
 	private readonly size: number;
 	private owner: number;
 	private participants: Map<number, string> = new Map();
-	private playing: Map<number, string> = new Map();
 	private structure: TournamentStructure = { rounds: [], winner: undefined};
 	private started: boolean = false;
 
@@ -141,26 +141,17 @@ export class Tournament {
 		return this.participants;
 	}
 
-	public getPlaying(): Map<number, string> {
-		return this.playing;
-	}
-
 	public addPlayer(userId: number, displayName: string) {
 		this.participants.set(userId, displayName);
-		this.playing.set(userId, displayName);
 	}
 
 	public removePlayer(userId: number) {
 		if (!this.started)
 			this.participants.delete(userId);
-		this.playing.delete(userId);
 	}
 
 	public hasPlayer(userId: number) {
-		if (this.started)
-			return this.playing.has(userId);
-		else
-			return this.participants.has(userId);
+		return this.participants.has(userId);
 	}
 
 	public hasStarted(): boolean {

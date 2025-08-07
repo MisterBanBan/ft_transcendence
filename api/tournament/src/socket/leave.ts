@@ -17,7 +17,7 @@ export async function leave(app: FastifyInstance, playerId: number, tournament: 
 	tournament.removePlayer(playerId);
 	allLeaveRoom(app, playerId, tournament.getName());
 
-	if (tournament.getParticipants().size == 0 || tournament.getPlaying().size == 0)
+	if (tournament.getParticipants().size == 0)
 		tournaments.delete(tournament.getName());
 
 	await updateTournamentInfo(app, playerId, tournament, true);

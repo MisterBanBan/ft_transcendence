@@ -2,8 +2,8 @@ import {FastifyInstance} from "fastify";
 import {Match, Tournament} from "../class/Tournament.js";
 import {emitAll} from "../utils/emit-all.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
-import {leave} from "./leave.js";
 import {tournaments} from "../server.js";
+import {wait} from "../utils/wait.js";
 
 function shuffleMap<K, V>(map: Map<K, V>): Map<K, V> {
 	const entries = Array.from(map.entries());
@@ -16,13 +16,9 @@ function shuffleMap<K, V>(map: Map<K, V>): Map<K, V> {
 	return new Map(entries);
 }
 
-export function wait(ms: number): Promise<void> {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export async function start(app: FastifyInstance, tournament: Tournament) {
 
-	const players = shuffleMap(tournament.getPlaying())
+	const players = shuffleMap(tournament.getParticipants())
 
 	const round1 = tournament.getStructure().rounds[0];
 
@@ -47,7 +43,7 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 
 		let matchPromises = round.map((match: Match, index: number) => {
 			console.log("Starting match", index + 1);
-			return match.startMatch(app, tournament);
+			return match.startMatch(app);
 		});
 
 		await Promise.all(matchPromises);
