@@ -21,7 +21,7 @@ class PlayerStats {
     jump: number = -700;
 }
 
-function handleKeyPressPlayer(stats: PlayerStats, player: PlayerAnimation, isInTriggerZone: boolean, isDoorOpen: boolean, e: KeyboardEvent) {
+function handleKeyPressPlayer(stats: PlayerStats, player: PlayerAnimation, e: KeyboardEvent) {
     const key = e.key.toLowerCase();
     if (pressedKeys[key]) return;
     pressedKeys[key] = true;
@@ -50,16 +50,27 @@ function handleKeyPressPlayer(stats: PlayerStats, player: PlayerAnimation, isInT
 
 function handleKeyReleasePlayer(stats: PlayerStats, player: PlayerAnimation, e: KeyboardEvent) {
     const key = e.key.toLowerCase();
+    if (!pressedKeys[key]) {
+        return; // Ne rien faire si la touche n'était pas pressée
+    }
     pressedKeys[key] = false;
 
     switch (key) {
         case 'arrowleft':
             stats.velocity.x += stats.speed;
             stats.leftKey = false;
+            if (stats.rightKey) {
+                player.setDirection(false); // regarde à droite
+                player.startAnimation();
+            }
             break;
         case 'arrowright':
             stats.velocity.x -= stats.speed;
             stats.rightKey = false;
+            if (stats.leftKey) {
+                player.setDirection(true); // regarde à gauche
+                player.startAnimation();
+            }
             break;
     }
 
@@ -79,6 +90,12 @@ export class PlayerController implements IPlayerController{
     private playerElement: HTMLElement;
     private skipButton?: HTMLElement;
     private worldIs: number = 4;
+    private pressE;
+    private boundHandleWindowBlur;
+    private boundHandleVisibilityChange;
+    private boundHandleResize;
+    private boundGameLoop;
+    private SkipHandler = () => { router.navigateTo("/game"); };
     private boundKeyDownHandler: (e: KeyboardEvent) => void;
     private boundKeyUpHandler: (e: KeyboardEvent) => void;
     private animationFrameId: number | null = null;
@@ -86,26 +103,31 @@ export class PlayerController implements IPlayerController{
     private isInTriggerZone: boolean = false;
     private isDoorOpen: boolean = false;
 
-    constructor(playerId: string, door: string) {
+    constructor(playerId: string, presseE: string) {
         
-        window.addEventListener('resize', this.handleResize.bind(this));
+        
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
         this.playerElement = playerElement;
 
-        console.log("PlayerController initialisé !");
+        const pressE = document.getElementById(presseE);
+        if (!pressE) throw new Error('Press E element not found');
+        this.pressE = pressE;
         
         const skipButton = document.getElementById('skipButton');
-        if (skipButton) {
+        if (skipButton)
             this.skipButton = skipButton;
-            this.skipButton.addEventListener('click', () => {
-                router.navigateTo("/game");
-            });
-        }
-        window.addEventListener('blur', this.handleWindowBlur.bind(this));
-        document.addEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+        
+
+        this.boundHandleResize = this.handleResize.bind(this);
+        this.boundHandleWindowBlur = this.handleWindowBlur.bind(this);
+        this.boundHandleVisibilityChange = this.handleVisibilityChange.bind(this);
+        this.boundGameLoop = this.gameLoop.bind(this);
+
+       
 
         this.player = new PlayerAnimation(playerId);
+
         const sizePlayer = playerElement.getBoundingClientRect();
         this.playerWidth = sizePlayer.width;
         this.playerHeight = sizePlayer.height;
@@ -113,11 +135,12 @@ export class PlayerController implements IPlayerController{
         let worldPath: string;
         this.activateInfoUserOnce();
         displayTextByLetter("Bienvenue dans le jeu ! Appuyez sur 'E' pour ouvrir la porte.\nvhfrvvbbrevbbvbberuvbibrbvilrbziuvbiulbtrulibvulibrltuibvuil\nbrtubviubrtubviubrtluibvubrtuhbvlubrtubvulrbtubvirbti", "dialogueBox", 50);
-        this.boundKeyDownHandler = (e) => {console.log("Key Down"); handleKeyPressPlayer(this.stats, this.player, this.isDoorOpen, this.isInTriggerZone, e)};
+
+        this.boundKeyDownHandler = (e) => {handleKeyPressPlayer(this.stats, this.player, e)};
         this.boundKeyUpHandler = (e) => {
-            console.log("Key up")
+            const key = e.key.toLowerCase();
             handleKeyReleasePlayer(this.stats, this.player, e);
-            if (e.key.toLowerCase() === 'e') {
+            if (key === 'e') {
                 if (this.isInTriggerZone && !this.isDoorOpen) {
                     this.isDoorOpen = true;
                     const path = window.location.pathname;
@@ -139,13 +162,26 @@ export class PlayerController implements IPlayerController{
                 }
             }
         };
+        this.bindEvent();
+        
+    }
 
+    private bindEvent()
+    {
         window.addEventListener('keydown', this.boundKeyDownHandler);
         window.addEventListener('keyup', this.boundKeyUpHandler);
-
+        window.addEventListener('blur', this.boundHandleWindowBlur);
+        document.addEventListener('visibilitychange', this.boundHandleVisibilityChange);
+        window.addEventListener('resize', this.boundHandleResize);
+        if(this.skipButton && this.SkipHandler)
+            this.skipButton.addEventListener('click', this.SkipHandler);
         this.updatePosition();
-        this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
+        this.animationFrameId = requestAnimationFrame(this.boundGameLoop);
     }
+
+
+
+
     private handleVisibilityChange() {
         if (document.hidden) {
             this.handleWindowBlur();
@@ -153,16 +189,20 @@ export class PlayerController implements IPlayerController{
     }
 
     private handleWindowBlur() {
-    // Remet tous les flags à zéro
-    for (const key in pressedKeys) pressedKeys[key] = false;
-
-    this.stats.leftKey = false;
-    this.stats.rightKey = false;
-    this.stats.velocity.x = 0;
-    this.player.setDirection(false);
-    this.player.stopAnimation();
-
-}
+        for (const key in pressedKeys) {
+            if (pressedKeys[key]) {
+            pressedKeys[key] = false;
+            // Appelle ton gestionnaire manuellement pour être sûr
+            const fakeEvent = new KeyboardEvent('keyup', { key });
+            handleKeyReleasePlayer(this.stats, this.player, fakeEvent);
+            }
+        }
+        this.stats.leftKey = false;
+        this.stats.rightKey = false;
+        this.stats.velocity.x = 0;
+        this.player.setDirection(false);
+        this.player.stopAnimation();
+    }
 
 
     private handleResize() {
@@ -231,90 +271,6 @@ export class PlayerController implements IPlayerController{
         }
     }
 
-    private checkTriggers() {
-        const path = window.location.pathname;
-        const pressE = document.getElementById("pressE");
-        if (!pressE) return;
-
-        if (path === "/chalet") {
-            const triggerX = 0.6 * window.innerWidth * 2;
-            const triggerY = 0.5 * window.innerHeight;
-
-            const shouldShowPressEBack = this.worldPosX <= triggerY;
-            const shouldShowPressE = this.worldPosX >= triggerX;
-            const img = document.getElementById("img") as HTMLImageElement;
-            if (!img) return;
-
-            if (shouldShowPressE) {
-                img.src = "/img/enter.png";
-                this.worldIs = 0;
-                this.isInTriggerZone = true;
-                pressE.classList.remove("hidden");
-                img.classList.add('left-[80%]');
-                img.classList.remove('left-[10%]');
-            } else if (shouldShowPressEBack) {
-                img.src = "/img/back.png";
-                this.worldIs = 1;
-                this.isInTriggerZone = true;
-                pressE.classList.remove("hidden");
-                img.classList.add('left-[10%]');
-                img.classList.remove('left-[80%]');
-            } else {
-                this.isInTriggerZone = false;
-                pressE.classList.add("hidden");
-                img.classList.remove('left-[10%]', 'left-[80%]');
-            }
-        }
-
-        const door = document.getElementById("trigger");
-        const secondWindow = document.getElementById("secondWindow");
-        if (!door || !pressE || !secondWindow) return;
-
-        
-
-        const rect = door.getBoundingClientRect();
-        
-        const doorLeft = this.cameraX + rect.left + this.playerWidth;
-        const doorRight = doorLeft + rect.width / 3;
-        const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
-
-        if (!inZone) {
-            door.classList.remove("bg-black", "bg-opacity-50");
-            secondWindow.classList.remove("bg-black", "bg-opacity-50");
-            pressE.classList.add("hidden",);
-          }else
-          {
-            this.worldIs = 2;
-            this.isInTriggerZone = inZone;
-            door.classList.add("bg-black", "bg-opacity-50");
-            secondWindow.classList.add("bg-black", "bg-opacity-50");
-            pressE.classList.remove("hidden");
-          }
-
-    }
-
-    private infoUser()
-    {
-        const pageOne = document.getElementById("pageOne");
-        const userInfo = document.getElementById("infoUser");
-        if( !pageOne || !userInfo) return;
-        console.log("infoUser called");
-        pageOne.classList.remove("bg-black/50");
-        userInfo.classList.add("hidden");
-
-    }
-
-
-
-    private activateInfoUserOnce() {
-        const handleKeydown = (event: KeyboardEvent) => {
-            console.log(`Key pressed: ${event.key}`);
-            this.infoUser();
-            document.removeEventListener("keydown", handleKeydown);
-        };
-        document.addEventListener("keydown", handleKeydown);
-    }
-
     private gameLoop(timestamp: number) {
         
         const deltaTime = this.computeDeltaTime(timestamp);
@@ -332,53 +288,146 @@ export class PlayerController implements IPlayerController{
             worldWidth = viewportWidth * 3;
         }
         
-
-
         this.updatePhysics(deltaTime, worldWidth, viewportHeight);
         this.updateCamera(viewportWidth, worldWidth);
 
         this.checkTriggers();
         
         this.updatePosition();
-        this.animationFrameId = requestAnimationFrame(this.gameLoop.bind(this));
+        this.animationFrameId = requestAnimationFrame(this.boundGameLoop);
     }
+
+    private checkTriggers() {
+        const path = window.location.pathname;
+        if (!this.pressE) return;
+
+        if (path === "/chalet") {
+            const triggerX = 0.6 * window.innerWidth * 2;
+            const triggerY = 0.5 * window.innerHeight;
+
+            const shouldShowPressEBack = this.worldPosX <= triggerY;
+            const shouldShowPressE = this.worldPosX >= triggerX;
+            const img = document.getElementById("img") as HTMLImageElement;
+            if (!img) return;
+
+            if (shouldShowPressE) {
+                img.src = "/img/enter.png";
+                this.worldIs = 0;
+                this.isInTriggerZone = true;
+                this.pressE.classList.remove("hidden");
+                img.classList.add('left-[80%]');
+                img.classList.remove('left-[10%]');
+            } else if (shouldShowPressEBack) {
+                img.src = "/img/back.png";
+                this.worldIs = 1;
+                this.isInTriggerZone = true;
+                this.pressE.classList.remove("hidden");
+                img.classList.add('left-[10%]');
+                img.classList.remove('left-[80%]');
+            } else {
+                this.isInTriggerZone = false;
+                this.pressE.classList.add("hidden");
+                img.classList.remove('left-[10%]', 'left-[80%]');
+            }
+        }
+
+        const door = document.getElementById("trigger");
+        const secondWindow = document.getElementById("secondWindow");
+        if (!door || !this.pressE || !secondWindow) return;
+
+        
+
+        const rect = door.getBoundingClientRect();
+        
+        const doorLeft = this.cameraX + rect.left + this.playerWidth;
+        const doorRight = doorLeft + rect.width / 3;
+        const inZone = this.worldPosX >= doorLeft && doorRight >= this.worldPosX;
+
+        if (!inZone) {
+            door.classList.remove("bg-black", "bg-opacity-50");
+            secondWindow.classList.remove("bg-black", "bg-opacity-50");
+            this.pressE.classList.add("hidden",);
+          }else
+          {
+            this.worldIs = 2;
+            this.isInTriggerZone = inZone;
+            door.classList.add("bg-black", "bg-opacity-50");
+            secondWindow.classList.add("bg-black", "bg-opacity-50");
+            this.pressE.classList.remove("hidden");
+          }
+
+    }
+
+    private infoUser()
+    {
+        const pageOne = document.getElementById("pageOne");
+        const userInfo = document.getElementById("infoUser");
+        if( !pageOne || !userInfo) return;
+        pageOne.classList.remove("bg-black/50");
+        userInfo.classList.add("hidden");
+    }
+
+
+
+    private activateInfoUserOnce() {
+        const handleKeydown = (event: KeyboardEvent) => {
+            console.log(`Key pressed: ${event.key}`);
+            this.infoUser();
+            document.removeEventListener("keydown", handleKeydown);
+        };
+        document.addEventListener("keydown", handleKeydown);
+    }
+
+
 
     private updatePosition() {
         this.player.updatePosition(this.pos.x, this.pos.y);
     }
+
     public destroy(): void {
-        this.player.stopAnimation();
-        
+        this.stats.velocity.x = 0;
+        this.stats.velocity.y = 0;
+        this.stats.leftKey = false;
+        this.stats.rightKey = false;
+
+        for (const key in pressedKeys) pressedKeys[key] = false;
+
         window.removeEventListener('keydown', this.boundKeyDownHandler);
         window.removeEventListener('keyup', this.boundKeyUpHandler);
-        window.removeEventListener('blur', this.handleWindowBlur.bind(this));
-        document.removeEventListener('visibilitychange', this.handleVisibilityChange.bind(this));
+        window.removeEventListener('blur', this.boundHandleWindowBlur);
+        document.removeEventListener('visibilitychange', this.boundHandleVisibilityChange);
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);
         }
-        console.log("PlayerController destroy");
+        if (this.player && typeof this.player.destroy === "function") {
+            this.player.destroy();
+        }        
+        if (this.skipButton && this.SkipHandler) {
+            this.skipButton.removeEventListener('click', this.SkipHandler);
+        }
+
     }
+
 
 }
 
-    function displayTextByLetter(text: string, elementId: string, speed: number) : void {
-            const element = document.getElementById(elementId);
-            if (!element) {
-                console.error(`Element with id "${elementId}" not found`);
-                return;
-            }
-
-            let index = 0;
-            element.textContent = '';
-            const interval = setInterval(() => {
-                if(index < text.length) {
-                    element.textContent += text[index];
-                    index++;
-                } else {
-                    clearInterval(interval);
-                }
-            }, speed);
-
+function displayTextByLetter(text: string, elementId: string, speed: number) : void {
+    const element = document.getElementById(elementId);
+    if (!element) {
+        console.error(`Element with id "${elementId}" not found`);
+            return;
     }
+
+    let index = 0;
+    element.textContent = '';
+    const interval = setInterval(() => {
+    if(index < text.length) {
+        element.textContent += text[index];
+        index++;
+    } else {
+        clearInterval(interval);
+    }
+    }, speed);
+}
 
 export default PlayerController;

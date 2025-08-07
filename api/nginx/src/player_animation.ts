@@ -42,5 +42,8 @@ export class PlayerAnimation{
             this.element.style.transform = 'scaleX(1)';
         }
     }
+    destroy() {
+        this.stopAnimation();
+    }
     
 }

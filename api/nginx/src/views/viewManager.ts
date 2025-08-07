@@ -15,7 +15,6 @@ import { selectAnimation } from '../selectAnimat.js';
 
 
 export class viewManager implements Component {
-    //private pictureContainer: HTMLElement;
     private activeView : Component | null = null;
     private profilePictureManager: ProfilePictureManager | null = null;
     private videoMain: HTMLVideoElement;
