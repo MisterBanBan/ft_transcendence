@@ -136,7 +136,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			}
 
 			tournament.start();
-			await  updateTournamentsList(app, socket);
+			await updateTournamentsList(app, socket);
 			await start(app, tournament);
 		})
 

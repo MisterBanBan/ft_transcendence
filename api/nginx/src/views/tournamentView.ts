@@ -25,8 +25,6 @@ export class tournamentView implements Component{
 
 	private async listTournament() {
 
-		console.log(document.body.innerHTML)
-
 		await initTournamentSocket();
 
 		const mainDiv = document.getElementById('tournament');
@@ -37,8 +35,6 @@ export class tournamentView implements Component{
 
 		mainDiv.innerHTML = '';
 		mainDiv.insertAdjacentHTML('beforeend', tournamentsList())
-
-		console.log(document.body.innerHTML)
 
 		const leftBox = document.getElementById('left-box');
 		if (!leftBox) {

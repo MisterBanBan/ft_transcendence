@@ -2,6 +2,7 @@ import {emitAll} from "../utils/emit-all.js";
 import {FastifyInstance} from "fastify";
 import {wait} from "../utils/wait.js";
 import {usersSockets} from "../plugins/socket-plugin.js";
+import {updateTournamentInfo} from "../room/update-tournament-info.js";
 
 export class Match {
 	private player1?: number;
@@ -14,7 +15,7 @@ export class Match {
 		this.winner = undefined
 	}
 
-	public async startMatch(app: FastifyInstance): Promise<void> {
+	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
 
 		if ((this.player1 === undefined && this.player2 === undefined) ||
 			((this.player1 && !usersSockets.has(this.player1)) && ((this.player2 && !usersSockets.has(this.player2))))) {
@@ -25,12 +26,16 @@ export class Match {
 		if ((this.player1 !== undefined && this.player2 === undefined) ||
 			((this.player1 && usersSockets.has(this.player1)) && (this.player2 && !usersSockets.has(this.player2)))) {
 			this.winner = this.player1
+
+			await updateTournamentInfo(app, this.player1, tournament, false)
 			return Promise.resolve()
 		}
 
 		if ((this.player1 === undefined && this.player2 !== undefined) ||
 			((this.player2 && usersSockets.has(this.player2)) && (this.player1 && !usersSockets.has(this.player1)))) {
 			this.winner = this.player2
+
+			await updateTournamentInfo(app, this.player2, tournament, false)
 			return Promise.resolve()
 		}
 

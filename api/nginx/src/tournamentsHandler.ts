@@ -4,6 +4,8 @@ import {showTournaments} from "./tournament/show-tournaments.js";
 import {leftTournamentInfos} from "./menuInsert/Tournaments/leftTournamentInfos.js";
 import {router} from "./router.js";
 import {getUser} from "./user-handler.js";
+import {tournamentInfoPopup} from "./menuInsert/Tournaments/tournamentInfoPopup.js";
+import {wait} from "./wait.js";
 
 declare const io: any;
 
@@ -49,7 +51,50 @@ export async function initTournamentSocket() {
 			router.navigateTo("/game#tournament");
 		});
 
-		tournamentSocket.on("tournamentEnded", () => {
+		tournamentSocket.on("roundEnded", async () => {
+			const mainDiv = document.getElementById("dynamic-content")
+			if (mainDiv) {
+				mainDiv.insertAdjacentHTML("beforebegin", tournamentInfoPopup("Gathering results..."));
+
+				await wait(2500)
+
+				document.getElementById("tournament-info-popup")?.remove();
+
+				mainDiv.insertAdjacentHTML("beforebegin", tournamentInfoPopup("Round starting in 00:05"));
+
+				const countdown = document.getElementById("tournament-info-popup");
+
+				if (countdown) {
+					let duration = 4
+					const timer = setInterval(async () => {
+
+						countdown.textContent =
+							`Round starting in 00:${duration.toString().padStart(2, '0')}`;
+
+						if (--duration < 0) {
+							clearInterval(timer);
+							countdown.textContent = "Round starting";
+							await wait(1000)
+							countdown.remove()
+						}
+					}, 1000);
+				}
+			}
+		})
+
+		tournamentSocket.on("tournamentEnded", async (winner: string) => {
+			const mainDiv = document.getElementById("dynamic-content")
+			if (mainDiv) {
+				mainDiv.insertAdjacentHTML("beforebegin", tournamentInfoPopup("And the winner is..."));
+
+				await wait(2500)
+
+				document.getElementById("tournament-info-popup")?.remove();
+				mainDiv.insertAdjacentHTML("beforebegin", tournamentInfoPopup(winner + " !"));
+
+				await wait(5000);
+			}
+
 			router.navigateTo("/game");
 		});
 	});
