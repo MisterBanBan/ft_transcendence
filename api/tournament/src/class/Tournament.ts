@@ -14,18 +14,21 @@ export class Match {
 	}
 
 	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
-		console.log(Date.now(), "Starting match")
-		if (this.player1 === undefined && this.player2 === undefined) {
+
+		if ((this.player1 === undefined && this.player2 === undefined) ||
+			((this.player1 && !tournament.getPlaying().has(this.player1)) && (this.player2 && !tournament.getPlaying().has(this.player2)))) {
 			this.winner = undefined
 			return Promise.resolve()
 		}
 
-		if (this.player1 !== undefined && this.player2 === undefined) {
+		if ((this.player1 !== undefined && this.player2 === undefined) ||
+			((this.player1 && tournament.getPlaying().has(this.player1)) && (this.player2 && !tournament.getPlaying().has(this.player2)))) {
 			this.winner = this.player1
 			return Promise.resolve()
 		}
 
-		if (this.player1 === undefined && this.player2 !== undefined) {
+		if ((this.player1 === undefined && this.player2 !== undefined) ||
+			((this.player2 && tournament.getPlaying().has(this.player2)) && (this.player1 && !tournament.getPlaying().has(this.player1)))) {
 			this.winner = this.player2
 			return Promise.resolve()
 		}
@@ -104,7 +107,8 @@ export class Tournament {
 	private readonly name: string;
 	private readonly size: number;
 	private owner: number;
-	private players: Map<number, string> = new Map();
+	private participants: Map<number, string> = new Map();
+	private playing: Map<number, string> = new Map();
 	private structure: TournamentStructure = { rounds: [], winner: undefined};
 	private started: boolean = false;
 
@@ -133,21 +137,30 @@ export class Tournament {
 	public getSize(): number {
 		return this.size;
 	}
+	public getParticipants(): Map<number, string> {
+		return this.participants;
+	}
 
-	public getPlayers(): Map<number, string> {
-		return this.players;
+	public getPlaying(): Map<number, string> {
+		return this.playing;
 	}
 
 	public addPlayer(userId: number, displayName: string) {
-		this.players.set(userId, displayName);
+		this.participants.set(userId, displayName);
+		this.playing.set(userId, displayName);
 	}
 
 	public removePlayer(userId: number) {
-		this.players.delete(userId);
+		if (!this.started)
+			this.participants.delete(userId);
+		this.playing.delete(userId);
 	}
 
 	public hasPlayer(userId: number) {
-		return this.players.has(userId);
+		if (this.started)
+			return this.playing.has(userId);
+		else
+			return this.participants.has(userId);
 	}
 
 	public hasStarted(): boolean {
@@ -159,7 +172,7 @@ export class Tournament {
 	}
 
 	public isFull(): boolean {
-		return this.players.size >= this.size;
+		return this.participants.size >= this.size;
 	}
 
 	public start(): void {

@@ -8,9 +8,9 @@ export async function updateTournamentInfo(app: FastifyInstance, userId: number,
 	const infos = {
 		"name": tournament.getName(),
 		"size": tournament.getSize(),
-		"registered": tournament.getPlayers().size,
+		"registered": tournament.getParticipants().size,
 		"ownerId": tournament.getOwner(),
-		"players": Array.from(tournament.getPlayers()),
+		"players": Array.from(tournament.getParticipants()),
 		"started": tournament.hasStarted(),
 		"structure": createStructure(tournament)
 	}

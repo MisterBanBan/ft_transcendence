@@ -139,7 +139,11 @@ export class pong implements Component {
 
 		this.quitPongEle.addEventListener('click', () => {
 			this.socket.emit("abandon");
-			router.navigateTo("/game");
+
+			if (this.mode !== "private")
+				router.navigateTo("/game");
+			else
+				router.navigateTo("/game#tournament");
         });
     }
     

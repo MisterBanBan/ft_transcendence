@@ -39,7 +39,7 @@ export function initTournamentSocket() {
 	})
 
 	tournamentSocket.on("leftTournament", () =>{
-		console.warn("Left tournament from another position");
+		console.warn("Left tournament");
 		router.navigateTo("/game#tournament");
 	})
 

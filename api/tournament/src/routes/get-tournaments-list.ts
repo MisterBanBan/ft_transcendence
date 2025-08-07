@@ -23,8 +23,8 @@ export default async function (app: FastifyInstance) {
 				tournamentsList.push({
 					"name": name,
 					"size": tournament.getSize(),
-					"registered": tournament.getPlayers().size,
-					"players": Array.from(tournament.getPlayers().values())
+					"registered": tournament.getParticipants().size,
+					"players": Array.from(tournament.getParticipants().values())
 				})
 		});
 
@@ -33,9 +33,9 @@ export default async function (app: FastifyInstance) {
 			const infos = {
 				"name": tournament.getName(),
 				"size": tournament.getSize(),
-				"registered": tournament.getPlayers().size,
+				"registered": tournament.getParticipants().size,
 				"ownerId": tournament.getOwner(),
-				"players": Array.from(tournament.getPlayers()),
+				"players": Array.from(tournament.getParticipants()),
 				"started": tournament.hasStarted(),
 				"structure": createStructure(tournament)
 			}

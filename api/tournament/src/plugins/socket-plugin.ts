@@ -8,6 +8,7 @@ import updateTournamentsList from "../socket/update-tournaments-list.js";
 import {inTournament} from "../utils/in-tournament.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
 import {start} from "../socket/start.js";
+import {toUnicode} from "node:punycode";
 
 export const usersSockets = new Map<number, Set<string>>()
 
@@ -42,15 +43,13 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			usersSockets.set(user.id, new Set<string>())
 		usersSockets.get(user.id)?.add(socket.id);
 
-		if (hasSockets) {
-			const tournament = await inTournament(user.id)
-			if (tournament) {
-				socket.join(tournament.getName());
-				await updateTournamentInfo(app, user.id, tournament, false);
-			}
+		const tournament = await inTournament(user.id)
+		if (tournament) {
+			socket.join(tournament.getName());
+			await updateTournamentInfo(app, user.id, tournament, false);
 		}
-
-		await updateTournamentsList(app, socket);
+		else
+			await updateTournamentsList(app, socket);
 
 		socket.on("create", async (name, size) => {
 			if (typeof name !== "string" || typeof size !== "number") {
@@ -161,6 +160,11 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 				return
 			}
 
+			if (!tournament.hasOwnership(user.id)) {
+				console.log(`${user.username} is not the owner of the tournament ${tournament.getName()}`);
+				return
+			}
+
 			await join(app, 22, "Coucou", tournament)
 			await join(app, 23, "Bonjour", tournament)
 			await join(app, 24, "Hello", tournament)
@@ -184,7 +188,7 @@ const socketPlugin: FastifyPluginAsync = async (app) => {
 			}
 
 			if (tournament)
-				await leave(app, user.id, tournament);
+				socket.leave(tournament.getName())
 
 			usersSockets.delete(user.id);
 		})

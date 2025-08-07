@@ -22,7 +22,7 @@ export function wait(ms: number): Promise<void> {
 
 export async function start(app: FastifyInstance, tournament: Tournament) {
 
-	const players = shuffleMap(tournament.getPlayers())
+	const players = shuffleMap(tournament.getPlaying())
 
 	const round1 = tournament.getStructure().rounds[0];
 
