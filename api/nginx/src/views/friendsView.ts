@@ -12,9 +12,11 @@ import {router} from "../router.js";
 export class friendsView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
+    private friendBtnHandler = (e: Event) => this.friendAction(e as MouseEvent);
     private handleReturn = () => router.navigateTo("/game#parametre", this.viewManager);
     private handleFriends = () => this.friends();
     private handleInvites = () => this.invites();
+    private closeOnClickOutside?: (evt: MouseEvent) => void;
 
     constructor(container: HTMLElement, viewManager: viewManager) {
         this.container = container;
@@ -90,7 +92,7 @@ export class friendsView implements Component {
             friendsContainer.insertAdjacentHTML('beforeend', friendsHtml);
 
             document.querySelectorAll('.friend-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));
+                btn.addEventListener('click', this.friendBtnHandler);
             });
         } catch (error) {
             console.error('Error loading friends:', error);
@@ -131,15 +133,15 @@ export class friendsView implements Component {
         if (!popup)
             { console.log('fdfd'); return; }
 
-         const closeOnClickOutside = (evt: MouseEvent) => {
+        this.closeOnClickOutside = (evt: MouseEvent) => {
          if (!popup.contains(evt.target as Node)) {
              popup.remove();
-             document.removeEventListener('click', closeOnClickOutside);
+             document.removeEventListener('click', this.closeOnClickOutside!);
              return;
              }
          };
          setTimeout(() => {
-            document.addEventListener('click', closeOnClickOutside);
+            document.addEventListener('click', this.closeOnClickOutside!);
             }, 0);
 
         
@@ -168,8 +170,12 @@ export class friendsView implements Component {
         document.getElementById('invites')?.removeEventListener('click', this.handleInvites);
 
         document.querySelectorAll('.friend-btn').forEach(btn => {
-            btn.removeEventListener('click', (e) => this.friendAction(e as MouseEvent));
+            btn.removeEventListener('click', this.friendBtnHandler);
         });
+        if (this.closeOnClickOutside) {
+            document.removeEventListener('click', this.closeOnClickOutside);
+            this.closeOnClickOutside = undefined;
+        }
     }
 
 }

@@ -55,7 +55,7 @@ export class ChangePassword implements Component{
 
 					error.textContent = data.message;
 					return;
-				} 
+				}
 
 			} catch (err) {
 				console.error("Error: ", err);

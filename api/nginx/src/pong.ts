@@ -263,7 +263,7 @@ export class pong implements Component {
 			window.addEventListener('keyup', this.boundKeyUpHandler);
 			window.addEventListener('resize', this.barResize);
 			window.addEventListener('resize', this.loadingScreen);
-            window.addEventListener('resize', this.endScreen.bind);
+            window.addEventListener('resize', this.endScreen);
 			window.addEventListener('resize', this.buttonResize);
 
 			this.barResize();

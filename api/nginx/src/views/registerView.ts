@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   registerView.ts                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 14:23:46 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/06 13:31:07 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/07 22:11:51 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ import {router} from "../router.js";
 export class registerView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
+    private componentStorage?: Component;
     
     private handleSubmit = () => this.submit_registerForm();
     private handleLogin = () =>  router.navigateTo("/game#login", this.viewManager);
@@ -31,10 +32,11 @@ export class registerView implements Component {
     }
 
     public init(): void {
+        this.componentStorage?.destroy();
         this.container.innerHTML = '';
         this.container.innerHTML = registerForm();
-        const registerLogic = new Register();
-        registerLogic.init();
+        this.componentStorage = new Register();
+        this.componentStorage.init();
         this.attachEventListeners();
     }
 
@@ -58,6 +60,7 @@ export class registerView implements Component {
     }
 
     public destroy(): void {
+        this.componentStorage?.destroy();
         document.getElementById('submit-register')?.removeEventListener('click', this.handleSubmit);
         document.getElementById('loginBtn')?.removeEventListener('click', this.handleLogin);
     }

@@ -26,15 +26,6 @@ export const routes: Route[] = [
             await new Promise(resolve => setTimeout(resolve, 300));
             return `
             <div class="fixed inset-0 h-full w-full relative overflow-hidden">
-
-				
-                <canvas id="forest" class="absolute inset-0 -z-20"></canvas>
-				
-				
-
-
-
-
                 <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
 					<div
 					id="procedural-bg"
@@ -87,8 +78,7 @@ export const routes: Route[] = [
 				<button id="skipButton" class="w-full h-full object-contain">
 				<img src="/img/skip.png" class="w-full h-full "/>
 				</button>
-			</div
-							<!-- 3. Joueur par-dessus tout -->
+			</div>
 			<div id="player"
 				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop1.png')] bg-contain bg-no-repeat z-10">
 			</div>

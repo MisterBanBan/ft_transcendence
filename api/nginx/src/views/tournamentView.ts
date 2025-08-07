@@ -69,6 +69,7 @@ export class tournamentView implements Component{
 	}
 
 	public destroy(): void {
+		
 		this.container.innerHTML = '';
 	}
 }

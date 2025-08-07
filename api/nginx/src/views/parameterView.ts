@@ -8,7 +8,7 @@ import {router} from "../router.js";
 export class parameterView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
-    private picture: HTMLElement;
+    private componentStorage?: Component;
 
     private handleReturn = () => {console.log('clicked');router.navigateTo('/game', this.viewManager);};
     private handleProfile = () => this.loadProfile();
@@ -19,17 +19,17 @@ export class parameterView implements Component {
 
     
 
-    constructor(container: HTMLElement, viewManager: viewManager, picture: HTMLElement) {
+    constructor(container: HTMLElement, viewManager: viewManager) {
         this.container = container;
         this.viewManager = viewManager;
-        this.picture = picture;
     }
 
     public init(): void {
+        this.componentStorage?.destroy();
         this.container.innerHTML = '';
         this.container.innerHTML = parametre();
-        const logout = new Logout();
-        logout.init();
+        this.componentStorage = new Logout();
+        this.componentStorage.init();
         this.attachEventListeners();
     }
 
@@ -48,6 +48,7 @@ export class parameterView implements Component {
     }
 
     public destroy(): void {
+        this.componentStorage?.destroy();
         document.getElementById('profile')?.removeEventListener('click', this.handleProfile);
         document.getElementById('friendsList')?.removeEventListener('click', this.handleFriendsList);
         document.getElementById('settings')?.removeEventListener('click', this.handleSettings);

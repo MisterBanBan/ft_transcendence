@@ -172,7 +172,7 @@ export class viewManager implements Component {
                 newView = new tournamentView(this.formsContainer, this);
                 break;
             case 'parametre':
-                newView = new parameterView(this.formsContainer, this, this.formspicture);
+                newView = new parameterView(this.formsContainer, this);
                 break;
             case 'friendsList':
                 newView = new friendsView(this.formsContainer, this);
