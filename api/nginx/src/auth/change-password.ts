@@ -13,6 +13,7 @@ export class ChangePassword implements Component{
 	public init(): void {
 		if (this.submitButton) {
 			this.submitButton.addEventListener("click", async (event) => {
+				event.preventDefault();
 				await submitForm();
 			});
 		} else {
@@ -26,8 +27,9 @@ export class ChangePassword implements Component{
 			const confirmNewPasswordInput = document.getElementById("confirm_new_password") as HTMLInputElement | null;
 
 			if (!currentPasswordInput || !newPasswordInput || !confirmNewPasswordInput) {
-				console.error("One or multiple form's fields are missing.");
-				return;
+				const error = document.getElementById('error-password');
+    			if (error) error.textContent = "Tous les champs sont obligatoires !";
+    			return;
 			}
 
 			const body: Payload = {
@@ -53,7 +55,7 @@ export class ChangePassword implements Component{
 
 					error.textContent = data.message;
 					return;
-				}
+				} 
 
 			} catch (err) {
 				console.error("Error: ", err);

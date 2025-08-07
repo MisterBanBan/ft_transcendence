@@ -6,7 +6,7 @@
 /*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/05 13:11:24 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/27 00:14:14 by mtbanban         ###   ########.fr       */
+/*   Updated: 2025/08/07 17:01:41 by mtbanban         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ export const registerForm = () => `
                 <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
                 <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
                 
-                <div id="form-register-error" class="error-message-register text-red-500 text-sm mb-2"></div>
+                <div id="form-register-error" class="error-message"></div>
                 <input
                     id="username-register"
                     type="text"

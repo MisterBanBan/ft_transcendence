@@ -173,6 +173,15 @@
     @apply font-omori text-sm sm:text-base md:text-2xl
     lg:text-4xl xl:text-5xl 2xl:text-6xl;
   }
+
+  .error-message {
+    @apply  text-red-500 bg-black/60 font-omori text-sm sm:text-base md:text-xl
+    lg:text-2xl xl:text-4xl 2xl:text-6xl mb-2;
+  }
+  .succes-message {
+    @apply  text-green-500 bg-black/60 font-omori text-sm sm:text-base md:text-xl
+    lg:text-2xl xl:text-4xl 2xl:text-6xl mb-2;
+  }
 }
 
 

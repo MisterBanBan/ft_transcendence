@@ -1,6 +1,8 @@
 export const newPass = () => `
 <form id="newPass" class="flex responsive-form-register flex-col items-center justify-center">
-                <div id="error-password" class="error-message-password text-red-500 text-sm mb-2"></div>
+                <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
+                <div id="error-password" class="error-message"></div>
+                <div id="success-password" class="succes-message"></div>
                 <input
                     id="current_password"
                     type="password"
