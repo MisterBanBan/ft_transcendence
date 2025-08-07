@@ -3,6 +3,8 @@ import {FastifyInstance} from "fastify";
 import {wait} from "../utils/wait.js";
 import {usersSockets} from "../plugins/socket-plugin.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
+import {tournaments} from "../server.js";
+import updateTournamentsList from "../socket/update-tournaments-list.js";
 
 export class Match {
 	private player1?: number;
@@ -113,14 +115,31 @@ export class Tournament {
 	private readonly name: string;
 	private readonly size: number;
 	private owner: number;
+	private timer: NodeJS.Timeout | null = null;
+	private timeLeft: number = 0;
 	private participants: Map<number, string> = new Map();
 	private structure: TournamentStructure = { rounds: [], winner: undefined};
 	private started: boolean = false;
 
-	constructor(name: string, owner: number, size: number) {
+	constructor(app: FastifyInstance, name: string, owner: number, size: number) {
 		this.name = name;
 		this.owner = owner;
 		this.size = size;
+
+		this.timeLeft = 300;
+
+		this.timer = setInterval(() => {
+			this.timeLeft--;
+			emitAll(app, 0, "updateTimer", name, name, this.timeLeft.toString());
+
+			if (this.timeLeft <= 0) {
+				emitAll(app, 0, "leftTournament", name);
+				app.io.socketsLeave(name);
+				tournaments.delete(name);
+
+				updateTournamentsList(app)
+			}
+		}, 1000);
 	}
 
 	public setOwner(owner: number) {
@@ -173,5 +192,10 @@ export class Tournament {
 
 	public start(): void {
 		this.started = true
+
+		if (this.timer) {
+			clearInterval(this.timer);
+			this.timer = null;
+		}
 	}
 }

@@ -29,7 +29,7 @@ function printTournament(tournament: TournamentStructure): void {
 
 export async function create(app: FastifyInstance, socket: Socket, name: string, size: number, displayName: string, ownerId: number): Promise<Tournament | null> {
 
-	const tournament = new Tournament(name, ownerId, size);
+	const tournament = new Tournament(app, name, ownerId, size);
 	await join(app, ownerId, displayName, tournament);
 
 	let index = 0

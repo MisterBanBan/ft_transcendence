@@ -16,8 +16,12 @@ export async function initTournamentSocket() {
 	if (tournamentSocket?.connected)
 		return
 
+	console.warn("Socket not connected")
+
 	if (connectionPromise)
 		return connectionPromise;
+
+	console.warn("create tournament socket")
 
 	connectionPromise = new Promise<void>((resolve) => {
 		tournamentSocket = io(`/`, {
@@ -31,6 +35,35 @@ export async function initTournamentSocket() {
 			resolve();
 		});
 
+		tournamentSocket.on("startingTournament", () => {
+			const mainDiv = document.getElementById("dynamic-content")
+			if (mainDiv) {
+				mainDiv.insertAdjacentHTML("beforebegin", tournamentInfoPopup("Tournament starting in 00:10"));
+
+				const countdown = document.getElementById("tournament-info-popup");
+
+				if (countdown) {
+					let duration = 9
+					const timer = setInterval(async () => {
+
+						countdown.textContent =
+							`Tournament starting in 00:${duration.toString().padStart(2, '0')}`;
+
+						if (--duration < 0) {
+							clearInterval(timer);
+							countdown.textContent = "Round starting";
+							await wait(1000)
+							countdown.remove()
+						}
+					}, 1000);
+				}
+			}
+		})
+
+		tournamentSocket.on("leftTournament", () => {
+			router.navigateTo("/game#tournament");
+		});
+
 		tournamentSocket.on("updateTournamentsList", (tournamentsList: any) => {
 			showTournaments(tournamentsList);
 		});
@@ -39,12 +72,14 @@ export async function initTournamentSocket() {
 			updateTournamentInfos(tournamentInfos);
 		});
 
-		tournamentSocket.on("newMatch", () => {
-			router.navigateTo("/Pong?mode=private");
+		tournamentSocket.on("updateTimer", (tournamentName: string, timeLeft: string) => {
+			const title = document.getElementById("tournament-title")
+			if (title)
+				title.textContent = `${tournamentName} (${timeLeft})`
 		});
 
-		tournamentSocket.on("leftTournament", () => {
-			router.navigateTo("/game#tournament");
+		tournamentSocket.on("newMatch", () => {
+			router.navigateTo("/Pong?mode=private");
 		});
 
 		tournamentSocket.on("matchEnded", () => {
@@ -90,7 +125,7 @@ export async function initTournamentSocket() {
 				await wait(2500)
 
 				document.getElementById("tournament-info-popup")?.remove();
-				mainDiv.insertAdjacentHTML("beforebegin", tournamentInfoPopup(winner + " !"));
+				mainDiv.insertAdjacentHTML("beforebegin", tournamentInfoPopup(`${winner} !`));
 
 				await wait(5000);
 			}
@@ -104,8 +139,10 @@ export async function initTournamentSocket() {
 
 export function clearTournamentSocket() {
 	if (tournamentSocket) {
+		console.warn("clear tournament socket")
 		tournamentSocket.disconnect()
 		tournamentSocket = null
+		connectionPromise = null;
 	}
 }
 

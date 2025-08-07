@@ -18,6 +18,9 @@ function shuffleMap<K, V>(map: Map<K, V>): Map<K, V> {
 
 export async function start(app: FastifyInstance, tournament: Tournament) {
 
+	emitAll(app, 0, "startingTournament", tournament.getName());
+	await wait(10000);
+
 	const players = shuffleMap(tournament.getParticipants())
 
 	const round1 = tournament.getStructure().rounds[0];
