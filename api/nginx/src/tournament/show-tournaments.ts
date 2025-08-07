@@ -1,4 +1,6 @@
-export function showTournaments(socket: any, tournamentsList: any) {
+import {emitTournamentSocket} from "../tournamentsHandler.js";
+
+export function showTournaments(tournamentsList: any) {
 
 	const div = document.getElementById('right-box-infos');
 	if (!div) {
@@ -52,7 +54,8 @@ export function showTournaments(socket: any, tournamentsList: any) {
 				joinTournament.addEventListener("click", async (e) => {
 					e.preventDefault();
 
-					socket.emit("join", name)
+					emitTournamentSocket("join", name);
+					// socket.emit("join", name)
 				})
 		}
 	})

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   player_animation.ts                                :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 11:09:44 by afavier           #+#    #+#             */
-/*   Updated: 2025/08/02 22:27:47 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 export class PlayerAnimation{
     private element: HTMLElement;
     private images: string[] = [

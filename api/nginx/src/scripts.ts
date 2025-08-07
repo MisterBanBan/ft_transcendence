@@ -94,8 +94,6 @@ export class PlayerController implements IPlayerController{
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
         this.playerElement = playerElement;
-
-        console.log("PlayerController initialisé !");
         
         const skipButton = document.getElementById('skipButton');
         if (skipButton) {
@@ -148,7 +146,6 @@ export class PlayerController implements IPlayerController{
     }
     private handleResize() {
         const viewportHeight = window.innerHeight;
-        console.log("Viewport height:", viewportHeight);
         const playerBottom = this.pos.y + this.playerHeight;
         
         if (playerBottom > viewportHeight) {
@@ -165,7 +162,6 @@ export class PlayerController implements IPlayerController{
         if (this.animationFrameId !== null) {
             cancelAnimationFrame(this.animationFrameId);
         }
-        console.log("PlayerController destroy");
     }
 
     private worldPosX:number = 0;
@@ -197,7 +193,6 @@ export class PlayerController implements IPlayerController{
             this.pos.y = viewportHeight - this.playerHeight;
             this.stats.isJumping = false;
         }
-        console.log(this.pos.y, viewportHeight, this.playerHeight);
         this.pos.x = this.worldPosX - this.cameraX;
     }
 
@@ -290,7 +285,6 @@ export class PlayerController implements IPlayerController{
         const pageOne = document.getElementById("pageOne");
         const userInfo = document.getElementById("infoUser");
         if( !pageOne || !userInfo) return;
-        console.log("infoUser called");
         pageOne.classList.remove("bg-black/50");
         userInfo.classList.add("hidden");
 
@@ -300,7 +294,6 @@ export class PlayerController implements IPlayerController{
 
     private activateInfoUserOnce() {
         const handleKeydown = (event: KeyboardEvent) => {
-            console.log(`Key pressed: ${event.key}`);
             this.infoUser();
             document.removeEventListener("keydown", handleKeydown);
         };

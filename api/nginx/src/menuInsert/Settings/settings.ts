@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   settings.ts                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/05 15:31:19 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/05 13:59:54 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 export const settings = () => `
     <form id="paramUser" class="flex responsive-form-login gap-4 flex-col items-center justify-center">
     

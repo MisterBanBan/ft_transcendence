@@ -6,4 +6,5 @@ export const createTournamentForm = () => `
                         <option value="8">8 players</option>
                     </select>
                 <button id="create-tournament-submit" class="text-white responsive-text" >Create Tournament</button>
+                <button id="leave-tournament-menu" class="text-white responsive-text" >Go back</button>
 `

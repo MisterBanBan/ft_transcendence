@@ -1,6 +1,6 @@
 import { Component } from "../component.js";
 import { setUser } from "../user-handler.js";
-import {router} from "../router.js";
+import {logoutChannel, router} from "../router.js";
 
 // Removed unused Payload interface
 
@@ -15,8 +15,6 @@ export class Logout implements Component{
 
 	public init(): void {
 		this.submitButton = document.getElementById("logout");
-
-		console.log("Logout button:", this.submitButton);
 
 		if (!this.submitButton) {
 			console.error("Logout button not found!");
@@ -38,6 +36,7 @@ export class Logout implements Component{
 			if (response.ok) {
 				setUser(undefined);
 				router.navigateTo("/game#login");
+				logoutChannel.postMessage("logout");
 				return;
 			}
 

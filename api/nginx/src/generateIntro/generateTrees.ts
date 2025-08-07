@@ -1,16 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   generateTrees.ts                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/08 13:47:42 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/02 23:13:00 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-
 export function generateTrees(containerId:string, count: number = 20): HTMLElement[] {
     const container = document.getElementById(containerId);
     if(!container) {

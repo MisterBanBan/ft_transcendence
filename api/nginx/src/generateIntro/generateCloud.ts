@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   generateCloud.ts                                   :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/07 05:58:52 by afavier           #+#    #+#             */
-/*   Updated: 2025/08/02 23:12:56 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 export function generateCloud(containerId: string, count: number = 20): HTMLElement[] {
     const container = document.getElementById(containerId);
     if (!container) {

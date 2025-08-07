@@ -3,6 +3,8 @@ DOCKER_COMPOSE= docker compose
 make: all
 
 build: update-env
+	mkdir -p ./api/users/database
+	mkdir -p ./api/auth/database
 	$(DOCKER_COMPOSE) build
 
 up: build
