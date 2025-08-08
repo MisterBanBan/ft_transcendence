@@ -134,8 +134,15 @@ export class PlayerController implements IPlayerController{
         this.player.setDirection(false);
         let worldPath: string;
         this.activateInfoUserOnce();
-        displayTextByLetter("Bienvenue dans le jeu ! Appuyez sur 'E' pour ouvrir la porte.\nvhfrvvbbrevbbvbberuvbibrbvilrbziuvbiulbtrulibvulibrltuibvuil\nbrtubviubrtubviubrtluibvubrtuhbvlubrtubvulrbtubvirbti", "dialogueBox", 50);
-
+        const path = window.location.pathname;
+        if(path === "/")
+        {
+            displayTextByLetter("After wandering for ages among trees and mist, a house finally appears deep within the forest—a quiet promise of shelter.", "dialogueBox", 50);
+        }
+        else
+        {
+            displayTextByLetter("Inside the house, a Pong console rests on the floor and invites play; the urge to imitate familiar gestures awakens beneath the gentle glow of the TV.", "dialogueBox", 50);
+        }
         this.boundKeyDownHandler = (e) => {handleKeyPressPlayer(this.stats, this.player, e)};
         this.boundKeyUpHandler = (e) => {
             const key = e.key.toLowerCase();
@@ -143,7 +150,7 @@ export class PlayerController implements IPlayerController{
             if (key === 'e') {
                 if (this.isInTriggerZone && !this.isDoorOpen) {
                     this.isDoorOpen = true;
-                    const path = window.location.pathname;
+                    
                         if (path === "/" && this.worldIs === 2)
                         {
                             worldPath = "/chalet";

@@ -26,26 +26,30 @@ export class chaletCadre implements Component {
                 if (buffer.length > 10) {
                     buffer = buffer.slice(-10);
                 }
-                if (buffer.endsWith('liam')) {
-                    this.showEasterEgg();
-                    buffer = '';
+                const prenoms = ['liam', 'afavier', 'arvoyer', 'mbaron', 'anjambon', 'arno', 'andre']; // complémente cette liste avec les prénoms que tu veux
+                for (const prenom of prenoms) {
+                    if (buffer.endsWith(prenom)) {
+                        this.showEasterEgg(prenom);
+                        buffer = '';
+                        break;
+                    }
                 }
             }
         };
         window.addEventListener('keydown', this.keydownHandler);
     }
 
-    private showEasterEgg() {
+    private showEasterEgg(prenom: string) {
     const easteregg = document.createElement('div');
     easteregg.className = 'easteregg';
     easteregg.innerHTML = `
-  <img src="/img/liam.jpg"
+    <img src="/img/${prenom}.jpg"
        style="
          position: absolute;
          left: 156vw;
          top: 23%;
          width: 140px;
-         height: 124px;
+         height: 120px;
          border-radius: 50%;
          object-fit: cover;
          z-index: 50;
