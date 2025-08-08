@@ -5,6 +5,7 @@ import {usersSockets} from "../plugins/socket-plugin.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
 import {tournaments} from "../server.js";
 import updateTournamentsList from "../socket/update-tournaments-list.js";
+import {leave} from "../socket/leave.js";
 
 export class Match {
 	private player1?: number;
@@ -19,7 +20,8 @@ export class Match {
 
 	private isPresent(player: number | undefined, tournament: Tournament): boolean {
 		return player !== undefined &&
-			(usersSockets.has(player) || tournament.getPlaying().has(player));
+			usersSockets.has(player) &&
+			tournament.getPlaying().has(player);
 	}
 
 	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
@@ -34,23 +36,24 @@ export class Match {
 
 		if (p1Present && !p2Present) {
 			this.winner = this.player1;
-			await updateTournamentInfo(app, this.player1!, tournament, false);
+
+			if (this.player2 && tournament.getPlaying().has(this.player2))
+				await leave(app, this.player2, tournament);
+			else
+				await updateTournamentInfo(app, this.player1!, tournament, false);
+
 			return Promise.resolve();
 		}
 
 		if (!p1Present && p2Present) {
 			this.winner = this.player2;
-			await updateTournamentInfo(app, this.player2!, tournament, false);
+
+			if (this.player1 && tournament.getPlaying().has(this.player1))
+				await leave(app, this.player1, tournament);
+			else
+				await updateTournamentInfo(app, this.player2!, tournament, false);
+
 			return Promise.resolve();
-		}
-
-		if ((this.player1 === undefined && this.player2 !== undefined) ||
-			((this.player2 && usersSockets.has(this.player2)) && (this.player1 && !usersSockets.has(this.player1))) ||
-			((this.player2 && tournament.getPlaying().has(this.player2)) && (this.player1 && !tournament.getPlaying().has(this.player1)))) {
-			this.winner = this.player2
-
-			await updateTournamentInfo(app, this.player2, tournament, false)
-			return Promise.resolve()
 		}
 
 		const body = { client1: this.player1!.toString(), client2: this.player2!.toString() } as { client1: string, client2: string }
@@ -65,6 +68,10 @@ export class Match {
 
 		emitAll(app, this.player1!, "newMatch", undefined);
 		emitAll(app, this.player2!, "newMatch", undefined);
+
+		tournament.changeState(this.player1!, "Playing");
+		tournament.changeState(this.player2!, "Playing");
+		await updateTournamentInfo(app, 0, tournament, true);
 
 		const response = await fetchPromise;
 		const results = await response.json()
@@ -89,6 +96,11 @@ export class Match {
 
 		emitAll(app, this.player1!, "matchEnded", undefined)
 		emitAll(app, this.player2!, "matchEnded", undefined)
+
+		tournament.changeState(this.player1!, "Waiting");
+		tournament.changeState(this.player2!, "Waiting");
+
+		await updateTournamentInfo(app, 0, tournament, true);
 
 		await wait(2000)
 
@@ -128,7 +140,7 @@ export class Tournament {
 	private owner: number;
 	private timer: NodeJS.Timeout | null = null;
 	private timeLeft: number = 0;
-	private participants: Map<number, string> = new Map();
+	private participants: Map<number, { name: string, state: string }> = new Map();
 	private playing: Set<number> = new Set();
 	private structure: TournamentStructure = { rounds: [], winner: undefined};
 	private started: boolean = false;
@@ -174,7 +186,7 @@ export class Tournament {
 		return this.size;
 	}
 
-	public getParticipants(): Map<number, string> {
+	public getParticipants(): Map<number, { name: string, state: string }> {
 		return this.participants;
 	}
 
@@ -183,7 +195,7 @@ export class Tournament {
 	}
 
 	public addPlayer(userId: number, displayName: string) {
-		this.participants.set(userId, displayName);
+		this.participants.set(userId, { name: displayName, state: "Waiting" });
 		if (!this.playing.has(userId))
 			this.playing.add(userId);
 	}
@@ -211,6 +223,12 @@ export class Tournament {
 
 	public isFull(): boolean {
 		return this.participants.size >= this.size;
+	}
+
+	public changeState(userId: number, state: "Waiting" | "Playing" | "Left") {
+		const user = this.participants.get(userId)
+		if (user)
+			this.participants.set(userId, { name: user.name, state: state });
 	}
 
 	public start(): void {

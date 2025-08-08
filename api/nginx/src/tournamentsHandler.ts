@@ -241,19 +241,18 @@ function tournamentPage(size: number, ownerId: number, started: boolean) {
 }
 
 export function updateTournamentInfos(tournamentInfos: any) {
-	console.warn("updateTournamentInfos");
 
 	const infos = tournamentInfos as {
 		name: string,
 		size: number,
 		registered: number,
 		ownerId: number,
-		players: Array<[number, string]>,
+		players: Array<[number, { name: string, state: string }]>,
 		started: boolean
 		structure: TournamentStructure
 	}
 
-	const map: Record<number, string> = Object.fromEntries(infos.players);
+	const map: Record<number, { name: string, state: string}> = Object.fromEntries(infos.players);
 
 	tournamentPage(tournamentInfos.size, tournamentInfos.ownerId, infos.started);
 
@@ -270,7 +269,7 @@ export function updateTournamentInfos(tournamentInfos: any) {
 		const parts = child.id.split("-");
 		if (parts.length >= 2) {
 			const splitName = parts.slice(1, parts.length).join("-");
-			if (!infos.players.some(([id, name]) => name === splitName)) {
+			if (!infos.players.some(([id, { name, state }]) => name === splitName)) {
 				child.remove();
 			}
 		}
@@ -280,7 +279,7 @@ export function updateTournamentInfos(tournamentInfos: any) {
 	if (playersListTitle)
 		playersListTitle.innerText = `Players (${infos.players.length}/${infos.size})`;
 
-	infos.players.forEach(([id, name]) => {
+	infos.players.forEach(([id, { name, state }]) => {
 		const playerLi = document.getElementById(`player-${name}`);
 
 		if (!playerLi) {
@@ -294,6 +293,8 @@ export function updateTournamentInfos(tournamentInfos: any) {
 			li.innerText = `- ${name}`;
 			if (id === getUser()?.id)
 				li.innerText += ' (You)';
+			else if (id !== getUser()?.id && infos.started)
+				li.innerText += ` (${state})`
 
 			li.id = `player-${name}`;
 
@@ -319,14 +320,14 @@ export function updateTournamentInfos(tournamentInfos: any) {
 
 						if (player1Div) {
 							if (match.player1)
-								player1Div.textContent = map[match.player1]
+								player1Div.textContent = map[match.player1].name
 							else
 								player1Div.textContent = "Undefined"
 						}
 
 						if (player2Div) {
 							if (match.player2)
-								player2Div.textContent = map[match.player2]
+								player2Div.textContent = map[match.player2].name
 							else
 								player2Div.textContent = "Undefined"
 						}
@@ -343,7 +344,7 @@ export function updateTournamentInfos(tournamentInfos: any) {
 	}
 
 	if (infos.structure.winner)
-		winnerDiv.innerText = map[infos.structure.winner]
+		winnerDiv.innerText = map[infos.structure.winner].name
 	else
 		winnerDiv.innerText = "Undefined"
 }

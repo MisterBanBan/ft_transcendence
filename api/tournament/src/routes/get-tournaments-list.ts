@@ -15,7 +15,7 @@ export default async function (app: FastifyInstance) {
 			});
 		}
 
-		type TournamentJSON = { name: string, size: number, registered: number, players: Array<string> };
+		type TournamentJSON = { name: string, size: number, registered: number };
 		const tournamentsList: TournamentJSON[] = [];
 
 		tournaments.forEach((tournament, name) => {
@@ -23,8 +23,7 @@ export default async function (app: FastifyInstance) {
 				tournamentsList.push({
 					"name": name,
 					"size": tournament.getSize(),
-					"registered": tournament.getParticipants().size,
-					"players": Array.from(tournament.getParticipants().values())
+					"registered": tournament.getParticipants().size
 				})
 		});
 
