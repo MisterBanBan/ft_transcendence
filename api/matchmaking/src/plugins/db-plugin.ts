@@ -17,18 +17,17 @@ export default async function (server: FastifyInstance, opts: any) {
     try {
         db = await open({ filename: "./database/matchmaking_db.sqlite", driver: sqlite3.Database });
 
-        const usersDb: Database = await open({
+        const userDb: Database = await open({
             filename: "/app/database/users/users_db.sqlite",
             driver: sqlite3.Database,
         });
+        server.decorate('userDb', userDb);
 
         console.log("database connected.");
     } catch (err) {
         console.error("Database error :", err);
         throw err;
     }
-
-
 
     const umzug = new Umzug({
         logger: undefined,
@@ -39,5 +38,4 @@ export default async function (server: FastifyInstance, opts: any) {
     });
     await umzug.up();
     server.decorate('db', db);
-    server.decorate('userDb', userdb);
 };
