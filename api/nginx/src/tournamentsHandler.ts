@@ -134,7 +134,7 @@ export async function initTournamentSocket() {
 		});
 
 		tournamentSocket.on("error", (message: string) => {
-			alert(message);
+			alert(message);	
 		})
 	});
 

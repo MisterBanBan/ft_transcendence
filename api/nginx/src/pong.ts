@@ -1,5 +1,6 @@
 import { Component } from "./component.js"
 import { router } from "./router.js";
+import {wait} from "./wait.js";
 
 declare const io: any;
 
@@ -415,7 +416,7 @@ export class pong implements Component {
             console.error("Connection error:", err);
         });
 
-        this.socket.on("game-end", (score: {playerLeft: number, playerRight: number}) => {
+        this.socket.on("game-end", async (score: {playerLeft: number, playerRight: number}) => {
             console.log("Game end with a score of ", score.playerLeft, ":", score.playerRight);
 			this.inGame = 2;
             if (this.side === "left" && score.playerLeft > score.playerRight ||
@@ -437,6 +438,11 @@ export class pong implements Component {
                 this.endScreen();
             }
             this.hidePong();
+
+			await wait(2000);
+			if (this.mode == "private") {
+				router.navigateTo("/game#tournament")
+			}
         })
     }
     
