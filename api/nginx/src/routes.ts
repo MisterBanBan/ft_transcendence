@@ -208,6 +208,10 @@ export const routes: Route[] = [
 			<img id="lose"  src="/img/youLoose.png"  class="absolute" />
 
 			<p id="end"  class="absolute text-white text-[calc(20vw)] font-omori z-0 drop-shadow"></p>
+			<video autoplay loop muted id="video_main"
+                class="absolute translate-y-2">
+                <source src="/img/tuto.mp4" type="video/mp4">
+            </video>
 		</div>
 				
 
@@ -221,3 +225,4 @@ export const routes: Route[] = [
             `
     }
 ];
+

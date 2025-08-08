@@ -35,15 +35,15 @@ export class pong implements Component {
     private boundKeyUpHandler!: (e: KeyboardEvent) => void;
 	private inGame: number = 0;
     private side: string | null = null;
-    private readonly mode: string | null;
+    private mode: string | null;
     private leftBar!: Bar;
     private rightBar!: Bar;
     private ball!: Ball;
     private rafId = 0;
     private imgPong: HTMLImageElement;
-    private readonly leftBEle: HTMLElement;
-    private readonly rightBEle: HTMLElement;
-    private readonly ballEle: HTMLElement;
+    private leftBEle: HTMLElement;
+    private rightBEle: HTMLElement;
+    private ballEle: HTMLElement;
     private scorePlayer1: HTMLElement;
     private scorePlayer2: HTMLElement;
     private loadingEle: HTMLElement;
@@ -52,6 +52,7 @@ export class pong implements Component {
     private backPongEle: HTMLElement;
     private quitPongEle: HTMLElement;
     private endEle: HTMLElement;
+    private videoMainEle: HTMLElement;
     private backRect!: DOMRect;
 
 	private socket = io(`/`, {
@@ -61,7 +62,7 @@ export class pong implements Component {
 	});
     
     constructor(leftBarId: string, rightBarId: string, ballId: string,containerId: string, scorePlayer1: string, scorePlayer2: string,
-            backPong: string, quitPong: string, loading: string, win: string, lose: string, end: string, mode: string | null) {
+            backPong: string, quitPong: string, loading: string, win: string, lose: string, end: string, video_main: string, mode: string | null) {
         const leftBarElement = document.getElementById(leftBarId);
         if(!leftBarElement) {
             throw new Error('Left bar not found');
@@ -117,6 +118,12 @@ export class pong implements Component {
             throw new Error('End element not found');
         }
 
+        const videoMainElement = document.getElementById(video_main);
+        if(!videoMainElement) {
+            console.log("Video Main element not found, using default");
+            throw new Error('Video Main element not found');
+        }
+
         this.leftBEle = leftBarElement;
         this.rightBEle = rightBarElement;
         this.ballEle = ballElement;
@@ -128,25 +135,36 @@ export class pong implements Component {
 		this.backPongEle = backPongElement;
 		this.quitPongEle = quitPongElement;
         this.endEle = endElement;
+        this.videoMainEle = videoMainElement;
         this.imgPong = document.getElementById(containerId) as HTMLImageElement;
 
         this.mode = mode;
 
 		this.backPongEle.addEventListener('click', () => {
-			if (this.mode !== "private") {
-				this.socket.emit("abandon");
-				router.navigateTo("/Pong?mode=" + this.mode);
-			}
+			this.socket.emit("abandon");
+            router.navigateTo("/Pong?mode=" + this.mode);
         });
 
 		this.quitPongEle.addEventListener('click', () => {
 			this.socket.emit("abandon");
-
-			if (this.mode !== "private")
-				router.navigateTo("/game");
-			else
-				router.navigateTo("/game#tournament");
+			router.navigateTo("/game");
         });
+    }
+
+    private infoUser = () => {
+        this.videoMainEle.style.display = "none";
+    }
+
+    private activateInfoUserOnce = () =>  {
+        const imgRect = this.imgPong.getBoundingClientRect();
+
+		const width = imgRect.width * 0.4;
+		const height = imgRect.height * 0.4;
+
+		this.videoMainEle.style.width = `${width}px`;
+		this.videoMainEle.style.height = `${height}px`;
+		this.videoMainEle.style.top = `${imgRect.top + imgRect.height * 0.499416569 - height / 2}px`;
+		this.videoMainEle.style.left = `${imgRect.left + imgRect.width * 0.41 - width / 2}px`;
     }
     
     private barResize = () => {
@@ -248,7 +266,9 @@ export class pong implements Component {
         else
             this.socket.emit("error");
 
-		this.imgPong.onload = () => {
+        this.videoMainEle.style.display = "none";
+        this.imgPong.onload = () => {
+            this.activateInfoUserOnce();
 			this.winEle.style.display = "none";
 			this.loseEle.style.display = "none";
             this.endEle.style.display = "none";
@@ -266,10 +286,11 @@ export class pong implements Component {
 			this.boundKeyDownHandler = this.onKeyDown.bind(this);
 			this.boundKeyUpHandler = this.onKeyUp.bind(this);
 			window.addEventListener('keydown', this.boundKeyDownHandler);
+            window.addEventListener('keydown', this.infoUser);
 			window.addEventListener('keyup', this.boundKeyUpHandler);
 			window.addEventListener('resize', this.barResize);
 			window.addEventListener('resize', this.loadingScreen);
-            window.addEventListener('resize', this.endScreen.bind);
+            window.addEventListener('resize', this.endScreen);
 			window.addEventListener('resize', this.buttonResize);
 
 			this.barResize();
@@ -386,9 +407,11 @@ export class pong implements Component {
         this.socket.on("game-started", (data: { gameId: string, side: string}) => {
           gameId = data.gameId;
           this.side = data.side;
+          console.log("Game started! Game ID:", gameId);
           this.inGame = 1;
 		  this.showPong();
 		  this.loadingEle.style.display = "none";
+          this.videoMainEle.style.display = "inline";
         });
 
         this.socket.on("game-update", (data: { gameId: string, state: {
@@ -429,8 +452,7 @@ export class pong implements Component {
                 else {
                     this.endEle.textContent = "Player Right wins!";
                 }
-				if (score.playerLeft !== score.playerRight)
-					this.endEle.style.display = "inline";
+                this.endEle.style.display = "inline";
             }
             else {
                 this.loseEle.style.display = "inline";
@@ -441,9 +463,14 @@ export class pong implements Component {
     }
     
     public destroy(): void {
+		console.log("Destroy pong")
         window.removeEventListener('keydown', this.boundKeyDownHandler);
+        window.removeEventListener('keydown', this.infoUser);
         window.removeEventListener('keyup', this.boundKeyUpHandler);
         window.removeEventListener('resize', this.barResize);
+		window.removeEventListener('resize', this.loadingScreen);
+        window.removeEventListener('resize', this.endScreen.bind);
+		window.removeEventListener('resize', this.buttonResize);
         cancelAnimationFrame(this.rafId);
 		this.socket.removeAllListeners();
 		this.socket.disconnect();

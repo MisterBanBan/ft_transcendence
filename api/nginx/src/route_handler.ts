@@ -93,6 +93,7 @@ const routeComponents: Record<string, Component> = {
 				'win',
 				'lose',
 				'end',
+                'video_main',
                 mode
               );
             pongGame.init();
