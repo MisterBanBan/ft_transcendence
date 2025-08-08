@@ -455,10 +455,11 @@ export class pong implements Component {
                 if (score.playerLeft > score.playerRight) {
                     this.endEle.textContent = "Player Left wins!";
                 }
-                else {
+                else if (score.playerLeft < score.playerRight) {
                     this.endEle.textContent = "Player Right wins!";
                 }
-                this.endEle.style.display = "inline";
+				if (score.playerLeft != score.playerRight)
+                	this.endEle.style.display = "inline";
             }
             else {
                 this.loseEle.style.display = "inline";
