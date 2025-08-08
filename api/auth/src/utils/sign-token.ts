@@ -4,6 +4,6 @@ import {FastifyInstance} from "fastify";
 export async function signToken(server: FastifyInstance, payload: TokenPayload): Promise<string> {
 	return server.jwt.sign(payload, {
 		noTimestamp: true,
-		expiresIn: '1h'
+		expiresIn: 2_592_000
 	});
 }
