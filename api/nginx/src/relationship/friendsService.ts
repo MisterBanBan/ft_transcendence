@@ -95,6 +95,6 @@ export class FriendService {
                 </div>
             `;
         else
-            return `<p class="text-gray-400 flex flex-row justify-center item-center gap-8">Aucuns amis</p>`;
+            return `<p class="text-gray-400 flex flex-row justify-center item-center gap-8">No friends</p>`;
     }
 }

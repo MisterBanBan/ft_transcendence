@@ -110,7 +110,6 @@ export class InvitationService {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
                 return false;
             }
 
@@ -142,7 +141,6 @@ export class InvitationService {
             });
 
             if (!response.ok) {
-                const errorData = await response.json();
                 return false;
             }
 
@@ -181,7 +179,7 @@ export class InvitationService {
             </div>
         `;
         } else {
-            invitationsList.innerHTML = '<p class="text-gray-400 flex flex-row justify-center item-center gap-8">Aucune invitation en attente</p>';
+            invitationsList.innerHTML = '<p class="text-gray-400 flex flex-row justify-center item-center gap-8">No pending invitations</p>';
         }
     }
 
