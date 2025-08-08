@@ -17,21 +17,31 @@ export class Match {
 		this.winner = undefined
 	}
 
+	private isPresent(player: number | undefined): boolean {
+		return player !== undefined &&
+			(usersSockets.has(player) || tournament.getPlaying().has(player));
+	}
+
 	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
 
-		if ((this.player1 === undefined && this.player2 === undefined) ||
-			((this.player1 && !usersSockets.has(this.player1)) && ((this.player2 && !usersSockets.has(this.player2))))) {
-			this.winner = undefined
-			return Promise.resolve()
+		const p1Present = this.isPresent(this.player1);
+		const p2Present = this.isPresent(this.player2);
+
+		if (!p1Present && !p2Present) {
+			this.winner = undefined;
+			return Promise.resolve();
 		}
 
-		if ((this.player1 !== undefined && this.player2 === undefined) ||
-			((this.player1 && usersSockets.has(this.player1)) && (this.player2 && !usersSockets.has(this.player2))) ||
-			((this.player1 && tournament.getPlaying().has(this.player1)) && (this.player2 && !tournament.getPlaying().has(this.player2)))) {
-			this.winner = this.player1
+		if (p1Present && !p2Present) {
+			this.winner = this.player1;
+			await updateTournamentInfo(app, this.player1!, tournament, false);
+			return Promise.resolve();
+		}
 
-			await updateTournamentInfo(app, this.player1, tournament, false)
-			return Promise.resolve()
+		if (!p1Present && p2Present) {
+			this.winner = this.player2;
+			await updateTournamentInfo(app, this.player2!, tournament, false);
+			return Promise.resolve();
 		}
 
 		if ((this.player1 === undefined && this.player2 !== undefined) ||
