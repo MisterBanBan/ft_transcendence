@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   scores.ts                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/08 11:18:41 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/06/08 18:53:28 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { FastifyInstance } from 'fastify';
 import { getAllGameScores, getPlayerScore } from '../db/getScore.js';
 

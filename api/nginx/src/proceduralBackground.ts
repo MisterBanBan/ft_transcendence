@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   proceduralBackground.ts                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/06 11:10:07 by afavier           #+#    #+#             */
-/*   Updated: 2025/07/01 18:20:36 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { Component } from "./component.js";
 import { destroyCloud, generateCloud } from "./generateIntro/generateCloud.js";
 import { animateBirds, destroyBirds, generateBirds } from "./generateIntro/generateBirds.js";

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   registerView.ts                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 14:23:46 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/07/27 11:02:48 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 import { viewManager } from "./viewManager.js";
 import { registerForm } from "../menuInsert/Connection/registerForm.js";
 import { getUser } from "../user-handler.js";
@@ -44,18 +32,12 @@ export class registerView implements Component {
     }
     
     public async submit_registerForm() {
+        await wait(1000);
 
-        const limit = 10;
-        let attempts = 0;
-        while (!getUser() && attempts < limit) {
-            await wait(1000);
-            attempts++;
-        }
         if (getUser()) {
             router.navigateTo("/game", this.viewManager)
             // this.viewManager.show('game');
         }
-        this.attachEventListeners(); 
     }
 
     public destroy(): void {

@@ -11,6 +11,7 @@ export function allLeaveRoom(app: FastifyInstance, userId: number, roomName: str
 			const socket = app.io.sockets.sockets.get(socketId);
 			if (socket) {
 				socket.leave(roomName)
+				socket.emit("leftTournament")
 			} else {
 				sockets.delete(socketId)
 			}

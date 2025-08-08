@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   friendsView.ts                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 23:50:50 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 //import { Component } from "./component.js";
 //import { invites } from "../menuInsert/Friends/invites.js";
 import { searchMate } from "../menuInsert/Friends/searchMate.js";
@@ -37,7 +25,6 @@ export class friendsView implements Component {
 
     public async init(): Promise<void> {
         this.container.innerHTML = friendsList();
-        console.log(this.container.innerHTML);
         await this.friends();
         this.attachEventListeners();
     }

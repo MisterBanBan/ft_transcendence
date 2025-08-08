@@ -1,6 +1,10 @@
 import {emitAll} from "../utils/emit-all.js";
 import {FastifyInstance} from "fastify";
-import {wait} from "../socket/start.js";
+import {wait} from "../utils/wait.js";
+import {usersSockets} from "../plugins/socket-plugin.js";
+import {updateTournamentInfo} from "../room/update-tournament-info.js";
+import {tournaments} from "../server.js";
+import updateTournamentsList from "../socket/update-tournaments-list.js";
 
 export class Match {
 	private player1?: number;
@@ -14,19 +18,26 @@ export class Match {
 	}
 
 	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
-		console.log(Date.now(), "Starting match")
-		if (this.player1 === undefined && this.player2 === undefined) {
+
+		if ((this.player1 === undefined && this.player2 === undefined) ||
+			((this.player1 && !usersSockets.has(this.player1)) && ((this.player2 && !usersSockets.has(this.player2))))) {
 			this.winner = undefined
 			return Promise.resolve()
 		}
 
-		if (this.player1 !== undefined && this.player2 === undefined) {
+		if ((this.player1 !== undefined && this.player2 === undefined) ||
+			((this.player1 && usersSockets.has(this.player1)) && (this.player2 && !usersSockets.has(this.player2)))) {
 			this.winner = this.player1
+
+			await updateTournamentInfo(app, this.player1, tournament, false)
 			return Promise.resolve()
 		}
 
-		if (this.player1 === undefined && this.player2 !== undefined) {
+		if ((this.player1 === undefined && this.player2 !== undefined) ||
+			((this.player2 && usersSockets.has(this.player2)) && (this.player1 && !usersSockets.has(this.player1)))) {
 			this.winner = this.player2
+
+			await updateTournamentInfo(app, this.player2, tournament, false)
 			return Promise.resolve()
 		}
 
@@ -47,7 +58,6 @@ export class Match {
 		const results = await response.json()
 
 		if (results.status === "ok") {
-			console.log(results.result);
 			this.winner = parseInt(results.result.key);
 		}
 
@@ -102,16 +112,37 @@ export interface TournamentStructure {
 export class Tournament {
 
 	private readonly name: string;
-	private readonly owner: number;
 	private readonly size: number;
-	private players: Map<number, string> = new Map();
+	private owner: number;
+	private timer: NodeJS.Timeout | null = null;
+	private timeLeft: number = 0;
+	private participants: Map<number, string> = new Map();
 	private structure: TournamentStructure = { rounds: [], winner: undefined};
 	private started: boolean = false;
 
-	constructor(name: string, owner: number, size: number) {
+	constructor(app: FastifyInstance, name: string, owner: number, size: number) {
 		this.name = name;
 		this.owner = owner;
 		this.size = size;
+
+		this.timeLeft = 300;
+
+		this.timer = setInterval(() => {
+			this.timeLeft--;
+			emitAll(app, 0, "updateTimer", name, name, this.timeLeft.toString());
+
+			if (this.timeLeft <= 0) {
+				emitAll(app, 0, "leftTournament", name);
+				app.io.socketsLeave(name);
+				tournaments.delete(name);
+
+				updateTournamentsList(app)
+			}
+		}, 1000);
+	}
+
+	public setOwner(owner: number) {
+		this.owner = owner;
 	}
 
 	public getName(): string {
@@ -129,21 +160,21 @@ export class Tournament {
 	public getSize(): number {
 		return this.size;
 	}
-
-	public getPlayers(): Map<number, string> {
-		return this.players;
+	public getParticipants(): Map<number, string> {
+		return this.participants;
 	}
 
 	public addPlayer(userId: number, displayName: string) {
-		this.players.set(userId, displayName);
+		this.participants.set(userId, displayName);
 	}
 
 	public removePlayer(userId: number) {
-		this.players.delete(userId);
+		if (!this.started)
+			this.participants.delete(userId);
 	}
 
 	public hasPlayer(userId: number) {
-		return this.players.has(userId);
+		return this.participants.has(userId);
 	}
 
 	public hasStarted(): boolean {
@@ -155,10 +186,15 @@ export class Tournament {
 	}
 
 	public isFull(): boolean {
-		return this.players.size >= this.size;
+		return this.participants.size >= this.size;
 	}
 
 	public start(): void {
 		this.started = true
+
+		if (this.timer) {
+			clearInterval(this.timer);
+			this.timer = null;
+		}
 	}
 }

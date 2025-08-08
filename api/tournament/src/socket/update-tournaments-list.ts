@@ -12,8 +12,8 @@ export default async function updateTournamentsList(app: FastifyInstance, socket
 			tournamentsList.push({
 				"name": name,
 				"size": tournament.getSize(),
-				"registered": tournament.getPlayers().size,
-				"players": Array.from(tournament.getPlayers().values())
+				"registered": tournament.getParticipants().size,
+				"players": Array.from(tournament.getParticipants().values())
 			})
 	});
 

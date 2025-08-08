@@ -2,8 +2,8 @@ import {FastifyInstance} from "fastify";
 import {Match, Tournament} from "../class/Tournament.js";
 import {emitAll} from "../utils/emit-all.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
-import {leave} from "./leave.js";
 import {tournaments} from "../server.js";
+import {wait} from "../utils/wait.js";
 
 function shuffleMap<K, V>(map: Map<K, V>): Map<K, V> {
 	const entries = Array.from(map.entries());
@@ -16,13 +16,12 @@ function shuffleMap<K, V>(map: Map<K, V>): Map<K, V> {
 	return new Map(entries);
 }
 
-export function wait(ms: number): Promise<void> {
-	return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 export async function start(app: FastifyInstance, tournament: Tournament) {
 
-	const players = shuffleMap(tournament.getPlayers())
+	emitAll(app, 0, "startingTournament", tournament.getName());
+	await wait(10000);
+
+	const players = shuffleMap(tournament.getParticipants())
 
 	const round1 = tournament.getStructure().rounds[0];
 
@@ -43,20 +42,11 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 
 		const round = tournament.getStructure().rounds[i];
 
-		console.log("Starting round", i + 1);
-
 		let matchPromises = round.map((match: Match, index: number) => {
-			console.log("Starting match", index + 1);
 			return match.startMatch(app, tournament);
 		});
 
 		await Promise.all(matchPromises);
-
-		console.log("-------- Results --------");
-		tournament.getStructure().rounds[i].forEach(( match: Match, index: number ) => {
-			console.log(index, match);
-		})
-		console.log("-------------------------");
 
 		if (i + 1 < length) {
 			tournament.getStructure().rounds[i + 1].forEach((match: Match, index: number) => {
@@ -64,18 +54,29 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 				match.setPlayer2(tournament.getStructure().rounds[i][index * 2 + 1].getWinner())
 			})
 
+			emitAll(app, 0, "roundEnded", tournament.getName());
+
+			await wait(2500);
+
 			await updateTournamentInfo(app, 0, tournament, true);
+
+			emitAll(app, 0, "newRound", tournament.getName())
 
 			await wait(5000);
 		}
 		else {
-			console.log("Winner:", round[0].getWinner());
-			tournament.getStructure().winner = round[0].getWinner();
+			const winner = round[0].getWinner()
+			tournament.getStructure().winner = winner;
+
+			if (winner)
+				emitAll(app, 0, "tournamentEnded", tournament.getName(), tournament.getParticipants().get(winner));
+			else
+				emitAll(app, 0, "tournamentEnded", tournament.getName(), "Undefined");
+
+			await wait(2500);
+
 			await updateTournamentInfo(app, 0, tournament, true);
 
-			await wait(5000);
-
-			emitAll(app, 0, "tournamentEnded", tournament.getName());
 			app.io.socketsLeave(tournament.getName());
 			tournaments.delete(tournament.getName());
 		}

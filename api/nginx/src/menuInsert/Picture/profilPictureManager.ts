@@ -26,8 +26,6 @@ export class ProfilePictureManager {
             return;
         }
 
-        this.loadCurrentProfilePicture();
-
         this.pictureElement.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -35,11 +33,13 @@ export class ProfilePictureManager {
         });
 
         this.isInitialized = true;
-        console.log('ProfilePictureManager initialized');
     }
 
     public reinitialize(): void {
         this.isInitialized = false;
+        const user = getUser()
+        if (user)
+            this.userId = user.id.toString()
         this.init();
     }
 
@@ -59,32 +59,6 @@ export class ProfilePictureManager {
         this.fileInput.addEventListener('change', (event) => {
             this.handleFileSelection(event);
         });
-    }
-
-    private async loadCurrentProfilePicture(): Promise<void> {
-        try {
-            const currentUser = getUser() as UserWithAvatar;
-
-            if (currentUser && currentUser.avatar_url) {
-                let avatarUrl: string;
-
-                if (typeof currentUser.avatar_url === 'object' && currentUser.avatar_url.avatar_url) {
-                    avatarUrl = currentUser.avatar_url.avatar_url;
-                }
-                else if (typeof currentUser.avatar_url === 'string') {
-                    avatarUrl = currentUser.avatar_url;
-                }
-                else {
-                    console.warn('Invalid avatar_url format');
-                    return;
-                }
-
-                const fullAvatarPath = avatarUrl.startsWith('/') ? avatarUrl : `/uploads/${avatarUrl}`;
-                this.updateProfilePicture(fullAvatarPath);
-            }
-        } catch (error) {
-            console.error('Error loading profile picture:', error);
-        }
     }
 
     private async handleFileSelection(event: Event): Promise<void> {
@@ -135,15 +109,10 @@ export class ProfilePictureManager {
         const result = await response.json();
 
         this.updateProfilePicture(result.avatarUrl);
-
-        console.log('Profile picture updated successfully');
     }
 
     private updateProfilePicture(avatarUrl: string): void {
         if (!this.pictureElement) return;
-
-        console.log('Updating profile picture with URL:', avatarUrl);
-        console.log('URL type:', typeof avatarUrl);
 
         if (typeof avatarUrl !== 'string') {
             console.error('Avatar URL is not a string:', avatarUrl);
@@ -179,6 +148,5 @@ export class ProfilePictureManager {
             this.fileInput.parentNode.removeChild(this.fileInput);
         }
         this.isInitialized = false;
-        console.log('ProfilePictureManager destroyed');
     }
 }
