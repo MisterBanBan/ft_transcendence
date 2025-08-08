@@ -440,7 +440,7 @@ export class pong implements Component {
             this.hidePong();
 
 			await wait(2000);
-			if (this.mode == "private") {
+			if (this.mode == "private" && (window.location.pathname + window.location.hash) !== "/game#tournament") {
 				router.navigateTo("/game#tournament")
 			}
         })

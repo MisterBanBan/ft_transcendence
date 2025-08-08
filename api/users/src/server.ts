@@ -6,7 +6,6 @@ import { dirname, join } from "node:path";
 import corsConfig from './config/cors.js';
 import fileValidationConfig from "./config/file-validation.js";
 import websocket from "@fastify/websocket";
-// import cleanupPlugin from "./plugins/cleanup.js";
 
 declare module 'fastify' {
     interface FastifyInstance {
