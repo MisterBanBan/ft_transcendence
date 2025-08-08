@@ -270,6 +270,10 @@ export function updateTournamentInfos(tournamentInfos: any) {
 		}
 	}
 
+	const playersListTitle = document.getElementById("players-list-title")
+	if (playersListTitle)
+		playersListTitle.innerText = `Players (${infos.players.length}/${infos.size})`;
+
 	infos.players.forEach(([id, name]) => {
 		const playerLi = document.getElementById(`player-${name}`);
 
@@ -300,17 +304,14 @@ export function updateTournamentInfos(tournamentInfos: any) {
 	if (infos.started) {
 		infos.structure.rounds.forEach((round: Match[], i: number) => {
 			const roundDiv = document.getElementById(`round-${i + 1}`);
-			//console.log(`round-${i + 1}`)
 			if (roundDiv) {
 				round.forEach((match: Match, j: number) => {
 					const matchDiv = roundDiv.querySelector(`#match-${j + 1}`)
-					//console.log(`match-${j + 1}: `, matchDiv?.children);
 					if (matchDiv) {
 						const player1Div = matchDiv.querySelector('#player-1')
 						const player2Div = matchDiv.querySelector('#player-2')
 
 						if (player1Div) {
-							//console.log("Player 1:", match.player1)
 							if (match.player1)
 								player1Div.textContent = map[match.player1]
 							else
@@ -318,7 +319,6 @@ export function updateTournamentInfos(tournamentInfos: any) {
 						}
 
 						if (player2Div) {
-							//console.log("Player 2:", match.player2)
 							if (match.player2)
 								player2Div.textContent = map[match.player2]
 							else
@@ -327,7 +327,6 @@ export function updateTournamentInfos(tournamentInfos: any) {
 					}
 				})
 			}
-			//console.log(`----------------------`)
 		})
 	}
 
