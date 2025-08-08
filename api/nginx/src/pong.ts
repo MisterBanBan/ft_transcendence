@@ -445,8 +445,11 @@ export class pong implements Component {
                 this.ball.position.y = data.state.ball.y * this.backRect.height / 1714 - (this.ball.height * 0.5);
 				this.leftBar.position.y = data.state.bar.left * this.backRect.height / 1714 - (this.leftBar.height * 0.5) ;
 				this.rightBar.position.y = data.state.bar.right * this.backRect.height / 1714 - (this.rightBar.height * 0.5);
-				this.timer.textContent = data.time.toString();
-				this.rafId = requestAnimationFrame(this.gameLoop);
+				if (data.time >= 0)
+                    this.timer.textContent = data.time.toString();
+				else
+                    this.timer.textContent = `Extra Time`;
+                this.rafId = requestAnimationFrame(this.gameLoop);
             }
             // console.log(data.state);
             if (data && data.state && data.state.score)
