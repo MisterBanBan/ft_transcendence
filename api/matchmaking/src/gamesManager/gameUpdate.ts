@@ -8,7 +8,7 @@ export function gameUpdate(app: FastifyInstance){
 		console.log("Connected to game service");
 	});
 
-	app.gameSocket.on("game-update", (data:  { gameId: string, state: any}) => {
+	app.gameSocket.on("game-update", (data:  { gameId: string, state: any, time: number}) => {
 		const gameId = data.gameId;
 
 		for (const [playerId, value] of app.playerToGame.entries()) {
@@ -27,7 +27,7 @@ export function gameUpdate(app: FastifyInstance){
 
 	app.gameSocket.on("game-end", (data: {gameId: string, score: { playerLeft: number, playerRight: number }}) => {
 		console.log("game", data.gameId, "end with a score of", data.score.playerLeft, ":", data.score.playerRight);
-		console.log(app.playerToGame.entries())
+
 		const toDelete: string[] = [];
 		let   privateResult: playerInfo[] | null = null;
 		for (const [playerId, value] of app.playerToGame.entries()) {

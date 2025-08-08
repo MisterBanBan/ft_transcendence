@@ -68,12 +68,14 @@ const routeComponents: Record<string, Component> = {
                 'pong-bg',
 				'score-player1',
 				'score-player2',
+                'timer',
 				'backPong',
 				'quitPong',
 				'loading',
 				'win',
 				'lose',
 				'end',
+                'video_main',
                 mode
               );
             pongGame.init();
