@@ -85,6 +85,7 @@ export class tournamentView implements Component{
 	}
 
 	public destroy(): void {
+
 		this.container.innerHTML = '';
 
 		document.getElementById('create-tournament-submit')?.removeEventListener("click", this.createTournament)

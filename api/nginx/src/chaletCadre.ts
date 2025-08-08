@@ -36,7 +36,6 @@ export class chaletCadre implements Component {
     }
 
     private showEasterEgg() {
-    //const imgWidth = 60;
     const easteregg = document.createElement('div');
     easteregg.className = 'easteregg';
     easteregg.innerHTML = `

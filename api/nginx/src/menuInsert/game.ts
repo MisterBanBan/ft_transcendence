@@ -14,7 +14,3 @@ export const game = () => `
 </div>
 
 `
-/*
-<div id="player"
-				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop1.png')] bg-contain bg-no-repeat z-10">
-			</div>*/

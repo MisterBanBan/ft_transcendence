@@ -13,7 +13,7 @@ export class TFAValidate implements Component {
 	private token: string | null = null;
 
 	constructor(token: string | null = null) {
-		this.handleSubmitBound = this.handleSubmit.bind(this);
+		this.handleSubmitBound = this.handleSubmit;
 		this.token = token;
 	}
 

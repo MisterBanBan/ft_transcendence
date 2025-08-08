@@ -26,15 +26,6 @@ export const routes: Route[] = [
             await new Promise(resolve => setTimeout(resolve, 300));
             return `
             <div class="fixed inset-0 h-full w-full relative overflow-hidden">
-
-				
-                <canvas id="forest" class="absolute inset-0 -z-20"></canvas>
-				
-				
-
-
-
-
                 <div id="pageContainer" class="flex w-[300vw] h-screen overflow-hidden">
 					<div
 					id="procedural-bg"
@@ -54,7 +45,7 @@ export const routes: Route[] = [
 								</div>
 							</div>
 
-							<img id="infoUser" src="/img/infoUser.png" class="absolute top-[40%] left-[38%]  w-[20%] h-[18%] object-cover pointer-events-none translate-y-2"/>
+							<img id="infoUser" src="/img/infoUser.png" class="absolute top-[40%] left-[38%]  w-[20%] h-[18%] object-contain pointer-events-none translate-y-2"/>
 							<img src="/img/path2.png" class="absolute left-0 bottom-0 w-full h-[18%] object-cover pointer-events-none translate-y-2"/>
 			
 							<img src="/img/path.png"  class="absolute left-0 bottom-0 w-full h-[12%] object-cover pointer-events-none translate-y-2"/>
@@ -87,8 +78,7 @@ export const routes: Route[] = [
 				<button id="skipButton" class="w-full h-full object-contain">
 				<img src="/img/skip.png" class="w-full h-full "/>
 				</button>
-			</div
-							<!-- 3. Joueur par-dessus tout -->
+			</div>
 			<div id="player"
 				class="fixed left-0 w-[10vw] h-[25vh] bg-[url('/img/kodama_stop1.png')] bg-contain bg-no-repeat z-10">
 			</div>
@@ -159,19 +149,6 @@ export const routes: Route[] = [
 			`;
 		}	
 	},
-    {
-        path: "/Tv",
-        title: "Tv",
-        template: async () => {
-            await new Promise(resolve => setTimeout(resolve, 300));
-            return `<div id="zoom" class="w-screen h-screen relative">
-                        <video autoplay loop muted class="absolute inset-0 w-full h-full object-contain bg-black transition-transform duration-500">
-            <source src="/img/Tv.mp4" type="video/mp4">
-                </video>
-                </div>
-            `;
-        }
-    },
     {
 
       path: "/Pong",

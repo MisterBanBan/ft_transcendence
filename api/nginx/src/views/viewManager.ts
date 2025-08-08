@@ -15,7 +15,6 @@ import { selectAnimation } from '../selectAnimat.js';
 
 
 export class viewManager implements Component {
-    //private pictureContainer: HTMLElement;
     private activeView : Component | null = null;
     private profilePictureManager: ProfilePictureManager | null = null;
     private videoMain: HTMLVideoElement;
@@ -130,7 +129,6 @@ export class viewManager implements Component {
         console.info(`Redirecting to ${viewName}`)
 
         this.formsContainer.innerHTML = '';
-        //this.pictureContainer.innerHTML = '';
 
         let newView: Component | null = null;
 
@@ -175,7 +173,7 @@ export class viewManager implements Component {
                 newView = new tournamentView(this.formsContainer, this);
                 break;
             case 'parametre':
-                newView = new parameterView(this.formsContainer, this, this.formspicture);
+                newView = new parameterView(this.formsContainer, this);
                 break;
             case 'friendsList':
                 newView = new friendsView(this.formsContainer, this);
@@ -194,28 +192,12 @@ export class viewManager implements Component {
         this.select?.stopAnimation();
     }
 
-    // private wordAnimation() {
-    //     const friends = document.querySelectorAll('.friend');
-    //     friends.forEach(div => {
-    //         const word = div.textContent?.trim() || '';
-    //         div.textContent = '';
-    //         word.split('').forEach((letter, idx) => {
-    //         const span = document.createElement('span');
-    //         span.textContent = letter;
-    //         span.style.transitionDelay = `${idx * 0.1}s`;
-    //         div.appendChild(span);
-    //         });
-    //     });
-    // }
-
 
     private authBtnHandler = () => {
         if (!getUser()) {
             router.navigateTo("/game#login", this)
-            // this.show('login');
         } else {
             router.navigateTo("/game#parametre", this)
-            // this.show('parametre');
         }
     };
 
@@ -248,7 +230,6 @@ export class viewManager implements Component {
         }
         if (selected.id === 'Tournament') {
             router.navigateTo("/game#tournament", this)
-            // this.show('tournament');
         }
     }
 

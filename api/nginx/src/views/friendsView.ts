@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   friendsView.ts                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
+/*   Updated: 2025/08/08 12:43:26 by afavier          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 //import { Component } from "./component.js";
 //import { invites } from "../menuInsert/Friends/invites.js";
 import { searchMate } from "../menuInsert/Friends/searchMate.js";
 import { playerPerso } from "../menuInsert/Profile/playerPerso.js";
-import { friendAction } from "../menuInsert/Friends/friendAction.js";
+import { friendActionTemplate } from "../menuInsert/Friends/friendAction.js";
 import { Component } from "../component.js";
 import { InvitationService } from "../relationship/invitationService.js";
 import { FriendService } from "../relationship/friendsService.js";
@@ -14,9 +26,14 @@ import {router} from "../router.js";
 export class friendsView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
+    private friendBtnHandler = (e: Event) => this.friendAction(e as MouseEvent);
     private handleReturn = () => router.navigateTo("/game#parametre", this.viewManager);
     private handleFriends = () => this.friends();
     private handleInvites = () => this.invites();
+    private boundInviteClickHandler?: () => void;
+    private boundInviteKeydownHandler?: (event: KeyboardEvent) => void;
+
+    private closeOnClickOutside?: (evt: MouseEvent) => void;
 
     constructor(container: HTMLElement, viewManager: viewManager) {
         this.container = container;
@@ -50,19 +67,12 @@ export class friendsView implements Component {
         leftFriends.insertAdjacentHTML('beforeend', searchMate());
         invitesContainer.innerHTML = '';
         InvitationService.loadInvitations();
- /*       document.addEventListener('DOMContentLoaded', () => {
-            InvitationService.loadInvitations();
-            console.log('test');
-        });*/
-        console.log('Invites loaded');
-            console.log('DOMContentLoaded event fired');
+
             const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
             const shareInviteButton = document.getElementById('Share Invite');
-            console.log('Invite input:', inviteInput);
             if (shareInviteButton && inviteInput) {
-                shareInviteButton.addEventListener('click', () => {
+                this.boundInviteClickHandler = () => {
                     const inviteValue = inviteInput.value.trim();
-        
                     if (!inviteValue) {
                         console.log('Input is empty');
                         return;
@@ -70,10 +80,15 @@ export class friendsView implements Component {
         
                     console.log(`Sending invite to: ${inviteValue}`);
                     InvitationService.sendInvitation();
-                });
+                };
+                this.boundInviteKeydownHandler = (event: KeyboardEvent) => {
+                if (event.key === "Enter") {
+                    shareInviteButton.click();
+                }
+            };
+            shareInviteButton.addEventListener('click', this.boundInviteClickHandler);
+            inviteInput.addEventListener('keydown', this.boundInviteKeydownHandler);            
             }
-        //this.eventFriendsListener();
-        //this.eventFormListeners();
     }
 
     private async friends() {
@@ -98,7 +113,7 @@ export class friendsView implements Component {
             friendsContainer.insertAdjacentHTML('beforeend', friendsHtml);
 
             document.querySelectorAll('.friend-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => this.friendAction(e as MouseEvent));
+                btn.addEventListener('click', this.friendBtnHandler);
             });
         } catch (error) {
             console.error('Error loading friends:', error);
@@ -132,8 +147,24 @@ export class friendsView implements Component {
             return;
         }
 
-        const popupHtml = friendAction(x, y);
+        const popupHtml = friendActionTemplate(x, y);
         friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
+
+        const popup = document.getElementById('friend-popup');
+        if (!popup)
+            { console.log('fdfd'); return; }
+
+        this.closeOnClickOutside = (evt: MouseEvent) => {
+         if (!popup.contains(evt.target as Node)) {
+             popup.remove();
+             document.removeEventListener('click', this.closeOnClickOutside!);
+             return;
+             }
+         };
+         setTimeout(() => {
+            document.addEventListener('click', this.closeOnClickOutside!);
+            }, 0);
+
 
         document.getElementById('removeFriend')?.addEventListener('click', async () => {
             try {
@@ -155,13 +186,27 @@ export class friendsView implements Component {
     }
 
     destroy(): void {
+        const inviteInput = document.getElementById('inviteUserId');
+        const shareInviteButton = document.getElementById('Share Invite');
         document.getElementById('friendReturnBtn')?.removeEventListener('click', this.handleReturn);
         document.getElementById('friends')?.removeEventListener('click', this.handleFriends);
         document.getElementById('invites')?.removeEventListener('click', this.handleInvites);
 
         document.querySelectorAll('.friend-btn').forEach(btn => {
-            btn.removeEventListener('click', (e) => this.friendAction(e as MouseEvent));
+            btn.removeEventListener('click', this.friendBtnHandler);
         });
+        if (this.closeOnClickOutside) {
+            document.removeEventListener('click', this.closeOnClickOutside);
+            this.closeOnClickOutside = undefined;
+        }
+        if (inviteInput && this.boundInviteKeydownHandler) {
+    inviteInput.removeEventListener('keydown', this.boundInviteKeydownHandler);
+    this.boundInviteKeydownHandler = undefined;
+}
+if (shareInviteButton && this.boundInviteClickHandler) {
+    shareInviteButton.removeEventListener('click', this.boundInviteClickHandler);
+    this.boundInviteClickHandler = undefined;
+}
     }
 
 }
