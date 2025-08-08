@@ -4,6 +4,15 @@ import { AuthUser } from './type.js';
 import { setUser} from "./user-handler.js";
 import {viewManager} from "./views/viewManager.js";
 
+export const logoutChannel = new BroadcastChannel('logout_channel');
+
+logoutChannel.onmessage = (event) => {
+    if (event.data === 'logout') {
+        setUser(undefined)
+        router.navigateTo("/game#login");
+    }
+};
+
 class Router {
     private routes: Route[];
     private appDiv: HTMLElement;
@@ -98,7 +107,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (data)
                 setUser(data);
         }
-        console.warn("Router updatePage");
         await router.updatePage();
     } catch (error) {
         console.error("Wrong init :", error);

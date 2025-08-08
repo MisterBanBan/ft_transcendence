@@ -48,7 +48,7 @@ export class loginView implements Component {
     }
     //bloquer lenvoie de pleins de submit
     public async submit_loginForm() {
-        await wait(2000)
+        await wait(1000)
 
         const user = getUser();
         if (user) {

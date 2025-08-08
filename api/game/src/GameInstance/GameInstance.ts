@@ -250,6 +250,9 @@ export class GameInstance {
 			this.state.score.playerLeft = 10;
 		} else if (side === "left") {
 			this.state.score.playerRight = 10;
+		} else {
+			this.state.score.playerLeft = 10;
+			this.state.score.playerRight = 10;
 		}
 		this.updateScore();
 	}

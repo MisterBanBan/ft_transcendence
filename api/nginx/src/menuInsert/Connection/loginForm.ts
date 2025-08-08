@@ -42,15 +42,14 @@ export const loginForm = () => `
                     
                     <div class="flex flex-row h-[5%] w-full justify-center items-center">
                       <a href="${ft_url}"
-                        class="flex object-contain responsive-text responsive-case-submit-42 text-white gap-4 mr-4">
-                        <img class="h-6 w-6" src="https://profile.intra.42.fr/assets/42_logo_black-684989d43d629b3c0ff6fd7e1157ee04db9bb7a73fba8ec4e01543d650a1c607.png"/>
-                        Login/Register with 42 OAuth
+                        class="flex object-contain responsive-text responsive-case-submit-42 text-white mr-4 pl-[15px] pr-[15px] pb-[5px] pt-[5px]">
+                       	  Login/Register with 42
                       </a>
                         <a href="${google_url}"
-                        class="flex object-contain responsive-text responsive-case-submit-google text-white gap-4">
-                          Login/Register with Google OAuth
+                        class="flex object-contain responsive-text responsive-case-submit-google text-white pl-[15px] pr-[15px] pb-[5px] pt-[5px]">
+                          Login/Register with Google
                       </a>
                     </div>
                     
-                    <button type="button" id="registerBtn" class="text-white responsive-text relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">Register</button>
+                    <button type="button" id="registerBtn" class="text-white responsive-text relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-white hover:after:w-full after:transition-all after:duration-300">REGISTER</button>
                 </form>`

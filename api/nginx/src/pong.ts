@@ -35,15 +35,15 @@ export class pong implements Component {
     private boundKeyUpHandler!: (e: KeyboardEvent) => void;
 	private inGame: number = 0;
     private side: string | null = null;
-    private mode: string | null;
+    private readonly mode: string | null;
     private leftBar!: Bar;
     private rightBar!: Bar;
     private ball!: Ball;
     private rafId = 0;
     private imgPong: HTMLImageElement;
-    private leftBEle: HTMLElement;
-    private rightBEle: HTMLElement;
-    private ballEle: HTMLElement;
+    private readonly leftBEle: HTMLElement;
+    private readonly rightBEle: HTMLElement;
+    private readonly ballEle: HTMLElement;
     private scorePlayer1: HTMLElement;
     private scorePlayer2: HTMLElement;
     private loadingEle: HTMLElement;
@@ -133,13 +133,19 @@ export class pong implements Component {
         this.mode = mode;
 
 		this.backPongEle.addEventListener('click', () => {
-			this.socket.emit("abandon");
-            router.navigateTo("/Pong?mode=" + this.mode);
+			if (this.mode !== "private") {
+				this.socket.emit("abandon");
+				router.navigateTo("/Pong?mode=" + this.mode);
+			}
         });
 
 		this.quitPongEle.addEventListener('click', () => {
 			this.socket.emit("abandon");
-			router.navigateTo("/game");
+
+			if (this.mode !== "private")
+				router.navigateTo("/game");
+			else
+				router.navigateTo("/game#tournament");
         });
     }
     
@@ -380,7 +386,6 @@ export class pong implements Component {
         this.socket.on("game-started", (data: { gameId: string, side: string}) => {
           gameId = data.gameId;
           this.side = data.side;
-          console.log("Game started! Game ID:", gameId);
           this.inGame = 1;
 		  this.showPong();
 		  this.loadingEle.style.display = "none";
@@ -424,7 +429,8 @@ export class pong implements Component {
                 else {
                     this.endEle.textContent = "Player Right wins!";
                 }
-                this.endEle.style.display = "inline";
+				if (score.playerLeft !== score.playerRight)
+					this.endEle.style.display = "inline";
             }
             else {
                 this.loseEle.style.display = "inline";
@@ -435,7 +441,6 @@ export class pong implements Component {
     }
     
     public destroy(): void {
-		console.log("Destroy pong")
         window.removeEventListener('keydown', this.boundKeyDownHandler);
         window.removeEventListener('keyup', this.boundKeyUpHandler);
         window.removeEventListener('resize', this.barResize);

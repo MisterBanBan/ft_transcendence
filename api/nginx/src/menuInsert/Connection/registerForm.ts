@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   registerForm.ts                                    :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mtbanban <mtbanban@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/05 13:11:24 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/07 17:01:41 by mtbanban         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 export const registerForm = () => `
                 <form id="register"  class="flex responsive-form-register flex-col items-center justify-center">
                   

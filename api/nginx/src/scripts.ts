@@ -104,8 +104,8 @@ export class PlayerController implements IPlayerController{
     private isDoorOpen: boolean = false;
 
     constructor(playerId: string, presseE: string) {
-        
-        
+
+
         const playerElement = document.getElementById(playerId);
         if (!playerElement) throw new Error('Player element not found');
         this.playerElement = playerElement;
@@ -117,14 +117,14 @@ export class PlayerController implements IPlayerController{
         const skipButton = document.getElementById('skipButton');
         if (skipButton)
             this.skipButton = skipButton;
-        
+
 
         this.boundHandleResize = this.handleResize.bind(this);
         this.boundHandleWindowBlur = this.handleWindowBlur.bind(this);
         this.boundHandleVisibilityChange = this.handleVisibilityChange.bind(this);
         this.boundGameLoop = this.gameLoop.bind(this);
 
-       
+
 
         this.player = new PlayerAnimation(playerId);
 
@@ -163,7 +163,7 @@ export class PlayerController implements IPlayerController{
             }
         };
         this.bindEvent();
-        
+
     }
 
     private bindEvent()
@@ -272,10 +272,10 @@ export class PlayerController implements IPlayerController{
     }
 
     private gameLoop(timestamp: number) {
-        
+
         const deltaTime = this.computeDeltaTime(timestamp);
 
-    
+
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
 
@@ -287,12 +287,12 @@ export class PlayerController implements IPlayerController{
         } else {
             worldWidth = viewportWidth * 3;
         }
-        
+
         this.updatePhysics(deltaTime, worldWidth, viewportHeight);
         this.updateCamera(viewportWidth, worldWidth);
 
         this.checkTriggers();
-        
+
         this.updatePosition();
         this.animationFrameId = requestAnimationFrame(this.boundGameLoop);
     }
@@ -371,7 +371,6 @@ export class PlayerController implements IPlayerController{
 
     private activateInfoUserOnce() {
         const handleKeydown = (event: KeyboardEvent) => {
-            console.log(`Key pressed: ${event.key}`);
             this.infoUser();
             document.removeEventListener("keydown", handleKeydown);
         };
@@ -401,7 +400,7 @@ export class PlayerController implements IPlayerController{
         }
         if (this.player && typeof this.player.destroy === "function") {
             this.player.destroy();
-        }        
+        }
         if (this.skipButton && this.SkipHandler) {
             this.skipButton.removeEventListener('click', this.SkipHandler);
         }

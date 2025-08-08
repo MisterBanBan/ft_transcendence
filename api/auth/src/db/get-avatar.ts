@@ -1,13 +1,12 @@
 import type {Database} from 'sqlite';
-import {User} from "../interface/user.js";
 
 export async function getAvatar(
-	usersDb: Database,
+	db: Database,
 	username: string,
-): Promise<User | undefined> {
+): Promise<string | undefined> {
 
-	return await usersDb.get<User>(
+	return (await db.get<{ avatar_url: string }>(
 		`SELECT avatar_url FROM users WHERE username = ?`,
 		[username]
-	);
+	))?.avatar_url;
 }

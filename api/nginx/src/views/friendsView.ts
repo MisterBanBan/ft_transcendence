@@ -1,3 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   friendsView.ts                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
+/*   Updated: 2025/08/03 23:50:50 by afavier          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+//import { Component } from "./component.js";
+//import { invites } from "../menuInsert/Friends/invites.js";
 import { searchMate } from "../menuInsert/Friends/searchMate.js";
 import { playerPerso } from "../menuInsert/Profile/playerPerso.js";
 import { friendActionTemplate } from "../menuInsert/Friends/friendAction.js";
@@ -25,7 +39,6 @@ export class friendsView implements Component {
 
     public async init(): Promise<void> {
         this.container.innerHTML = friendsList();
-        console.log(this.container.innerHTML);
         await this.friends();
         this.attachEventListeners();
     }
@@ -128,7 +141,7 @@ export class friendsView implements Component {
 
         const popupHtml = friendActionTemplate(x, y);
         friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
-        
+
         const popup = document.getElementById('friend-popup');
         if (!popup)
             { console.log('fdfd'); return; }
@@ -144,7 +157,7 @@ export class friendsView implements Component {
             document.addEventListener('click', this.closeOnClickOutside!);
             }, 0);
 
-        
+
         document.getElementById('removeFriend')?.addEventListener('click', async () => {
             try {
                 console.log('Attempting to remove friend with ID:', friendId);

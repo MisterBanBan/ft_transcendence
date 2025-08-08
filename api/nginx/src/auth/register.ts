@@ -1,6 +1,6 @@
 import { Component } from "../component.js";
 import { AuthUser } from "../type.js";
-import { setUser } from "../user-handler.js";
+import {getUser, setUser} from "../user-handler.js";
 
 interface Payload {
 	username: string;

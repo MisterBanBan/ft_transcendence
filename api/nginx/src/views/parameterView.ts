@@ -10,7 +10,7 @@ export class parameterView implements Component {
     private viewManager: viewManager;
     private componentStorage?: Component;
 
-    private handleReturn = () => {console.log('clicked');router.navigateTo('/game', this.viewManager);};
+    private handleReturn = () => {router.navigateTo('/game', this.viewManager);};
     private handleProfile = () => this.loadProfile();
 	private handleParametre = () => router.navigateTo("/game#parametre", this.viewManager);
     private handleFriendsList = () => router.navigateTo("/game#friendsList", this.viewManager);
