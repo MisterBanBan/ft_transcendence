@@ -16,6 +16,13 @@ export default async function (server: FastifyInstance, opts: any) {
     let db: Database;
     try {
         db = await open({ filename: "./database/matchmaking_db.sqlite", driver: sqlite3.Database });
+
+        const userDb: Database = await open({
+            filename: "/app/database/users/users_db.sqlite",
+            driver: sqlite3.Database,
+        });
+        server.decorate('userDb', userDb);
+
         console.log("database connected.");
     } catch (err) {
         console.error("Database error :", err);

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   friendsView.ts                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/08 12:43:26 by afavier          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 //import { Component } from "./component.js";
 //import { invites } from "../menuInsert/Friends/invites.js";
 import { searchMate } from "../menuInsert/Friends/searchMate.js";
@@ -77,7 +65,7 @@ export class friendsView implements Component {
                         console.log('Input is empty');
                         return;
                     }
-        
+
                     console.log(`Sending invite to: ${inviteValue}`);
                     InvitationService.sendInvitation();
                 };
@@ -87,7 +75,7 @@ export class friendsView implements Component {
                 }
             };
             shareInviteButton.addEventListener('click', this.boundInviteClickHandler);
-            inviteInput.addEventListener('keydown', this.boundInviteKeydownHandler);            
+            inviteInput.addEventListener('keydown', this.boundInviteKeydownHandler);
             }
     }
 

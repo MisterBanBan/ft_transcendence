@@ -124,6 +124,7 @@ services:
       - ft_transcendence
     volumes:
       - matchmaking-data:/app/database/matchmaking
+      - ./api/users/database:/app/database/users
       - ./certs:/app/certs
     restart: on-failure
 
