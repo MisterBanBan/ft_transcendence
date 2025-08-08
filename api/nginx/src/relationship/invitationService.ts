@@ -46,7 +46,7 @@ export class InvitationService {
         }
 
         try {
-            const response = await fetch(`/api/users/${currentUser.id}/invite`, {
+            const response = await fetch(`/api/users/invite`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -75,7 +75,7 @@ export class InvitationService {
         }
 
         try {
-            const response = await fetch(`/api/users/${currentUser.id}/invitations`);
+            const response = await fetch(`/api/users/invitations`);
 
             if (!response.ok) {
                 return;

@@ -4,7 +4,7 @@ import {InviteBody} from "../types/request.js";
 export default async function (server: FastifyInstance) {
     server.post<{
         Body: InviteBody;
-    }>('/api/users/:userId/invite', {
+    }>('/api/users/invite', {
         schema: {
             body: {
                 type: 'object',
