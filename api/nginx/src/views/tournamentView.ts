@@ -9,9 +9,9 @@ import {router} from "../router.js";
 
 export class tournamentView implements Component{
 
-	private handleReturn = () => router.navigateTo("/game#login");
+	private handleReturn = () => router.navigateTo("/game", this.viewManager);
 	private container: HTMLElement;
-	private viewManager: viewManager;
+	private readonly viewManager: viewManager;
 
 	constructor(container: HTMLElement, viewManager: viewManager) {
 		this.container = container;
