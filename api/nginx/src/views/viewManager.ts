@@ -31,7 +31,6 @@ export class viewManager implements Component {
 
     constructor(videoId: string, containerId: string, authBtnId: string) {
 
-
         const video = document.getElementById(videoId) as HTMLVideoElement;
         if (!video) throw new Error('Video element not found');
         this.videoMain = video;
@@ -56,6 +55,29 @@ export class viewManager implements Component {
 
         this.userLog();
         this.initializeProfilePictureManager();
+
+        if (getUser()) {
+            this.formspicture.innerHTML = picture();
+
+            setTimeout(() => {
+                if (this.profilePictureManager) {
+                    this.profilePictureManager.reinitialize();
+                }
+            }, 100);
+        }
+
+        const powerOff = document.getElementById('power');
+        if (powerOff)
+            powerOff.addEventListener('click',  () => {
+                const onAnimEnd = (e: AnimationEvent) => {
+                    if (e.animationName === 'tvOff') {
+                        this.containerForm.removeEventListener('animationend', onAnimEnd);
+                        router.navigateTo('/chalet');
+                    }
+                };
+                this.containerForm.addEventListener('animationend', onAnimEnd);
+                this.containerForm.classList.add('tv-effect', 'off');
+            });
     }
 
     public init(): void {
@@ -71,7 +93,7 @@ export class viewManager implements Component {
     private initializeProfilePictureManager(): void {
         const currentUser = getUser();
         if (currentUser) {
-            this.profilePictureManager = new ProfilePictureManager(currentUser.id.toString());
+            this.profilePictureManager = new ProfilePictureManager();
 
             this.profilePictureManager.reinitialize()
         }
@@ -100,27 +122,6 @@ export class viewManager implements Component {
         {
             if (!getUser())
                 router.navigateTo("/game#login")
-            else
-            {
-                this.formspicture.innerHTML = picture();
-                const powerOf = document.getElementById('power');
-                if(powerOf)
-                    powerOf.addEventListener('click',  () => {
-                        const onAnimEnd = (e: AnimationEvent) => {
-                            if (e.animationName === 'tvOff') {
-                                this.containerForm.removeEventListener('animationend', onAnimEnd);
-                                router.navigateTo('/chalet');
-                            }
-                        };
-                        this.containerForm.addEventListener('animationend', onAnimEnd);
-                        this.containerForm.classList.add('tv-effect', 'off');
-                    });
-                setTimeout(() => {
-                    if (this.profilePictureManager) {
-                        this.profilePictureManager.reinitialize();
-                    }
-                }, 100);
-            }
         }
 
         if (viewName !== "tournament")
@@ -187,11 +188,15 @@ export class viewManager implements Component {
         if (this.activeView)
             this.activeView.init();
     }
+
     public destroyGameListeners(): void {
         document.removeEventListener('keydown', this.keydownHandler);
         this.select?.stopAnimation();
     }
 
+    public setPicture(): void {
+        this.formspicture.innerHTML = picture()
+    }
 
     private authBtnHandler = () => {
         if (!getUser()) {
@@ -200,8 +205,6 @@ export class viewManager implements Component {
             router.navigateTo("/game#parametre", this)
         }
     };
-
-
 
     private updateCursor() {
         if (!this.options.length) return;

@@ -1,18 +1,11 @@
-import {FastifyInstance} from "fastify";
+import {FastifyInstance, FastifyRequest} from "fastify";
 import {UserParams} from "../types/request.js";
 
 export default async function (server: FastifyInstance) {
     server.get<{
         Params: UserParams;
-    }>('/api/users/:userId/friendsList', {
+    }>('/api/users/friendsList', {
         schema: {
-            params: {
-                type: 'object',
-                properties: {
-                    userId: { type: 'string' }
-                },
-                required: ['userId']
-            },
             response: {
                 200: {
                     type: 'object',
@@ -33,8 +26,13 @@ export default async function (server: FastifyInstance) {
                 }
             }
         }
-    }, async (request, reply) => {
-        const { userId } = request.params;
+    }, async (request: FastifyRequest, reply) => {
+        const userId = request.currentUser?.id;
+
+        if (!userId)
+            return reply.status(401).send({
+                error: 'User not authenticated'
+            });
 
         try {
             const friends = await server.db.all(`

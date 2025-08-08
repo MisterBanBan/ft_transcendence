@@ -2,7 +2,7 @@ import {FastifyInstance} from "fastify";
 import {Socket} from "socket.io";
 import { tournaments } from "../server.js"
 
-type TournamentJSON = { name: string, size: number, registered: number, players: Array<string> };
+type TournamentJSON = { name: string, size: number, registered: number };
 
 export default async function updateTournamentsList(app: FastifyInstance, socket?: Socket) {
 	let tournamentsList: TournamentJSON[] = []
@@ -12,8 +12,7 @@ export default async function updateTournamentsList(app: FastifyInstance, socket
 			tournamentsList.push({
 				"name": name,
 				"size": tournament.getSize(),
-				"registered": tournament.getParticipants().size,
-				"players": Array.from(tournament.getParticipants().values())
+				"registered": tournament.getParticipants().size
 			})
 	});
 

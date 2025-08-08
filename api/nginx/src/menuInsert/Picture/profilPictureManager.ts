@@ -8,11 +8,9 @@ interface UserWithAvatar {
 export class ProfilePictureManager {
     private pictureElement: HTMLButtonElement | null = null;
     private fileInput!: HTMLInputElement;
-    private userId: string;
     private isInitialized: boolean = false;
 
-    constructor(userId: string) {
-        this.userId = userId;
+    constructor() {
         this.createFileInput();
     }
 
@@ -37,9 +35,6 @@ export class ProfilePictureManager {
 
     public reinitialize(): void {
         this.isInitialized = false;
-        const user = getUser()
-        if (user)
-            this.userId = user.id.toString()
         this.init();
     }
 
@@ -96,7 +91,7 @@ export class ProfilePictureManager {
         const formData = new FormData();
         formData.append('file', file);
 
-        const response = await fetch(`/api/users/${this.userId}/avatar`, {
+        const response = await fetch(`/api/users/avatar`, {
             method: 'POST',
             body: formData
         });
@@ -108,17 +103,17 @@ export class ProfilePictureManager {
 
         const result = await response.json();
 
-        this.updateProfilePicture(result.avatarUrl);
+        this.updateProfilePicture(result.avatarName, result.avatarUrl);
     }
 
-    private updateProfilePicture(avatarUrl: string): void {
+    private updateProfilePicture(avatarName: string, avatarUrl: string): void {
         if (!this.pictureElement) return;
 
         if (typeof avatarUrl !== 'string') {
             console.error('Avatar URL is not a string:', avatarUrl);
             return;
         }
-        setAvatarUrl(avatarUrl);
+        setAvatarUrl(avatarName)
         const uniqueUrl = `${avatarUrl}?t=${Date.now()}`;
 
         this.pictureElement.style.backgroundImage = `url('${uniqueUrl}')`;

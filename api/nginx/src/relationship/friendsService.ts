@@ -23,7 +23,7 @@ export class FriendService {
         }
 
         try {
-            const response = await fetch(`/api/users/${currentUser.id}/removeFriend`, {
+            const response = await fetch(`/api/users/removeFriend`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ export class FriendService {
 
         try {
             console.log(`Fetching friends for user ID: ${currentUser.id}`);
-            const response = await fetch(`/api/users/${currentUser.id}/friendsList`, {
+            const response = await fetch(`/api/users/friendsList`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

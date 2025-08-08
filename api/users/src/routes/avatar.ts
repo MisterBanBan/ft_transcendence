@@ -10,7 +10,7 @@ import currentUser from "../plugins/current-user.js";
 dotenv.config();
 
 export default async function (server: FastifyInstance) {
-    server.post('/api/users/:id/avatar', {
+    server.post('/api/users/avatar', {
     }, async (request: FastifyRequest, reply) => {
         try {
             const currentUser = request.currentUser;
@@ -85,6 +85,7 @@ export default async function (server: FastifyInstance) {
 
             console.log('Avatar updated successfully for', currentUser.id);
             return {
+                avatarName: newFilename,
                 avatarUrl: `/uploads/${newFilename}`,
                 message: 'Avatar updated successfully'
             };

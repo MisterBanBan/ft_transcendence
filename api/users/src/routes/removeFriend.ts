@@ -3,7 +3,7 @@ import {FastifyInstance, FastifyRequest} from "fastify";
 export default async function (server: FastifyInstance) {
     server.delete<{
         Body: { friendId: string };
-    }>('/api/users/:userId/removeFriend', {
+    }>('/api/users/removeFriend', {
         schema: {
             body: {
                 type: 'object',
