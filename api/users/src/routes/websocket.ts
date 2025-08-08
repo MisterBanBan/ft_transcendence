@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyRequest } from "fastify";
+/* import { FastifyInstance, FastifyRequest } from "fastify";
 
 interface StatusMessage {
     type: 'status_change' | 'heartbeat';
@@ -151,3 +151,4 @@ export default async function (server: FastifyInstance) {
         }
     });
 }
+ */

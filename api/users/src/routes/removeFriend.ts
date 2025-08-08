@@ -2,17 +2,9 @@ import {FastifyInstance, FastifyRequest} from "fastify";
 
 export default async function (server: FastifyInstance) {
     server.delete<{
-        Params: { userId: string };
         Body: { friendId: string };
     }>('/api/users/:userId/removeFriend', {
         schema: {
-            params: {
-                type: 'object',
-                properties: {
-                    userId: { type: 'string' }
-                },
-                required: ['userId']
-            },
             body: {
                 type: 'object',
                 properties: {
@@ -61,15 +53,10 @@ export default async function (server: FastifyInstance) {
             }
         }
     }, async (request: FastifyRequest, reply) => {
-        const { userId } = request.params as { userId: string };
         const { friendId } = request.body as { friendId: string };
-
-        if (String(request.currentUser?.id) !== String(userId)) {
-            return reply.status(403).send({ error: 'Unauthorized' });
-        }
+        const userId = request.currentUser?.id;
 
         if (!userId) {
-            console.log('User not authenticated:', request.currentUser);
             return reply.status(401).send({ error: 'User not authenticated' });
         }
 
@@ -110,9 +97,9 @@ export default async function (server: FastifyInstance) {
             }
 
             const deleteResult = await server.db.run(
-                `DELETE FROM relationships 
+                `DELETE FROM relationships
                  WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))
-                 AND status = 'accepted'`,
+                   AND status = 'accepted'`,
                 userId, friendId, friendId, userId
             );
 

@@ -57,9 +57,6 @@ export default async function (server: FastifyInstance) {
             return reply.status(401).send({ error: 'User not authenticated' });
         }
 
-        console.log('Requester ID:', requester_id);
-        console.log('Addressee username:', addressee_username);
-
         try {
             const addresseeUser = await server.db.get(
                 'SELECT id, username FROM users WHERE username = ?',
@@ -73,9 +70,8 @@ export default async function (server: FastifyInstance) {
             }
 
             const addressee_id = addresseeUser.id;
-            console.log('Addressee ID:', addressee_id);
 
-            if (requester_id === addressee_id) {
+            if (requester_id.toString() === addressee_id.toString()) {
                 return reply.status(400).send({ error: 'Cannot invite yourself' });
             }
 
@@ -112,7 +108,6 @@ export default async function (server: FastifyInstance) {
             });
 
         } catch (error) {
-            //server.log.error('Error in invite endpoint:', error);
             return reply.status(500).send({ error: 'Internal server error' });
         }
     });
