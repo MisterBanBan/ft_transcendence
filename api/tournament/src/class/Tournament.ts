@@ -17,24 +17,36 @@ export class Match {
 		this.winner = undefined
 	}
 
+	private isPresent(player: number | undefined, tournament: Tournament): boolean {
+		return player !== undefined &&
+			(usersSockets.has(player) || tournament.getPlaying().has(player));
+	}
+
 	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
 
-		if ((this.player1 === undefined && this.player2 === undefined) ||
-			((this.player1 && !usersSockets.has(this.player1)) && ((this.player2 && !usersSockets.has(this.player2))))) {
-			this.winner = undefined
-			return Promise.resolve()
+		const p1Present = this.isPresent(this.player1, tournament);
+		const p2Present = this.isPresent(this.player2, tournament);
+
+		if (!p1Present && !p2Present) {
+			this.winner = undefined;
+			return Promise.resolve();
 		}
 
-		if ((this.player1 !== undefined && this.player2 === undefined) ||
-			((this.player1 && usersSockets.has(this.player1)) && (this.player2 && !usersSockets.has(this.player2)))) {
-			this.winner = this.player1
+		if (p1Present && !p2Present) {
+			this.winner = this.player1;
+			await updateTournamentInfo(app, this.player1!, tournament, false);
+			return Promise.resolve();
+		}
 
-			await updateTournamentInfo(app, this.player1, tournament, false)
-			return Promise.resolve()
+		if (!p1Present && p2Present) {
+			this.winner = this.player2;
+			await updateTournamentInfo(app, this.player2!, tournament, false);
+			return Promise.resolve();
 		}
 
 		if ((this.player1 === undefined && this.player2 !== undefined) ||
-			((this.player2 && usersSockets.has(this.player2)) && (this.player1 && !usersSockets.has(this.player1)))) {
+			((this.player2 && usersSockets.has(this.player2)) && (this.player1 && !usersSockets.has(this.player1))) ||
+			((this.player2 && tournament.getPlaying().has(this.player2)) && (this.player1 && !tournament.getPlaying().has(this.player1)))) {
 			this.winner = this.player2
 
 			await updateTournamentInfo(app, this.player2, tournament, false)
@@ -117,6 +129,7 @@ export class Tournament {
 	private timer: NodeJS.Timeout | null = null;
 	private timeLeft: number = 0;
 	private participants: Map<number, string> = new Map();
+	private playing: Set<number> = new Set();
 	private structure: TournamentStructure = { rounds: [], winner: undefined};
 	private started: boolean = false;
 
@@ -160,21 +173,32 @@ export class Tournament {
 	public getSize(): number {
 		return this.size;
 	}
+
 	public getParticipants(): Map<number, string> {
 		return this.participants;
 	}
 
+	public getPlaying(): Set<number> {
+		return this.playing
+	}
+
 	public addPlayer(userId: number, displayName: string) {
 		this.participants.set(userId, displayName);
+		if (!this.playing.has(userId))
+			this.playing.add(userId);
 	}
 
 	public removePlayer(userId: number) {
 		if (!this.started)
 			this.participants.delete(userId);
+		this.playing.delete(userId);
 	}
 
 	public hasPlayer(userId: number) {
-		return this.participants.has(userId);
+		if (this.started)
+			return this.playing.has(userId)
+		else
+			return this.participants.has(userId);
 	}
 
 	public hasStarted(): boolean {

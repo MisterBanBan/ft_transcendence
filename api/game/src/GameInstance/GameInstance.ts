@@ -3,6 +3,7 @@ import { limit, state, intern, pause } from "../utils/interface"
 
 export class GameInstance {
 	private interval!: NodeJS.Timeout;
+	private time!:NodeJS.Timeout;
 	private state: state;
 	private limit: limit;
 	private intern: intern;
@@ -16,6 +17,7 @@ export class GameInstance {
 		this.limit = {
 			map: {left: 164, top: 123, right: 3146, bot: 1590},
 			speed: (3146 - 164) / 25,
+			timer: 180
 		};	// Effectivement nous sommes sur du code tres developpe et tres important afin de realiser le magnifique projet de merde qu'est transcendence
 		this.state = {
 			bar: {
@@ -78,6 +80,14 @@ export class GameInstance {
 				this.pause.bool = false;
 			}
 		}, 1000 / 60);
+		console.log("timer loop started");
+		this.time = setInterval(() => {
+			console.log("time: ", this.limit.timer);
+			this.limit.timer--;
+			if (((this.state.score.playerRight >= 10 || this.state.score.playerLeft >= 10) || this.limit.timer <= 0) && this.state.score.playerRight != this.state.score.playerLeft)
+				this.endGame();
+		}, 1000);
+		
 	}
 
 	private sendUpdate() {
@@ -85,7 +95,8 @@ export class GameInstance {
 		if (matchmakingSocket) {
 			matchmakingSocket.emit("game-update", {
 				gameId: this.id,
-				state: this.state
+				state: this.state,
+				time: this.limit.timer
 			});
 		}
 	}
@@ -189,6 +200,22 @@ export class GameInstance {
 		}
 	}
 
+	private endGame()
+	{
+		this.stop();
+		if (this.state.score.playerLeft > 10)
+			this.state.score.playerLeft = 10;
+		if (this.state.score.playerRight > 10)
+			this.state.score.playerRight = 10;
+		const matchmakingSocket = this.getMatchmakingSocket();
+		if (matchmakingSocket) {
+			matchmakingSocket.emit("game-end", {
+				gameId: this.id,
+				score: this.state.score
+			});
+		}
+	}
+
 	private updateScore()
 	{
 		this.pause.bool = true;
@@ -198,22 +225,9 @@ export class GameInstance {
 		else
 			this.state.score.playerLeft += 1;
 		
-		if (this.state.score.playerRight >= 10 || this.state.score.playerLeft >= 10)
+		if ((this.state.score.playerRight >= 10 || this.state.score.playerLeft >= 10) || this.limit.timer <= 0)
 		{
-			this.stop();
-			if (this.state.score.playerLeft > 10)
-				this.state.score.playerLeft = 10;
-			if (this.state.score.playerRight > 10)
-				this.state.score.playerRight = 10;
-			const matchmakingSocket = this.getMatchmakingSocket();
-			if (matchmakingSocket) {
-				matchmakingSocket.emit("game-end", {
-					gameId: this.id,
-					score: this.state.score
-				});
-			console.log("Game", this.id, "end with a score of", this.state.score.playerLeft, ":", this.state.score.playerRight);
-		}
-
+			this.endGame();
 		}
 		this.state.ball.x = this.limit.map.left + (this.limit.map.right - this.limit.map.left) / 2;
 		this.state.ball.y = this.limit.map.top + (this.limit.map.bot - this.limit.map.top) / 2;
@@ -252,13 +266,14 @@ export class GameInstance {
 			this.state.score.playerRight = 10;
 		} else {
 			this.state.score.playerLeft = 10;
-			this.state.score.playerRight = 10;
+			this.state.score.playerRight = 11;
 		}
 		this.updateScore();
 	}
   
 	private stop() {
 		clearInterval(this.interval);
+		clearInterval(this.time);
 		console.log(`[${this.id}] GameLoop end`);
 	}
   }

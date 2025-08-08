@@ -5,7 +5,8 @@ export interface limit {
 		top: number,
 		right: number,
 		bot: number
-	}
+	},
+	timer: number
 }
 
 export interface state {

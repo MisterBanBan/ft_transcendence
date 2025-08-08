@@ -10,7 +10,7 @@ import {TokenPayload} from "../../interface/token-payload.js";
 import {setCookie} from "../../utils/set-cookie.js";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
 
-export const create2FASessions = new Map<string, {token?:string, key?: string, relogin: boolean, eat?: number, tries?: number}>();
+export const create2FASessions = new Map<string, { token?:string, key?: string, relogin: boolean, eat?: number, tries?: number, timeout: NodeJS.Timeout }>();
 
 export default async function (server: FastifyInstance) {
 
@@ -31,10 +31,24 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
+		const ttl = 2 * 60 * 1000;
+		const eat = Date.now() + ttl;
+
+		const timeout = setTimeout(() => {
+			const session = create2FASessions.get(user.username);
+			if (session) {
+				create2FASessions.delete(user.username);
+			}
+		}, ttl);
+
 		if (user.provider == "local" || (user.provider != "local" && create2FASessions.get(user.username)?.relogin === false)) {
 
 			const formattedKey = authenticator.generateKey();
-			create2FASessions.set(user.username, { key: formattedKey, relogin: false, eat: Date.now() + (2 * 60 * 1000), tries: 5 });
+
+			if (create2FASessions.has(user.username))
+				clearTimeout(create2FASessions.get(user.username)!.timeout)
+
+			create2FASessions.set(user.username, { key: formattedKey, relogin: false, eat: eat, tries: 5, timeout: timeout });
 
 			const url = authenticator.generateTotpUri(formattedKey, user.username, "Transcendence", "SHA1", 6, 30);
 
@@ -47,8 +61,11 @@ export default async function (server: FastifyInstance) {
 
 			const token = crypto.randomUUID();
 
-			create2FASessions.set(user.username,	 {token: token, relogin: false});
-			await createOAuthEntry(token, user.username, "create2FA");
+			if (create2FASessions.has(user.username))
+				clearTimeout(create2FASessions.get(user.username)!.timeout)
+
+			create2FASessions.set(user.username, { token: token, relogin: false, eat: eat, timeout: timeout });
+			await createOAuthEntry(token, user.username, "create2FA", ttl, eat);
 
 			if (user.provider == "google") {
 				const redirectUri = encodeURIComponent(`https://redirectmeto.com/http://${process.env.HOSTNAME}:8080/api/auth/callback/google`);

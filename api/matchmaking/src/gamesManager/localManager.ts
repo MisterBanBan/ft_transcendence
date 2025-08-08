@@ -21,7 +21,9 @@ export function localManager(socket: Socket, app: FastifyInstance, userID: strin
 
 	socket.on("player-input", (data: any) => {
 	const value = app.playerToGame.get(socket.id);
-		if (!value?.gameId) return;
+	if (!value)
+		return;
+	if (!value?.gameId) return;
 
 	gameSocket.emit("player-input", {
 		gameId: value.gameId,
