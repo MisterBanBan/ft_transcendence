@@ -7,8 +7,9 @@ import {TokenPayload} from "../../interface/token-payload.js";
 import {setCookie} from "../../utils/set-cookie.js";
 import {signToken} from "../../utils/sign-token.js";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
+import {create2FASessions} from "./create.js";
 
-export const remove2FASessions = new Map<string, {token?:string, relogin: boolean, eat?: number, tries?: number}>();
+export const remove2FASessions = new Map<string, { token?:string, relogin: boolean, eat?: number, tries?: number, timeout: NodeJS.Timeout }>();
 
 export default async function (server: FastifyInstance) {
 
@@ -28,9 +29,22 @@ export default async function (server: FastifyInstance) {
 			});
 		}
 
+		const ttl = 2 * 60 * 1000;
+		const eat = Date.now() + ttl;
+
+		const timeout = setTimeout(() => {
+			const session = remove2FASessions.get(user.username);
+			if (session) {
+				remove2FASessions.delete(user.username);
+			}
+		}, ttl);
+
 		if (user.provider == "local" || (user.provider != "local" && remove2FASessions.get(user.username)?.relogin === false)) {
 
-			remove2FASessions.set(user.username, {relogin: false, eat: Date.now() + (2 * 60 * 1000), tries: 5});
+			if (remove2FASessions.has(user.username))
+				clearTimeout(remove2FASessions.get(user.username)!.timeout)
+
+			remove2FASessions.set(user.username, { relogin: false, eat: eat, tries: 5, timeout: timeout });
 
 			return reply.status(200).send({ success: true, message: "Session created" });
 		}
@@ -38,8 +52,11 @@ export default async function (server: FastifyInstance) {
 
 			const token = crypto.randomUUID();
 
-			remove2FASessions.set(user.username,	 {token: token, relogin: false});
-			await createOAuthEntry(token, user.username, "remove2FA");
+			if (remove2FASessions.has(user.username))
+				clearTimeout(remove2FASessions.get(user.username)!.timeout)
+
+			remove2FASessions.set(user.username, { token: token, relogin: false, eat: eat, timeout: timeout });
+			await createOAuthEntry(token, user.username, "remove2FA", ttl, eat);
 
 			if (user.provider == "google") {
 				const redirectUri = encodeURIComponent(`https://redirectmeto.com/http://${process.env.HOSTNAME}:8080/api/auth/callback/google`);

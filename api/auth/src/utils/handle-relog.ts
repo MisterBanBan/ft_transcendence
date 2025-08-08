@@ -2,10 +2,18 @@ import {create2FASessions} from "../routes/2fa/create.js";
 import {remove2FASessions} from "../routes/2fa/remove.js";
 import {FastifyReply} from "fastify";
 
-const oauthSessions = new Map<string, { username: string, type: string, eat: number }>
+const oauthSessions = new Map<string, { username: string, type: string, eat: number, timeout: NodeJS.Timeout }>
 
-export async function createOAuthEntry(token: string, username: string, type: string) {
-	oauthSessions.set(token, { username: username, type: type, eat: Date.now() + (2 * 60 * 1000) });
+export async function createOAuthEntry(token: string, username: string, type: string, ttl: number, eat: number) {
+
+	const timeout = setTimeout(() => {
+		const session = oauthSessions.get(token);
+		if (session) {
+			oauthSessions.delete(token);
+		}
+	}, ttl);
+
+	oauthSessions.set(token, { username: username, type: type, eat: eat, timeout: timeout });
 }
 
 export async function handleRelog(state: string, reply: FastifyReply) {

@@ -17,15 +17,15 @@ export class Match {
 		this.winner = undefined
 	}
 
-	private isPresent(player: number | undefined): boolean {
+	private isPresent(player: number | undefined, tournament: Tournament): boolean {
 		return player !== undefined &&
 			(usersSockets.has(player) || tournament.getPlaying().has(player));
 	}
 
 	public async startMatch(app: FastifyInstance, tournament: Tournament): Promise<void> {
 
-		const p1Present = this.isPresent(this.player1);
-		const p2Present = this.isPresent(this.player2);
+		const p1Present = this.isPresent(this.player1, tournament);
+		const p2Present = this.isPresent(this.player2, tournament);
 
 		if (!p1Present && !p2Present) {
 			this.winner = undefined;
