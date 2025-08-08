@@ -6,7 +6,7 @@
 /*   By: afavier <afavier@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 12:37:00 by mtbanban          #+#    #+#             */
-/*   Updated: 2025/08/03 23:50:50 by afavier          ###   ########.fr       */
+/*   Updated: 2025/08/08 12:43:26 by afavier          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@ export class friendsView implements Component {
     private handleReturn = () => router.navigateTo("/game#parametre", this.viewManager);
     private handleFriends = () => this.friends();
     private handleInvites = () => this.invites();
+    private boundInviteClickHandler?: () => void;
+    private boundInviteKeydownHandler?: (event: KeyboardEvent) => void;
+
     private closeOnClickOutside?: (evt: MouseEvent) => void;
 
     constructor(container: HTMLElement, viewManager: viewManager) {
@@ -67,11 +70,9 @@ export class friendsView implements Component {
 
             const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
             const shareInviteButton = document.getElementById('Share Invite');
-            console.log('Invite input:', inviteInput);
             if (shareInviteButton && inviteInput) {
-                shareInviteButton.addEventListener('click', () => {
+                this.boundInviteClickHandler = () => {
                     const inviteValue = inviteInput.value.trim();
-        
                     if (!inviteValue) {
                         console.log('Input is empty');
                         return;
@@ -79,7 +80,14 @@ export class friendsView implements Component {
         
                     console.log(`Sending invite to: ${inviteValue}`);
                     InvitationService.sendInvitation();
-                });
+                };
+                this.boundInviteKeydownHandler = (event: KeyboardEvent) => {
+                if (event.key === "Enter") {
+                    shareInviteButton.click();
+                }
+            };
+            shareInviteButton.addEventListener('click', this.boundInviteClickHandler);
+            inviteInput.addEventListener('keydown', this.boundInviteKeydownHandler);            
             }
     }
 
@@ -178,6 +186,8 @@ export class friendsView implements Component {
     }
 
     destroy(): void {
+        const inviteInput = document.getElementById('inviteUserId');
+        const shareInviteButton = document.getElementById('Share Invite');
         document.getElementById('friendReturnBtn')?.removeEventListener('click', this.handleReturn);
         document.getElementById('friends')?.removeEventListener('click', this.handleFriends);
         document.getElementById('invites')?.removeEventListener('click', this.handleInvites);
@@ -189,6 +199,14 @@ export class friendsView implements Component {
             document.removeEventListener('click', this.closeOnClickOutside);
             this.closeOnClickOutside = undefined;
         }
+        if (inviteInput && this.boundInviteKeydownHandler) {
+    inviteInput.removeEventListener('keydown', this.boundInviteKeydownHandler);
+    this.boundInviteKeydownHandler = undefined;
+}
+if (shareInviteButton && this.boundInviteClickHandler) {
+    shareInviteButton.removeEventListener('click', this.boundInviteClickHandler);
+    this.boundInviteClickHandler = undefined;
+}
     }
 
 }
