@@ -18,6 +18,7 @@ export default async function (server: FastifyInstance) {
 			reply.code(400).send({ status: 'error', message: 'Invalid protocol' });
             return;
 		}
+
         console.log(`Private match request between ${client1} and ${client2}`);
 		server.privateQueue.set(client1, {opponent: client2, type});
 		server.privateQueue.set(client2, {opponent: client1, type});
@@ -45,11 +46,10 @@ export default async function (server: FastifyInstance) {
         try {
             const result: any = await waitForResult([client1, client2]);
 			server.privateResult.delete(result.key)
-            reply.code(200).send({ status: 'ok', result: result });
+            reply.code(200).send({ status: 'ok', result});
+            console.log("ok on private request : ", result)
         } catch (e) {
 			let players: string[] = [];
-
-			console.log(server.privateQueue)
 
 			if (server.privateQueue.has(client1)) {
 				players.push(client1)
@@ -64,7 +64,8 @@ export default async function (server: FastifyInstance) {
 			if (server.privateQueue.has(client2) && server.privateQueue.get(client2)!.type === type)
 				server.privateQueue.delete(client2);
 
-            reply.code(504).send({ status: 'timeout', players: players });
+            reply.code(504).send({ status: 'timeout', players});
+            console.log("timeout on private request :", players);
         }
     });
 }
