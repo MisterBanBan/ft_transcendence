@@ -80,14 +80,14 @@ export default async function (server: FastifyInstance) {
 
             } catch (error) {
                 if (error instanceof Error) {
-                    server.log.error('Error handling WebSocket message:', error);
+                    // server.log.error('Error handling WebSocket message:', error);
                     socket.send(JSON.stringify({
                         type: 'error',
                         message: error.message,
                         timestamp: new Date().toISOString()
                     }));
                 } else {
-                    server.log.error('Unknown error handling WebSocket message:', error);
+                    // server.log.error('Unknown error handling WebSocket message:', error);
                     socket.send(JSON.stringify({
                         type: 'error',
                         message: 'unknown error',
@@ -119,7 +119,7 @@ export default async function (server: FastifyInstance) {
         });
 
         socket.on('error', (error: Error) => {
-            server.log.error(`WebSocket error for user ${userId}:`, error);
+            // server.log.error(`WebSocket error for user ${userId}:`, error);
             if (userId) {
                 activeConnections.delete(userId);
             }
@@ -146,7 +146,7 @@ export default async function (server: FastifyInstance) {
                 users: users
             });
         } catch (error) {
-            server.log.error('Error fetching user statuses:', error);
+            // server.log.error('Error fetching user statuses:', error);
             return reply.status(500).send({ error: 'Internal server error' });
         }
     });
