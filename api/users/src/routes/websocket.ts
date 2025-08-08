@@ -9,7 +9,7 @@ interface StatusMessage {
 export default async function (server: FastifyInstance) {
     const activeConnections = server.activeConnections;
 
-    server.`get`('/api/users/ws/status/', {
+    server.get('/api/users/ws/status/', {
         websocket: true
     }, (socket, request: FastifyRequest) => {
         let userId: string | undefined;
