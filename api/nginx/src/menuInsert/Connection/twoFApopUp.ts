@@ -1,6 +1,8 @@
 export const twoFApopUp = () =>
     `
                 <div id="popup-2fa" class="fixed w-full h-full inset-0 flex flex-col gap-4 justify-center items-center bg-black/80 z-20">
+                  <div id="popup-2fa-error" class="error-message"></div>
+
                   <input 
                     type="text"
                     id="code-2fa"

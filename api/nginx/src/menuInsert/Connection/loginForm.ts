@@ -23,7 +23,7 @@ export const loginForm = () => `
                 <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
                 <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
                 
-                <div id="form-login-error" class="error-message-login text-red-500 text-sm mb-2"></div>
+                <div id="form-login-error" class="error-message"></div>
 
                   <input
                     id="username-login"

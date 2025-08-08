@@ -4,5 +4,3 @@ export const searchMate = () => `
                 
                 <button id="Share Invite" class="text-white responsive-text" >Share Invite</button>
 `
-
-//<p class="text-white responsive-text">OR</p>

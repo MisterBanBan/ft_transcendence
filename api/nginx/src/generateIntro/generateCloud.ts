@@ -30,7 +30,7 @@ export function generateCloud(containerId: string, count: number = 20): HTMLElem
         cloud.style.width = `${size}vw`;
         cloud.style.height = 'auto';
         cloud.classList.add('animate-float');
-        cloud.style.top = `${20 + Math.random() * 5}%`;
+        cloud.style.top = `${20 + Math.random() * 15}%`;
         cloud.style.left = `${i * step + Math.random() * (step * 0.5)}%`;
         container.appendChild(cloud);
         clouds.push(cloud);

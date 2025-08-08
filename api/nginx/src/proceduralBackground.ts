@@ -17,7 +17,7 @@ export class proceduralBackground implements Component{
       this.clouds = generateCloud(this.containerCloudId, this.count);
       this.trees = generateTrees(this.containerId, this.count);
     }
-    //ensuite les arbres et nuages
+
 
 
 

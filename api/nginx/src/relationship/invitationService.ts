@@ -165,7 +165,7 @@ export class InvitationService {
                 ${invitations.map(inv => `
                     <div class="flex flex-row items-center justify-between responsive-text-historique">
                         <div class="flex flex-row items-center gap-4">
-                            <img src="${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
+                            <img src="/uploads/${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
                             <span class="responsive-text-historique text-white font-medium">
                             ${this.escapeHtml(inv.username)}
                         </span>
@@ -183,7 +183,6 @@ export class InvitationService {
         }
     }
 
-    // for XSS
     private static escapeHtml(text: string): string {
         const div = document.createElement('div');
         div.textContent = text;

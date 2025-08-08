@@ -7,7 +7,6 @@ import { Login } from "../auth/login.js";
 import { loginForm } from "../menuInsert/Connection/loginForm.js";
 import { Component } from "../component.js";
 import {router} from "../router.js";
-import {AuthUser} from "../type.js";
 
 
 export class loginView implements Component {
@@ -54,7 +53,6 @@ export class loginView implements Component {
         const user = getUser();
         if (user) {
             if (user.tfa) {
-                //a changer
                 this.container.insertAdjacentHTML('beforeend', twoFApopUp());
                 if (this.tfaValidate)
                     this.tfaValidate.destroy();

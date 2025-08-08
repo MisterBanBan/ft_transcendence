@@ -75,7 +75,6 @@ export default async function (server: FastifyInstance) {
                 return reply.status(400).send({ error: 'Cannot invite yourself' });
             }
 
-
             const requesterExists = await server.db.get(
                 'SELECT id FROM users WHERE id = ?',
                 requester_id

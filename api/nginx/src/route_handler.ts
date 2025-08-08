@@ -1,12 +1,5 @@
 import { Component } from './component.js';
-import { Login } from "./auth/login.js";
-import { Register } from "./auth/register.js";
-import {TFAValidate} from "./auth/2fa-validate.js";
-import {ChangeUsername} from "./auth/change-username.js";
-import {ChangePassword} from "./auth/change-password.js";
-import {Logout} from "./auth/logout.js";
 import { introduction } from './intro.js';
-import { Zoom } from './zoom.js';
 import { proceduralBackground } from './proceduralBackground.js';
 import { pong } from './pong.js';
 import { viewManager } from './views/viewManager.js';
@@ -58,18 +51,6 @@ const routeComponents: Record<string, Component> = {
             activeComponent = {
                 init: () => {},
                 destroy: () => { me.destroy(); }
-            };
-        },
-        destroy: () => {}
-    },
-    "/Tv": {
-        init: () => {
-            activeComponent?.destroy?.();
-            const tv = new Zoom('zoom');
-            tv.init();
-            activeComponent = {
-                init: () => {},
-                destroy: () => { tv.destroy(); }
             };
         },
         destroy: () => {}

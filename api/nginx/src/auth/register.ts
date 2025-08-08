@@ -17,7 +17,7 @@ export class Register implements Component{
 		this.handleSubmitBound = this.handleSubmit.bind(this);
 	}
 
-	public init() {
+	public init() : void {
 		this.submitButton = document.getElementById("submit-register");
 
 		if (!this.submitButton) {
@@ -82,7 +82,7 @@ export class Register implements Component{
 		}
 	}
 
-	public destroy() {
+	public destroy() : void {
 		if (this.submitButton)
 			this.submitButton.removeEventListener("click", this.handleSubmitBound)
 	}
