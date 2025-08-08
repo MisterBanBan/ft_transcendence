@@ -8,7 +8,7 @@ export function gameUpdate(app: FastifyInstance){
 		console.log("Connected to game service");
 	});
 
-	app.gameSocket.on("game-update", (data:  { gameId: string, state: any}) => {
+	app.gameSocket.on("game-update", (data:  { gameId: string, state: any, time: number}) => {
 		const gameId = data.gameId;
 
 		for (const [playerId, value] of app.playerToGame.entries()) {

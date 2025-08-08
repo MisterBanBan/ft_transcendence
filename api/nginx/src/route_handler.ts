@@ -87,6 +87,7 @@ const routeComponents: Record<string, Component> = {
                 'pong-bg',
 				'score-player1',
 				'score-player2',
+                'timer',
 				'backPong',
 				'quitPong',
 				'loading',

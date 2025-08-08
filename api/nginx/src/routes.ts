@@ -193,6 +193,8 @@ export const routes: Route[] = [
     		<p id="score-player1"  class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
    			<p id="score-player2" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
 
+			<p id="timer" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
+
 			<button id="backPong" class="absolute p-0 border-none bg-transparent">
 				<img src="/img/backPong.png" class="hover:scale-110 transition-transform duration-300"/>
 			</button>

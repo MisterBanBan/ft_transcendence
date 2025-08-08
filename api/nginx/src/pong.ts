@@ -46,6 +46,7 @@ export class pong implements Component {
     private ballEle: HTMLElement;
     private scorePlayer1: HTMLElement;
     private scorePlayer2: HTMLElement;
+	private timer: HTMLElement;
     private loadingEle: HTMLElement;
     private winEle: HTMLElement;
     private loseEle: HTMLElement;
@@ -61,7 +62,7 @@ export class pong implements Component {
         path: "/wss/matchmaking"
 	});
     
-    constructor(leftBarId: string, rightBarId: string, ballId: string,containerId: string, scorePlayer1: string, scorePlayer2: string,
+    constructor(leftBarId: string, rightBarId: string, ballId: string,containerId: string, scorePlayer1: string, scorePlayer2: string, timer: string,
             backPong: string, quitPong: string, loading: string, win: string, lose: string, end: string, video_main: string, mode: string | null) {
         const leftBarElement = document.getElementById(leftBarId);
         if(!leftBarElement) {
@@ -87,6 +88,11 @@ export class pong implements Component {
         if(!score_player2) {
             throw new Error('Score Player 2 not found');
         }
+
+		const timerElement = document.getElementById(timer);
+		if(!timerElement) {
+			throw new Error('Timer element not found');
+		}
 
 		const loadingElement = document.getElementById(loading);
 		if(!loadingElement) {
@@ -129,6 +135,7 @@ export class pong implements Component {
         this.ballEle = ballElement;
         this.scorePlayer1 = score_player1;
         this.scorePlayer2 = score_player2;
+		this.timer = timerElement;
 		this.loadingEle = loadingElement;
 		this.winEle = winElement;
 		this.loseEle = loseElement;
@@ -359,6 +366,7 @@ export class pong implements Component {
         this.ballEle.style.display = "none";
         this.scorePlayer1.style.display = "none";
         this.scorePlayer2.style.display = "none";
+		this.timer.style.display = "none";
     }
 
     private showPong = () => {
@@ -367,6 +375,7 @@ export class pong implements Component {
         this.ballEle.style.display = "block";
         this.scorePlayer1.style.display = "block";
         this.scorePlayer2.style.display = "block";
+		this.timer.style.display = "block";
     }
 
     private gameLoop = () => {
@@ -387,13 +396,17 @@ export class pong implements Component {
             bar.element.style.top = `${imgTop + bar.position.y}px`;
         });
 
-		this.scorePlayer1.style.fontSize = `${imgWidth * 0.25}px`; // taille de la police
-		this.scorePlayer1.style.top = `${imgTop}px`;   // position verticale
+		this.scorePlayer1.style.fontSize = `${imgWidth * 0.25}px`;
+		this.scorePlayer1.style.top = `${imgTop}px`;
 		this.scorePlayer1.style.left = `${imgLeft + imgWidth * 0.222045898 - this.scorePlayer1.getBoundingClientRect().width * 0.5}px`; // position horizontale
 
-		this.scorePlayer2.style.fontSize = `${imgWidth * 0.25}px`; // taille de la police
+		this.scorePlayer2.style.fontSize = `${imgWidth * 0.25}px`;
 		this.scorePlayer2.style.top = `${imgTop}px`;
 		this.scorePlayer2.style.left = `${imgLeft + imgWidth * 0.58605957 - this.scorePlayer2.getBoundingClientRect().width * 0.5}px`;
+
+		this.timer.style.fontSize = `${imgWidth * 0.07}px`;
+		this.timer.style.top = `${imgTop}px`;
+		this.timer.style.left = `${imgLeft + imgWidth * 0.404052734 - this.timer.getBoundingClientRect().width / 2}px`;
     };
 
     private updateScore(newScore_player1: number, newScore_player2: number) {
@@ -420,7 +433,7 @@ export class pong implements Component {
           this.videoMainEle.style.display = "inline";
         });
 
-        this.socket.on("game-update", (data: { gameId: string, state: {
+        this.socket.on("game-update", (data: { gameId: string, time: number, state: {
 			bar: { left: number, right: number},
         	ball: { x: number, y: number},
         	score: {playerLeft: number, playerRight: number}}}) => {
@@ -432,6 +445,7 @@ export class pong implements Component {
                 this.ball.position.y = data.state.ball.y * this.backRect.height / 1714 - (this.ball.height * 0.5);
 				this.leftBar.position.y = data.state.bar.left * this.backRect.height / 1714 - (this.leftBar.height * 0.5) ;
 				this.rightBar.position.y = data.state.bar.right * this.backRect.height / 1714 - (this.rightBar.height * 0.5);
+				this.timer.textContent = data.time.toString();
 				this.rafId = requestAnimationFrame(this.gameLoop);
             }
             // console.log(data.state);

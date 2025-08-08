@@ -95,7 +95,8 @@ export class GameInstance {
 		if (matchmakingSocket) {
 			matchmakingSocket.emit("game-update", {
 				gameId: this.id,
-				state: this.state
+				state: this.state,
+				time: this.limit.timer
 			});
 		}
 	}
