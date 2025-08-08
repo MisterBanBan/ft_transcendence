@@ -1,7 +1,9 @@
 export const newPseudo = () => `
-<div id="newPseudo" class="flex responsive-form-login flex-col items-center justify-center">
-        <label for="username" class="block text-gray-700 font-medium mb-2">Nouveau pseudo</label>
-                  
+<form id="newPseudo" class="flex responsive-form-login flex-col items-center justify-center">
+                <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
+                <div id="error-username" class="error-message"></div>
+                <div id="success-username" class="succes-message"></div>
+
                 <input
                     id="username"
                     type="text"
@@ -10,5 +12,6 @@ export const newPseudo = () => `
                   />
                   <button type="submit" id="submit-username" class="responsive-text responsive-case-submit text-black">Valider</button>
                   <button type="button" id="pseudoReturnBtn" class="text-white responsive-text ">Return</button>
-                  </div>
+                  </form>
 `
+//        <label for="username" class="block text-gray-700 font-medium mb-2">Nouveau pseudo</label>

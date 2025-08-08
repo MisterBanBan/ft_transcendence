@@ -11,6 +11,7 @@ export class ChangeUsername implements Component{
 	public init(): void {
 		if (this.submitButton) {
 			this.submitButton.addEventListener("click", async (event) => {
+				event.preventDefault();
 				await submitForm();
 			});
 		} else {
@@ -46,7 +47,7 @@ export class ChangeUsername implements Component{
 
 					error.textContent = data.message;
 					return;
-				}
+				} 
 
 			} catch (err) {
 				console.error("Error: ", err);

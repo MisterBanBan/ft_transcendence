@@ -5,7 +5,7 @@ export const registerForm = () => `
                 <input type="text" name="fakeuser" style="position:absolute;top:-9999px">
                 <input type="password" name="fakepass" style="position:absolute;top:-9999px">  
                 
-                <div id="form-register-error" class="error-message-register text-red-500 text-sm mb-2"></div>
+                <div id="form-register-error" class="error-message"></div>
                 <input
                     id="username-register"
                     type="text"

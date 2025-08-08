@@ -9,7 +9,8 @@ import {router} from "../router.js";
 export class registerView implements Component {
     private container: HTMLElement;
     private viewManager: viewManager;
-    
+    private componentStorage?: Component;
+
     private handleSubmit = () => this.submit_registerForm();
     private handleLogin = () =>  router.navigateTo("/game#login", this.viewManager);
 
@@ -19,10 +20,11 @@ export class registerView implements Component {
     }
 
     public init(): void {
+        this.componentStorage?.destroy();
         this.container.innerHTML = '';
         this.container.innerHTML = registerForm();
-        const registerLogic = new Register();
-        registerLogic.init();
+        this.componentStorage = new Register();
+        this.componentStorage.init();
         this.attachEventListeners();
     }
 
@@ -35,12 +37,12 @@ export class registerView implements Component {
         await wait(1000);
 
         if (getUser()) {
-            router.navigateTo("/game", this.viewManager)
-            // this.viewManager.show('game');
+            router.navigateTo("/game", this.viewManager);
         }
     }
 
     public destroy(): void {
+        this.componentStorage?.destroy();
         document.getElementById('submit-register')?.removeEventListener('click', this.handleSubmit);
         document.getElementById('loginBtn')?.removeEventListener('click', this.handleLogin);
     }

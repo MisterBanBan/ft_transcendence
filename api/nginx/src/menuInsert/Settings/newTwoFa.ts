@@ -16,7 +16,7 @@ export const newTwoFa = () => `
                   />
                   <input
                     id="2fa-password"
-                    type="text"
+                    type="password"
                     placeholder="Enter Password"
                     class="responsive-placeholder responsive-case-login responsive-case responsive-text"
                   />
