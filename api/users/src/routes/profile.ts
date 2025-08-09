@@ -1,14 +1,10 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
-
-interface ProfileParams {
-    userId: string;
-}
+import currentUser from "../plugins/current-user.js";
 
 export default async function (server: FastifyInstance) {
 
     server.get<{
-        Params: ProfileParams
-    }>('/api/users/:userId/userProfile', {
+    }>('/api/users/userProfile', {
         schema: {
             response: {
                 200: {
@@ -37,9 +33,9 @@ export default async function (server: FastifyInstance) {
                 }
             }
         }
-    }, async (request: FastifyRequest<{ Params: ProfileParams }>, reply) => {
+    }, async (request: FastifyRequest, reply) => {
         try {
-            const { userId } = request.params;
+            const userId = request.currentUser?.id;
             console.log('Fetching profile for userId:', userId);
 
             const user = await server.db.get(
@@ -98,9 +94,8 @@ export default async function (server: FastifyInstance) {
     });
 
     server.get<{
-        Params: ProfileParams;
         Querystring: { page?: number; limit?: number }
-    }>('/api/users/:userId/matches', {
+    }>('/api/users/matches', {
         schema: {
             response: {
                 200: {
@@ -139,11 +134,10 @@ export default async function (server: FastifyInstance) {
             }
         }
     }, async (request: FastifyRequest<{
-        Params: ProfileParams;
         Querystring: { page?: number; limit?: number }
     }>, reply) => {
         try {
-            const { userId } = request.params;
+            const userId = request.currentUser?.id;
             const { page = 1, limit = 10 } = request.query;
             console.log('Fetching matches for userId:', userId);
 
@@ -199,8 +193,7 @@ export default async function (server: FastifyInstance) {
         }
     });
 
-    server.post<{
-        Params: ProfileParams;
+/*    server.post<{
         Body: { status: 'offline' | 'online' | 'in_game' }
     }>('/api/users/:userId/status', {
         schema: {
@@ -225,11 +218,10 @@ export default async function (server: FastifyInstance) {
             }
         }
     }, async (request: FastifyRequest<{
-        Params: ProfileParams;
         Body: { status: 'offline' | 'online' | 'in_game' }
     }>, reply) => {
         try {
-            const { userId } = request.params;
+            const userId = request.currentUser?.id;
             const { status } = request.body;
 
             const validStatuses = ['offline', 'online', 'in_game'];
@@ -274,10 +266,9 @@ export default async function (server: FastifyInstance) {
                 error: 'Internal server error'
             });
         }
-    });
+    });*/
 
     server.get<{
-        Params: ProfileParams
     }>('/api/users/:userId', {
         schema: {
             response: {
@@ -298,9 +289,9 @@ export default async function (server: FastifyInstance) {
                 }
             }
         }
-    }, async (request: FastifyRequest<{ Params: ProfileParams }>, reply) => {
+    }, async (request: FastifyRequest, reply) => {
         try {
-            const { userId } = request.params;
+            const userId = request.currentUser?.id;
 
             const user = await server.db.get(
                 'SELECT id, username, avatar_url, status FROM users WHERE id = ?',
