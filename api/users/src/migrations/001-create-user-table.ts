@@ -25,7 +25,7 @@ export async function up({ context }: { context: Database }) {
 
     await context.run(`
         CREATE TABLE IF NOT EXISTS matches (
-            id INT PRIMARY KEY AUTOINCREMENT,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
             player1_id TEXT NOT NULL,
             player2_id TEXT NOT NULL,
             winner_id TEXT,
