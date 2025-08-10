@@ -1,7 +1,7 @@
 {
-  "name": "transcendance_matchmaking",
+  "name": "transcendance_users-status",
   "version": "1.0.0",
-  "description": "Matchmaking microservice",
+  "description": "Users status microservice",
   "main": "dist/server.js",
   "scripts": {
     "build": "tsc",
@@ -14,8 +14,6 @@
     "@fastify/cors": "^8.2.0",
     "@fastify/helmet": "^10.0.0",
     "@fastify/websocket": "^11.0.2",
-    "@fastify/multipart": "^9.0.3",
-    "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "fastify-plugin": "^5.0.1",
     "sqlite": "^5.1.1",

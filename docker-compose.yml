@@ -27,6 +27,8 @@ services:
         condition: service_healthy
       auth:
         condition: service_healthy
+      users-status:
+        condition: service_healthy
     volumes:
         - ./api/auth/database:/app/database/auth
         - ./api/users/database:/app/database/users
@@ -147,6 +149,26 @@ services:
       - ft_transcendence
     volumes:
       - auth-data:/app/database/auth
+      - ./api/users/database:/app/database/users
+      - ./certs:/app/certs
+    restart: on-failure
+
+  users-status:
+    image: users-status
+    env_file:
+      - .env
+    container_name: users-status
+    build:
+      context: api/users-status
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:8086/health || exit 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - ft_transcendence
+    volumes:
       - ./api/users/database:/app/database/users
       - ./certs:/app/certs
     restart: on-failure

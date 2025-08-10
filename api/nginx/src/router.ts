@@ -4,6 +4,14 @@ import { AuthUser } from './type.js';
 import { setUser} from "./user-handler.js";
 import {viewManager} from "./views/viewManager.js";
 
+declare const io: any;
+
+const socket = io(`/`, {
+	transports: ["websocket", "polling"],
+	withCredentials: true,
+    path: "/wss/users-status"
+});
+
 export const logoutChannel = new BroadcastChannel('logout_channel');
 
 logoutChannel.onmessage = (event) => {
