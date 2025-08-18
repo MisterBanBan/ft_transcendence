@@ -34,7 +34,7 @@ export default async function (server: FastifyInstance) {
                 SELECT r.requester_id, u.username, u.avatar_url
                 FROM relationships r
                          JOIN users u ON r.requester_id = u.id
-                WHERE r.addressee_id = ? AND r.status = 'pending'
+                WHERE r.addressee_id = ? AND r.status_r = 'pending'
             `, userId);
 
             console.log(invitations);

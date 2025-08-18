@@ -94,7 +94,7 @@ export default async function (server: FastifyInstance) {
             }
 
             await server.db.run(
-                'INSERT INTO relationships (requester_id, addressee_id, status) VALUES (?, ?, ?)',
+                'INSERT INTO relationships (requester_id, addressee_id, status_r) VALUES (?, ?, ?)',
                 requester_id, addressee_id, 'pending'
             );
 
@@ -108,6 +108,7 @@ export default async function (server: FastifyInstance) {
             });
 
         } catch (error) {
+            console.error('Invite error:', error);
             return reply.status(500).send({ error: 'Internal server error' });
         }
     });

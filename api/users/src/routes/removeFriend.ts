@@ -86,7 +86,7 @@ export default async function (server: FastifyInstance) {
             const existingRelation = await server.db.get(
                 `SELECT * FROM relationships
                  WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))
-                   AND status = 'accepted'`,
+                   AND status_r = 'accepted'`,
                 userId, friendId, friendId, userId
             );
 
@@ -99,7 +99,7 @@ export default async function (server: FastifyInstance) {
             const deleteResult = await server.db.run(
                 `DELETE FROM relationships
                  WHERE ((requester_id = ? AND addressee_id = ?) OR (requester_id = ? AND addressee_id = ?))
-                   AND status = 'accepted'`,
+                   AND status_r = 'accepted'`,
                 userId, friendId, friendId, userId
             );
 

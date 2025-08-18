@@ -42,7 +42,7 @@ export default async function (server: FastifyInstance) {
                     (r.requester_id = ? AND r.addressee_id = u.id) OR 
                     (r.addressee_id = ? AND r.requester_id = u.id)
                 )
-                WHERE r.status = 'accepted' AND u.id != ?
+                WHERE r.status_r = 'accepted' AND u.id != ?
             `, userId, userId, userId);
 
             return reply.send({ friends });

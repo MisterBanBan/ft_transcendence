@@ -59,7 +59,7 @@ export default async function (server: FastifyInstance) {
 
         try {
             const invitation = await server.db.get(
-                'SELECT * FROM relationships WHERE requester_id = ? AND addressee_id = ? AND status = ?',
+                'SELECT * FROM relationships WHERE requester_id = ? AND addressee_id = ? AND status_r = ?',
                 requesterId, userId, 'pending'
             );
 
@@ -70,7 +70,7 @@ export default async function (server: FastifyInstance) {
             }
 
             const result = await server.db.run(
-                'DELETE FROM relationships WHERE requester_id = ? AND addressee_id = ? AND status = ?',
+                'DELETE FROM relationships WHERE requester_id = ? AND addressee_id = ? AND status_r = ?',
                 requesterId, userId, 'pending'
             );
 
