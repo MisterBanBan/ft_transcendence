@@ -61,6 +61,11 @@ export default async function (server: FastifyInstance, opts: any) {
 	})
 
 	server.register(fastifyHttpProxy, {
+		upstream: 'http://users-status:8086/api/users-status/',
+		prefix: '/api/users-status',
+	})
+
+	server.register(fastifyHttpProxy, {
 		upstream: 'http://matchmaking:8083/wss/matchmaking',
 		prefix: '/wss/matchmaking',
 		websocket: true,
@@ -80,6 +85,23 @@ export default async function (server: FastifyInstance, opts: any) {
 	server.register(fastifyHttpProxy, {
 		upstream: 'http://tournament:8081/wss/tournament',
 		prefix: '/wss/tournament',
+		websocket: true,
+		wsClientOptions: {
+			queryString(search, reqUrl, request) {
+				const url = new URL(reqUrl, `http://${process.env.HOSTNAME}`);
+				let encodedUser = request.headers['x-current-user'];
+				if (encodedUser && validUser(encodedUser)) {
+					if (Array.isArray(encodedUser)) encodedUser = encodedUser[0];
+					url.searchParams.set('user', encodedUser);
+				}
+				return url.searchParams.toString();
+			}
+		}
+	})
+
+	server.register(fastifyHttpProxy, {
+		upstream: 'http://users-status:8086/wss/users-status',
+		prefix: '/wss/users-status',
 		websocket: true,
 		wsClientOptions: {
 			queryString(search, reqUrl, request) {
