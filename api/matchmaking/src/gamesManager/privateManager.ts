@@ -48,7 +48,7 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 			});
 
 			privateWaiting.delete(oppID);
-			console.log(gameId, "started");
+			console.log(gameId, "started with type : ", type)	;
 		}
 	}
 
@@ -59,6 +59,8 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 
 	socket.on("player-input", (data: inputData) => {
 	const value = app.playerToGame.get(socket.id);
+	if (!value)
+		return;
 	data.player = value!.side;
 	if (!value?.gameId) return;
 

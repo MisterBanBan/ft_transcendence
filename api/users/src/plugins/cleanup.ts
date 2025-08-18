@@ -1,4 +1,4 @@
-import { FastifyInstance, FastifyPluginAsync } from "fastify";
+/* import { FastifyInstance, FastifyPluginAsync } from "fastify";
 
 const cleanupPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
     let cleanupInterval: NodeJS.Timeout;
@@ -15,7 +15,7 @@ const cleanupPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
                 fastify.log.info(`Marked ${result.changes} inactive users as offline`);
             }
         } catch (error) {
-            //fastify.log.error('Error cleaning inactive users:', error);
+            // fastify.log.error('Error cleaning inactive users:', error);
             console.log(error);
         }
     };
@@ -37,3 +37,4 @@ const cleanupPlugin: FastifyPluginAsync = async (fastify: FastifyInstance) => {
 };
 
 export default cleanupPlugin;
+ */

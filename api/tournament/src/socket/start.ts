@@ -69,7 +69,7 @@ export async function start(app: FastifyInstance, tournament: Tournament) {
 			tournament.getStructure().winner = winner;
 
 			if (winner)
-				emitAll(app, 0, "tournamentEnded", tournament.getName(), tournament.getParticipants().get(winner));
+				emitAll(app, 0, "tournamentEnded", tournament.getName(), tournament.getParticipants().get(winner)?.name);
 			else
 				emitAll(app, 0, "tournamentEnded", tournament.getName(), "Undefined");
 

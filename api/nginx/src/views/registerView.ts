@@ -38,6 +38,7 @@ export class registerView implements Component {
 
         if (getUser()) {
             router.navigateTo("/game", this.viewManager);
+            this.viewManager.setPicture();
         }
     }
 

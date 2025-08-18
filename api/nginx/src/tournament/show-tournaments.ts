@@ -10,9 +10,9 @@ export function showTournaments(tournamentsList: any) {
 
 	const tournamentsNames: string[] = [];
 
-	type Tournament = { name: string, size: number, registered: number, players: Array<string> };
+	type Tournament = { name: string, size: number, registered: number };
 
-	tournamentsList.forEach(({ name, size, registered, players }: Tournament, index: number) => {
+	tournamentsList.forEach(({ name, size, registered }: Tournament, index: number) => {
 		const tournamentDiv = document.getElementById(`tournament-${name}`);
 
 		tournamentsNames.push(name);
@@ -55,7 +55,6 @@ export function showTournaments(tournamentsList: any) {
 					e.preventDefault();
 
 					emitTournamentSocket("join", name);
-					// socket.emit("join", name)
 				})
 		}
 	})

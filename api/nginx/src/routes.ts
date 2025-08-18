@@ -170,6 +170,8 @@ export const routes: Route[] = [
     		<p id="score-player1"  class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
    			<p id="score-player2" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
 
+			<p id="timer" class="absolute text-white/80 text-[calc(20vw)] font-omori z-0 opacity-70 drop-shadow">0</p>
+
 			<button id="backPong" class="absolute p-0 border-none bg-transparent">
 				<img src="/img/backPong.png" class="hover:scale-110 transition-transform duration-300"/>
 			</button>
@@ -185,6 +187,10 @@ export const routes: Route[] = [
 			<img id="lose"  src="/img/youLoose.png"  class="absolute" />
 
 			<p id="end"  class="absolute text-white text-[calc(20vw)] font-omori z-0 drop-shadow"></p>
+			<video autoplay loop muted id="video_main"
+                class="absolute translate-y-2">
+                <source src="/img/tuto.mp4" type="video/mp4">
+            </video>
 		</div>
 				
 
@@ -198,3 +204,4 @@ export const routes: Route[] = [
             `
     }
 ];
+

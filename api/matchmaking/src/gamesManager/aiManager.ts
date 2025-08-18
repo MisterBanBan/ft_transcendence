@@ -27,6 +27,8 @@ export function aiManager(socket: Socket, app: FastifyInstance, userID: string) 
 
 	socket.on("player-input", (data: inputData) => {
 		const value = app.playerToGame.get(socket.id);
+		if (!value)
+			return;
 		data.player = value!.side;
 		if (!value?.gameId) return;
 

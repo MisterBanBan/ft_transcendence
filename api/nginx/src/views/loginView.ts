@@ -61,6 +61,7 @@ export class loginView implements Component {
             }
             else {
                 router.navigateTo("/game", this.viewManager)
+                this.viewManager.setPicture();
             }
         }
     }

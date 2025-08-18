@@ -23,7 +23,7 @@ export class FriendService {
         }
 
         try {
-            const response = await fetch(`/api/users/${currentUser.id}/removeFriend`, {
+            const response = await fetch(`/api/users/removeFriend`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ export class FriendService {
 
         try {
             console.log(`Fetching friends for user ID: ${currentUser.id}`);
-            const response = await fetch(`/api/users/${currentUser.id}/friendsList`, {
+            const response = await fetch(`/api/users/friendsList`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -81,17 +81,20 @@ export class FriendService {
         const sortedFriends = friends.sort((a, b) => a.username.localeCompare(b.username));
         let nb = 0;
 
-        return `
-        <div class="h-full w-full overflow-y-auto">
-            ${sortedFriends.map(friend => `
-                <div class="flex flex-row justify-between items-center gap-4 responsive-text-historique">
-                    <p class="w-10 h-10">${nb++}</p>
-                    <img src="/uploads/${friend.avatar_url || '/last_airbender.jpg'}" alt="${friend.username}" class="w-10 h-10 rounded-full object-contain"/>
-                    <button class="friend-btn responsive-text-historique" data-friend-id="${friend.id}" data-username="${friend.username}">${friend.username}</button>
-                    <span>Online</span>
+        if (friends.length > 0)
+            return `
+                <div class="h-full w-full overflow-y-auto">
+                    ${sortedFriends.map(friend => `
+                        <div class="flex flex-row justify-between items-center gap-4 responsive-text-historique">
+                            <p class="w-10 h-10">${nb++}</p>
+                            <img src="/uploads/${friend.avatar_url || '/last_airbender.jpg'}" alt="${friend.username}" class="w-10 h-10 rounded-full object-contain"/>
+                            <button class="friend-btn responsive-text-historique" data-friend-id="${friend.id}" data-username="${friend.username}">${friend.username}</button>
+                            <span>Online</span>
+                        </div>
+                    `).join('')}
                 </div>
-            `).join('')}
-        </div>
-    `;
+            `;
+        else
+            return `<p class="text-gray-400 flex flex-row justify-center item-center gap-8">No friends</p>`;
     }
 }

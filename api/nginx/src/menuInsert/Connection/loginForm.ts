@@ -42,11 +42,11 @@ export const loginForm = () => `
                     
                     <div class="flex flex-row h-[5%] w-full justify-center items-center">
                       <a href="${ft_url}"
-                        class="flex object-contain responsive-text responsive-case-submit-42 text-white mr-4 pl-[15px] pr-[15px] pb-[5px] pt-[5px]">
+                        class="flex object-contain responsive-text responsive-case-submit-42 text-white mr-4 px-[15px] py-[5px]">
                        	  Login/Register with 42
                       </a>
                         <a href="${google_url}"
-                        class="flex object-contain responsive-text responsive-case-submit-google text-white pl-[15px] pr-[15px] pb-[5px] pt-[5px]">
+                        class="flex object-contain responsive-text responsive-case-submit-google text-white px-[15px] py-[5px]">
                           Login/Register with Google
                       </a>
                     </div>

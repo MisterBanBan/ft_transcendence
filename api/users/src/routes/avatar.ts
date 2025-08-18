@@ -1,27 +1,23 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest } from "fastify";
 import { pipeline } from 'stream/promises';
 import fs from 'fs';
 import { randomUUID } from 'crypto';
 import path from 'path';
 import dotenv from 'dotenv';
+import currentUser from "../plugins/current-user.js";
 // import sharp from 'sharp';
 
 dotenv.config();
 
 export default async function (server: FastifyInstance) {
-    server.post('/api/users/:id/avatar', {
-        schema: {
-            params: {
-                type: 'object',
-                properties: {
-                    id: { type: 'string', pattern: '^\\d+$' }
-                }
-            }
-        }
-    }, async (request, reply) => {
+    server.post('/api/users/avatar', {
+    }, async (request: FastifyRequest, reply) => {
         try {
-            const userId = (request.params as { id: string }).id;
-            console.log(`Upload attempt for user ${userId}`);
+            const currentUser = request.currentUser;
+            if (!currentUser) {
+                return reply.code(404).send({ error: 'User not found' });
+            }
+            console.log(`Upload attempt for user ${currentUser.id}`);
 
             const uploadDir = '/app/uploads/';
 
@@ -29,15 +25,10 @@ export default async function (server: FastifyInstance) {
                 fs.mkdirSync(uploadDir, { recursive: true });
             }
 
-            const currentUser = await server.db.get(
+            const user = await server.db.get(
                 'SELECT avatar_url FROM users WHERE id = ?',
-                [userId]
+                [currentUser.id],
             );
-
-            if (!currentUser) {
-                console.error('User not found:', userId);
-                return reply.code(404).send({ error: 'User not found' });
-            }
 
             const data = await request.file();
 
@@ -69,7 +60,7 @@ export default async function (server: FastifyInstance) {
 
             const result = await server.db.run(
                 'UPDATE users SET avatar_url = ? WHERE id = ?',
-                [newFilename, userId]
+                [newFilename, currentUser.id],
             );
 
             if (result.changes === 0) {
@@ -92,8 +83,9 @@ export default async function (server: FastifyInstance) {
                 console.log('Default avatar preserved:', currentUser.avatar_url);
             }
 
-            console.log('Avatar updated successfully for', userId);
+            console.log('Avatar updated successfully for', currentUser.id);
             return {
+                avatarName: newFilename,
                 avatarUrl: `/uploads/${newFilename}`,
                 message: 'Avatar updated successfully'
             };
