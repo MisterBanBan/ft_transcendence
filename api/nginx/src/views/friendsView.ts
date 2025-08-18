@@ -1,7 +1,6 @@
 //import { Component } from "./component.js";
 //import { invites } from "../menuInsert/Friends/invites.js";
 import { searchMate } from "../menuInsert/Friends/searchMate.js";
-import { playerPerso } from "../menuInsert/Profile/playerPerso.js";
 import { friendActionTemplate } from "../menuInsert/Friends/friendAction.js";
 import { Component } from "../component.js";
 import { InvitationService } from "../relationship/invitationService.js";
@@ -92,7 +91,7 @@ export class friendsView implements Component {
         }
 
         leftFriends.innerHTML = '';
-        leftFriends.insertAdjacentHTML('beforeend', playerPerso());
+
         friendsContainer.innerHTML = '';
 
         try {

@@ -31,6 +31,16 @@ export default async function (server: FastifyInstance) {
 					properties: {},
 					additionalProperties: false,
 				},
+				400: {
+					type: "object",
+					properties: {},
+					additionalProperties: false,
+				},
+				404: {
+					type: "object",
+					properties: {},
+					additionalProperties: false,
+				},
 			}
 		}
 	}, async (request, reply) => {

@@ -15,7 +15,7 @@ export async function up({ context }: { context: Database }) {
         CREATE TABLE IF NOT EXISTS relationships (
             requester_id INTEGER NOT NULL,
             addressee_id INTEGER NOT NULL,
-            status TEXT NOT NULL CHECK(status IN ('pending', 'accepted')),
+            status_r TEXT NOT NULL CHECK(status_r IN ('pending', 'accepted')),
             updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (requester_id) REFERENCES users(id),
             FOREIGN KEY (addressee_id) REFERENCES users(id),

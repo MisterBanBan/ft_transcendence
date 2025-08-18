@@ -36,7 +36,7 @@ export default async function (server: FastifyInstance) {
 
         try {
             const friends = await server.db.all(`
-                SELECT DISTINCT u.id, u.username, u.avatar_url, r.status
+                SELECT DISTINCT u.id, u.username, u.avatar_url, u.status
                 FROM relationships r
                 JOIN users u ON (
                     (r.requester_id = ? AND r.addressee_id = u.id) OR 

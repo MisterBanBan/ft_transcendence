@@ -80,16 +80,17 @@ export class FriendService {
     static displayFriends(friends: Friends[]): string {
         const sortedFriends = friends.sort((a, b) => a.username.localeCompare(b.username));
         let nb = 0;
-
         if (friends.length > 0)
+            
+            
             return `
                 <div class="h-full w-full overflow-y-auto">
                     ${sortedFriends.map(friend => `
-                        <div class="flex flex-row justify-between items-center gap-4 responsive-text-historique">
-                            <p class="w-10 h-10">${nb++}</p>
-                            <img src="/uploads/${friend.avatar_url || '/last_airbender.jpg'}" alt="${friend.username}" class="w-10 h-10 rounded-full object-contain"/>
-                            <button class="friend-btn responsive-text-historique" data-friend-id="${friend.id}" data-username="${friend.username}">${friend.username}</button>
-                            <span>${friend.status}</span>
+                        <div class="flex flex-row w-[80%] h-[20%] items-center gap-4 responsive-text-historique">
+                            <p class="mr-20 w-[40px] h-[40px]">${nb++}</p>
+                            <img src=" /uploads/${friend.avatar_url || '/last_airbender.jpg'}" alt="${friend.username}" class="w-[40px] mr-20 h-[40px] rounded-full object-cover"/>
+                            <button class="mr-20 friend-btn responsive-text-historique" data-friend-id="${friend.id}" data-username="${friend.username}">${friend.username}</button>
+                            <span class="ml-auto">${friend.status}</span>
                         </div>
                     `).join('')}
                 </div>
