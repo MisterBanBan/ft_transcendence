@@ -47,6 +47,9 @@ export function privateManager(socket: Socket, app: FastifyInstance, userID: str
 				side: "left",
 			});
 
+			app.usersSocket.emit("newGame", {playerID: userID});
+			app.usersSocket.emit("newGame", {playerID: oppID});
+
 			privateWaiting.delete(oppID);
 			console.log(gameId, "started with type : ", type)	;
 		}

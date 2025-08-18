@@ -22,3 +22,12 @@ export interface privateInfo {
 	opponent: string;
 	type: string;
 }
+
+export interface EndMatchBody {
+    player1_id: string;
+    player2_id: string;
+    winner_id: string;
+    player1_score: number;
+    player2_score: number;
+    game_type?: 'online' | 'tournament';
+}

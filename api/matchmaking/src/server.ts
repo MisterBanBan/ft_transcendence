@@ -28,8 +28,15 @@ async function start() {
 	const aiSocket = ClientIO("http://ai:8085", {
 		transports: ["websocket"],
 	});
-
+	
 	app.decorate("aiSocket", aiSocket);
+	
+	const usersSocket = ClientIO("http://users-status:8086", {
+		transports: ["websocket"],
+		path: "/wss/users-status",
+	});
+
+	app.decorate("usersSocket", usersSocket);
 
 	const playerToGame = new Map<string, playerInfo>();
 	app.decorate("playerToGame", playerToGame);

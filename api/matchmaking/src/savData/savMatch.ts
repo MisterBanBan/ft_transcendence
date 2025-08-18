@@ -1,35 +1,13 @@
-/*
-import { EndMatchBody } from "../types/fastify.d.js"
+import { EndMatchBody } from "../utils/interface"
 import {FastifyInstance} from "fastify";
 
-async function savMatchStats(server: FastifyInstance, EndMatchBody: EndMatchBody) {
+export async function savMatchStats(server: FastifyInstance, EndMatchBody: EndMatchBody) {
     try {
         const [player1, player2, winner] = await Promise.all([
             server.userDb.get('SELECT id, username FROM users WHERE id = ?', [EndMatchBody.player1_id]),
             server.userDb.get('SELECT id, username FROM users WHERE id = ?', [EndMatchBody.player2_id]),
             server.userDb.get('SELECT id, username FROM users WHERE id = ?', [EndMatchBody.winner_id])
         ]);
-
-        if (!player1 || !player2) {
-            return reply.status(400).send({
-                success: false,
-                error: 'One or more players not found'
-            });
-        }
-
-        if (!winner) {
-            return reply.status(400).send({
-                success: false,
-                error: 'Specified winner not found'
-            });
-        }
-
-        if (EndMatchBody.winner_id !== EndMatchBody.player1_id && EndMatchBody.winner_id !== EndMatchBody.player2_id) {
-            return reply.status(400).send({
-                success: false,
-                error: 'Winner must be one of the two match players'
-            });
-        }
 
         const completedAt = new Date().toISOString();
 
@@ -48,27 +26,12 @@ async function savMatchStats(server: FastifyInstance, EndMatchBody: EndMatchBody
             completedAt
         ]);
 
-        console.log('Match inserted with ID:', matchId);
-
         const statsUpdated = await updatePlayersStats(server, EndMatchBody.player1_id, EndMatchBody.player2_id, EndMatchBody.winner_id);
 
         console.log('Match processing completed successfully');
 
-        return reply.status(201).send({
-            success: true,
-            data: {
-                matchId: matchId,
-                message: 'Match recorded and statistics updated',
-                stats: statsUpdated
-            }
-        });
-
     } catch (error) {
         console.error('Error processing end of match:', error);
-        return reply.status(500).send({
-            success: false,
-            error: 'Internal server error'
-        });
     }
 }
 
@@ -119,4 +82,3 @@ async function updatePlayersStats(server: FastifyInstance, player1_id: string, p
 
     return results;
 }
-*/

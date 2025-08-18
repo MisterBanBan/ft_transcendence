@@ -23,6 +23,8 @@ export function aiManager(socket: Socket, app: FastifyInstance, userID: string) 
 		side: "left",
 	});
 
+	app.usersSocket.emit("newGame", {playerID: userID});
+
 	console.log(gameId, "started");
 
 	socket.on("player-input", (data: inputData) => {

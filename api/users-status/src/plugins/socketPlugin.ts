@@ -2,9 +2,10 @@ import { FastifyInstance, FastifyPluginAsync } from "fastify";
 import { Socket } from "socket.io";
 import { updateUserStatus } from "./insertToDB";
 
+
 const socketPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 	app.io.on("connection", (socket: Socket) => {
-		// console.log("Client connected:", socket.id);
+		//console.log("Client connected:", socket.id);
 
 		const user: string | undefined | string[] = socket.handshake.query.user;
 		let	userID: string | null = null;
@@ -17,21 +18,27 @@ const socketPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 			} catch (e) {
 				console.error('User header could not be parsed:', e);
 			}
-		} else {
-			console.error('No valid user in handshake');
 		}
-
 		if (userID == null)
 		{
-			console.error('User not valid');
-			return;
+			socket.on("newGame", (playerID: any) => {
+				console.log("playerID : ", playerID.playerID);
+				updateUserStatus(app, playerID.playerID, "in_game");
+			})
+
+			// socket.on("endGame", (playerID:string) => {
+			// 	updateUserStatus(app, playerID, "online");
+			// })
 		}
+		else {
 
 		updateUserStatus(app, userID, "online");
 
 		socket.on("disconnect", () => {
 			updateUserStatus(app, userID, "offline");
 		});
+
+		}
 	});
 };
 

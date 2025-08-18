@@ -13,6 +13,7 @@ import {clearTournamentSocket, initTournamentSocket} from "../tournamentsHandler
 import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
 import { selectAnimation } from '../selectAnimat.js';
 
+declare const io: any;
 
 export class viewManager implements Component {
     private activeView : Component | null = null;
@@ -28,6 +29,11 @@ export class viewManager implements Component {
     private select?: selectAnimation;
     private activeViewName: string | null = null;
     private keydownHandler: (e: KeyboardEvent) => void;
+    private socket = io(`/`, {
+        transports: ["websocket", "polling"],
+        withCredentials: true,
+        path: "/wss/users-status"
+    });
 
     constructor(videoId: string, containerId: string, authBtnId: string) {
 
@@ -292,5 +298,6 @@ export class viewManager implements Component {
         }
         if (this.activeView)
             this.activeView.destroy();
+        this.socket.disconnect();
     }
 }

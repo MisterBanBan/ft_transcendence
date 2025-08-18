@@ -31,6 +31,9 @@ export function onlineManager(socket: Socket, app: FastifyInstance, userID: stri
 			side: "left",
 		});
 
+		app.usersSocket.emit("newGame", {playerID: userID});
+		app.usersSocket.emit("newGame", {playerID: waitingPlayer.userID});
+
 		console.log(gameId, "started");
 
 		waitingPlayer = null;
