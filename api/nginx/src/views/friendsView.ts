@@ -30,21 +30,6 @@ export class friendsView implements Component {
     public async init(): Promise<void> {
         this.container.innerHTML = friendsList();
         await this.friends();
-        this.attachEventListeners();
-    }
-
-    private attachEventListeners() {
-        document.getElementById('friendReturnBtn')?.addEventListener('click', this.handleReturn);
-        document.getElementById('friends')?.addEventListener('click', this.handleFriends);
-        document.getElementById('invites')?.addEventListener('click', this.handleInvites);
-    }
-
-    private invites() {
-        const invitesContainer = document.getElementById('dynamic-popup');
-        if (!invitesContainer) {
-            console.error('Invites container not found');
-            return;
-        }
         const leftFriends = document.getElementById('divLeft');
         if (!leftFriends) {
             console.error('Left friends container not found');
@@ -52,10 +37,7 @@ export class friendsView implements Component {
         }
         leftFriends.innerHTML = '';
         leftFriends.insertAdjacentHTML('beforeend', searchMate());
-        invitesContainer.innerHTML = '';
-        InvitationService.loadInvitations();
-
-            const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
+        const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
             const shareInviteButton = document.getElementById('Share Invite');
             if (shareInviteButton && inviteInput) {
                 this.boundInviteClickHandler = () => {
@@ -76,6 +58,24 @@ export class friendsView implements Component {
             shareInviteButton.addEventListener('click', this.boundInviteClickHandler);
             inviteInput.addEventListener('keydown', this.boundInviteKeydownHandler);
             }
+        this.attachEventListeners();
+    }
+
+    private attachEventListeners() {
+        document.getElementById('friendReturnBtn')?.addEventListener('click', this.handleReturn);
+        document.getElementById('friends')?.addEventListener('click', this.handleFriends);
+        document.getElementById('invites')?.addEventListener('click', this.handleInvites);
+    }
+
+    private invites() {
+        const invitesContainer = document.getElementById('dynamic-popup');
+        if (!invitesContainer) {
+            console.error('Invites container not found');
+            return;
+        }
+
+        invitesContainer.innerHTML = '';
+        InvitationService.loadInvitations();
     }
 
     private async friends() {
@@ -84,10 +84,6 @@ export class friendsView implements Component {
             console.error('Friends container not found');
             return;
         }
-
-
-
-
         friendsContainer.innerHTML = '';
 
         try {
@@ -168,7 +164,7 @@ export class friendsView implements Component {
         });
         document.getElementById('friendsProfile')?.addEventListener('click', () => {
             console.log('Viewing profile for friend with ID:', friendId);
-            FriendService.viewProfile(friendId); // Utiliser FriendService au lieu de this
+            FriendService.viewProfile(friendId);
         });
     }
 

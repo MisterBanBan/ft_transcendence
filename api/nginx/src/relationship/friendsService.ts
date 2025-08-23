@@ -132,9 +132,11 @@ export class FriendService {
                 <div class="h-full w-full overflow-y-auto">
                     ${sortedFriends.map(friend => `
                         <div class="flex flex-row w-[80%] h-[20%] items-center gap-4 responsive-text-historique">
-                            <p class="mr-20 w-[40px] h-[40px]">${nb++}</p>
-                            <img src=" /uploads/${friend.avatar_url || '/last_airbender.jpg'}" alt="${friend.username}" class="w-[40px] mr-20 h-[40px] rounded-full object-cover"/>
-                            <button class="mr-20 friend-btn responsive-text-historique" data-friend-id="${friend.id}" data-username="${friend.username}">${friend.username}</button>
+                            <p class="mr-10 w-[40px] h-[40px]">${nb++}</p>
+                            <div class="w-[40px] h-[40px] rounded-full overflow-hidden mr-20">
+                                <img src="/uploads/${friend.avatar_url || '/last_airbender.jpg'}" alt="${friend.username}" class="w-full h-full object-cover"/>
+                            </div>
+                            <button class="mr-10 friend-btn responsive-text-historique" data-friend-id="${friend.id}" data-username="${friend.username}">${friend.username}</button>
                             <span class="ml-auto">${friend.status}</span>
                         </div>
                     `).join('')}

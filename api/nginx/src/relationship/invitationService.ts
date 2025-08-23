@@ -161,17 +161,17 @@ export class InvitationService {
 
         if (invitations.length > 0) {
             invitationsList.innerHTML = `
-            <div class="h-full w-full overflow-y-auto flex flex-col items-center justify-center">
+            <div class="h-full w-full overflow-y-auto flex flex-row mb-10">
                 ${invitations.map(inv => `
-                    <div class="flex flex-row items-center justify-between responsive-text-historique">
-                        <div class="flex flex-row items-center gap-4">
+                    <div class="flex flex-row w-[80%] h-[20%] responsive-text-historique mr-20">
+                        <div class="flex flex-row gap-4">
                             <img src="/uploads/${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
                             <span class="responsive-text-historique text-white font-medium">
                             ${this.escapeHtml(inv.username)}
                         </span>
                         </div>
                     </div>
-                    <div class="flex flex-row justify-center gap-8 responsive-text-historique">
+                    <div class="flex flex-row w-[80%] h-[20%] gap-8 responsive-text-historique">
                         <button id="Response invitation reject" onclick="InvitationService.declineInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-red-600">REJECT</button>
                         <button id="Response invitation accept" onclick="InvitationService.acceptInvitation('${this.escapeHtml(inv.requester_id)}')" class="responsive-text-historique text-green-600">ACCEPT</button>
                     </div>

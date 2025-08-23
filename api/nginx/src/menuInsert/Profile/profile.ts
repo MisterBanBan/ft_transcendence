@@ -25,7 +25,7 @@ export const profile = (userProfile: UserProfile, matchHistory: Match[]): string
                 <div id="first" class="flex flex-row items-center justify-center h-[15%] w-[70%]">
                     <div class="flex flex-col items-center justify-center w-full h-full">
                         <p class="text-white">${userProfile.username}</p>
-                         <span class="w-3 h-3 rounded-full border-2 mt-8 border-white ${userProfile.status === 'online' ? 'bg-green-500' : userProfile.status === 'in_game' ? 'bg-yellow-500' : 'bg-gray-400'}"></span>
+                         <span class="w-4 h-4 rounded-full border-2 mt-1 border-white ${userProfile.status === 'online' ? 'bg-green-500' : userProfile.status === 'in_game' ? 'bg-yellow-500' : 'bg-gray-400'}"></span>
                     </div>
                 </div>
                 <div id="second" class="flex flex-row items-center justify-between h-[25%] w-[70%] responsive-text">
