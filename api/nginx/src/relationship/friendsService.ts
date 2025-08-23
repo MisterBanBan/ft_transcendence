@@ -1,5 +1,7 @@
 import {getUser} from "../user-handler.js";
 import {ApiUtils} from "./apiUtils.js";
+import { profile } from "../menuInsert/Profile/profile.js";
+import {router} from "../router.js";
 
 interface loadFriendsResponse {
     message?: string;
@@ -74,6 +76,49 @@ export class FriendService {
         } catch (error) {
             console.error('Network or parsing error:', error);
             return [];
+        }
+    }
+
+    static async viewProfile(friendId: string): Promise<void> {
+        try {
+            // Appeler la nouvelle route pour récupérer le profil complet
+            const response = await fetch(`/api/users/${friendId}/fullProfile`);
+            if (!response.ok) {
+                console.error('Failed to fetch full profile');
+                alert('Failed to load profile. Please try again.');
+                return;
+            }
+    
+            const { success, data } = await response.json();
+            if (!success) {
+                console.error('Error fetching profile:', data);
+                alert('Failed to load profile. Please try again.');
+                return;
+            }
+    
+            // Générer le HTML du profil
+            const profileHtml = profile(data, data.matches);
+    
+            // Injecter le HTML dans une section dédiée
+            const profileContainer = document.getElementById('friendsList');
+            if(!profileContainer) return;
+            if (profileContainer) {
+                profileContainer.innerHTML = profileHtml;
+                profileContainer.style.display = 'block';
+            }
+
+    
+            // Ajouter un gestionnaire pour le bouton "Return"
+            const returnBtn = document.getElementById('profileReturnBtn');
+            if (returnBtn) {
+                returnBtn.addEventListener('click', () => {
+                    router.navigateTo("/game#friendsList");
+                });            } else {
+                console.error('Return button not found');
+            }
+        } catch (error) {
+            console.error('Error fetching full profile:', error);
+            alert('Failed to load profile. Please try again.');
         }
     }
 

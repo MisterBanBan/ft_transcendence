@@ -84,13 +84,9 @@ export class friendsView implements Component {
             console.error('Friends container not found');
             return;
         }
-        const leftFriends = document.getElementById('divLeft');
-        if (!leftFriends) {
-            console.error('Left friends container not found');
-            return;
-        }
 
-        leftFriends.innerHTML = '';
+
+
 
         friendsContainer.innerHTML = '';
 
@@ -134,7 +130,7 @@ export class friendsView implements Component {
             return;
         }
 
-        const popupHtml = friendActionTemplate(x, y);
+        const popupHtml = friendActionTemplate(x, y, friendId);
         friendsContainer.insertAdjacentHTML('beforeend', popupHtml);
 
         const popup = document.getElementById('friend-popup');
@@ -169,6 +165,10 @@ export class friendsView implements Component {
                 console.error('Error removing friend:', error);
                 alert('Failed to remove friend. Please try again.');
             }
+        });
+        document.getElementById('friendsProfile')?.addEventListener('click', () => {
+            console.log('Viewing profile for friend with ID:', friendId);
+            FriendService.viewProfile(friendId); // Utiliser FriendService au lieu de this
         });
     }
 
