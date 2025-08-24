@@ -166,9 +166,16 @@ export class friendsView implements Component {
                 alert('Failed to remove friend. Please try again.');
             }
         });
-        document.getElementById('friendsProfile')?.addEventListener('click', () => {
-            console.log('Viewing profile for friend with ID:', friendId);
-            FriendService.viewProfile(friendId);
+        document.addEventListener('click', (event) => {
+            const target = event.target as HTMLElement;
+
+            if (target.classList.contains('friends-profile-btn')) {
+                const friendId = target.getAttribute('data-friend-id');
+                if (friendId) {
+                    console.log('Viewing profile for friend with ID:', friendId);
+                    FriendService.viewProfile(friendId);
+                }
+            }
         });
     }
 
