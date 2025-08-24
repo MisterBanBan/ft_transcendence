@@ -2,9 +2,9 @@ import { parametre } from "../menuInsert/parametre.js";
 import { viewManager } from "./viewManager.js";
 import { profile } from "../menuInsert/Profile/profile.js";
 import { Logout } from "../auth/logout.js";
-import { Component } from "../component.js";
-import {router} from "../router.js";
-import {getUser} from "../user-handler.js";
+import { Component } from "../route/component.js";
+import {router} from "../route/router.js";
+import {getUser} from "../route/user-handler.js";
 import {fetchUserProfileData} from "../menuInsert/Profile/userProfilData.js";
 
 export class parameterView implements Component {

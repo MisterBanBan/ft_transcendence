@@ -1,17 +1,17 @@
 import { SettingsView } from './settingsView.js';
-import { getUser } from '../user-handler.js';
+import { getUser } from '../route/user-handler.js';
 import { parameterView } from './parameterView.js';
 import { friendsView } from './friendsView.js';
 import { loginView } from './loginView.js';
 import { registerView } from './registerView.js';
-import { Component } from '../component.js';
+import { Component } from '../route/component.js';
 import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/Picture/picture.js';
 import { tournamentView } from './tournamentView.js';
-import {router} from "../router.js";
-import {clearTournamentSocket, initTournamentSocket} from "../tournamentsHandler.js"
+import {router} from "../route/router.js";
+import {clearTournamentSocket, initTournamentSocket} from "../tournament/tournamentsHandler.js"
 import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
-import { selectAnimation } from '../selectAnimat.js';
+import { selectAnimation } from '../IntroProject/selectAnimat.js';
 
 declare const io: any;
 
@@ -257,6 +257,10 @@ export class viewManager implements Component {
 
     private setupGameMenu() {
         this.options = Array.from(document.querySelectorAll('.menu-option')) as HTMLElement[];
+        if (!this.options.length) {
+            console.error('No menu options found');
+            return;
+        }
         const cursor = document.getElementById('cursor-video') as HTMLVideoElement;
         if (!cursor) throw new Error('Cursor video not found');
         this.cursor = cursor;

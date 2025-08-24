@@ -1,6 +1,6 @@
-import { Component } from "../component.js";
-import { setUser } from "../user-handler.js";
-import {logoutChannel, router} from "../router.js";
+import { Component } from "../route/component.js";
+import { setUser } from "../route/user-handler.js";
+import {logoutChannel, router} from "../route/router.js";
 
 // Removed unused Payload interface
 

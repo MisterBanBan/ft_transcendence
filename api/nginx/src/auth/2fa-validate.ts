@@ -1,7 +1,7 @@
-import {Component} from "../component";
-import {router} from "../router.js";
-import {AuthUser} from "../type.js";
-import {setUser} from "../user-handler.js";
+import {Component} from "../route/component";
+import {router} from "../route/router.js";
+import {AuthUser} from "../route/type.js";
+import {setUser} from "../route/user-handler.js";
 
 export class TFAValidate implements Component {
 

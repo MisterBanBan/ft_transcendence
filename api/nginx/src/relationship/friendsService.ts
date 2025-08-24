@@ -1,7 +1,7 @@
-import {getUser} from "../user-handler.js";
+import {getUser} from "../route/user-handler.js";
 import {ApiUtils} from "./apiUtils.js";
 import { profile } from "../menuInsert/Profile/profile.js";
-import {router} from "../router.js";
+import {router} from "../route/router.js";
 
 interface loadFriendsResponse {
     message?: string;
@@ -17,6 +17,7 @@ interface Friends {
 }
 
 export class FriendService {
+    private static returnBtnListener: () => void;
 
     static async removeFriend(friendId: string): Promise<void> {
         const currentUser = getUser();
@@ -81,7 +82,6 @@ export class FriendService {
 
     static async viewProfile(friendId: string): Promise<void> {
         try {
-            // Appeler la nouvelle route pour récupérer le profil complet
             const response = await fetch(`/api/users/${friendId}/fullProfile`);
             if (!response.ok) {
                 console.error('Failed to fetch full profile');
@@ -96,24 +96,25 @@ export class FriendService {
                 return;
             }
     
-            // Générer le HTML du profil
             const profileHtml = profile(data, data.matches);
     
-            // Injecter le HTML dans une section dédiée
             const profileContainer = document.getElementById('friendsList');
             if(!profileContainer) return;
-            if (profileContainer) {
-                profileContainer.innerHTML = profileHtml;
-                profileContainer.style.display = 'block';
-            }
+            profileContainer.innerHTML = profileHtml;
+            profileContainer.style.display = 'block';
 
-    
-            // Ajouter un gestionnaire pour le bouton "Return"
             const returnBtn = document.getElementById('profileReturnBtn');
             if (returnBtn) {
-                returnBtn.addEventListener('click', () => {
+                if (this.returnBtnListener) {
+                    returnBtn.removeEventListener('click', this.returnBtnListener);
+                }
+
+                this.returnBtnListener = () => {
                     router.navigateTo("/game#friendsList");
-                });            } else {
+                };
+
+                returnBtn.addEventListener('click', this.returnBtnListener);
+            } else {
                 console.error('Return button not found');
             }
         } catch (error) {
@@ -144,5 +145,11 @@ export class FriendService {
             `;
         else
             return `<p class="text-gray-400 flex flex-row justify-center item-center gap-8">No friends</p>`;
+    }
+    static destroy(): void {
+        const returnBtn = document.getElementById('profileReturnBtn');
+        if (returnBtn && this.returnBtnListener) {
+            returnBtn.removeEventListener('click', this.returnBtnListener);
+        }
     }
 }

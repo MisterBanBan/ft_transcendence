@@ -1,9 +1,9 @@
 import { Component } from './component.js';
-import { introduction } from './intro.js';
-import { proceduralBackground } from './proceduralBackground.js';
-import { pong } from './pong.js';
-import { viewManager } from './views/viewManager.js';
-import { chaletCadre } from './chaletCadre.js';
+import { introduction } from '../IntroProject/intro.js';
+import { proceduralBackground } from '../IntroProject/proceduralBackground.js';
+import { pong } from '../pong/pong.js';
+import { viewManager } from '../views/viewManager.js';
+import { chaletCadre } from '../IntroProject/chaletCadre.js';
 
 let activeComponent: Component | null = null;
 

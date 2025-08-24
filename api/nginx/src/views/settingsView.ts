@@ -7,10 +7,10 @@ import {ChangePassword} from "../auth/change-password.js";
 import {Add2FA, Remove2FA} from "../auth/toggle-2fa.js";
 import { removeTwoFa } from "../menuInsert/Settings/removeTwoFa.js";
 
-import { getUser } from "../user-handler.js";
+import { getUser } from "../route/user-handler.js";
 import { viewManager } from "./viewManager.js";
-import { Component } from "../component.js";
-import {router} from "../router.js";
+import { Component } from "../route/component.js";
+import {router} from "../route/router.js";
 
 export class SettingsView implements Component {
     private container: HTMLElement;

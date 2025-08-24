@@ -1,4 +1,4 @@
-import { Component } from "./component.js";
+import { Component } from "../route/component.js";
 
 export class chaletCadre implements Component {
     private container: HTMLElement;

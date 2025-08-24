@@ -2,13 +2,13 @@
 //import { invites } from "../menuInsert/Friends/invites.js";
 import { searchMate } from "../menuInsert/Friends/searchMate.js";
 import { friendActionTemplate } from "../menuInsert/Friends/friendAction.js";
-import { Component } from "../component.js";
+import { Component } from "../route/component.js";
 import { InvitationService } from "../relationship/invitationService.js";
 import { FriendService } from "../relationship/friendsService.js";
 
 import { viewManager } from "./viewManager.js";
 import { friendsList } from "../menuInsert/Friends/friendsList.js";
-import {router} from "../router.js";
+import {router} from "../route/router.js";
 
 export class friendsView implements Component {
     private container: HTMLElement;
@@ -38,7 +38,11 @@ export class friendsView implements Component {
         leftFriends.innerHTML = '';
         leftFriends.insertAdjacentHTML('beforeend', searchMate());
         const inviteInput = document.getElementById('inviteUserId') as HTMLInputElement;
-            const shareInviteButton = document.getElementById('Share Invite');
+        const shareInviteButton = document.getElementById('Share Invite');
+        if (!inviteInput || !shareInviteButton) {
+            console.error('Invite input or Share Invite button not found');
+            return;
+        }
             if (shareInviteButton && inviteInput) {
                 this.boundInviteClickHandler = () => {
                     const inviteValue = inviteInput.value.trim();
@@ -131,7 +135,7 @@ export class friendsView implements Component {
 
         const popup = document.getElementById('friend-popup');
         if (!popup)
-            { console.log('fdfd'); return; }
+            { console.log('Friends-popup not found'); return; }
 
         this.closeOnClickOutside = (evt: MouseEvent) => {
          if (!popup.contains(evt.target as Node)) {
@@ -183,13 +187,16 @@ export class friendsView implements Component {
             this.closeOnClickOutside = undefined;
         }
         if (inviteInput && this.boundInviteKeydownHandler) {
-    inviteInput.removeEventListener('keydown', this.boundInviteKeydownHandler);
-    this.boundInviteKeydownHandler = undefined;
-}
-if (shareInviteButton && this.boundInviteClickHandler) {
-    shareInviteButton.removeEventListener('click', this.boundInviteClickHandler);
-    this.boundInviteClickHandler = undefined;
-}
+            inviteInput.removeEventListener('keydown', this.boundInviteKeydownHandler);
+            this.boundInviteKeydownHandler = undefined;
+        }
+        if (shareInviteButton && this.boundInviteClickHandler) {
+            shareInviteButton.removeEventListener('click', this.boundInviteClickHandler);
+            this.boundInviteClickHandler = undefined;
+        }
+        InvitationService.destroy();
+        FriendService.destroy();
     }
+
 
 }

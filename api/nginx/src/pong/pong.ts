@@ -1,6 +1,6 @@
-import { Component } from "./component.js"
-import { router } from "./router.js";
-import {wait} from "./wait.js";
+import { Component } from "../route/component.js"
+import { router } from "../route/router.js";
+import {wait} from "../route/wait.js";
 
 declare const io: any;
 
@@ -148,22 +148,34 @@ export class pong implements Component {
 
         this.mode = mode;
 
-		this.backPongEle.addEventListener('click', () => {
-			if (this.mode !== "private") {
-				this.socket.emit("abandon");
-				router.navigateTo("/Pong?mode=" + this.mode);
-			}
-        });
-
-		this.quitPongEle.addEventListener('click', () => {
-			this.socket.emit("abandon");
-
-			if (this.mode !== "private")
-				router.navigateTo("/game");
-			else
-				router.navigateTo("/game#tournament");
-        });
+        this.backPongEle.addEventListener('click', this.handleBackPongClick);
+        this.quitPongEle.addEventListener('click', this.handleQuitPongClick);
     }
+
+    private handleBackPongClick = () => {
+        if (this.mode !== "private") {
+            if (this.socket && this.socket.connected) {
+                this.socket.emit("abandon");
+            } else {
+                console.error("Socket is not connected");
+            }
+            router.navigateTo("/Pong?mode=" + this.mode);
+        }
+    };
+    
+    private handleQuitPongClick = () => {
+        if (this.socket && this.socket.connected) {
+            this.socket.emit("abandon");
+        } else {
+            console.error("Socket is not connected");
+        }
+    
+        if (this.mode !== "private") {
+            router.navigateTo("/game");
+        } else {
+            router.navigateTo("/game#tournament");
+        }
+    };
 
     private infoUser = () => {
         this.videoMainEle.style.display = "none";
@@ -317,6 +329,14 @@ export class pong implements Component {
         if (this.imgPong.complete && this.imgPong.onload) {
 			this.imgPong.onload(new Event("load"));
 		}
+        /*if (this.imgPong.complete) {
+    this.imgPong.onload?.(new Event("load"));
+} else {
+    this.imgPong.onload = () => {
+        this.activateInfoUserOnce();
+        // Autres initialisations...
+    };
+}*/
     }
 
     private onKeyDown = (e: KeyboardEvent) => {
@@ -494,12 +514,19 @@ export class pong implements Component {
     
     public destroy(): void {
 		console.log("Destroy pong")
+        if (this.backPongEle) {
+            this.backPongEle.removeEventListener('click', this.handleBackPongClick);
+        }
+    
+        if (this.quitPongEle) {
+            this.quitPongEle.removeEventListener('click', this.handleQuitPongClick);
+        }
         window.removeEventListener('keydown', this.boundKeyDownHandler);
         window.removeEventListener('keydown', this.infoUser);
         window.removeEventListener('keyup', this.boundKeyUpHandler);
         window.removeEventListener('resize', this.barResize);
 		window.removeEventListener('resize', this.loadingScreen);
-        window.removeEventListener('resize', this.endScreen.bind);
+        window.removeEventListener('resize', this.endScreen);
 		window.removeEventListener('resize', this.buttonResize);
         cancelAnimationFrame(this.rafId);
 		this.socket.removeAllListeners();

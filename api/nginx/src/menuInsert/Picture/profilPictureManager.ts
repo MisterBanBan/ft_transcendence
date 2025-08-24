@@ -1,4 +1,4 @@
-import { getUser, setAvatarUrl } from '../../user-handler.js';
+import { getUser, setAvatarUrl } from '../../route/user-handler.js';
 
 interface UserWithAvatar {
     avatar_url?: string | { avatar_url: string };

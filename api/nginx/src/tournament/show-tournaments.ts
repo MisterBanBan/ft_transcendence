@@ -1,4 +1,4 @@
-import {emitTournamentSocket} from "../tournamentsHandler.js";
+import {emitTournamentSocket} from "./tournamentsHandler.js";
 
 export function showTournaments(tournamentsList: any) {
 

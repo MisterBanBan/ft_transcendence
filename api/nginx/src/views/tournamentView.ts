@@ -1,11 +1,11 @@
-import { Component } from "../component.js";
+import { Component } from "../route/component.js";
 import { viewManager } from "./viewManager.js";
 import { tournament } from "../menuInsert/Tournaments/tournament.js";
-import {emitTournamentSocket, initTournamentSocket, updateTournamentInfos} from "../tournamentsHandler.js";
+import {emitTournamentSocket, initTournamentSocket, updateTournamentInfos} from "../tournament/tournamentsHandler.js";
 import {createTournamentForm} from "../menuInsert/Tournaments/createTournamentForm.js";
 import {showTournaments} from "../tournament/show-tournaments.js";
 import {tournamentsList} from "../menuInsert/Tournaments/tournamentsList.js";
-import {router} from "../router.js";
+import {router} from "../route/router.js";
 
 export class tournamentView implements Component{
 

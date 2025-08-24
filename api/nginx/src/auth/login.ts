@@ -1,6 +1,6 @@
-import { Component } from "../component.js";
-import { AuthUser } from "../type.js";
-import { set2faPlaceholder, setUser } from "../user-handler.js";
+import { Component } from "../route/component.js";
+import { AuthUser } from "../route/type.js";
+import { set2faPlaceholder, setUser } from "../route/user-handler.js";
 
 interface Payload {
 	username: string;

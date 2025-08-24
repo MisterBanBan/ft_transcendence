@@ -1,5 +1,5 @@
-import {Component} from "../component.js";
-import {router} from "../router.js";
+import {Component} from "../route/component.js";
+import {router} from "../route/router.js";
 
 interface Payload {
 	code: string;

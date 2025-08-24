@@ -1,4 +1,4 @@
-import {getUser} from '../../user-handler.js';
+import {getUser} from '../../route/user-handler.js';
 
 export const picture = () => {
     const currentUser = getUser();

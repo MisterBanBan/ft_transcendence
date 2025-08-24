@@ -1,5 +1,5 @@
 import { PlayerAnimation } from "./player_animation.js";
-import {router} from "./router.js";
+import {router} from "../route/router.js";
 
 const pressedKeys: { [key: string]: boolean } = {};
 
@@ -199,7 +199,6 @@ export class PlayerController implements IPlayerController{
         for (const key in pressedKeys) {
             if (pressedKeys[key]) {
             pressedKeys[key] = false;
-            // Appelle ton gestionnaire manuellement pour être sûr
             const fakeEvent = new KeyboardEvent('keyup', { key });
             handleKeyReleasePlayer(this.stats, this.player, fakeEvent);
             }
@@ -214,7 +213,6 @@ export class PlayerController implements IPlayerController{
 
     private handleResize() {
         const viewportHeight = window.innerHeight;
-        // console.log("Viewport height:", viewportHeight);
         const playerBottom = this.pos.y + this.playerHeight;
         
         if (playerBottom > viewportHeight) {
@@ -236,7 +234,6 @@ export class PlayerController implements IPlayerController{
     private updatePhysics(dt: number, worldWidth: number, viewportHeight: number) {
         
         const gravity = 1500; 
-        // console.log(this.stats.velocity.x)
         this.worldPosX = this.worldPosX || this.pos.x;
         this.worldPosX += this.stats.velocity.x * dt;
         this.worldPosX = Math.max(0, Math.min(worldWidth - this.playerWidth, this.worldPosX));
@@ -254,7 +251,6 @@ export class PlayerController implements IPlayerController{
             this.pos.y = viewportHeight - this.playerHeight;
             this.stats.isJumping = false;
         }
-        // console.log(this.pos.y, viewportHeight, this.playerHeight);
         this.pos.x = this.worldPosX - this.cameraX;
     }
 

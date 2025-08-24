@@ -1,10 +1,10 @@
 import { viewManager } from "./viewManager.js";
 import { registerForm } from "../menuInsert/Connection/registerForm.js";
-import { getUser } from "../user-handler.js";
-import { wait } from "../wait.js";
+import { getUser } from "../route/user-handler.js";
+import { wait } from "../route/wait.js";
 import { Register } from "../auth/register.js";
-import { Component } from "../component.js";
-import {router} from "../router.js";
+import { Component } from "../route/component.js";
+import {router} from "../route/router.js";
 
 export class registerView implements Component {
     private container: HTMLElement;

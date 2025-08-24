@@ -1,12 +1,12 @@
-import { tournamentPage8 } from "./menuInsert/Tournaments/tournamentPage8.js";
-import {tournamentPage4} from "./menuInsert/Tournaments/tournamentPage4.js";
-import {showTournaments} from "./tournament/show-tournaments.js";
-import {leftTournamentInfos} from "./menuInsert/Tournaments/leftTournamentInfos.js";
-import {router} from "./router.js";
-import {getUser} from "./user-handler.js";
-import {tournamentInfoPopup} from "./menuInsert/Tournaments/tournamentInfoPopup.js";
-import {wait} from "./wait.js";
-import {errorPopup} from "./menuInsert/Tournaments/errorPopup.js";
+import { tournamentPage8 } from "../menuInsert/Tournaments/tournamentPage8.js";
+import {tournamentPage4} from "../menuInsert/Tournaments/tournamentPage4.js";
+import {showTournaments} from "./show-tournaments.js";
+import {leftTournamentInfos} from "../menuInsert/Tournaments/leftTournamentInfos.js";
+import {router} from "../route/router.js";
+import {getUser} from "../route/user-handler.js";
+import {tournamentInfoPopup} from "../menuInsert/Tournaments/tournamentInfoPopup.js";
+import {wait} from "../route/wait.js";
+import {errorPopup} from "../menuInsert/Tournaments/errorPopup.js";
 
 declare const io: any;
 

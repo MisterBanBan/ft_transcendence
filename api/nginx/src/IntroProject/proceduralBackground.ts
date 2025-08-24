@@ -1,7 +1,7 @@
-import { Component } from "./component.js";
-import { destroyCloud, generateCloud } from "./generateIntro/generateCloud.js";
-import { animateBirds, destroyBirds, generateBirds } from "./generateIntro/generateBirds.js";
-import { destroyTree, generateTrees } from "./generateIntro/generateTrees.js";
+import { Component } from "../route/component.js";
+import { destroyCloud, generateCloud } from "../generateIntro/generateCloud.js";
+import { animateBirds, destroyBirds, generateBirds } from "../generateIntro/generateBirds.js";
+import { destroyTree, generateTrees } from "../generateIntro/generateTrees.js";
 
 export class proceduralBackground implements Component{
     private birds: HTMLElement[] = [];

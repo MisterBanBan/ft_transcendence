@@ -1,5 +1,5 @@
 import PlayerController from "./scripts.js";
-import { Component } from "./component.js";
+import { Component } from "../route/component.js";
 
 interface IPlayerController {
     destroy(): void;
