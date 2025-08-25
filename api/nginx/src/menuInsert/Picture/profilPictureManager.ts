@@ -23,6 +23,7 @@ export class ProfilePictureManager {
             console.warn('Picture element not found, will retry later');
             return;
         }
+        
 
         this.pictureElement.addEventListener('click', (e) => {
             e.preventDefault();

@@ -54,16 +54,16 @@ export const profile = (userProfile: UserProfile, matchHistory: Match[]): string
                             <p class="responsive-text-profile">Score</p>
                             <p class="responsive-text-profile">Game Type</p>
                         </div>
-                        <div class="h-full w-full overflow-y-auto ">
+                       <div class="h-full w-full overflow-y-auto">
                             ${matchHistory.slice(0, 10).map((match: Match) => `
-                            <div class="flex flex-row justify-between items-center responsive-text-historique ">
-                                <span class="">${match.player1}</span>
-                                <span class="">${match.player2}</span>
-                                <span class="">${match.score1} - ${match.score2}</span>
-                                <span class="">${match.gameType || match.date}</span>
+                            <div class="flex flex-row responsive-text-historique items-center justify-between">
+                                <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-left">${match.player1}</span>
+                                <span class="flex-shrink-0 flex-grow-0 w-[17%] truncate text-left">${match.player2}</span>
+                                <span class="flex-shrink-0 flex-grow-0 w-[33%] truncate text-center">${match.score1} - ${match.score2}</span>
+                                <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-left">${match.gameType || match.date}</span>
                             </div>
                             `).join('')}
-                    </div>
+                        </div>
 
                 </div>
                 <div class="w-[70%] h-[10%] items-center justify-center flex flex-col">
