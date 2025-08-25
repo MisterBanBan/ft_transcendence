@@ -3,7 +3,7 @@ export const friendActionTemplate = (x: number, y: number, friendId: string) => 
        class="w-42 max-w-[64vw] h-30 max-h-[52vh] sm-h-[20] bg-white/90 flex flex-col items-center justify-center rounded-lg overflow-auto shadow-lg">
     <div class="flex flex-col gap-2 w-full h-full px-2 py-2 break-words whitespace-normal overflow-auto">
       <button id="removeFriend" class="w-full text-black break-words">Retirer</button>
-      <button id="friendsProfile"  data-friend-id="${friendId} class="w-full text-black">Profil</button>
+      <button id="friendsProfile"  data-friend-id="${friendId}" class="friends-profile-btn w-full text-black">Profil</button>
     </div>
   </div>
 `;

@@ -84,6 +84,18 @@ export default async function (server: FastifyInstance) {
                 return reply.status(404).send({ error: 'Requester not found' });
             }
 
+            const existingFriendship = await server.db.get(
+                `SELECT * FROM relationships 
+                 WHERE ((requester_id = ? AND addressee_id = ?) 
+                    OR (requester_id = ? AND addressee_id = ?)) 
+                    AND status_r = 'accepted'`,
+                requester_id, addressee_id, addressee_id, requester_id
+            );
+            
+            if (existingFriendship) {
+                return reply.status(409).send({ error: 'User is already your friend' });
+            }
+
             const existingRelation = await server.db.get(
                 'SELECT * FROM relationships WHERE requester_id = ? AND addressee_id = ?',
                 requester_id, addressee_id

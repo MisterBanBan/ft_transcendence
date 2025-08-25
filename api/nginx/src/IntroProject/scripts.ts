@@ -51,7 +51,7 @@ function handleKeyPressPlayer(stats: PlayerStats, player: PlayerAnimation, e: Ke
 function handleKeyReleasePlayer(stats: PlayerStats, player: PlayerAnimation, e: KeyboardEvent) {
     const key = e.key.toLowerCase();
     if (!pressedKeys[key]) {
-        return; // Ne rien faire si la touche n'était pas pressée
+        return;
     }
     pressedKeys[key] = false;
 
@@ -60,7 +60,7 @@ function handleKeyReleasePlayer(stats: PlayerStats, player: PlayerAnimation, e: 
             stats.velocity.x += stats.speed;
             stats.leftKey = false;
             if (stats.rightKey) {
-                player.setDirection(false); // regarde à droite
+                player.setDirection(false);
                 player.startAnimation();
             }
             break;
@@ -68,7 +68,7 @@ function handleKeyReleasePlayer(stats: PlayerStats, player: PlayerAnimation, e: 
             stats.velocity.x -= stats.speed;
             stats.rightKey = false;
             if (stats.leftKey) {
-                player.setDirection(true); // regarde à gauche
+                player.setDirection(true);
                 player.startAnimation();
             }
             break;

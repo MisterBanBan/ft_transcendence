@@ -6,5 +6,5 @@ export const parametre = () => `
                 <button type="button" id="settings" class="responsive-text-parametre ">Settings</button>
                 <button type="button" id="logout" class="responsive-text-parametre ">Log out</button>
                 <button type="button" id="parametreReturnBtn" class="responsive-text-parametre mt-4">Return</button>
-                  </div>
+    </div>
 `

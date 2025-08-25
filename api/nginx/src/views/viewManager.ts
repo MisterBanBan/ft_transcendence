@@ -50,11 +50,11 @@ export class viewManager implements Component {
         this.authBtn = authBtn;
 
         const formsContainer = document.getElementById('dynamic-content');
-        if (!formsContainer) throw new Error('Form wrapper not found');
+        if (!formsContainer) throw new Error('Form Container not found');
         this.formsContainer= formsContainer;
 
         const formspicture = document.getElementById('picture');
-        if (!formspicture) throw new Error('Form wrapper not found');
+        if (!formspicture) throw new Error('Form picture not found');
         this.formspicture = formspicture;
 
         this.keydownHandler = this.handleKeydown.bind(this);
@@ -100,7 +100,6 @@ export class viewManager implements Component {
         const currentUser = getUser();
         if (currentUser) {
             this.profilePictureManager = new ProfilePictureManager();
-
             this.profilePictureManager.reinitialize()
         }
     }

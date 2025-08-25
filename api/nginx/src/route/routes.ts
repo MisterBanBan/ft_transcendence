@@ -14,7 +14,6 @@ const google_url = "https://accounts.google.com/o/oauth2/v2/auth?" +
 export interface Route {
 	path: string;
 	title: string;
-	/*Gestion du chargement asynchrone du contenu des templates grace a Promise*/
 	template: (() => Promise<string>) | string;
 }
 
@@ -201,6 +200,9 @@ export const routes: Route[] = [
         path: "*",
         title: "404 - Page not found",
         template: `
+			<div class="h-full w-full items-center justify-center" >
+				<img src="/img/page404.png" class="w-screen h-screen object-cover"/>
+			</div>
             `
     }
 ];

@@ -19,23 +19,18 @@ class Router {
     
     constructor(routes: Route[]) {
         this.routes = routes;
-        /*recupere l'element app dans index.html*/
         const app = document.getElementById("app");
         if (!app)
             throw new Error("Element not found");
         this.appDiv = app;
         this.bindLinks();
-        /*Cette ligne ajoute un écouteur pour l'événement popstate sur l'objet window. L'événement popstate est déclenché lorsque l'utilisateur utilise les boutons Back ou Forward du navigateur. Lorsque cet événement se produit, la méthode updatePage() est appelée pour mettre à jour le contenu affiché en fonction de l'URL courante, assurant ainsi que l'application réagit correctement aux changements de l'historique sans recharger la page. */
         window.addEventListener("popstate", () => this.updatePage());
     }
 
-    /*Intercepte les clics*/
     private bindLinks(): void {
         document.body.addEventListener("click", (event) => {
-            /*seul les liens avec data-link <a href="/home" data-link>Accueil</a>  closest permet de remonter a l'element de datalink*/
             const target = (event.target as HTMLElement).closest("[data-link]");
             if (target) {
-                /*empeche le comportement par defaut du navigateur comme recharger la page */
                 event.preventDefault();
                 const url = target.getAttribute("href");
                 if (url) {

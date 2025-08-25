@@ -46,7 +46,6 @@ export class loginView implements Component {
         document.getElementById('registerBtn')?.addEventListener('click', this.handleRegister);
 
     }
-    //bloquer lenvoie de pleins de submit
     public async submit_loginForm() {
         await wait(1000)
 

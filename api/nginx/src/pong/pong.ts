@@ -329,14 +329,6 @@ export class pong implements Component {
         if (this.imgPong.complete && this.imgPong.onload) {
 			this.imgPong.onload(new Event("load"));
 		}
-        /*if (this.imgPong.complete) {
-    this.imgPong.onload?.(new Event("load"));
-} else {
-    this.imgPong.onload = () => {
-        this.activateInfoUserOnce();
-        // Autres initialisations...
-    };
-}*/
     }
 
     private onKeyDown = (e: KeyboardEvent) => {
@@ -400,8 +392,7 @@ export class pong implements Component {
     }
 
     private gameLoop = () => {
-    
-        // Mesure la position réelle de l'image
+
         this.backRect = this.imgPong.getBoundingClientRect();
         const imgTop = this.backRect.top;
         const imgLeft = this.backRect.left;
@@ -472,10 +463,8 @@ export class pong implements Component {
                     this.timer.textContent = `Extra Time`;
                 this.rafId = requestAnimationFrame(this.gameLoop);
             }
-            // console.log(data.state);
             if (data && data.state && data.state.score)
         		this.updateScore(data.state.score.playerLeft, data.state.score.playerRight);
-		// console.log("Game Update - Ball:", ball);
         });
 
         this.socket.on("connect_error", (err: any) => {

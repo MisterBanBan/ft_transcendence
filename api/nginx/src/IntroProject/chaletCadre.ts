@@ -26,7 +26,7 @@ export class chaletCadre implements Component {
                 if (buffer.length > 10) {
                     buffer = buffer.slice(-10);
                 }
-                const prenoms = ['liam', 'afavier', 'arvoyer', 'mbaron', 'anjambon', 'arno', 'andre']; // complémente cette liste avec les prénoms que tu veux
+                const prenoms = ['liam', 'afavier', 'arvoyer', 'mbaron', 'anjambon', 'andre'];
                 for (const prenom of prenoms) {
                     if (buffer.endsWith(prenom)) {
                         this.showEasterEgg(prenom);

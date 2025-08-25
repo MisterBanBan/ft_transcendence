@@ -18,10 +18,6 @@ export class SettingsView implements Component {
     private setting: string | null;
     private componentStorage?: Component;
     
-    /*private handleSubmit = async (event: SubmitEvent) => {
-        event.preventDefault();
-        router.navigateTo("/game#settings", this.viewManager);
-    }*/
     private handleNewPseudo = () => this.newPseudo();
     private handleNewPassword = () => this.newPassword();
     private handleToggle2FA = () => this.toggle2FA();
@@ -72,7 +68,6 @@ export class SettingsView implements Component {
         this.container.insertAdjacentHTML('beforeend', newPseudo());
         this.componentStorage = new ChangeUsername();
         this.componentStorage.init();
-        //document.getElementById('submit-username')?.addEventListener('click', (event: MouseEvent) => { this.handleSubmit});
         document.getElementById('pseudoReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
     }
 
@@ -82,7 +77,6 @@ export class SettingsView implements Component {
         this.container.insertAdjacentHTML('beforeend', newPass());
         this.componentStorage = new ChangePassword();
         this.componentStorage.init();
-        //document.getElementById('submit-new-password')?.addEventListener('click', (event: MouseEvent) => { this.handleSubmit});
         document.getElementById('passReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
 
     }
@@ -120,8 +114,6 @@ export class SettingsView implements Component {
 
     public destroy(): void {
         this.componentStorage?.destroy();
-        //document.getElementById('submit-username')?.removeEventListener('click',(event: MouseEvent) => { this.handleSubmit});
-        //document.getElementById('submit-new-password')?.removeEventListener('click', (event: MouseEvent) => { this.handleSubmit});
         document.getElementById('newPseudo')?.removeEventListener('click', this.handleNewPseudo);
         document.getElementById('newPass')?.removeEventListener('click', this.handleNewPassword);
         document.getElementById('toggle-2fa')?.removeEventListener('change', this.handleToggle2FA);
