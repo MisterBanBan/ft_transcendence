@@ -1,19 +1,19 @@
 interface UserProfile {
-    username: string;
-    status: 'online' | 'offline' | 'in_game';
-    totalGames?: number;
-    wins?: number;
-    losses?: number;
-    winrate?: string;
+	username: string;
+	status: 'online' | 'offline' | 'in_game';
+	totalGames?: number;
+	wins?: number;
+	losses?: number;
+	winrate?: string;
 }
 
 interface Match {
-    player1: string;
-    player2: string;
-    score1: number;
-    score2: number;
-    date: string;
-    gameType?: string;
+	player1: string;
+	player2: string;
+	score1: number;
+	score2: number;
+	date: string;
+	gameType?: string;
 }
 
 export const profile = (userProfile: UserProfile, matchHistory: Match[]): string => `
@@ -57,9 +57,9 @@ export const profile = (userProfile: UserProfile, matchHistory: Match[]): string
                             ${matchHistory.slice(0, 10).map((match: Match) => `
                             <div class="flex flex-row responsive-text-historique items-center justify-between">
                                 <button class="profile-btn flex-shrink-0 flex-grow-0 w-[25%] truncate text-left">${match.player1}</button>
-                                <button class="profile-btn flex-shrink-0 flex-grow-0 w-[17%] truncate text-left">${match.player2}</button>
+                                <button class="profile-btn flex-shrink-0 flex-grow-0 w-[17%] truncate text-center">${match.player2}</button>
                                 <span class="flex-shrink-0 flex-grow-0 w-[33%] truncate text-center">${match.score1} - ${match.score2}</span>
-                                <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-left">${match.gameType || match.date}</span>
+                                <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-center">${match.gameType || match.date}</span>
                             </div>
                             `).join('')}
                         </div>
