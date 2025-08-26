@@ -12,6 +12,7 @@ import {router} from "../route/router.js";
 import {clearTournamentSocket, initTournamentSocket} from "../tournament/tournamentsHandler.js"
 import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
 import { selectAnimation } from '../IntroProject/selectAnimat.js';
+import {profileView} from "./profileView.js";
 
 declare const io: any;
 
@@ -183,6 +184,10 @@ export class viewManager implements Component {
                 break;
             case 'friendsList':
                 newView = new friendsView(this.formsContainer, this);
+                break;
+            case 'user':
+                const username = params.get("username")
+                newView = new profileView(this.formsContainer, this, username);
                 break;
             default:
                 console.error(`View "${viewName}" is not implemented.`);

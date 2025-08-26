@@ -2,6 +2,7 @@ import {getUser} from "../route/user-handler.js";
 import {ApiUtils} from "./apiUtils.js";
 import { profile } from "../menuInsert/Profile/profile.js";
 import {router} from "../route/router.js";
+import {viewManager} from "../views/viewManager.js";
 
 interface loadFriendsResponse {
     message?: string;
@@ -80,7 +81,7 @@ export class FriendService {
         }
     }
 
-    static async viewProfile(friendId: string): Promise<void> {
+    static async viewProfile(friendId: string, viewManager?: viewManager): Promise<void> {
         try {
             const response = await fetch(`/api/users/${friendId}/fullProfile`);
             if (!response.ok) {
@@ -98,8 +99,11 @@ export class FriendService {
     
             const profileHtml = profile(data, data.matches);
     
-            const profileContainer = document.getElementById('friendsList');
-            if(!profileContainer) return;
+            const profileContainer = document.getElementById('dynamic-content');
+            if(!profileContainer) {
+                console.error("404 page")
+                return;
+            }
             profileContainer.innerHTML = profileHtml;
             profileContainer.style.display = 'block';
 
@@ -110,7 +114,7 @@ export class FriendService {
                 }
 
                 this.returnBtnListener = () => {
-                    router.navigateTo("/game#friendsList");
+                    router.navigateTo("/game#friendsList", viewManager);
                 };
 
                 returnBtn.addEventListener('click', this.returnBtnListener);
