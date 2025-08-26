@@ -13,16 +13,22 @@ declare const io: any;
 let tournamentSocket: any = null;
 let connectionPromise: Promise<void> | null = null;
 
+function handleStart(e: Event) {
+	e.preventDefault()
+	emitTournamentSocket("start");
+}
+
+function handleLeave(e: Event) {
+	e.preventDefault()
+	emitTournamentSocket("leave");
+}
+
 export async function initTournamentSocket() {
 	if (tournamentSocket?.connected)
 		return
 
-	console.warn("Socket not connected")
-
 	if (connectionPromise)
 		return connectionPromise;
-
-	console.warn("create tournament socket")
 
 	connectionPromise = new Promise<void>((resolve) => {
 		tournamentSocket = io(`/`, {
@@ -149,7 +155,6 @@ export async function initTournamentSocket() {
 
 export function clearTournamentSocket() {
 	if (tournamentSocket) {
-		console.warn("clear tournament socket")
 		tournamentSocket.disconnect()
 		tournamentSocket = null
 		connectionPromise = null;
@@ -188,48 +193,26 @@ function tournamentPage(size: number, ownerId: number, started: boolean) {
 	leftBox.insertAdjacentHTML("beforeend", leftTournamentInfos());
 
 	const start = document.getElementById('start-tournament');
-	const fakeJoin = document.getElementById('fake-join-tournament');
+	if (start) start.removeEventListener("click", handleStart)
 	const leave = document.getElementById('leave-tournament');
+	if (leave) leave.removeEventListener("click", handleLeave)
 
 	if (started) {
 		if (start)
 			start.remove()
-		if (fakeJoin)
-			fakeJoin.remove()
 	}
 	else {
-
 		if (start) {
 			if (getUser()?.id !== ownerId) {
 				start.remove();
 			}
 			else
-				start.addEventListener("click", async (e) => {
-					e.preventDefault()
-					emitTournamentSocket("start");
-					// tournamentSocket.emit("start")
-				})
-		}
-
-		if (fakeJoin) {
-			if (getUser()?.id !== ownerId) {
-				fakeJoin.remove();
-			}
-			else
-				fakeJoin.addEventListener("click", async (e) => {
-					e.preventDefault()
-					emitTournamentSocket("fakeJoin")
-					// tournamentSocket.emit("fakeJoin")
-				})
+				start.addEventListener("click", handleStart)
 		}
 	}
 
 	if (leave)
-		leave.addEventListener("click", async (e) => {
-			e.preventDefault()
-
-			emitTournamentSocket("leave")
-		})
+		leave.addEventListener("click", handleLeave);
 
 	if (size == 4) {
 		tournamentPageContainer.innerHTML = '';
