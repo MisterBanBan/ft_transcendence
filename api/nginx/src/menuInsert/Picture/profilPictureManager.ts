@@ -81,7 +81,6 @@ export class ProfilePictureManager {
             await this.uploadProfilePicture(file);
         } catch (error) {
             console.error('Upload error:', error);
-            alert('Failed to upload profile picture. Please try again.');
         } finally {
             this.hideLoadingState();
             this.fileInput.value = '';

@@ -203,8 +203,6 @@ export class friendsView implements Component {
 	}
 
 	private async handleRemove() {
-		console.log(this.friendId, this.username)
-		console.log("removing");
 		if (!this.friendId)
 			return;
 
@@ -221,7 +219,6 @@ export class friendsView implements Component {
 
 		} catch (error) {
 			console.error('Error removing friend:', error);
-			alert('Failed to remove friend. Please try again.');
 		}
 	}
 

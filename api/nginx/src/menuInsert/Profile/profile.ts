@@ -20,7 +20,6 @@ export const profile = (userProfile: UserProfile, matchHistory: Match[]): string
     <div id="profil" class="h-full w-full flex items-center justify-center">
     <div class="h-[85%] w-[90%] flex flex-col items-center justify-center bg-black/60">
         <div class="flex flex-row items-center justify-center  h-full w-full">
-
             <div id="infos" class="flex flex-col items-center justify-center h-full w-[70%] responsive-text">
                 <div id="first" class="flex flex-row items-center justify-center h-[15%] w-[70%]">
                     <div class="flex flex-col items-center justify-center w-full h-full">
@@ -54,11 +53,11 @@ export const profile = (userProfile: UserProfile, matchHistory: Match[]): string
                             <p class="responsive-text-profile">Score</p>
                             <p class="responsive-text-profile">Game Type</p>
                         </div>
-                       <div class="h-full w-full overflow-y-auto">
+                       <div id="dynamic-popup" class="h-full w-full overflow-y-auto">
                             ${matchHistory.slice(0, 10).map((match: Match) => `
                             <div class="flex flex-row responsive-text-historique items-center justify-between">
-                                <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-left">${match.player1}</span>
-                                <span class="flex-shrink-0 flex-grow-0 w-[17%] truncate text-left">${match.player2}</span>
+                                <button class="profile-btn flex-shrink-0 flex-grow-0 w-[25%] truncate text-left">${match.player1}</button>
+                                <button class="profile-btn flex-shrink-0 flex-grow-0 w-[17%] truncate text-left">${match.player2}</button>
                                 <span class="flex-shrink-0 flex-grow-0 w-[33%] truncate text-center">${match.score1} - ${match.score2}</span>
                                 <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-left">${match.gameType || match.date}</span>
                             </div>

@@ -3,137 +3,147 @@ import {ApiUtils} from "./apiUtils.js";
 import { profile } from "../menuInsert/Profile/profile.js";
 import {router} from "../route/router.js";
 import {viewManager} from "../views/viewManager.js";
+import {profileActionTemplate} from "../menuInsert/Profile/profileAction.js";
 
 interface loadFriendsResponse {
-    message?: string;
-    error?: string;
-    friends?: Friends[];
+	message?: string;
+	error?: string;
+	friends?: Friends[];
 }
 
 interface Friends {
-    username: string;
-    id: string;
-    avatar_url: string;
-    status: string;
+	username: string;
+	id: string;
+	avatar_url: string;
+	status: string;
 }
 
+let username: string | null = null
+let viewManagerRef: viewManager | undefined = undefined
+
 export class FriendService {
-    private static returnBtnListener: () => void;
+	private static returnBtnListener: () => void;
+	private static profileBtnHandler = (e: Event) => this.profileAction(e as MouseEvent);
+	private static closeOnClickOutside?: (evt: MouseEvent) => void;
 
-    static async removeFriend(friendId: string): Promise<void> {
-        const currentUser = getUser();
-        if (!currentUser) {
-            throw new Error('User not authenticated');
-        }
+	static async removeFriend(friendId: string): Promise<void> {
+		const currentUser = getUser();
+		if (!currentUser) {
+			throw new Error('User not authenticated');
+		}
 
-        try {
-            const response = await fetch(`/api/users/removeFriend`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ friendId: friendId })
-            });
+		try {
+			const response = await fetch(`/api/users/removeFriend`, {
+				method: 'DELETE',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ friendId: friendId })
+			});
 
-            const data = await response.json();
-            console.log(data.message);
-        } catch (error) {
-            console.error('Error removing friend:', error);
-            throw error;
-        }
-    }
+			const data = await response.json();
+			console.log(data.message);
+		} catch (error) {
+			console.error('Error removing friend:', error);
+			throw error;
+		}
+	}
 
-    static async loadFriends(): Promise<Friends[]> {
-        const currentUser = getUser();
-        if (!currentUser) {
-            ApiUtils.showAlert('User not authenticated');
-            return [];
-        }
+	static async loadFriends(): Promise<Friends[]> {
+		const currentUser = getUser();
+		if (!currentUser) {
+			ApiUtils.showAlert('User not authenticated');
+			return [];
+		}
 
-        try {
-            console.log(`Fetching friends for user ID: ${currentUser.id}`);
-            const response = await fetch(`/api/users/friendsList`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
+		try {
+			console.log(`Fetching friends for user ID: ${currentUser.id}`);
+			const response = await fetch(`/api/users/friendsList`, {
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json',
+				}
+			});
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                console.error(`HTTP Error ${response.status}:`, errorText);
-                return [];
-            }
+			if (!response.ok) {
+				const errorText = await response.text();
+				console.error(`HTTP Error ${response.status}:`, errorText);
+				return [];
+			}
 
-            const data: loadFriendsResponse = await response.json();
-            console.log('API Response data:', data);
+			const data: loadFriendsResponse = await response.json();
+			console.log('API Response data:', data);
 
-            if (data.friends && data.friends.length > 0) {
-                console.log(`Found ${data.friends.length} friends`);
-                return data.friends;
-            } else {
-                console.log('No friends found in response');
-                return [];
-            }
-        } catch (error) {
-            console.error('Network or parsing error:', error);
-            return [];
-        }
-    }
+			if (data.friends && data.friends.length > 0) {
+				console.log(`Found ${data.friends.length} friends`);
+				return data.friends;
+			} else {
+				console.log('No friends found in response');
+				return [];
+			}
+		} catch (error) {
+			console.error('Network or parsing error:', error);
+			return [];
+		}
+	}
 
-    static async viewProfile(friendId: string, viewManager?: viewManager): Promise<void> {
-        try {
-            const response = await fetch(`/api/users/${friendId}/fullProfile`);
-            if (!response.ok) {
-                console.error('Failed to fetch full profile');
-                alert('Failed to load profile. Please try again.');
-                return;
-            }
-    
-            const { success, data } = await response.json();
-            if (!success) {
-                console.error('Error fetching profile:', data);
-                alert('Failed to load profile. Please try again.');
-                return;
-            }
-    
-            const profileHtml = profile(data, data.matches);
-    
-            const profileContainer = document.getElementById('dynamic-content');
-            if(!profileContainer) {
-                console.error("404 page")
-                return;
-            }
-            profileContainer.innerHTML = profileHtml;
-            profileContainer.style.display = 'block';
+	static async viewProfile(friendId: string, viewManager?: viewManager): Promise<void> {
+		viewManagerRef = viewManager;
 
-            const returnBtn = document.getElementById('profileReturnBtn');
-            if (returnBtn) {
-                if (this.returnBtnListener) {
-                    returnBtn.removeEventListener('click', this.returnBtnListener);
-                }
+		try {
+			const response = await fetch(`/api/users/${friendId}/fullProfile`);
+			if (!response.ok) {
+				console.error('Failed to fetch full profile');
+				return;
+			}
 
-                this.returnBtnListener = () => {
-                    router.navigateTo("/game#friendsList", viewManager);
-                };
+			const { success, data } = await response.json();
+			if (!success) {
+				console.error('Error fetching profile:', data);
+				return;
+			}
 
-                returnBtn.addEventListener('click', this.returnBtnListener);
-            } else {
-                console.error('Return button not found');
-            }
-        } catch (error) {
-            console.error('Error fetching full profile:', error);
-            alert('Failed to load profile. Please try again.');
-        }
-    }
+			const profileHtml = profile(data, data.matches);
 
-    static displayFriends(friends: Friends[]): string {
-        const sortedFriends = friends.sort((a, b) => a.username.localeCompare(b.username));
-        let nb = 0;
-        if (friends.length > 0)
-            
-            
-            return `
+			const profileContainer = document.getElementById('dynamic-content');
+			if(!profileContainer) {
+				console.error("404 page")
+				return;
+			}
+
+			profileContainer.innerHTML = profileHtml;
+			// profileContainer.style.display = 'block';
+
+			document.querySelectorAll('.profile-btn').forEach(btn => {
+				btn.addEventListener('click', this.profileBtnHandler);
+			});
+
+			const returnBtn = document.getElementById('profileReturnBtn');
+			if (returnBtn) {
+				if (this.returnBtnListener) {
+					returnBtn.removeEventListener('click', this.returnBtnListener);
+				}
+
+				this.returnBtnListener = () => {
+					router.navigateTo("/game#friendsList", viewManager);
+				};
+
+				returnBtn.addEventListener('click', this.returnBtnListener);
+			} else {
+				console.error('Return button not found');
+			}
+		} catch (error) {
+			console.error('Error fetching full profile:', error);
+		}
+	}
+
+	static displayFriends(friends: Friends[]): string {
+		const sortedFriends = friends.sort((a, b) => a.username.localeCompare(b.username));
+		let nb = 0;
+		if (friends.length > 0)
+
+
+			return `
                 <div class="h-full w-full overflow-y-auto">
                     ${sortedFriends.map(friend => `
                         <div class="flex flex-row w-[80%] h-[20%] items-center gap-4 responsive-text-historique">
@@ -147,13 +157,72 @@ export class FriendService {
                     `).join('')}
                 </div>
             `;
-        else
-            return `<p class="text-gray-400 flex flex-row justify-center item-center gap-8">No friends</p>`;
-    }
-    static destroy(): void {
-        const returnBtn = document.getElementById('profileReturnBtn');
-        if (returnBtn && this.returnBtnListener) {
-            returnBtn.removeEventListener('click', this.returnBtnListener);
-        }
-    }
+		else
+			return `<p class="text-gray-400 flex flex-row justify-center item-center gap-8">No friends</p>`;
+	}
+
+	static destroy(): void {
+		const returnBtn = document.getElementById('profileReturnBtn');
+		if (returnBtn && this.returnBtnListener) {
+			returnBtn.removeEventListener('click', this.returnBtnListener);
+		}
+
+		if (this.closeOnClickOutside) {
+			document.removeEventListener('click', this.closeOnClickOutside);
+			this.closeOnClickOutside = undefined;
+		}
+	}
+
+	static profileAction(e: MouseEvent): void {
+		const x = e.clientX;
+		const y = e.clientY;
+		const target = e.target as HTMLElement;
+
+		username = target.innerText
+
+		if (!username) {
+			console.error('Invalid username:', username);
+			return;
+		}
+
+		const container = document.getElementById('dynamic-popup');
+		if (!container) {
+			console.error('Main container not found');
+			return;
+		}
+
+		const existingPopup = document.getElementById('profile-popup');
+		if (existingPopup) {
+			existingPopup.remove();
+			return;
+		}
+
+		const popupHtml = profileActionTemplate(x, y);
+		container.insertAdjacentHTML('beforeend', popupHtml);
+
+		const popup = document.getElementById('profile-popup');
+		if (!popup)
+		{ console.log('profile-popup not found'); return; }
+
+		this.closeOnClickOutside = (evt: MouseEvent) => {
+			if (!popup.contains(evt.target as Node)) {
+				popup.remove();
+				document.removeEventListener('click', this.closeOnClickOutside!);
+				return;
+			}
+		};
+		setTimeout(() => {
+			document.addEventListener('click', this.closeOnClickOutside!);
+		}, 0);
+
+		const profile = document.getElementById("profile")
+		if (profile) {
+			profile.removeEventListener('click', this.handleProfile)
+			profile.addEventListener('click', this.handleProfile)
+		}
+	}
+
+	static handleProfile() {
+		router.navigateTo(`/game?username=${username}#user`, viewManagerRef);
+	}
 }
