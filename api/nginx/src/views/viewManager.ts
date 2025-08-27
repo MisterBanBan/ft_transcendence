@@ -36,6 +36,8 @@ export class viewManager implements Component {
         path: "/wss/users-status"
     });
 
+    public oldPaths: string[] = [];
+
     constructor(videoId: string, containerId: string, authBtnId: string) {
 
         const video = document.getElementById(videoId) as HTMLVideoElement;

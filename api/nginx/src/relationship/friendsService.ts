@@ -88,7 +88,8 @@ export class FriendService {
 	}
 
 	static async viewProfile(friendId: string, viewManager?: viewManager): Promise<void> {
-		viewManagerRef = viewManager;
+
+		viewManagerRef = viewManager
 
 		try {
 			const response = await fetch(`/api/users/${friendId}/fullProfile`);
@@ -107,12 +108,11 @@ export class FriendService {
 
 			const profileContainer = document.getElementById('dynamic-content');
 			if(!profileContainer) {
-				console.error("404 page")
+				console.error("404 Not Found")
 				return;
 			}
 
 			profileContainer.innerHTML = profileHtml;
-			// profileContainer.style.display = 'block';
 
 			document.querySelectorAll('.profile-btn').forEach(btn => {
 				btn.addEventListener('click', this.profileBtnHandler);
@@ -125,7 +125,12 @@ export class FriendService {
 				}
 
 				this.returnBtnListener = () => {
-					router.navigateTo("/game#friendsList", viewManager);
+					if (viewManager) {
+						const popped = viewManager.oldPaths.pop()
+						router.navigateTo(popped ?? "/game", viewManager, true);
+					}
+					else
+						router.navigateTo("/game");	
 				};
 
 				returnBtn.addEventListener('click', this.returnBtnListener);
@@ -224,5 +229,7 @@ export class FriendService {
 
 	static handleProfile() {
 		router.navigateTo(`/game?username=${username}#user`, viewManagerRef);
+		username = null
+		
 	}
 }
