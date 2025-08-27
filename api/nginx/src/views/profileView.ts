@@ -1,15 +1,14 @@
 import {Component} from "../route/component.js";
 import {FriendService} from "../relationship/friendsService.js";
 import {viewManager} from "./viewManager.js";
+import {router} from "../route/router.js";
 
 export class profileView implements Component {
 
-	private container: HTMLElement;
 	private readonly viewManager: viewManager;
 	private readonly username: string | null;
 
-	constructor(container: HTMLElement, viewManager: viewManager, username: string | null) {
-		this.container = container
+	constructor( viewManager: viewManager, username: string | null) {
 		this.viewManager = viewManager
 		this.username = username
 	}
@@ -17,7 +16,7 @@ export class profileView implements Component {
 	public async init(): Promise<void> {
 
 		if (this.username === null) {
-			console.log("Not found page")
+			router.navigateTo("/game#notFound", this.viewManager)
 			return;
 		}
 
@@ -26,7 +25,7 @@ export class profileView implements Component {
 		const data = await response.json()
 
 		if (!response.ok) {
-			console.log("Not found page")
+			router.navigateTo("/game#notFound", this.viewManager)
 			return;
 		}
 

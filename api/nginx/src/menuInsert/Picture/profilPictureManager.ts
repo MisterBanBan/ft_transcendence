@@ -1,9 +1,5 @@
-import { getUser, setAvatarUrl } from '../../route/user-handler.js';
+import { setAvatarUrl } from '../../route/user-handler.js';
 
-interface UserWithAvatar {
-    avatar_url?: string | { avatar_url: string };
-    id?: string | number;
-}
 
 export class ProfilePictureManager {
     private pictureElement: HTMLButtonElement | null = null;

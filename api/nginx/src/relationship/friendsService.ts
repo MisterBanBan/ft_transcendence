@@ -88,8 +88,7 @@ export class FriendService {
 	}
 
 	static async viewProfile(friendId: string, viewManager?: viewManager): Promise<void> {
-
-		viewManagerRef = viewManager
+		viewManagerRef = viewManager;
 
 		try {
 			const response = await fetch(`/api/users/${friendId}/fullProfile`);
@@ -108,7 +107,7 @@ export class FriendService {
 
 			const profileContainer = document.getElementById('dynamic-content');
 			if(!profileContainer) {
-				console.error("404 Not Found")
+				router.navigateTo("/game#notFound", viewManager)
 				return;
 			}
 
@@ -130,7 +129,7 @@ export class FriendService {
 						router.navigateTo(popped ?? "/game", viewManager, true);
 					}
 					else
-						router.navigateTo("/game");	
+						router.navigateTo("/game");
 				};
 
 				returnBtn.addEventListener('click', this.returnBtnListener);
@@ -230,6 +229,6 @@ export class FriendService {
 	static handleProfile() {
 		router.navigateTo(`/game?username=${username}#user`, viewManagerRef);
 		username = null
-		
+
 	}
 }

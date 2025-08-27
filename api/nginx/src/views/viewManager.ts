@@ -190,7 +190,7 @@ export class viewManager implements Component {
                 break;
             case 'user':
                 const username = params.get("username")
-                newView = new profileView(this.formsContainer, this, username);
+                newView = new profileView( this, username);
                 break;
             default:
                 this.formsContainer.innerHTML = '';
