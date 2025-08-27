@@ -103,7 +103,7 @@ export const routes: Route[] = [
 
              
               	<div id="container_form" class=" w-full h-full flex items-center justify-center pointer-events-auto ">
-					<div class="flex flex-col items-center justify-center h-full w-[80%] relative">	    
+					<div class="flex flex-col items-center justify-center h-full w-[85%] relative">	    
 						<button type="button" id="user" class="absolute flex items-center justify-center top-[10%] right-[5%] w-[6%] h-[10%] bg-[url('/img/profile.png')] bg-contain bg-no-repeat bg-center z-20 pointer-events-auto transition-transform duration-200 hover:scale-125">
 								</button>
 						<div id="dynamic-content" class="h-full w-full flex items-center justify-center absolute"></div>
