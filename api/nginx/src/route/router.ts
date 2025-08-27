@@ -47,6 +47,23 @@ class Router {
         }
 
         const gameFromGame = (window.location.pathname === "/game" && url.split(/[?#]/)[0] === "/game")
+
+        if (gameFromGame) {
+            if (viewManager) {
+                let oldPath = window.location.pathname
+
+                if (window.location.search)
+                    oldPath += window.location.search
+        
+                if (window.location.hash)
+                    oldPath += window.location.hash
+
+                viewManager.oldPaths.push(oldPath)
+
+                console.log("Pushing new old path", oldPath, viewManager.oldPaths.length)
+            }
+        }
+
         history.pushState(null, "",url);
 
         if (gameFromGame) {

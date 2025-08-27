@@ -1,12 +1,10 @@
 import { parametre } from "../menuInsert/parametre.js";
 import { viewManager } from "./viewManager.js";
-import { profile } from "../menuInsert/Profile/profile.js";
 import { Logout } from "../auth/logout.js";
 import { Component } from "../route/component.js";
 import {router} from "../route/router.js";
 import {getUser} from "../route/user-handler.js";
 import {fetchUserProfileData} from "../menuInsert/Profile/userProfilData.js";
-import {FriendService} from "../relationship/friendsService.js";
 
 export class parameterView implements Component {
     private container: HTMLElement;

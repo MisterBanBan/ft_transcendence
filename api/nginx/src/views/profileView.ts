@@ -4,12 +4,10 @@ import {viewManager} from "./viewManager.js";
 
 export class profileView implements Component {
 
-	private container: HTMLElement;
 	private readonly viewManager: viewManager;
 	private readonly username: string | null;
 
-	constructor(container: HTMLElement, viewManager: viewManager, username: string | null) {
-		this.container = container
+	constructor( viewManager: viewManager, username: string | null) {
 		this.viewManager = viewManager
 		this.username = username
 	}

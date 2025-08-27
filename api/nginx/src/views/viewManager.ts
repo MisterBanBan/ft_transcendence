@@ -36,6 +36,8 @@ export class viewManager implements Component {
         path: "/wss/users-status"
     });
 
+    public oldPaths: string[] = [];
+
     constructor(videoId: string, containerId: string, authBtnId: string) {
 
         const video = document.getElementById(videoId) as HTMLVideoElement;
@@ -187,7 +189,7 @@ export class viewManager implements Component {
                 break;
             case 'user':
                 const username = params.get("username")
-                newView = new profileView(this.formsContainer, this, username);
+                newView = new profileView( this, username);
                 break;
             default:
                 console.error(`View "${viewName}" is not implemented.`);

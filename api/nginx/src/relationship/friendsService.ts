@@ -88,8 +88,7 @@ export class FriendService {
 	}
 
 	static async viewProfile(friendId: string, viewManager?: viewManager): Promise<void> {
-		viewManagerRef = viewManager;
-
+		viewManagerRef = viewManager
 		try {
 			const response = await fetch(`/api/users/${friendId}/fullProfile`);
 			if (!response.ok) {
@@ -112,7 +111,6 @@ export class FriendService {
 			}
 
 			profileContainer.innerHTML = profileHtml;
-			// profileContainer.style.display = 'block';
 
 			document.querySelectorAll('.profile-btn').forEach(btn => {
 				btn.addEventListener('click', this.profileBtnHandler);
@@ -125,8 +123,13 @@ export class FriendService {
 				}
 
 				this.returnBtnListener = () => {
-					router.navigateTo("/game#friendsList", viewManager);
-				};
+                    if (viewManager) {
+                        console.log(viewManager.oldPaths.toString())
+                        router.navigateTo(viewManager.oldPaths.pop() ?? "/game", viewManager);
+                    }
+                    else
+                        router.navigateTo("/game");    
+                };
 
 				returnBtn.addEventListener('click', this.returnBtnListener);
 			} else {
