@@ -11,9 +11,6 @@ export const leftTournamentInfos = () => `
   <button id="start-tournament" class="responsive-case-register responsive-case responsive-text">
     Start
   </button>
-   <button id="fake-join-tournament" class="responsive-case-register responsive-case responsive-text">
-    Fake join
-  </button>
   <button id="leave-tournament" class="responsive-case-register responsive-case responsive-text">
     Leave
   </button>

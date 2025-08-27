@@ -14,4 +14,4 @@ export const newPseudo = () => `
                   <button type="button" id="pseudoReturnBtn" class="text-white responsive-text ">Return</button>
                   </form>
 `
-//        <label for="username" class="block text-gray-700 font-medium mb-2">Nouveau pseudo</label>
+

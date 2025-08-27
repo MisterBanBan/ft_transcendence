@@ -1,6 +1,5 @@
 import { parametre } from "../menuInsert/parametre.js";
 import { viewManager } from "./viewManager.js";
-import { profile } from "../menuInsert/Profile/profile.js";
 import { Logout } from "../auth/logout.js";
 import { Component } from "../route/component.js";
 import {router} from "../route/router.js";
@@ -55,11 +54,9 @@ export class parameterView implements Component {
 
             const userId = String(currentUser.id);
             const userData = await fetchUserProfileData(userId);
-            console.log(userData);
 
             if (userData) {
-                this.container.innerHTML = profile(userData.profile, userData.matches);
-                document.getElementById('profileReturnBtn')?.addEventListener('click', this.handleParametre);
+                router.navigateTo(`/game?username=${currentUser.username}#user`, this.viewManager)
             } else {
                 this.container.innerHTML = '<div class="h-full w-full flex items-center justify-center"><p class="text-white text-red-500">Error loading profile</p></div>';
             }

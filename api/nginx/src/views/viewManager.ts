@@ -9,9 +9,11 @@ import { game } from '../menuInsert/game.js';
 import { picture } from '../menuInsert/Picture/picture.js';
 import { tournamentView } from './tournamentView.js';
 import {router} from "../route/router.js";
-import {clearTournamentSocket, initTournamentSocket} from "../tournament/tournamentsHandler.js"
+import {clearTournamentSocket} from "../tournament/tournamentsHandler.js"
 import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManager.js';
 import { selectAnimation } from '../IntroProject/selectAnimat.js';
+import {profileView} from "./profileView.js";
+import {page404} from "../menuInsert/404.js";
 
 declare const io: any;
 
@@ -34,6 +36,8 @@ export class viewManager implements Component {
         withCredentials: true,
         path: "/wss/users-status"
     });
+
+    public oldPaths: string[] = [];
 
     constructor(videoId: string, containerId: string, authBtnId: string) {
 
@@ -184,8 +188,13 @@ export class viewManager implements Component {
             case 'friendsList':
                 newView = new friendsView(this.formsContainer, this);
                 break;
+            case 'user':
+                const username = params.get("username")
+                newView = new profileView( this, username);
+                break;
             default:
-                console.error(`View "${viewName}" is not implemented.`);
+                this.formsContainer.innerHTML = '';
+                this.formsContainer.innerHTML = page404();
         }
 
         this.activeView = newView;
