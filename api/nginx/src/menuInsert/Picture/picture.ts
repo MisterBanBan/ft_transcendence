@@ -22,7 +22,7 @@ export const picture = () => {
         </div>
         <div class="w-full h-[54%] flex  relative">
             <button type="button" id="power"
-             class="absolute top-[54%] left-[30%] w-[30%] h-[30%] bg-[url('/img/powerOf.png')] bg-contain bg-no-repeat">
+             class="absolute top-[54%] left-[28%] w-[30%] h-[30%] bg-[url('/img/powerOf.png')] bg-contain bg-no-repeat">
         </button>
         </div>
 
