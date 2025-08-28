@@ -136,18 +136,20 @@ export class InvitationService {
 
         if (invitations.length > 0) {
             invitationsList.innerHTML = `
-                <div class="h-full w-full overflow-y-auto flex flex-col mb-10">
+                <div class="h-full w-full overflow-y-auto flex flex-col mb-10 gap-4">
                     ${invitations.map(inv => `
-                        <div class="flex flex-row">
-                             <div class="flex flex-row w-[80%] h-[20%] responsive-text-historique mr-20">
-                                <div class="flex flex-row gap-4">
-                                    <img src="/uploads/${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
-                                    <span class="responsive-text-historique text-white font-medium">
-                                    ${this.escapeHtml(inv.username)}
-                                </span>
+                        <div class="flex flex-row ">
+                             
+                                <div class="flex flex-row gap-20">
+                                    <div class="w-[40px] h-[40px] rounded-full overflow-hidden">
+                                        <img src="/uploads/${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-full h-full object-cover"/>
+                                    </div>
+                                    <span class="responsive-text-historique text-white font-medium ">
+                                        ${this.escapeHtml(inv.username)}
+                                    </span>
                                 </div>
-                            </div>
-                            <div class="flex flex-row w-[80%] h-[20%] gap-8 responsive-text-historique">
+
+                            <div class="flex flex-row w-[80%] h-[20%] gap-8 responsive-text-historique justify-end">
                                 <button class="responsive-text-historique text-red-600" data-requester-id="${this.escapeHtml(inv.requester_id)}" data-action="reject">REJECT</button>
                                 <button class="responsive-text-historique text-green-600" data-requester-id="${this.escapeHtml(inv.requester_id)}" data-action="accept">ACCEPT</button>
                             </div>

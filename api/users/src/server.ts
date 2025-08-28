@@ -32,8 +32,6 @@ async function startServer() {
     // Register file validation configuration
     await server.register(fileValidationConfig);
 
-    // // Register custom error handler for validation errors
-    // await server.register(validationErrorHandler);
 
     // Register cors config
     await server.register(corsConfig);

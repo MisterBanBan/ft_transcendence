@@ -23,7 +23,6 @@ export default async function (server: FastifyInstance) {
 		server.privateQueue.set(client1, {opponent: client2, type});
 		server.privateQueue.set(client2, {opponent: client1, type});
 		
-		// Attendre que client1 ou client2 soit dans privateResult (timeout 10s)
         const waitForResult = (keys: string[], timeout = 10000) => new Promise((resolve, reject) => {
             const start = Date.now();
             const check = () => {

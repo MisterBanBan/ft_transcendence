@@ -15,7 +15,7 @@ export const picture = () => {
             <button
                 type="button"
                 id="picture-profile"
-                class="w-[70%] h-[68%] mt-4 mr-6 bg-[url(${fullAvatarPath})] bg-[length:100%_100%] bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
+                class="w-[70%] h-[68%] mt-3 mr-9 bg-[url(${fullAvatarPath})] bg-[length:100%_100%] bg-no-repeat bg-center z-20 pointer-events-auto flex items-center justify-center rounded-full hover:scale-105 transition-transform duration-200 cursor-pointer"
                 style='background-image: url("${fullAvatarPath}?t=${Date.now()}"); background-size: 100% 100%; background-repeat: no-repeat; background-position: center center;'
                 title="Click to change profile picture"
             ></button>

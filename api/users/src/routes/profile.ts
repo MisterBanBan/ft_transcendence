@@ -84,7 +84,6 @@ export default async function (server: FastifyInstance) {
                 winrate: `${winRate}%`
             };
 
-            console.log('Profile data:', profile);
 
             return reply.send({
                 success: true,
@@ -145,7 +144,6 @@ export default async function (server: FastifyInstance) {
             try {
                 const userId = request.currentUser?.id;
                 const { page = 1, limit = 10 } = request.query;
-                console.log('Fetching matches for userId:', userId);
     
                 const matches = await server.db.all(`
                     SELECT
@@ -176,8 +174,6 @@ export default async function (server: FastifyInstance) {
                     date: match.completed_at,
                     gameType: match.game_type || 'online'
                 }));
-    
-                console.log('Formatted matches:', formattedMatches);
     
                 return reply.send({
                     success: true,

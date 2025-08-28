@@ -30,7 +30,6 @@ export class FriendService {
 			});
 
 			const data = await response.json();
-			console.log(data.message);
 		} catch (error) {
 			console.error('Error removing friend:', error);
 			throw error;
@@ -45,7 +44,6 @@ export class FriendService {
 		}
 
 		try {
-			console.log(`Fetching friends for user ID: ${currentUser.id}`);
 			const response = await fetch(`/api/users/friendsList`, {
 				method: 'GET',
 				headers: {
@@ -60,17 +58,13 @@ export class FriendService {
 			}
 
 			const data: loadFriendsResponse = await response.json();
-			console.log('API Response data:', data);
 
 			if (data.friends && data.friends.length > 0) {
-				console.log(`Found ${data.friends.length} friends`);
 				return data.friends;
 			} else {
-				console.log('No friends found in response');
 				return [];
 			}
 		} catch (error) {
-			console.error('Network or parsing error:', error);
 			return [];
 		}
 	}

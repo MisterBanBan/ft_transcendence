@@ -55,7 +55,6 @@ export class friendsView implements Component {
 					return;
 				}
 
-				console.log(`Sending invite to: ${inviteValue}`);
 				InvitationService.sendInvitation();
 			};
 			this.boundInviteKeydownHandler = (event: KeyboardEvent) => {
@@ -115,7 +114,6 @@ export class friendsView implements Component {
 		this.friendId = target.getAttribute('data-friend-id');
 		this.username = target.getAttribute('data-username');
 
-		console.log(this.friendId, this.username)
 
 		if (!this.friendId || this.friendId === 'undefined') {
 			console.error('Invalid friend ID:', this.friendId);
@@ -207,7 +205,6 @@ export class friendsView implements Component {
 			return;
 
 		try {
-			console.log('Attempting to remove friend with ID:', this.friendId);
 			await FriendService.removeFriend(this.friendId);
 
 			const popup = document.getElementById('friend-popup');

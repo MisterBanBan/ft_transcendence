@@ -26,10 +26,7 @@ async function startServer() {
 		});
 
 		await app.listen({ port: 8081, host: '0.0.0.0' });
-		console.log(`Tournaments service is running on 0.0.0.0:8081`);
 	} catch (err) {
-		//app.log.error(err);
-		console.log(err);
 		process.exit(1);
 	}
 }

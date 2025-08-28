@@ -431,14 +431,9 @@ export class pong implements Component {
 
         let ball = { x: 0, y: 0 };
 
-        this.socket.on("connect", () => {
-          console.log("Connected with id:", this.socket.id);
-        });
-
         this.socket.on("game-started", (data: { gameId: string, side: string}) => {
           gameId = data.gameId;
           this.side = data.side;
-          console.log("Game started! Game ID:", gameId);
           this.inGame = 1;
 		  this.showPong();
 		  this.loadingEle.style.display = "none";
@@ -472,7 +467,6 @@ export class pong implements Component {
         });
 
         this.socket.on("game-end", async (score: {playerLeft: number, playerRight: number}) => {
-            console.log("Game end with a score of ", score.playerLeft, ":", score.playerRight);
 			this.inGame = 2;
             if (this.side === "left" && score.playerLeft > score.playerRight ||
                 this.side === "right" && score.playerLeft < score.playerRight) {
@@ -502,7 +496,6 @@ export class pong implements Component {
     }
     
     public destroy(): void {
-		console.log("Destroy pong")
         if (this.backPongEle) {
             this.backPongEle.removeEventListener('click', this.handleBackPongClick);
         }

@@ -43,7 +43,6 @@ export default async function (server: FastifyInstance) {
                 WHERE r.addressee_id = ? AND r.status_r = 'pending'
             `, userId);
 
-            console.log(invitations);
             return reply.send({
                 message: 'Invitations retrieved successfully',
                 invitations

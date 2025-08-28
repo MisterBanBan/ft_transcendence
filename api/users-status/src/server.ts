@@ -30,7 +30,6 @@ async function start() {
 
 	app.listen({ port: 8086, host: "0.0.0.0" }, (err) => {
 		if (err) {
-			console.log(err);
 			process.exit(1);
 		}
 	});

@@ -5,7 +5,6 @@ import { updateUserStatus } from "./insertToDB";
 
 const socketPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 	app.io.on("connection", (socket: Socket) => {
-		//console.log("Client connected:", socket.id);
 
 		const user: string | undefined | string[] = socket.handshake.query.user;
 		let	userID: string | null = null;
@@ -26,9 +25,6 @@ const socketPlugin: FastifyPluginAsync = async (app: FastifyInstance) => {
 				updateUserStatus(app, playerID.playerID, "in_game");
 			})
 
-			// socket.on("endGame", (playerID:string) => {
-			// 	updateUserStatus(app, playerID, "online");
-			// })
 		}
 		else {
 

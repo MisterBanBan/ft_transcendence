@@ -74,10 +74,7 @@ export default async function (server: FastifyInstance) {
                 friendId
             );
 
-            console.log('User existence check:', {
-                requesterExists: !!requesterExists,
-                friendExists: !!friendExists
-            });
+
 
             if (!requesterExists || !friendExists) {
                 return reply.status(404).send({ error: 'User not found' });
@@ -90,7 +87,6 @@ export default async function (server: FastifyInstance) {
                 userId, friendId, friendId, userId
             );
 
-            console.log('Existing relationship:', existingRelation);
 
             if (!existingRelation) {
                 return reply.status(404).send({ error: 'Friendship not found' });
@@ -103,7 +99,6 @@ export default async function (server: FastifyInstance) {
                 userId, friendId, friendId, userId
             );
 
-            console.log('Delete result:', deleteResult);
 
             return reply.status(200).send({
                 message: 'Friend removed successfully',

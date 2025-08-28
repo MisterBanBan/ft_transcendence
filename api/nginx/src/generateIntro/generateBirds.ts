@@ -17,7 +17,6 @@ export function generateBirds(containerId: string, count:number = 15): HTMLEleme
 
     bird.className = 'absolute w-[5%] h-[5%] object-contain animate-float';
     bird.style.top  = `${20 + Math.random() * 30}%`;
-    console.log(bird.style.top);
     bird.style.left = `${Math.random() * 100}%`;
 
     container.appendChild(bird);

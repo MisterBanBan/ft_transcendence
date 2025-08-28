@@ -38,7 +38,6 @@ export async function initTournamentSocket() {
 		});
 
 		tournamentSocket.on("connect", () => {
-			console.log("Connected:", tournamentSocket.id);
 			resolve();
 		});
 
