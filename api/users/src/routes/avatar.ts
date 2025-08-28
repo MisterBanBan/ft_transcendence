@@ -24,11 +24,6 @@ export default async function (server: FastifyInstance) {
                 fs.mkdirSync(uploadDir, { recursive: true });
             }
 
-            const user = await server.db.get(
-                'SELECT avatar_url FROM users WHERE id = ?',
-                [currentUser.id],
-            );
-
             const data = await request.file();
 
             if (!data) {

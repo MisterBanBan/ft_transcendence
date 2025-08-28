@@ -1,4 +1,3 @@
-import argon2 from 'argon2';
 import {FastifyInstance} from "fastify";
 import {getUserByUsername} from "../db/get-user-by-username.js";
 import {TokenPayload} from "../interface/token-payload.js";
@@ -7,13 +6,6 @@ import {signToken} from "../utils/sign-token.js";
 import {setCookie} from "../utils/set-cookie.js";
 import {verifyPassword} from "../utils/verify-password.js";
 import { getAvatar } from '../db/get-avatar.js';
-
-interface Cookie {
-	path: string,
-	httpOnly: boolean,
-	secure: boolean, 
-	maxAge: number
-}
 
 export default async function (server: FastifyInstance) {
 	server.post('/api/auth/login', {

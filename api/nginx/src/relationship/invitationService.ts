@@ -88,8 +88,6 @@ export class InvitationService {
                 return false;
             }
 
-            const data: InvitationResponse = await response.json();
-
             await this.loadInvitations();
             return true;
 
@@ -118,8 +116,6 @@ export class InvitationService {
             if (!response.ok) {
                 return false;
             }
-
-            const data: InvitationResponse = await response.json();
 
             await this.loadInvitations();
             return true;

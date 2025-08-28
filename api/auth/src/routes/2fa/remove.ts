@@ -7,7 +7,6 @@ import {TokenPayload} from "../../interface/token-payload.js";
 import {setCookie} from "../../utils/set-cookie.js";
 import {signToken} from "../../utils/sign-token.js";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
-import {create2FASessions} from "./create.js";
 
 export const remove2FASessions = new Map<string, { token?:string, relogin: boolean, eat?: number, tries?: number, timeout: NodeJS.Timeout }>();
 

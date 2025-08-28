@@ -43,7 +43,6 @@ RUN apk add --no-cache nginx openssl bash
 COPY nginx.conf /etc/nginx/
 COPY src/css/ /usr/share/nginx/front/css/
 COPY src/img/ /usr/share/nginx/front/img/
-COPY src/error_page /usr/share/nginx/front/error_page/
 COPY src/index.html /usr/share/nginx/front/
 
 COPY --from=builder /app/src/css/ /usr/share/nginx/front/css/
