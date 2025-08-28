@@ -1,6 +1,5 @@
 import { viewManager } from "./viewManager.js";
-import {getUser, set2faPlaceholder, setUser} from "../route/user-handler.js";
-import { wait } from "../route/wait.js";
+import {setUser} from "../route/user-handler.js";
 import { twoFApopUp } from "../menuInsert/Connection/twoFApopUp.js";
 import {TFAValidate} from "../auth/2fa-validate.js";
 import { loginForm } from "../menuInsert/Connection/loginForm.js";
@@ -32,7 +31,7 @@ export class loginView implements Component {
 
         if (this.token) {
             this.container.insertAdjacentHTML('beforeend', twoFApopUp());
-            this.tfaValidate = new TFAValidate(this.token, this.viewManager);
+            this.tfaValidate = new TFAValidate(this.token);
             this.tfaValidate.init()
         }
     }
@@ -72,7 +71,7 @@ export class loginView implements Component {
                 this.container.insertAdjacentHTML('beforeend', twoFApopUp());
                 if (this.tfaValidate)
                     this.tfaValidate.destroy();
-                this.tfaValidate = new TFAValidate(data.token, this.viewManager);
+                this.tfaValidate = new TFAValidate(data.token);
                 this.tfaValidate.init();
                 return;
             }
@@ -88,7 +87,7 @@ export class loginView implements Component {
                     updatedAt: data.user.updatedAt
                 }
                 setUser(user);
-                router.navigateTo("/game", this.viewManager)
+                router.navigateTo("/game")
                 this.viewManager.setPicture();
                 return;
             }

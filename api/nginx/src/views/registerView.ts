@@ -78,7 +78,7 @@ export class registerView implements Component {
                 updatedAt: data.user.updatedAt
             }
             setUser(user);
-            router.navigateTo("/game", this.viewManager);
+            router.navigateTo("/game");
             this.viewManager.setPicture();
 
         } catch (err) {

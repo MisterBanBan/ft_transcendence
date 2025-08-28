@@ -17,15 +17,3 @@ export function setAvatarUrl(avatarUrl: string): void {
         user.avatar_url = avatarUrl;
     }
 }
-
-export function set2faPlaceholder(token: string): void {
-    user = {
-        username: token,
-        id: -1,
-        avatar_url: "",
-        provider: "placeholder",
-        provider_id: undefined,
-        tfa: true,
-        updatedAt: Date.now(),
-    }
-}

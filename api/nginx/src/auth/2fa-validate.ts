@@ -12,12 +12,10 @@ export class TFAValidate implements Component {
 
 	private submitButton = document.getElementById("submit-2fa") as HTMLButtonElement | null;
 	private readonly token: string | null = null;
-	private readonly viewManager: viewManager;
 
-	constructor(token: string | null = null, viewManager: viewManager) {
+	constructor(token: string | null = null) {
 		this.handleSubmitBound = this.handleSubmit.bind(this);
 		this.token = token;
-		this.viewManager = viewManager
 	}
 
 	destroy(): void {
@@ -77,7 +75,7 @@ export class TFAValidate implements Component {
 			}
 
 			setUser(data as AuthUser);
-			router.navigateTo("/game", this.viewManager);
+			router.navigateTo("/game");
 			
 			return;
 
