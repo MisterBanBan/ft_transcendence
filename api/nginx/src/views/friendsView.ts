@@ -7,6 +7,7 @@ import { FriendService } from "../relationship/friendsService.js";
 import { viewManager } from "./viewManager.js";
 import { friendsList } from "../menuInsert/Friends/friendsList.js";
 import {router} from "../route/router.js";
+import {ApiUtils} from "../relationship/apiUtils.js";
 
 export class friendsView implements Component {
 	private container: HTMLElement;
@@ -51,7 +52,7 @@ export class friendsView implements Component {
 			this.boundInviteClickHandler = () => {
 				const inviteValue = inviteInput.value.trim();
 				if (!inviteValue) {
-					console.log('Input is empty');
+					ApiUtils.showAlert('Username search can\'t be empty')
 					return;
 				}
 

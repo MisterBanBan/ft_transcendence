@@ -187,8 +187,10 @@ export class FriendService {
 		container.insertAdjacentHTML('beforeend', popupHtml);
 
 		const popup = document.getElementById('profile-popup');
-		if (!popup)
-		{ console.log('profile-popup not found'); return; }
+		if (!popup) {
+			console.error('profile-popup not found')
+			return;
+		}
 
 		this.closeOnClickOutside = (evt: MouseEvent) => {
 			if (!popup.contains(evt.target as Node)) {

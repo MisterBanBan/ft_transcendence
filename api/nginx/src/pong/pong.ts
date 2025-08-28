@@ -127,7 +127,6 @@ export class pong implements Component {
 
         const videoMainElement = document.getElementById(video_main);
         if(!videoMainElement) {
-            console.log("Video Main element not found, using default");
             throw new Error('Video Main element not found');
         }
 
