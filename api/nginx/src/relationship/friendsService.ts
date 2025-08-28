@@ -4,19 +4,7 @@ import { profile } from "../menuInsert/Profile/profile.js";
 import {router} from "../route/router.js";
 import {viewManager} from "../views/viewManager.js";
 import {profileActionTemplate} from "../menuInsert/Profile/profileAction.js";
-
-interface loadFriendsResponse {
-	message?: string;
-	error?: string;
-	friends?: Friends[];
-}
-
-interface Friends {
-	username: string;
-	id: string;
-	avatar_url: string;
-	status: string;
-}
+import { loadFriendsResponse, Friends } from "./types/friends.js"
 
 let username: string | null = null
 let viewManagerRef: viewManager | undefined = undefined

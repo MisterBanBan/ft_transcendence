@@ -37,7 +37,12 @@ export default async function (server: FastifyInstance) {
     }, async (request: FastifyRequest, reply) => {
         try {
             const userId = request.currentUser?.id;
-            console.log('Fetching profile for userId:', userId);
+
+            if (!userId) {
+                return reply.status(401).send({
+                    error: 'User not authenticated'
+                });
+            }
 
             const user = await server.db.get(
                 'SELECT id, username, avatar_url, status, last_activity FROM users WHERE id = ?',
@@ -94,86 +99,7 @@ export default async function (server: FastifyInstance) {
         }
     });
 
-    
-
-/*    server.post<{
-        Body: { status: 'offline' | 'online' | 'in_game' }
-    }>('/api/users/:userId/status', {
-        schema: {
-            body: {
-                type: 'object',
-                required: ['status'],
-                properties: {
-                    status: {
-                        type: 'string',
-                        enum: ['offline', 'online', 'in_game']
-                    }
-                }
-            },
-            response: {
-                200: {
-                    type: 'object',
-                    properties: {
-                        success: { type: 'boolean' },
-                        message: { type: 'string' }
-                    }
-                }
-            }
-        }
-    }, async (request: FastifyRequest<{
-        Body: { status: 'offline' | 'online' | 'in_game' }
-    }>, reply) => {
-        try {
-            const userId = request.currentUser?.id;
-            const { status } = request.body;
-
-            const validStatuses = ['offline', 'online', 'in_game'];
-            if (!validStatuses.includes(status)) {
-                return reply.status(400).send({
-                    success: false,
-                    error: 'Invalid status value'
-                });
-            }
-
-            const userExists = await server.db.get(
-                'SELECT id FROM users WHERE id = ?',
-                [userId]
-            );
-
-            if (!userExists) {
-                return reply.status(404).send({
-                    success: false,
-                    error: 'User not found'
-                });
-            }
-
-            await server.db.run(
-                'UPDATE users SET status = ?, last_activity = CURRENT_TIMESTAMP WHERE id = ?',
-                [status, userId]
-            );
-
-            server.broadcastToAll({
-                type: 'user_status_change',
-                userId,
-                status
-            }, userId);
-
-            return reply.send({
-                success: true,
-                message: 'Status updated successfully'
-            });
-        } catch (error) {
-            console.error('Error updating user status:', error);
-            return reply.status(500).send({
-                success: false,
-                error: 'Internal server error'
-            });
-        }
-    });*/
-    
-        
-    
-        server.get<{
+    server.get<{
             Querystring: { page?: number; limit?: number }
         }>('/api/users/matches', {
             schema: {
@@ -373,81 +299,6 @@ export default async function (server: FastifyInstance) {
                 });
             }
         });
-    /*    server.post<{
-            Body: { status: 'offline' | 'online' | 'in_game' }
-        }>('/api/users/:userId/status', {
-            schema: {
-                body: {
-                    type: 'object',
-                    required: ['status'],
-                    properties: {
-                        status: {
-                            type: 'string',
-                            enum: ['offline', 'online', 'in_game']
-                        }
-                    }
-                },
-                response: {
-                    200: {
-                        type: 'object',
-                        properties: {
-                            success: { type: 'boolean' },
-                            message: { type: 'string' }
-                        }
-                    }
-                }
-            }
-        }, async (request: FastifyRequest<{
-            Body: { status: 'offline' | 'online' | 'in_game' }
-        }>, reply) => {
-            try {
-                const userId = request.currentUser?.id;
-                const { status } = request.body;
-    
-                const validStatuses = ['offline', 'online', 'in_game'];
-                if (!validStatuses.includes(status)) {
-                    return reply.status(400).send({
-                        success: false,
-                        error: 'Invalid status value'
-                    });
-                }
-    
-                const userExists = await server.db.get(
-                    'SELECT id FROM users WHERE id = ?',
-                    [userId]
-                );
-    
-                if (!userExists) {
-                    return reply.status(404).send({
-                        success: false,
-                        error: 'User not found'
-                    });
-                }
-    
-                await server.db.run(
-                    'UPDATE users SET status = ?, last_activity = CURRENT_TIMESTAMP WHERE id = ?',
-                    [status, userId]
-                );
-    
-                server.broadcastToAll({
-                    type: 'user_status_change',
-                    userId,
-                    status
-                }, userId);
-    
-                return reply.send({
-                    success: true,
-                    message: 'Status updated successfully'
-                });
-            } catch (error) {
-                console.error('Error updating user status:', error);
-                return reply.status(500).send({
-                    success: false,
-                    error: 'Internal server error'
-                });
-            }
-        });*/
-    
         
     server.get<{
     }>('/api/users/:userId', {

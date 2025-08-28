@@ -4,8 +4,7 @@ import fs from 'fs';
 import { randomUUID } from 'crypto';
 import path from 'path';
 import dotenv from 'dotenv';
-import currentUser from "../plugins/current-user.js";
-// import sharp from 'sharp';
+import sharp from 'sharp';
 
 dotenv.config();
 
@@ -51,12 +50,41 @@ export default async function (server: FastifyInstance) {
             }
 
             const newFilename = `${randomUUID()}${extension}`;
+            const tempPath = path.join(uploadDir, `temp_${newFilename}`);
             const uploadPath = path.join(uploadDir, newFilename);
 
             await pipeline(
                 data.file,
-                fs.createWriteStream(uploadPath)
+                fs.createWriteStream(tempPath)
             );
+
+            try {
+                if (!fs.existsSync(tempPath)) {
+                    throw new Error('Temporary file not found');
+                }
+
+                const processedImage = sharp(tempPath);
+
+                await processedImage
+                    .toFile(uploadPath);
+
+                if (!fs.existsSync(uploadPath)) {
+                    throw new Error('Processed file was not created');
+                }
+
+                fs.unlinkSync(tempPath);
+
+            } catch (sharpError) {
+                console.error('Error processing image with Sharp:', sharpError);
+
+                if (fs.existsSync(uploadPath)) {
+                    fs.unlinkSync(uploadPath);
+                }
+
+                fs.renameSync(tempPath, uploadPath);
+                console.log('Fallback: using original file without metadata stripping');
+            }
+
 
             const result = await server.db.run(
                 'UPDATE users SET avatar_url = ? WHERE id = ?',

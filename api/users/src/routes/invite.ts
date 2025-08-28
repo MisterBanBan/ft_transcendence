@@ -52,7 +52,6 @@ export default async function (server: FastifyInstance) {
         const requester_id = request.currentUser?.id;
         const { addressee_username } = request.body as { addressee_username: string };
 
-        console.log(request.currentUser);
         if (!requester_id) {
             return reply.status(401).send({ error: 'User not authenticated' });
         }
