@@ -1,4 +1,6 @@
 .env
+.env.auth
+.env.gateway
 key.key
 cert.crt
 .idea/

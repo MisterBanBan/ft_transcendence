@@ -6,7 +6,6 @@ WORKDIR /app
 
 COPY package.json .
 COPY tsconfig.json .
-COPY .env .
 COPY src/ ./src
 
 RUN npm install
@@ -19,7 +18,6 @@ RUN apk add --no-cache curl
 WORKDIR /app
 
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/.env .
 COPY package.json .
 
 RUN npm install --production
