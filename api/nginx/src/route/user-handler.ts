@@ -17,3 +17,9 @@ export function setAvatarUrl(avatarUrl: string): void {
         user.avatar_url = avatarUrl;
     }
 }
+
+export function set2FA(active: boolean): void {
+    if (user) {
+        user.tfa = active
+    }
+}
