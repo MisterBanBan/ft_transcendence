@@ -96,6 +96,8 @@ export class SettingsView implements Component {
         this.componentStorage?.destroy();
         this.container.innerHTML = '';
         this.container.insertAdjacentHTML('beforeend', newTwoFa());
+        if (getUser()?.provider !== "local")
+            document.getElementById("2fa-password")?.remove()
         this.componentStorage = new Add2FA();
         this.componentStorage.init();
         document.getElementById('2faReturnBtn')?.addEventListener('click', this.handleSettingsReturn);
@@ -106,6 +108,8 @@ export class SettingsView implements Component {
         this.componentStorage?.destroy();
         this.container.innerHTML = '';
         this.container.insertAdjacentHTML('beforeend', removeTwoFa());
+        if (getUser()?.provider !== "local")
+            document.getElementById("2fa-password-remove")?.remove()
         this.componentStorage = new Remove2FA();
         this.componentStorage.init();
         document.getElementById('2faReturnBtn')?.addEventListener('click', this.handleSettingsReturn);

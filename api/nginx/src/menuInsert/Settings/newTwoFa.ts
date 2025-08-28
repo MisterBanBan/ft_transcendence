@@ -7,7 +7,7 @@ export const newTwoFa = () => `
           </div>
           <div id="error-add-2fa" class="error-message"></div>
           <p class="text-white font-omori text-center text-xl">
-              Scan the QR code with your authenticator app, or enter the code manually if you have already set it up.
+              Scan the QR code with your authenticator app.
           </p>                 
                   <input
                     id="2fa-code"
