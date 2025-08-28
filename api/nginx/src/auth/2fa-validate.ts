@@ -2,6 +2,7 @@ import {Component} from "../route/component";
 import {router} from "../route/router.js";
 import {AuthUser} from "../route/type.js";
 import {setUser} from "../route/user-handler.js";
+import {viewManager} from "../views/viewManager.js";
 
 export class TFAValidate implements Component {
 
@@ -10,12 +11,13 @@ export class TFAValidate implements Component {
 	private handleReturn = () => router.navigateTo("/game#login");
 
 	private submitButton = document.getElementById("submit-2fa") as HTMLButtonElement | null;
-	private token: string | null = null;
+	private readonly token: string | null = null;
+	private readonly viewManager: viewManager;
 
-	constructor(token: string | null = null) {
+	constructor(token: string | null = null, viewManager: viewManager) {
 		this.handleSubmitBound = this.handleSubmit.bind(this);
 		this.token = token;
-		console.log(this.token)
+		this.viewManager = viewManager
 	}
 
 	destroy(): void {
@@ -48,9 +50,6 @@ export class TFAValidate implements Component {
 			const urlParams = new URLSearchParams(window.location.search);
 			tempToken = urlParams.get('token') || '';
 		}
-
-		console.log(this.token);
-		console.log(tempToken)
 		
 		const payload = {
 			token: tempToken,
@@ -87,7 +86,7 @@ export class TFAValidate implements Component {
 					setUser(data);
 			}
 
-			router.navigateTo("/game");
+			router.navigateTo("/game", this.viewManager);
 			
 			return;
 
