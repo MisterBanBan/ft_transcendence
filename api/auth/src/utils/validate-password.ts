@@ -2,7 +2,7 @@ export async function validatePassword(password: string, confirm_password: strin
 	const minLength = 8;
 	const hasUpperCase = /[A-Z]/.test(password);
 	const hasNumber = /\d/.test(password);
-	const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>\\/;]/.test(password);
+	const hasSpecialChar = /[-+_~='!@#$%^&*(),.?":;{}|<>\[\]\\\/]/.test(password);
 	const hasWhitespace = /\s/.test(password);
 	const isLongEnough = password.length >= minLength;
 	const samePassword = password === confirm_password

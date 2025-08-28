@@ -14,6 +14,7 @@ import { ProfilePictureManager } from '../menuInsert/Picture/profilPictureManage
 import { selectAnimation } from '../IntroProject/selectAnimat.js';
 import {profileView} from "./profileView.js";
 import {page404} from "../menuInsert/404.js";
+import {ApiUtils} from "../relationship/apiUtils.js";
 
 declare const io: any;
 
@@ -23,14 +24,14 @@ export class viewManager implements Component {
     private videoMain: HTMLVideoElement;
     private containerForm: HTMLElement;
     private authBtn: HTMLElement;
-    private formsContainer: HTMLElement;
-    private formspicture: HTMLElement;
+    private readonly formsContainer: HTMLElement;
+    private readonly formspicture: HTMLElement;
     private options!: HTMLElement[];
     private cursor!: HTMLVideoElement;
     private selectedIdx: number = 0;
     private select?: selectAnimation;
     private activeViewName: string | null = null;
-    private keydownHandler: (e: KeyboardEvent) => void;
+    private readonly keydownHandler: (e: KeyboardEvent) => void;
     private socket = io(`/`, {
         transports: ["websocket", "polling"],
         withCredentials: true,
@@ -171,13 +172,12 @@ export class viewManager implements Component {
                     newView = new registerView(this.formsContainer, this.formspicture, this);
                 break;
             case 'settings':
-                const currentUser = getUser();
                 const setting = params.get("setting")
-                if (currentUser) {
-                    newView = new SettingsView(this.formsContainer, this, setting);
-                } else {
-                    console.error("No user is currently authenticated.");
-                }
+                newView = new SettingsView(this.formsContainer, this, setting);
+
+                const popup = params.get("popup")
+                if (popup)
+                    ApiUtils.showAlert(decodeURI(popup))
                 break;
             case 'tournament':
                 newView = new tournamentView(this.formsContainer, this);

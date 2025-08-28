@@ -5,7 +5,7 @@ import { getUserByProviderId } from "../db/get-user-by-provider-id.js";
 import { signToken } from "../utils/sign-token.js";
 import { setCookie } from "../utils/set-cookie.js";
 import { createToken } from "./2fa/validate.js";
-import { handleRelog } from "../utils/handle-relog.js";
+import {handleRelog, returnPopup} from "../utils/handle-relog.js";
 import { validateUsername } from "../utils/validate-username.js";
 import { TokenPayload } from "../interface/token-payload.js";
 
@@ -49,16 +49,7 @@ export default async function (server: FastifyInstance) {
 			const { code, state } = request.query as { code?: string; state?: string };
 
 			if (!code)
-				return reply.status(400).send({
-					error: "Bad Request",
-					message: "Missing code"
-				});
-
-			if (request.cookies?.token)
-				return reply.status(401).send({
-					error: "Unauthorized",
-					message: "Already logged"
-				});
+				return reply.status(302).redirect("/game#login");
 
 			try {
 				const token = await exchangeToken(config, code);
@@ -72,7 +63,7 @@ export default async function (server: FastifyInstance) {
 					if (user)
 						return await handleRelog(user, state, reply);
 					else
-						return reply.status(401).send({error: "Invalid account"});
+						return returnPopup(reply, "Invalid account");
 				}
 
 				let payload: TokenPayload;

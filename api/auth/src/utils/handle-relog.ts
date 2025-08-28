@@ -17,20 +17,24 @@ export async function createOAuthEntry(token: string, username: string, type: st
 	oauthSessions.set(token, { username: username, type: type, eat: eat, timeout: timeout });
 }
 
+export function returnPopup(reply: FastifyReply, message: string) {
+	return reply.status(302).redirect(`https://${process.env.HOSTNAME}:8443/game?popup=${encodeURI(message)}#settings`)
+}
+
 export async function handleRelog(user: User, state: string, reply: FastifyReply) {
 	if (state.startsWith("relogin_")) {
 		const id = state.split('_')[1];
 		if (!id) {
-			return reply.status(400).send({ error: "Missing id" });
+			return returnPopup(reply, "Missing state token");
 		}
 
 		const oauthSession = oauthSessions.get(id);
 		if (!oauthSession) {
-			return reply.status(401).send({ error: "Invalid or expired session" });
+			return returnPopup(reply, "Invalid or expired session");
 		}
 
 		if (user.username !== oauthSession.username) {
-			return reply.status(401).send({ error: "Invalid account" });
+			return returnPopup(reply, "Invalid account");
 		}
 
 		oauthSessions.delete(id);
@@ -39,11 +43,11 @@ export async function handleRelog(user: User, state: string, reply: FastifyReply
 		switch (oauthSession.type) {
 			case "create2FA": key = create2FASessions.get(oauthSession.username); redirectUrl = "/game?setting=toggle-2fa#settings"; break;
 			case "remove2FA": key = remove2FASessions.get(oauthSession.username); redirectUrl = "/game?setting=toggle-2fa#settings"; break;
-			default: return reply.status(400).send({ error: "Invalid OAuth Relog request" });
+			default: return returnPopup(reply, "Invalid OAuth Relog request");
 		}
 
 		if (!key) {
-			return reply.status(401).send({error: "Invalid 2FA session"});
+			return returnPopup(reply, "Invalid 2FA session");
 		}
 
 		key.relogin = false;

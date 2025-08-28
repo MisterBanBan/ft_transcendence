@@ -64,7 +64,7 @@ export default async function (server: FastifyInstance) {
 			if (create2FASessions.has(user.username))
 				clearTimeout(create2FASessions.get(user.username)!.timeout)
 
-			create2FASessions.set(user.username, { token: token, relogin: false, eat: eat, timeout: timeout });
+			create2FASessions.set(user.username, { token: token, relogin: true, eat: eat, timeout: timeout });
 			await createOAuthEntry(token, user.username, "create2FA", ttl, eat);
 
 			if (user.provider == "google") {
