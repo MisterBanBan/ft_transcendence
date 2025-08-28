@@ -7,6 +7,8 @@ export function setUser(newUser: AuthUser | undefined): void {
 }
 
 export function getUser(): AuthUser | undefined {
+    if (user && user.id === -1)
+        return undefined;
     return user;
 }
 

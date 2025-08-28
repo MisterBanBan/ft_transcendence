@@ -13,8 +13,9 @@ export class TFAValidate implements Component {
 	private token: string | null = null;
 
 	constructor(token: string | null = null) {
-		this.handleSubmitBound = this.handleSubmit;
+		this.handleSubmitBound = this.handleSubmit.bind(this);
 		this.token = token;
+		console.log(this.token)
 	}
 
 	destroy(): void {
@@ -47,6 +48,9 @@ export class TFAValidate implements Component {
 			const urlParams = new URLSearchParams(window.location.search);
 			tempToken = urlParams.get('token') || '';
 		}
+
+		console.log(this.token);
+		console.log(tempToken)
 		
 		const payload = {
 			token: tempToken,
