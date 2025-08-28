@@ -32,7 +32,7 @@ export class loginView implements Component {
 
         if (this.token) {
             this.container.insertAdjacentHTML('beforeend', twoFApopUp());
-            this.tfaValidate = new TFAValidate(this.token);
+            this.tfaValidate = new TFAValidate(this.token, this.viewManager);
             this.tfaValidate.init()
         }
     }
@@ -72,9 +72,7 @@ export class loginView implements Component {
                 this.container.insertAdjacentHTML('beforeend', twoFApopUp());
                 if (this.tfaValidate)
                     this.tfaValidate.destroy();
-                console.log(data)
-                console.log(data.token);
-                this.tfaValidate = new TFAValidate(data.token);
+                this.tfaValidate = new TFAValidate(data.token, this.viewManager);
                 this.tfaValidate.init();
                 return;
             }

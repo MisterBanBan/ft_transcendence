@@ -76,16 +76,7 @@ export class TFAValidate implements Component {
 				return;
 			}
 
-			response = await fetch("/api/auth/verify", {
-				method: "GET",
-			});
-
-			if (response.ok) {
-				const data: AuthUser | undefined = await response.json();
-				if (data)
-					setUser(data);
-			}
-
+			setUser(data as AuthUser);
 			router.navigateTo("/game", this.viewManager);
 			
 			return;
