@@ -1,4 +1,5 @@
 import { setAvatarUrl } from '../../route/user-handler.js';
+import {ApiUtils} from "../../relationship/apiUtils.js";
 
 
 export class ProfilePictureManager {
@@ -61,13 +62,13 @@ export class ProfilePictureManager {
 
         const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
         if (!allowedTypes.includes(file.type)) {
-            alert('Please select a valid image file (JPEG, PNG, or WebP)');
+            ApiUtils.showAlert('Please select a valid image file (JPEG, PNG, or WebP)');
             return;
         }
 
         const maxSize = 5 * 1024 * 1024;
         if (file.size > maxSize) {
-            alert('File size must be less than 5MB');
+            ApiUtils.showAlert('File size must be less than 5MB')
             return;
         }
 

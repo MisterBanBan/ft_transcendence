@@ -1,5 +1,5 @@
 export const errorPopup = (text: string) => `
-<div id="tournament-error-popup" 
+<div id="error-popup" 
      style="position: absolute; z-index: 2;" 
      class="h-[20%] w-[40%] responsive-case responsive-text flex flex-col items-center justify-center bg-black/80">
     

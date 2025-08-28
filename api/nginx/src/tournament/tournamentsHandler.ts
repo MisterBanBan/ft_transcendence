@@ -6,7 +6,7 @@ import {router} from "../route/router.js";
 import {getUser} from "../route/user-handler.js";
 import {tournamentInfoPopup} from "../menuInsert/Tournaments/tournamentInfoPopup.js";
 import {wait} from "../route/wait.js";
-import {errorPopup} from "../menuInsert/Tournaments/errorPopup.js";
+import {ApiUtils} from "../relationship/apiUtils.js";
 
 declare const io: any;
 
@@ -140,12 +140,7 @@ export async function initTournamentSocket() {
 		});
 
 		tournamentSocket.on("error", (message: string) => {
-			const mainDiv = document.getElementById("dynamic-content")
-
-			if (mainDiv)
-				mainDiv.insertAdjacentHTML("beforebegin", errorPopup(message))
-			else
-				alert(message);
+			ApiUtils.showAlert(message)
 		})
 	});
 
