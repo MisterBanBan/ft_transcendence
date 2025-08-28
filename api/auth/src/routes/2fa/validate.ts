@@ -3,6 +3,7 @@ import crypto from "crypto"
 import authenticator from "authenticator";
 import {getUserByUsername} from "../../db/get-user-by-username.js";
 import {setCookie} from "../../utils/set-cookie.js";
+import {getAvatar} from "../../db/get-avatar.js";
 
 const tempKeys = new Map<string, { username: string, authToken: string, eat: number }>();
 
@@ -25,23 +26,6 @@ export default async function (server: FastifyInstance) {
 					code: { type: "string" },
 				},
 			},
-			response: {
-				200: {
-					type: "object",
-					properties: {},
-					additionalProperties: false,
-				},
-				400: {
-					type: "object",
-					properties: {},
-					additionalProperties: false,
-				},
-				404: {
-					type: "object",
-					properties: {},
-					additionalProperties: false,
-				},
-			}
 		}
 	}, async (request, reply) => {
 		const { token, code } = request.body as { token: string; code: string };
@@ -73,6 +57,16 @@ export default async function (server: FastifyInstance) {
 
 		await setCookie(reply, key.authToken);
 
-		return reply.status(200).send({ success: true });
+		const avatar_url = await getAvatar(server.usersDb, user.username);
+
+		return reply.status(200).send({
+			id: user.id!,
+			username: user.username,
+			avatar_url: avatar_url,
+			provider: user.provider,
+			provider_id: user.provider_id,
+			tfa: Boolean(user.tfa),
+			updatedAt: user.updatedAt
+		});
 	});
 }

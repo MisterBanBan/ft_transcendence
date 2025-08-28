@@ -1,5 +1,6 @@
 import {Component} from "../route/component.js";
 import {router} from "../route/router.js";
+import {set2FA} from "../route/user-handler.js";
 
 interface Payload {
 	code: string;
@@ -65,6 +66,7 @@ async function handleSubmit(event: Event, toggle: boolean): Promise<void> {
 			return;
 		}
 
+		set2FA(toggle)
 		router.navigateTo("/game#settings");
 
 	} catch (err) {

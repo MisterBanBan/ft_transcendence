@@ -7,6 +7,8 @@ export function setUser(newUser: AuthUser | undefined): void {
 }
 
 export function getUser(): AuthUser | undefined {
+    if (user && user.id === -1)
+        return undefined;
     return user;
 }
 
@@ -16,14 +18,8 @@ export function setAvatarUrl(avatarUrl: string): void {
     }
 }
 
-export function set2faPlaceholder(token: string): void {
-    user = {
-        username: token,
-        id: -1,
-        avatar_url: "",
-        provider: "placeholder",
-        provider_id: undefined,
-        tfa: true,
-        updatedAt: Date.now(),
+export function set2FA(active: boolean): void {
+    if (user) {
+        user.tfa = active
     }
 }
