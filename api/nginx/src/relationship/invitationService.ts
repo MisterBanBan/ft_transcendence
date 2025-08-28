@@ -1,34 +1,6 @@
 import { ApiUtils } from './apiUtils.js';
 import {getUser} from "../route/user-handler.js";
-
-interface InvitationRequest {
-    addressee_username: string;
-}
-
-interface InvitationResponse {
-    message?: string;
-    error?: string;
-    invitations?: Invitation[];
-}
-
-interface Invitation {
-    requester_id: string;
-    username: string;
-    status: 'pending' | 'accepted' | 'declined';
-    avatar_url?: string;
-}
-
-interface LoadInvitationResponse {
-    message?: string;
-    error?: string;
-    invitations?: LoadInvitation[];
-}
-
-interface LoadInvitation {
-    requester_id: string;
-    username: string;
-    avatar_url: string;
-}
+import { InvitationRequest, InvitationResponse, LoadInvitationResponse, LoadInvitation } from "./types/invitation.js"
 
 export class InvitationService {
 
@@ -91,7 +63,6 @@ export class InvitationService {
                 this.displayInvitations(data.invitations);
             } else {
                 this.displayInvitations([]);
-                console.log('No pending invitations found');
             }
         } catch (error) {
             console.error('Error loading invitations:', error);
@@ -165,21 +136,25 @@ export class InvitationService {
 
         if (invitations.length > 0) {
             invitationsList.innerHTML = `
-            <div class="h-full w-full overflow-y-auto flex flex-row mb-10">
-                ${invitations.map(inv => `
-                    <div class="flex flex-row w-[80%] h-[20%] responsive-text-historique mr-20">
-                        <div class="flex flex-row gap-4">
-                            <img src="/uploads/${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
-                            <span class="responsive-text-historique text-white font-medium">
-                            ${this.escapeHtml(inv.username)}
-                        </span>
+                <div class="h-full w-full overflow-y-auto flex flex-col mb-10">
+                    ${invitations.map(inv => `
+                        <div class="flex flex-row">
+                             <div class="flex flex-row w-[80%] h-[20%] responsive-text-historique mr-20">
+                                <div class="flex flex-row gap-4">
+                                    <img src="/uploads/${inv.avatar_url || '/img/default-avatar.png'}" alt="${this.escapeHtml(inv.username)}" class="w-10 h-10 rounded-full object-contain"/>
+                                    <span class="responsive-text-historique text-white font-medium">
+                                    ${this.escapeHtml(inv.username)}
+                                </span>
+                                </div>
+                            </div>
+                            <div class="flex flex-row w-[80%] h-[20%] gap-8 responsive-text-historique">
+                                <button class="responsive-text-historique text-red-600" data-requester-id="${this.escapeHtml(inv.requester_id)}" data-action="reject">REJECT</button>
+                                <button class="responsive-text-historique text-green-600" data-requester-id="${this.escapeHtml(inv.requester_id)}" data-action="accept">ACCEPT</button>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex flex-row w-[80%] h-[20%] gap-8 responsive-text-historique">
-                        <button class="responsive-text-historique text-red-600" data-requester-id="${this.escapeHtml(inv.requester_id)}" data-action="reject">REJECT</button>
-                        <button class="responsive-text-historique text-green-600" data-requester-id="${this.escapeHtml(inv.requester_id)}" data-action="accept">ACCEPT</button>
-                    </div>
-                `).join('')}
+                        
+                    `).join('')}
+                </div>
             </div>
         `;
         invitationsList.querySelectorAll('button[data-action="reject"]').forEach(button => {
@@ -220,5 +195,3 @@ export class InvitationService {
         }
     }
 }
-
-//(window as any).InvitationService = InvitationService;
