@@ -29,6 +29,12 @@ export default async function (server: FastifyInstance) {
     }, async (request: FastifyRequest, reply) => {
         const userId = request.currentUser?.id;
 
+        if (!userId) {
+            return reply.status(401).send({
+                error: 'User not authenticated'
+            });
+        }
+
         try {
             const invitations = await server.db.all(`
                 SELECT r.requester_id, u.username, u.avatar_url
