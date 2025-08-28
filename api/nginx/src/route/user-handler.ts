@@ -12,6 +12,12 @@ export function getUser(): AuthUser | undefined {
     return user;
 }
 
+export function setUsername(username: string): void {
+    if (user) {
+        user.username = username
+    }
+}
+
 export function setAvatarUrl(avatarUrl: string): void {
     if (user) {
         user.avatar_url = avatarUrl;
