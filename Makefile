@@ -23,6 +23,7 @@ clean:
 	$(DOCKER_COMPOSE) down --rmi all --volumes --remove-orphans
 	rm -rf ./api/users/database/*
 	rm -rf ./api/auth/database/*
+	find ./uploads/ -type f ! -name 'last_airbender.jpg' -delete
 
 fclean: clean
 	docker system prune --all --volumes --force
