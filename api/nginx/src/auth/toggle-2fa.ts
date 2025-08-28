@@ -12,17 +12,20 @@ async function handleSubmit(event: Event, toggle: boolean): Promise<void> {
 	let codeInput;
 	let passwordInput;
 	let requestUrl;
+	let errorId;
 	switch (toggle) {
 		case true: {
 			codeInput = document.getElementById("2fa-code") as HTMLInputElement | null;
 			passwordInput = document.getElementById("2fa-password") as HTMLInputElement | null;
 			requestUrl = "/api/auth/2fa/create";
+			errorId = "error-add-2fa";
 			break;
 		}
 		case false: {
 			codeInput = document.getElementById("2fa-code-remove") as HTMLInputElement | null;
 			passwordInput = document.getElementById("2fa-password-remove") as HTMLInputElement | null;
 			requestUrl = "/api/auth/2fa/remove";
+			errorId = "error-remove-2fa";
 			break;
 		}
 	}
@@ -52,7 +55,13 @@ async function handleSubmit(event: Event, toggle: boolean): Promise<void> {
 		const data = await response.json();
 
 		if (!response.ok) {
-			console.error(data.error);
+			const error = document.getElementById(errorId)
+			if (!error) {
+				console.error("Can't display error");
+				return;
+			}
+
+			error.textContent = data.message;
 			return;
 		}
 
@@ -85,8 +94,14 @@ export class Add2FA implements Component {
 			const data = await response.json();
 
 			if (!response.ok) {
-				console.error(data.error);
-				return;
+				const error = document.getElementById("error-add-2fa")
+					if (!error) {
+						console.error("Can't display error");
+						return;
+					}
+
+					error.textContent = data.message;
+					return;
 			}
 
 			if (response.status === 202) {
@@ -149,7 +164,13 @@ export class Remove2FA implements Component {
 			const data = await response.json();
 
 			if (!response.ok) {
-				console.error(data.error);
+				const error = document.getElementById("error-remove-2fa")
+				if (!error) {
+					console.error("Can't display error");
+					return;
+				}
+
+				error.textContent = data.message;
 				return;
 			}
 

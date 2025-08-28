@@ -218,12 +218,12 @@ export class GameInstance {
 
 	private updateScore()
 	{
-		this.pause.bool = true;
+        this.pause.bool = true;
 
-		if (this.state.ball.x <= this.limit.map.left + (this.intern.ball.width / 2))
-			this.state.score.playerRight += 1;
-		else
-			this.state.score.playerLeft += 1;
+        if (this.state.ball.x <= this.limit.map.left + (this.intern.ball.width / 2))
+            this.state.score.playerRight += 1;
+        else if (this.state.ball.x >= this.limit.map.right - (this.intern.ball.width / 2))
+            this.state.score.playerLeft += 1;
 		
 		if ((this.state.score.playerRight >= 10 || this.state.score.playerLeft >= 10) || this.limit.timer <= 0)
 		{

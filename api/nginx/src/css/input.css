@@ -83,6 +83,15 @@
     sm:w-[50%] lg:w-[60%] xl:w-[60%] 2xl:w-[60%]; 
   }
 
+  .responsive-case-2fa {
+    @apply  top-2
+    h-xxs:h-[7%] h-xs:h-[7%] h-sm:h-[7%] h-md:h-[7%] 
+    h-lg:h-[7%] h-xl:h-[7%] h-2xl:h-[7%]
+
+    w-[40%] xxs:w-[40%] xs:w-[40%]
+    sm:w-[40%] lg:w-[50%] xl:w-[50%] 2xl:w-[50%]; 
+  }
+
   .responsive-form-register {
     @apply xs:gap-1 sm:gap-2 md:gap-3 lg:gap-4 xl:gap-5 2xl:gap-8
    h-full w-full font-omori;

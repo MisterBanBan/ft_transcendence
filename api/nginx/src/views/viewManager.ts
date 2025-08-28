@@ -273,16 +273,24 @@ export class viewManager implements Component {
         if (!cursor) throw new Error('Cursor video not found');
         this.cursor = cursor;
         this.updateCursor();
-        this.options.forEach((opt, i) => {
-            opt.addEventListener('click', () => {
-                this.selectedIdx = i;
-                this.updateCursor();
-                this.selectOption();
-            });
+        this.options.forEach(opt => {
+            opt.addEventListener('click', this.menuClickHandler);
         });
+
         document.removeEventListener('keydown', this.keydownHandler);
         document.addEventListener('keydown', this.keydownHandler);
     }
+    
+    private menuClickHandler = (event: Event) => {
+        const opt = event.currentTarget as HTMLElement;
+        const idx = this.options.indexOf(opt);
+        if (idx !== -1) {
+            this.selectedIdx = idx;
+            this.updateCursor();
+            this.selectOption();
+        }
+    }
+
 
     private resize = () => {
         const rect = this.videoMain.getBoundingClientRect();
@@ -304,10 +312,11 @@ export class viewManager implements Component {
             this.profilePictureManager = null;
         }
         if (this.options) {
-            this.options.forEach((opt) => {
-                opt.replaceWith(opt.cloneNode(true));
+            this.options.forEach(opt => {
+                opt.removeEventListener('click', this.menuClickHandler);
             });
         }
+
         if (this.activeView)
             this.activeView.destroy();
         this.socket.disconnect();
