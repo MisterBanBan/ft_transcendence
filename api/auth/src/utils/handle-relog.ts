@@ -1,6 +1,7 @@
 import {create2FASessions} from "../routes/2fa/create.js";
 import {remove2FASessions} from "../routes/2fa/remove.js";
 import {FastifyReply} from "fastify";
+import {User} from "../interface/user.js";
 
 const oauthSessions = new Map<string, { username: string, type: string, eat: number, timeout: NodeJS.Timeout }>
 
@@ -16,7 +17,7 @@ export async function createOAuthEntry(token: string, username: string, type: st
 	oauthSessions.set(token, { username: username, type: type, eat: eat, timeout: timeout });
 }
 
-export async function handleRelog(state: string, reply: FastifyReply) {
+export async function handleRelog(user: User, state: string, reply: FastifyReply) {
 	if (state.startsWith("relogin_")) {
 		const id = state.split('_')[1];
 		if (!id) {
@@ -26,6 +27,10 @@ export async function handleRelog(state: string, reply: FastifyReply) {
 		const oauthSession = oauthSessions.get(id);
 		if (!oauthSession) {
 			return reply.status(401).send({ error: "Invalid or expired session" });
+		}
+
+		if (user.username !== oauthSession.username) {
+			return reply.status(401).send({ error: "Invalid account" });
 		}
 
 		oauthSessions.delete(id);

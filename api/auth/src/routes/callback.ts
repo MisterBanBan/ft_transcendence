@@ -54,9 +54,6 @@ export default async function (server: FastifyInstance) {
 					message: "Missing code"
 				});
 
-			if (state)
-				return await handleRelog(state, reply);
-
 			if (request.cookies?.token)
 				return reply.status(401).send({
 					error: "Unauthorized",
@@ -70,6 +67,14 @@ export default async function (server: FastifyInstance) {
 				const displayName = config.getDisplayName(profile);
 
 				let user = await getUserByProviderId(server.db, providerId);
+
+				if (state) {
+					if (user)
+						return await handleRelog(user, state, reply);
+					else
+						return reply.status(401).send({error: "Invalid account"});
+				}
+
 				let payload: TokenPayload;
 				let timestamp = Date.now();
 
@@ -110,7 +115,6 @@ export default async function (server: FastifyInstance) {
 					await setCookie(reply, signedToken);
 					return reply.status(302).redirect("/game");
 				} else {
-					// /game?need-2fa=true#login
 					return reply.status(302).redirect(`/game?token=${await createToken(user.username, signedToken)}#login`);
 				}
 			} catch (error) {
