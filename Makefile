@@ -23,6 +23,7 @@ clean:
 	$(DOCKER_COMPOSE) down --rmi all --volumes --remove-orphans
 	rm -rf ./api/users/database/*
 	rm -rf ./api/auth/database/*
+	rm -rf ./certs/*
 	find ./uploads/ -type f ! -name 'last_airbender.jpg' -delete
 
 fclean: clean
@@ -32,7 +33,11 @@ update-env:
 	echo "HOSTNAME=$(shell hostname -s)" > .env
 
 all: build up
-	openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout certs/key.key -out certs/cert.crt -subj "/C=FR/ST=RA/L=Lyon/O=42/CN=localhost"
+	if [ ! -f certs/cert.crt ] || [ ! -f certs/key.key ]; then \
+    	mkdir -p certs; \
+    	openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+    		-keyout certs/key.key -out certs/cert.crt -subj "/C=FR/ST=RA/L=Lyon/O=42/CN=localhost"; \
+    fi
 
 re: fclean all
 
