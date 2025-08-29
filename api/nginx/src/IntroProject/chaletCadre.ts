@@ -40,29 +40,39 @@ export class chaletCadre implements Component {
     }
 
     private showEasterEgg(prenom: string) {
-    const easteregg = document.createElement('div');
-    easteregg.className = 'easteregg';
-    easteregg.innerHTML = `
-    <img src="/img/${prenom}.jpg"
-       style="
-         position: absolute;
-         left: 156vw;
-         top: 23%;
-         width: 140px;
-         height: 120px;
-         border-radius: 50%;
-         object-fit: cover;
-         z-index: 50;
-       "
-       alt="secret">
-`;
 
-    const pageContainer = document.getElementById('pageContainer');
-    if (pageContainer) {
-      pageContainer.appendChild(easteregg);
+        const existingEasterEgg = document.querySelector('.easteregg');
+        if (existingEasterEgg) {
+            existingEasterEgg.remove();
+        }
+
+        prenom = this.sanitizePrenom(prenom);
+
+        const easteregg = document.createElement('div');
+        easteregg.className = 'easteregg';
+    
+        const img = document.createElement('img');
+        img.src = `/img/${encodeURIComponent(prenom)}.jpg`;
+        img.alt = "secret";
+        img.style.position = "absolute";
+        img.style.left = "156vw";
+        img.style.top = "23%";
+        img.style.width = "140px";
+        img.style.height = "120px";
+        img.style.borderRadius = "50%";
+        img.style.objectFit = "cover";
+        img.style.zIndex = "50";
+    
+        easteregg.appendChild(img);
+    
+        const pageContainer = document.getElementById('pageContainer');
+        if (pageContainer) {
+            pageContainer.appendChild(easteregg);
+        }
     }
-}
-
+    private sanitizePrenom(prenom: string): string {
+        return prenom.replace(/[^a-zA-Z0-9_-]/g, '');
+    }
 
     public destroy(): void {
         window.removeEventListener('keydown', this.keydownHandler);
