@@ -52,14 +52,16 @@ export const profile = (userProfile: UserProfile, matchHistory: Match[]): string
                             <p class="responsive-text-profile">Player2</p>
                             <p class="responsive-text-profile">Score</p>
                             <p class="responsive-text-profile">Game Type</p>
+                            <p class="responsive-text-profile">Date</p>
                         </div>
                        <div id="dynamic-popup" class="h-full w-full overflow-y-auto">
                             ${matchHistory.slice(0, 10).map((match: Match) => `
                             <div class="flex flex-row responsive-text-historique items-center justify-between">
-                                <button class="profile-btn flex-shrink-0 flex-grow-0 w-[25%] truncate text-left">${match.player1}</button>
-                                <button class="profile-btn flex-shrink-0 flex-grow-0 w-[17%] truncate text-center">${match.player2}</button>
-                                <span class="flex-shrink-0 flex-grow-0 w-[33%] truncate text-center">${match.score1} - ${match.score2}</span>
-                                <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-center">${match.gameType || match.date}</span>
+                                <button class="profile-btn flex-shrink-0 flex-grow-0 w-[20%] truncate text-left">${match.player1}</button>
+                                <button class="profile-btn flex-shrink-0 flex-grow-0 w-[15%] truncate text-center">${match.player2}</button>
+                                <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-center">${match.score1} - ${match.score2}</span>
+                                <span class="flex-shrink-0 flex-grow-0 w-[25%] truncate text-center">${match.gameType}</span>
+                                <span class="flex-shrink-0 flex-grow-0 w-[15%] truncate text-center">${match.date}</span>
                             </div>
                             `).join('')}
                         </div>

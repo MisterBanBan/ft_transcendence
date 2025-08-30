@@ -1,6 +1,14 @@
 import { FastifyInstance, FastifyRequest } from 'fastify';
-import currentUser from "../plugins/current-user.js";
 
+function formatDate(date: Date) {
+
+    console.log(date);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    return `${day}/${month}/${year}`
+}
 
 export default async function (server: FastifyInstance) {
 
@@ -166,14 +174,20 @@ export default async function (server: FastifyInstance) {
                     LIMIT ?
                 `, [userId, userId, limit]);
     
-                const formattedMatches = matches.map(match => ({
+                const formattedMatches = matches.map(match => {
+                const dateObj = new Date(match.completed_at);
+                const formattedDate = formatDate(dateObj);
+
+                return {
                     player1: match.player1,
                     player2: match.player2,
                     score1: match.player1_score,
                     score2: match.player2_score,
-                    date: match.completed_at,
+                    date: formattedDate,
                     gameType: match.game_type || 'online'
-                }));
+                };
+                });
+
     
                 return reply.send({
                     success: true,
@@ -275,6 +289,19 @@ export default async function (server: FastifyInstance) {
                     WHERE (m.player1_id = ? OR m.player2_id = ?)
                     ORDER BY m.completed_at DESC
                 `, [userId, userId]);
+
+                const formattedMatches = matches.map(match => {
+                    const formattedDate = formatDate(new Date(match.date));
+
+                    return {
+                        player1: match.player1,
+                        player2: match.player2,
+                        score1: match.score1,
+                        score2: match.score2,
+                        date: formattedDate,
+                        gameType: match.gameType || 'online'
+                    };
+                })
         
                 return reply.send({
                     success: true,
@@ -284,9 +311,10 @@ export default async function (server: FastifyInstance) {
                         wins: stats?.wins || 0,
                         losses: stats?.losses || 0,
                         winrate: `${winRate}%`,
-                        matches: matches || []
+                        matches: formattedMatches || []
                     }
                 });
+
             } catch (error) {
                 console.error('Error fetching full profile:', error);
                 return reply.status(500).send({
