@@ -8,8 +8,6 @@ import updateTournamentsList from "../socket/update-tournaments-list.js";
 import {inTournament} from "../utils/in-tournament.js";
 import {updateTournamentInfo} from "../room/update-tournament-info.js";
 import {start} from "../socket/start.js";
-import {toUnicode} from "node:punycode";
-import {emitAll} from "../utils/emit-all.js";
 
 export const usersSockets = new Map<number, Set<string>>()
 

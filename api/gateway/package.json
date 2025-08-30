@@ -14,7 +14,6 @@
     "@fastify/autoload": "^6.3.0",
     "@fastify/helmet": "^10.0.0",
     "@fastify/http-proxy": "^11.2.0",
-    "argon2": "^0.41.1",
     "@fastify/jwt": "^9.1.0",
     "@fastify/cookie": "^11.0.2",
     "fastify": "^5.3.2",

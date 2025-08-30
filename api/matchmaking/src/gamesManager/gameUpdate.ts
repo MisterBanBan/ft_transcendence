@@ -53,6 +53,8 @@ export function gameUpdate(app: FastifyInstance){
     		}	
 		}
 		for (const playerId of toDelete) {
+			if (app.playerToGame.get(playerId)?.userID != "AI")
+				app.usersSocket.emit("endGame", {playerID: app.playerToGame.get(playerId)?.userID});
 			app.playerToGame.delete(playerId);
 			console.log(playerId, "disconnected from game", data.gameId);
 		}

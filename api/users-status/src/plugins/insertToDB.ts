@@ -10,12 +10,4 @@ export async function updateUserStatus(app: FastifyInstance, userId: string, new
 	} catch (error) {
 		console.error('Erreur lors de la mise à jour du status:', error);
 	}
-
-	console.log(`User ${userId} status updated to ${newStatus}`);
-
-	const user = await app.db.get(
-      `SELECT * FROM users WHERE id = ?`,
-      userId
-	);
-	console.log(`User data after update:`, user);
 }
